@@ -8,7 +8,7 @@ import scala.concurrent.Future
 trait BridgeUploadQueueRepository extends Repository {
 
   type EntityT = BridgeUploadQueue.Item
-  type IdT = LongId[EntityT]
+  type IdT     = LongId[EntityT]
 
   def add(draft: EntityT): EntityT
 

@@ -50,16 +50,18 @@ class AsyncHttpClientUploader(settings: Settings) extends Closeable with StrictL
 
     q.addHeader("Content-Type", contentType)
 
-    httpClient.prepareRequest(q).execute(new AsyncCompletionHandler[Unit] {
-      override def onCompleted(response: Response): Unit = {
-        promise.success(response)
-      }
+    httpClient
+      .prepareRequest(q)
+      .execute(new AsyncCompletionHandler[Unit] {
+        override def onCompleted(response: Response): Unit = {
+          promise.success(response)
+        }
 
-      override def onThrowable(t: Throwable): Unit = {
-        promise.failure(t)
-        super.onThrowable(t)
-      }
-    })
+        override def onThrowable(t: Throwable): Unit = {
+          promise.failure(t)
+          super.onThrowable(t)
+        }
+      })
 
     // see AsyncHttpClientFetcher
     val parentMdcContext = MDC.getCopyOfContextMap

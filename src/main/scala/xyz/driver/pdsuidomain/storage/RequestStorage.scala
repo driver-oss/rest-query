@@ -7,7 +7,7 @@ import xyz.driver.pdsuidomain.entities.{Arm, Patient}
 import scala.collection.concurrent.TrieMap
 
 object RequestStorage {
-  type Key = (UuidId[Patient], String)
+  type Key   = (UuidId[Patient], String)
   type Value = Set[LongId[Arm]]
 }
 
@@ -16,9 +16,7 @@ class RequestStorage extends PhiLogging {
 
   private val storage = new TrieMap[Key, Value]()
 
-  def put(patientId: UuidId[Patient],
-          disease: String,
-          ineligibleArms: Set[LongId[Arm]]): Unit = {
+  def put(patientId: UuidId[Patient], disease: String, ineligibleArms: Set[LongId[Arm]]): Unit = {
     logger.debug(phi"put($patientId, ${Unsafe(disease)}, $ineligibleArms")
     val key = (patientId, disease.toLowerCase)
     get(patientId, disease.toLowerCase) match {
@@ -37,9 +35,7 @@ class RequestStorage extends PhiLogging {
     storage.get(key)
   }
 
-  def contains(patientId: UuidId[Patient],
-               disease: String,
-               value: Set[LongId[Arm]]): Boolean = {
+  def contains(patientId: UuidId[Patient], disease: String, value: Set[LongId[Arm]]): Boolean = {
     logger.debug(phi"contains(key=($patientId,${Unsafe(disease)}),value=$value")
     get(patientId, disease.toLowerCase).contains(value)
   }

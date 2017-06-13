@@ -2,7 +2,7 @@ package xyz.driver.pdsuicommon.logging
 
 import org.slf4j.{Logger => Underlying}
 
-class DefaultPhiLogger private[logging](underlying: Underlying) extends PhiLogger {
+class DefaultPhiLogger private[logging] (underlying: Underlying) extends PhiLogger {
 
   def error(message: PhiString): Unit = underlying.error(message.text)
 

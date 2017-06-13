@@ -15,8 +15,7 @@ object ExportPatientWithLabels {
     phi"ExportPatientWithLabels(patientId=$patientId, version=${Unsafe(labelVersion)}, labels=$labels)"
   }
 
-  def fromRaw(patientId: UuidId[Patient],
-              rawPatientRefs: List[RawPatientLabel]) = ExportPatientWithLabels(
+  def fromRaw(patientId: UuidId[Patient], rawPatientRefs: List[RawPatientLabel]) = ExportPatientWithLabels(
     patientId = patientId,
     labelVersion = 1L, // TODO It is needed to replace this mock label version.
     labels = rawPatientRefs

@@ -18,17 +18,17 @@ object PatientCriterion {
   /**
     * @see https://driverinc.atlassian.net/wiki/display/MTCH/EV+Business+Process
     */
-  def getEligibilityStatus(criterionValue: Option[Boolean],
-                           primaryValue: Option[FuzzyValue]): Option[FuzzyValue] = {
+  def getEligibilityStatus(criterionValue: Option[Boolean], primaryValue: Option[FuzzyValue]): Option[FuzzyValue] = {
     primaryValue match {
-      case None => None
-      case Some(FuzzyValue.Maybe) => Some(FuzzyValue.Maybe)
+      case None                              => None
+      case Some(FuzzyValue.Maybe)            => Some(FuzzyValue.Maybe)
       case Some(_) if criterionValue.isEmpty => Some(FuzzyValue.Maybe)
-      case Some(status) => Some(FuzzyValue.fromBoolean(
-        FuzzyValue.fromBoolean(criterionValue.getOrElse(
-          throw new IllegalArgumentException("Criterion should not be empty"))
-        ) == status
-      ))
+      case Some(status) =>
+        Some(
+          FuzzyValue.fromBoolean(
+            FuzzyValue.fromBoolean(
+              criterionValue.getOrElse(throw new IllegalArgumentException("Criterion should not be empty"))) == status
+          ))
     }
   }
 
@@ -93,15 +93,18 @@ object PatientTrialArmGroup {
       // Eligible, if for all (verified for EV) label-criteria eligibilityStatus=NULL or YES and at least one has status=YES
       // If method executes from PatientService (when EV submit patient) need to check value PatientCriterion.isVerified
       val verifiedList = criterionList.filter { case (isVerifiedOpt, _) => isVerifiedOpt.isEmpty || isVerifiedOpt.get }
-      verifiedList.forall { case (_, eligibilityStatus) =>
-        eligibilityStatus.isEmpty || eligibilityStatus.contains(FuzzyValue.Yes)
+      verifiedList.forall {
+        case (_, eligibilityStatus) =>
+          eligibilityStatus.isEmpty || eligibilityStatus.contains(FuzzyValue.Yes)
       } && verifiedList.exists { case (_, eligibilityStatus) => eligibilityStatus.contains(FuzzyValue.Yes) }
     }
 
-    if (criterionList.exists { case (isVerified, eligibilityStatus) =>
-      eligibilityStatus.contains(FuzzyValue.No) && (isVerified.isEmpty || isVerified.get)
-    }) { Some(FuzzyValue.No)
-    } else if (criterionList.forall { case (_, eligibilityStatus) => eligibilityStatus.isEmpty }) {
+    if (criterionList.exists {
+          case (isVerified, eligibilityStatus) =>
+            eligibilityStatus.contains(FuzzyValue.No) && (isVerified.isEmpty || isVerified.get)
+        }) { Some(FuzzyValue.No) } else if (criterionList.forall {
+                                              case (_, eligibilityStatus) => eligibilityStatus.isEmpty
+                                            }) {
       None
     } else if (isEligible) {
       Some(FuzzyValue.Yes)
@@ -114,9 +117,9 @@ object PatientTrialArmGroup {
     * @see https://driverinc.atlassian.net/wiki/display/DMPD/EV+Business+Process
     */
   def getEligibilityStatusForRc(criterionList: TraversableOnce[PatientCriterion]): Option[FuzzyValue] = {
-    def isEligible: Boolean = criterionList.forall(_.verifiedEligibilityStatus.contains(FuzzyValue.Yes))
+    def isEligible: Boolean   = criterionList.forall(_.verifiedEligibilityStatus.contains(FuzzyValue.Yes))
     def isIneligible: Boolean = criterionList.exists(_.verifiedEligibilityStatus.contains(FuzzyValue.No))
-    def isUnknown: Boolean = criterionList.forall(_.verifiedEligibilityStatus.isEmpty)
+    def isUnknown: Boolean    = criterionList.forall(_.verifiedEligibilityStatus.isEmpty)
 
     if (isEligible) Some(FuzzyValue.Yes)
     else if (isIneligible) Some(FuzzyValue.No)

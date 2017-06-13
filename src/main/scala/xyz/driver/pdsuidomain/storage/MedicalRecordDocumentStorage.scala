@@ -9,8 +9,7 @@ import scala.concurrent.{ExecutionContext, Future, blocking}
 object MedicalRecordDocumentStorage extends StrictLogging {
   private val storage = StorageOptions.getDefaultInstance.getService
 
-  def fetchPdf(bucket: String, path: String)
-              (implicit ec: ExecutionContext): Future[PdfSource] = {
+  def fetchPdf(bucket: String, path: String)(implicit ec: ExecutionContext): Future[PdfSource] = {
     logger.trace(s"fetchPdf(bucket=$bucket, path=$path)")
     Future {
       blocking {

@@ -23,7 +23,7 @@ class PhiStringContextSuite extends FreeSpecLike {
   )
 
   "should not contain private info" in {
-    val foo = new Foo(42, "test")
+    val foo    = new Foo(42, "test")
     val result = phi"foo is $foo".text
     assert(!result.contains("test"))
     assert(!result.contains("42"))

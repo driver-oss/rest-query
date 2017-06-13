@@ -62,10 +62,8 @@ object Cron {
 
   case class Settings(disable: String, intervals: Map[String, FiniteDuration])
 
-  private class SingletonTask(taskName: String,
-                              job: () => Future[Unit])
-                             (implicit ec: ExecutionContext)
-    extends TimerTask with StrictLogging {
+  private class SingletonTask(taskName: String, job: () => Future[Unit])(implicit ec: ExecutionContext)
+      extends TimerTask with StrictLogging {
 
     private val isWorking = new AtomicBoolean(false)
 

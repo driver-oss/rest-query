@@ -15,8 +15,7 @@ object MysqlQueryBuilder {
                nullableFields: Set[String],
                links: Set[TableLink],
                runner: Runner[T],
-               countRunner: CountRunner)
-              (implicit ec: ExecutionContext): MysqlQueryBuilder[T] = {
+               countRunner: CountRunner)(implicit ec: ExecutionContext): MysqlQueryBuilder[T] = {
     val parameters = MysqlQueryBuilderParameters(
       tableData = TableData(tableName, lastUpdateFieldName, nullableFields),
       links = links.map(x => x.foreignTableName -> x)(breakOut)
@@ -28,8 +27,7 @@ object MysqlQueryBuilder {
                lastUpdateFieldName: Option[String],
                nullableFields: Set[String],
                links: Set[TableLink],
-               extractor: (ResultSet) => T)
-              (implicit sqlContext: SqlContext): MysqlQueryBuilder[T] = {
+               extractor: (ResultSet) => T)(implicit sqlContext: SqlContext): MysqlQueryBuilder[T] = {
 
     val runner = (parameters: QueryBuilderParameters) => {
       Future {
@@ -43,14 +41,19 @@ object MysqlQueryBuilder {
     val countRunner = (parameters: QueryBuilderParameters) => {
       Future {
         val (sql, binder) = parameters.toSql(countQuery = true, namingStrategy = MysqlEscape)
-        sqlContext.executeQuery[CountResult](sql, binder, { resultSet =>
-          val count = resultSet.getInt(1)
-          val lastUpdate = if (parameters.tableData.lastUpdateFieldName.isDefined) {
-            Option(sqlContext.localDateTimeDecoder.decoder(2, resultSet))
-          } else None
+        sqlContext
+          .executeQuery[CountResult](
+            sql,
+            binder, { resultSet =>
+              val count = resultSet.getInt(1)
+              val lastUpdate = if (parameters.tableData.lastUpdateFieldName.isDefined) {
+                Option(sqlContext.localDateTimeDecoder.decoder(2, resultSet))
+              } else None
 
-          (count, lastUpdate)
-        }).head
+              (count, lastUpdate)
+            }
+          )
+          .head
       }(sqlContext.executionContext)
     }
 
@@ -65,11 +68,10 @@ object MysqlQueryBuilder {
   }
 }
 
-class MysqlQueryBuilder[T](parameters: MysqlQueryBuilderParameters)
-                          (implicit runner: QueryBuilder.Runner[T],
-                           countRunner: QueryBuilder.CountRunner,
-                           ec: ExecutionContext)
-  extends QueryBuilder[T, MySQLDialect, MysqlEscape](parameters) {
+class MysqlQueryBuilder[T](parameters: MysqlQueryBuilderParameters)(implicit runner: QueryBuilder.Runner[T],
+                                                                    countRunner: QueryBuilder.CountRunner,
+                                                                    ec: ExecutionContext)
+    extends QueryBuilder[T, MySQLDialect, MysqlEscape](parameters) {
 
   def withFilter(newFilter: SearchFilterExpr): QueryBuilder[T, MySQLDialect, MysqlEscape] = {
     new MysqlQueryBuilder[T](parameters.copy(filter = newFilter))

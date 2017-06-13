@@ -17,19 +17,27 @@ object Patient {
   }
 
   object Status {
-    case object New extends Status
+    case object New      extends Status
     case object Verified extends Status
     case object Reviewed extends Status
-    case object Curated extends Status
-    case object Flagged extends Status
-    case object Done extends Status
+    case object Curated  extends Status
+    case object Flagged  extends Status
+    case object Done     extends Status
 
     val AllPrevious = Set[Status](
-      New, Verified, Reviewed, Curated
+      New,
+      Verified,
+      Reviewed,
+      Curated
     )
 
     val All = Set[Status](
-      New, Verified, Reviewed, Curated, Flagged, Done
+      New,
+      Verified,
+      Reviewed,
+      Curated,
+      Flagged,
+      Done
     )
 
     implicit def toPhiString(x: Status): PhiString = Unsafe(Utils.getClassSimpleName(x.getClass))
@@ -57,7 +65,6 @@ case class Patient(id: UuidId[Patient],
   import Patient.Status._
 
   if (previousStatus.nonEmpty) {
-    assert(AllPrevious.contains(previousStatus.get),
-      s"Previous status has invalid value: ${previousStatus.get}")
+    assert(AllPrevious.contains(previousStatus.get), s"Previous status has invalid value: ${previousStatus.get}")
   }
 }

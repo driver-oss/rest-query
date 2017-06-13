@@ -30,8 +30,9 @@ object BridgeUploadQueueRepositoryAdapter {
       */
     final case class LimitExponential(startInterval: FiniteDuration,
                                       intervalFactor: Double,
-                                        maxInterval: FiniteDuration,
-                                      onComplete: OnComplete) extends Strategy {
+                                      maxInterval: FiniteDuration,
+                                      onComplete: OnComplete)
+        extends Strategy {
 
       override def on(attempt: Int): OnAttempt = {
         OnAttempt.Continue(intervalFor(attempt).min(maxInterval))
@@ -67,14 +68,14 @@ object BridgeUploadQueueRepositoryAdapter {
     sealed trait OnComplete
     object OnComplete {
       case object Delete extends OnComplete
-      case object Mark extends OnComplete
+      case object Mark   extends OnComplete
 
       implicit def toPhiString(x: OnAttempt): PhiString = Unsafe(x.toString)
     }
 
     sealed trait OnAttempt
     object OnAttempt {
-      case object Complete extends OnAttempt
+      case object Complete                    extends OnAttempt
       case class Continue(interval: Duration) extends OnAttempt
 
       implicit def toPhiString(x: OnAttempt): PhiString = Unsafe(x.toString)
@@ -84,9 +85,8 @@ object BridgeUploadQueueRepositoryAdapter {
 
 class BridgeUploadQueueRepositoryAdapter(strategy: Strategy,
                                          repository: BridgeUploadQueueRepository,
-                                         transactions: Transactions)
-                                        (implicit executionContext: ExecutionContext)
-  extends BridgeUploadQueue with PhiLogging {
+                                         transactions: Transactions)(implicit executionContext: ExecutionContext)
+    extends BridgeUploadQueue with PhiLogging {
 
   override def add(item: Item): Future[Unit] = transactions.run { _ =>
     repository.add(item)
@@ -104,7 +104,7 @@ class BridgeUploadQueueRepositoryAdapter(strategy: Strategy,
       case Mark =>
         repository.getById(item) match {
           case Some(x) => repository.update(x.copy(completed = true))
-          case None => throw new RuntimeException(s"Can not find the $item task")
+          case None    => throw new RuntimeException(s"Can not find the $item task")
         }
     }
   }
@@ -115,7 +115,7 @@ class BridgeUploadQueueRepositoryAdapter(strategy: Strategy,
     logger.trace(phi"tryRetry($item)")
 
     val newAttempts = item.attempts + 1
-    val action = strategy.on(newAttempts)
+    val action      = strategy.on(newAttempts)
     logger.debug(phi"Action for ${Unsafe(newAttempts)}: $action")
 
     action match {

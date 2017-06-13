@@ -9,7 +9,7 @@ trait DbCommand {
 
 object DbCommand {
   val Empty: DbCommand = new DbCommand {
-    override def runSync(): Unit = {}
+    override def runSync(): Unit                                    = {}
     override def runAsync(transactions: Transactions): Future[Unit] = Future.successful(())
   }
 }

@@ -14,7 +14,6 @@ import xyz.driver.pdsuicommon.validation.Validators.Validator
 import xyz.driver.pdsuidomain.entities.Document.Meta
 import xyz.driver.pdsuicommon.compat.Implicits._
 
-
 final case class ProviderType(id: LongId[ProviderType], name: String)
 
 object ProviderType {
@@ -36,6 +35,7 @@ object DocumentType {
 object Document {
 
   case class Meta(predicted: Option[Boolean], startPage: Double, endPage: Double) {
+
     /**
       * Return a regular meta: this meta is considered as not predicted
       */
@@ -51,9 +51,9 @@ object Document {
   class DocumentStatusDeserializer extends JsonDeserializer[Status] {
     def deserialize(parser: JsonParser, context: DeserializationContext): Status = {
       val value = parser.getValueAsString
-      Option(value).fold[Document.Status](Status.New /* Default document status */) { v =>
+      Option(value).fold[Document.Status](Status.New /* Default document status */ ) { v =>
         Status.All.find(_.toString.toUpperCase == v) match {
-          case None => throw new RuntimeJsonMappingException(s"$v is not valid Document.Status")
+          case None         => throw new RuntimeJsonMappingException(s"$v is not valid Document.Status")
           case Some(status) => status
         }
       }
@@ -72,14 +72,14 @@ object Document {
 
   }
   object Status {
-    case object New extends Status
+    case object New       extends Status
     case object Organized extends Status
     case object Extracted extends Status
-    case object Done extends Status
-    case object Flagged extends Status
-    case object Archived extends Status
+    case object Done      extends Status
+    case object Flagged   extends Status
+    case object Archived  extends Status
 
-    val All = Set[Status](New, Organized, Extracted, Done, Flagged, Archived)
+    val All         = Set[Status](New, Organized, Extracted, Done, Flagged, Archived)
     val AllPrevious = Set[Status](Organized, Extracted)
 
     implicit def toPhiString(x: Status): PhiString = Unsafe(Utils.getClassSimpleName(x.getClass))
@@ -101,15 +101,15 @@ object Document {
       startDate <- Validators.nonEmpty("startDate")(input.startDate)
 
       isOrderRight <- input.endDate match {
-        case Some(endDate) if startDate.isAfter(endDate) =>
-          Validators.fail("The start date should be less, than the end one")
+                       case Some(endDate) if startDate.isAfter(endDate) =>
+                         Validators.fail("The start date should be less, than the end one")
 
-        case _ => Validators.success(true)
-      }
+                       case _ => Validators.success(true)
+                     }
 
       areDatesInThePast <- {
-        val dates = List(input.startDate, input.endDate).flatten
-        val now = LocalDateTime.now()
+        val dates      = List(input.startDate, input.endDate).flatten
+        val now        = LocalDateTime.now()
         val hasInvalid = dates.exists(_.isAfter(now))
 
         if (hasInvalid) Validators.fail("Dates should be in the past")
@@ -129,7 +129,7 @@ case class Document(id: LongId[Document] = LongId(0L),
                     recordId: LongId[MedicalRecord],
                     physician: Option[String],
                     typeId: Option[LongId[DocumentType]], // not null
-                    providerName: Option[String],  // not null
+                    providerName: Option[String], // not null
                     providerTypeId: Option[LongId[ProviderType]], // not null
                     meta: Option[TextJson[Meta]], // not null
                     startDate: Option[LocalDateTime], // not null
@@ -139,8 +139,7 @@ case class Document(id: LongId[Document] = LongId(0L),
   import Document.Status._
 
   if (previousStatus.nonEmpty) {
-    assert(AllPrevious.contains(previousStatus.get),
-      s"Previous status has invalid value: ${previousStatus.get}")
+    assert(AllPrevious.contains(previousStatus.get), s"Previous status has invalid value: ${previousStatus.get}")
   }
 
   //  TODO: with the current business logic code this constraint sometimes harmful

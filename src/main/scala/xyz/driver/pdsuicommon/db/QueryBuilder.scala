@@ -32,9 +32,7 @@ object QueryBuilder {
 
 }
 
-case class TableLink(keyColumnName: String,
-                     foreignTableName: String,
-                     foreignKeyColumnName: String)
+case class TableLink(keyColumnName: String, foreignTableName: String, foreignKeyColumnName: String)
 
 object QueryBuilderParameters {
   val AllFields = Set("*")
@@ -49,7 +47,7 @@ sealed trait QueryBuilderParameters {
   def pagination: Option[Pagination]
 
   def findLink(tableName: String): TableLink = links.get(tableName) match {
-    case None => throw new IllegalArgumentException(s"Cannot find a link for `$tableName`")
+    case None       => throw new IllegalArgumentException(s"Cannot find a link for `$tableName`")
     case Some(link) => link
   }
 
@@ -57,14 +55,12 @@ sealed trait QueryBuilderParameters {
     toSql(countQuery, QueryBuilderParameters.AllFields, namingStrategy)
   }
 
-  def toSql(countQuery: Boolean,
-            fields: Set[String],
-            namingStrategy: NamingStrategy): (String, QueryBuilder.Binder) = {
+  def toSql(countQuery: Boolean, fields: Set[String], namingStrategy: NamingStrategy): (String, QueryBuilder.Binder) = {
     val escapedTableName = namingStrategy.table(tableData.tableName)
     val fieldsSql: String = if (countQuery) {
       "count(*)" + (tableData.lastUpdateFieldName match {
         case Some(lastUpdateField) => s", max($escapedTableName.${namingStrategy.column(lastUpdateField)})"
-        case None => ""
+        case None                  => ""
       })
     } else {
       if (fields == QueryBuilderParameters.AllFields) {
@@ -78,7 +74,7 @@ sealed trait QueryBuilderParameters {
       }
     }
     val (where, bindings) = filterToSql(escapedTableName, filter, namingStrategy)
-    val orderBy = sortingToSql(escapedTableName, sorting, namingStrategy)
+    val orderBy           = sortingToSql(escapedTableName, sorting, namingStrategy)
 
     val limitSql = limitToSql()
 
@@ -92,9 +88,9 @@ sealed trait QueryBuilderParameters {
       import SearchFilterExpr._
       def aux(expr: SearchFilterExpr): Seq[TableLink] = expr match {
         case Atom.TableName(tableName) => List(findLink(tableName))
-        case Intersection(xs) => xs.flatMap(aux)
-        case Union(xs) => xs.flatMap(aux)
-        case _ => Nil
+        case Intersection(xs)          => xs.flatMap(aux)
+        case Union(xs)                 => xs.flatMap(aux)
+        case _                         => Nil
       }
       aux(filter)
     }
@@ -188,33 +184,35 @@ sealed trait QueryBuilderParameters {
         // So, to handle NotEq for nullable fields we need to use more complex SQL expression.
         // http://dev.mysql.com/doc/refman/5.7/en/working-with-null.html
         val escapedColumn = escapeDimension(dimension)
-        val sql = s"($escapedColumn is null or $escapedColumn != ${placeholder(dimension.name)})"
+        val sql           = s"($escapedColumn is null or $escapedColumn != ${placeholder(dimension.name)})"
         (sql, List(value))
 
       case Atom.Binary(dimension, op, value) =>
         val operator = op match {
-          case Eq => "="
+          case Eq    => "="
           case NotEq => "!="
-          case Like => "like"
-          case Gt => ">"
-          case GtEq => ">="
-          case Lt => "<"
-          case LtEq => "<="
+          case Like  => "like"
+          case Gt    => ">"
+          case GtEq  => ">="
+          case Lt    => "<"
+          case LtEq  => "<="
         }
         (s"${escapeDimension(dimension)} $operator ${placeholder(dimension.name)}", List(value))
 
       case Atom.NAry(dimension, op, values) =>
         val sqlOp = op match {
-          case SearchFilterNAryOperation.In => "in"
+          case SearchFilterNAryOperation.In    => "in"
           case SearchFilterNAryOperation.NotIn => "not in"
         }
 
-        val bindings = ListBuffer[AnyRef]()
+        val bindings       = ListBuffer[AnyRef]()
         val sqlPlaceholder = placeholder(dimension.name)
-        val formattedValues = values.map { value =>
-          bindings += value
-          sqlPlaceholder
-        }.mkString(", ")
+        val formattedValues = values
+          .map { value =>
+            bindings += value
+            sqlPlaceholder
+          }
+          .mkString(", ")
         (s"${escapeDimension(dimension)} $sqlOp ($formattedValues)", bindings.toList)
 
       case Intersection(operands) =>
@@ -232,13 +230,11 @@ sealed trait QueryBuilderParameters {
   /**
     * @param escapedMainTableName Should be escaped
     */
-  protected def sortingToSql(escapedMainTableName: String,
-                             sorting: Sorting,
-                             namingStrategy: NamingStrategy): String = {
+  protected def sortingToSql(escapedMainTableName: String, sorting: Sorting, namingStrategy: NamingStrategy): String = {
     sorting match {
       case Dimension(optSortingTableName, field, order) =>
         val sortingTableName = optSortingTableName.map(namingStrategy.table).getOrElse(escapedMainTableName)
-        val fullName = s"$sortingTableName.${namingStrategy.column(field)}"
+        val fullName         = s"$sortingTableName.${namingStrategy.column(field)}"
 
         s"$fullName ${orderToSql(order)}"
 
@@ -248,14 +244,14 @@ sealed trait QueryBuilderParameters {
   }
 
   protected def orderToSql(x: SortingOrder): String = x match {
-    case Ascending => "asc"
+    case Ascending  => "asc"
     case Descending => "desc"
   }
 
-  protected def binder(bindings: List[AnyRef])
-                      (bind: PreparedStatement): PreparedStatement = {
-    bindings.zipWithIndex.foreach { case (binding, index) =>
-      bind.setObject(index + 1, binding)
+  protected def binder(bindings: List[AnyRef])(bind: PreparedStatement): PreparedStatement = {
+    bindings.zipWithIndex.foreach {
+      case (binding, index) =>
+        bind.setObject(index + 1, binding)
     }
 
     bind
@@ -267,7 +263,8 @@ case class PostgresQueryBuilderParameters(tableData: QueryBuilder.TableData,
                                           links: Map[String, TableLink] = Map.empty,
                                           filter: SearchFilterExpr = SearchFilterExpr.Empty,
                                           sorting: Sorting = Sorting.Empty,
-                                          pagination: Option[Pagination] = None) extends QueryBuilderParameters {
+                                          pagination: Option[Pagination] = None)
+    extends QueryBuilderParameters {
 
   def limitToSql(): String = {
     pagination.map { pagination =>
@@ -285,19 +282,23 @@ case class MysqlQueryBuilderParameters(tableData: QueryBuilder.TableData,
                                        links: Map[String, TableLink] = Map.empty,
                                        filter: SearchFilterExpr = SearchFilterExpr.Empty,
                                        sorting: Sorting = Sorting.Empty,
-                                       pagination: Option[Pagination] = None) extends QueryBuilderParameters {
+                                       pagination: Option[Pagination] = None)
+    extends QueryBuilderParameters {
 
-  def limitToSql(): String = pagination.map { pagination =>
-    val startFrom = (pagination.pageNumber - 1) * pagination.pageSize
-    s"limit $startFrom, ${pagination.pageSize}"
-  }.getOrElse("")
+  def limitToSql(): String =
+    pagination
+      .map { pagination =>
+        val startFrom = (pagination.pageNumber - 1) * pagination.pageSize
+        s"limit $startFrom, ${pagination.pageSize}"
+      }
+      .getOrElse("")
 
 }
 
-abstract class QueryBuilder[T, D <: SqlIdiom, N <: NamingStrategy](val parameters: QueryBuilderParameters)
-                                                                  (implicit runner: QueryBuilder.Runner[T],
-                                                                   countRunner: QueryBuilder.CountRunner,
-                                                                   ec: ExecutionContext) {
+abstract class QueryBuilder[T, D <: SqlIdiom, N <: NamingStrategy](val parameters: QueryBuilderParameters)(
+        implicit runner: QueryBuilder.Runner[T],
+        countRunner: QueryBuilder.CountRunner,
+        ec: ExecutionContext) {
 
   def run: Future[Seq[T]] = runner(parameters)
 
@@ -307,11 +308,11 @@ abstract class QueryBuilder[T, D <: SqlIdiom, N <: NamingStrategy](val parameter
     * Runs the query and returns total found rows without considering of pagination.
     */
   def runWithCount: Future[(Seq[T], Int, Option[LocalDateTime])] = {
-    val countFuture = runCount
+    val countFuture     = runCount
     val selectAllFuture = run
     for {
       (total, lastUpdate) <- countFuture
-      all <- selectAllFuture
+      all                 <- selectAllFuture
     } yield (all, total, lastUpdate)
   }
 
@@ -323,7 +324,6 @@ abstract class QueryBuilder[T, D <: SqlIdiom, N <: NamingStrategy](val parameter
 
   def resetFilter: QueryBuilder[T, D, N] = withFilter(SearchFilterExpr.Empty)
 
-
   def withSorting(newSorting: Sorting): QueryBuilder[T, D, N]
 
   def withSorting(sorting: Option[Sorting]): QueryBuilder[T, D, N] = {
@@ -331,7 +331,6 @@ abstract class QueryBuilder[T, D <: SqlIdiom, N <: NamingStrategy](val parameter
   }
 
   def resetSorting: QueryBuilder[T, D, N] = withSorting(Sorting.Empty)
-
 
   def withPagination(newPagination: Pagination): QueryBuilder[T, D, N]
 

@@ -12,10 +12,7 @@ object Category {
   }
 }
 
-final case class Label(id: LongId[Label],
-                       categoryId: LongId[Category],
-                       name: String,
-                       description: String)
+final case class Label(id: LongId[Label], categoryId: LongId[Category], name: String, description: String)
 
 object Label {
   implicit def toPhiString(x: Label): PhiString = {

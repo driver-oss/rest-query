@@ -16,11 +16,9 @@ import scala.concurrent.Future
 trait BaseSuite extends FreeSpecLike with DiffUtils with ScalaFutures {
 
   implicit val defaultPatience = PatienceConfig(timeout = Span(1000, Millis), interval = Span(20, Millis))
-  implicit val sqlContext = new MockSqlContext(global)
+  implicit val sqlContext      = new MockSqlContext(global)
 
-  def sampleUser(role: User.Role,
-                 email: String = "test@example.com",
-                 password: String = "123") = User(
+  def sampleUser(role: User.Role, email: String = "test@example.com", password: String = "123") = User(
     id = LongId(2001),
     email = Email(email),
     name = "Test",

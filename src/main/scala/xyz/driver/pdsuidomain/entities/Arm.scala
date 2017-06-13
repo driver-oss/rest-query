@@ -15,7 +15,6 @@ object Arm {
 
   implicit def toPhiString(x: Arm): PhiString = {
     import x._
-     phi"Arm(id=$id, name=${Unsafe(x.name)}, trialId=${Unsafe(x.trialId)})"
+    phi"Arm(id=$id, name=${Unsafe(x.name)}, trialId=${Unsafe(x.trialId)})"
   }
 }
-

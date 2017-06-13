@@ -8,7 +8,7 @@ object ExceptionFormatter {
 
   def printStackTrace(e: Throwable): String = {
     val baos = new ByteArrayOutputStream()
-    val ps = new PrintStream(baos)
+    val ps   = new PrintStream(baos)
 
     e.printStackTrace(ps)
 

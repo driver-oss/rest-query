@@ -51,8 +51,7 @@ object SqlContext extends PhiLogging {
 }
 
 class SqlContext(dataSource: DataSource with Closeable, settings: Settings)
-  extends MysqlJdbcContext[MysqlEscape](dataSource)
-    with EntityExtractorDerivation[Literal] {
+    extends MysqlJdbcContext[MysqlEscape](dataSource) with EntityExtractorDerivation[Literal] {
 
   private val tpe = Executors.newFixedThreadPool(settings.threadPoolSize)
 
@@ -77,31 +76,31 @@ class SqlContext(dataSource: DataSource with Closeable, settings: Settings)
   implicit override def optionDecoder[T](implicit d: Decoder[T]): Decoder[Option[T]] =
     decoder(
       sqlType = d.sqlType,
-      row => index => {
-        try {
-          val res = d(index - 1, row)
-          if (row.wasNull) {
-            None
+      row =>
+        index => {
+          try {
+            val res = d(index - 1, row)
+            if (row.wasNull) {
+              None
+            } else {
+              Some(res)
+            }
+          } catch {
+            case _: NullPointerException => None
+            case _: IncorrectIdException => None
           }
-          else {
-            Some(res)
-          }
-        } catch {
-          case _: NullPointerException => None
-          case _: IncorrectIdException => None
-        }
       }
     )
 
   implicit def encodeStringId[T] = MappedEncoding[StringId[T], String](_.id)
   implicit def decodeStringId[T] = MappedEncoding[String, StringId[T]] {
     case "" => throw IncorrectIdException("'' is an invalid Id value")
-    case x => StringId(x)
+    case x  => StringId(x)
   }
 
   def decodeOptStringId[T] = MappedEncoding[Option[String], Option[StringId[T]]] {
     case None | Some("") => None
-    case Some(x) => Some(StringId(x))
+    case Some(x)         => Some(StringId(x))
   }
 
   implicit def encodeLongId[T] = MappedEncoding[LongId[T], Long](_.id)
@@ -113,21 +112,22 @@ class SqlContext(dataSource: DataSource with Closeable, settings: Settings)
   // TODO Dirty hack, see REP-475
   def decodeOptLongId[T] = MappedEncoding[Option[Long], Option[LongId[T]]] {
     case None | Some(0) => None
-    case Some(x) => Some(LongId(x))
+    case Some(x)        => Some(LongId(x))
   }
 
   implicit def encodeUuidId[T] = MappedEncoding[UuidId[T], String](_.toString)
   implicit def decodeUuidId[T] = MappedEncoding[String, UuidId[T]] {
     case "" => throw IncorrectIdException("'' is an invalid Id value")
-    case x => UuidId(x)
+    case x  => UuidId(x)
   }
 
   def decodeOptUuidId[T] = MappedEncoding[Option[String], Option[UuidId[T]]] {
     case None | Some("") => None
-    case Some(x) => Some(UuidId(x))
+    case Some(x)         => Some(UuidId(x))
   }
 
-  implicit def encodeTextJson[T: Manifest] = MappedEncoding[TextJson[T], String](x => JsonSerializer.serialize(x.content))
+  implicit def encodeTextJson[T: Manifest] =
+    MappedEncoding[TextJson[T], String](x => JsonSerializer.serialize(x.content))
   implicit def decodeTextJson[T: Manifest] = MappedEncoding[String, TextJson[T]] { x =>
     TextJson(JsonSerializer.deserialize[T](x))
   }
@@ -153,14 +153,14 @@ class SqlContext(dataSource: DataSource with Closeable, settings: Settings)
 
   implicit val encodeFuzzyValue = {
     MappedEncoding[FuzzyValue, String] {
-      case FuzzyValue.No => "No"
-      case FuzzyValue.Yes => "Yes"
+      case FuzzyValue.No    => "No"
+      case FuzzyValue.Yes   => "Yes"
       case FuzzyValue.Maybe => "Maybe"
     }
   }
   implicit val decodeFuzzyValue = MappedEncoding[String, FuzzyValue] {
-    case "Yes" => FuzzyValue.Yes
-    case "No" => FuzzyValue.No
+    case "Yes"   => FuzzyValue.Yes
+    case "No"    => FuzzyValue.No
     case "Maybe" => FuzzyValue.Maybe
     case x =>
       Option(x).fold {

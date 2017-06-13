@@ -31,16 +31,16 @@ object User {
   }
 
   object Role extends PhiLogging {
-    case object RecordAdmin extends Role {val bit = 1 << 0}
-    case object RecordCleaner extends Role {val bit = 1 << 1}
-    case object RecordOrganizer extends Role {val bit = 1 << 2}
-    case object DocumentExtractor extends Role {val bit = 1 << 3}
-    case object TrialSummarizer extends Role {val bit = 1 << 4}
-    case object CriteriaCurator extends Role {val bit = 1 << 5}
-    case object TrialAdmin extends Role {val bit = 1 << 6}
-    case object EligibilityVerifier extends Role{val bit = 1 << 7}
-    case object TreatmentMatchingAdmin extends Role{val bit = 1 << 8}
-    case object RoutesCurator extends Role{val bit = 1 << 9}
+    case object RecordAdmin            extends Role { val bit = 1 << 0 }
+    case object RecordCleaner          extends Role { val bit = 1 << 1 }
+    case object RecordOrganizer        extends Role { val bit = 1 << 2 }
+    case object DocumentExtractor      extends Role { val bit = 1 << 3 }
+    case object TrialSummarizer        extends Role { val bit = 1 << 4 }
+    case object CriteriaCurator        extends Role { val bit = 1 << 5 }
+    case object TrialAdmin             extends Role { val bit = 1 << 6 }
+    case object EligibilityVerifier    extends Role { val bit = 1 << 7 }
+    case object TreatmentMatchingAdmin extends Role { val bit = 1 << 8 }
+    case object RoutesCurator          extends Role { val bit = 1 << 9 }
 
     val RepRoles = Set[Role](RecordAdmin, RecordCleaner, RecordOrganizer, DocumentExtractor)
 

@@ -49,13 +49,13 @@ object SearchFilterExpr {
     object TableName {
       def unapply(value: Atom): Option[String] = value match {
         case Binary(Dimension(tableNameOpt, _), _, _) => tableNameOpt
-        case NAry(Dimension(tableNameOpt, _), _, _) => tableNameOpt
+        case NAry(Dimension(tableNameOpt, _), _, _)   => tableNameOpt
       }
     }
   }
 
-  case class Intersection private(operands: Seq[SearchFilterExpr])
-    extends SearchFilterExpr with SearchFilterExprSeqOps {
+  case class Intersection private (operands: Seq[SearchFilterExpr])
+      extends SearchFilterExpr with SearchFilterExprSeqOps {
 
     override def replace(f: PartialFunction[SearchFilterExpr, SearchFilterExpr]): SearchFilterExpr = {
       if (f.isDefinedAt(this)) f(this)
@@ -80,8 +80,7 @@ object SearchFilterExpr {
     }
   }
 
-
-  case class Union private(operands: Seq[SearchFilterExpr]) extends SearchFilterExpr with SearchFilterExprSeqOps {
+  case class Union private (operands: Seq[SearchFilterExpr]) extends SearchFilterExpr with SearchFilterExprSeqOps {
 
     override def replace(f: PartialFunction[SearchFilterExpr, SearchFilterExpr]): SearchFilterExpr = {
       if (f.isDefinedAt(this)) f(this)
@@ -123,13 +122,12 @@ object SearchFilterExpr {
 
     /** Create SearchFilterExpr with empty tableName */
     def create(field: String, values: String*): SearchFilterExpr =
-      create(Dimension(None, field), values:_*)
+      create(Dimension(None, field), values: _*)
 
     /** Create SearchFilterExpr with empty tableName */
     def create(field: String, values: Set[String]): SearchFilterExpr =
       create(Dimension(None, field), values)
   }
-
 
   case object AllowAll extends SearchFilterExpr {
     override def find(p: SearchFilterExpr => Boolean): Option[SearchFilterExpr] = {
@@ -159,8 +157,7 @@ object SearchFilterExpr {
     expr == Intersection.Empty || expr == Union.Empty
   }
 
-  sealed trait SearchFilterExprSeqOps {
-    this: SearchFilterExpr =>
+  sealed trait SearchFilterExprSeqOps { this: SearchFilterExpr =>
 
     val operands: Seq[SearchFilterExpr]
 
@@ -171,7 +168,7 @@ object SearchFilterExpr {
         // Is's ok to use foldLeft. If there will be performance issues, replace it by recursive loop
         operands.foldLeft(Option.empty[SearchFilterExpr]) {
           case (None, expr) => expr.find(p)
-          case (x, _) => x
+          case (x, _)       => x
         }
       }
     }
@@ -190,13 +187,13 @@ sealed trait SearchFilterBinaryOperation
 
 object SearchFilterBinaryOperation {
 
-  case object Eq extends SearchFilterBinaryOperation
+  case object Eq    extends SearchFilterBinaryOperation
   case object NotEq extends SearchFilterBinaryOperation
-  case object Like extends SearchFilterBinaryOperation
-  case object Gt extends SearchFilterBinaryOperation
-  case object GtEq extends SearchFilterBinaryOperation
-  case object Lt extends SearchFilterBinaryOperation
-  case object LtEq extends SearchFilterBinaryOperation
+  case object Like  extends SearchFilterBinaryOperation
+  case object Gt    extends SearchFilterBinaryOperation
+  case object GtEq  extends SearchFilterBinaryOperation
+  case object Lt    extends SearchFilterBinaryOperation
+  case object LtEq  extends SearchFilterBinaryOperation
 
 }
 
@@ -204,7 +201,7 @@ sealed trait SearchFilterNAryOperation
 
 object SearchFilterNAryOperation {
 
-  case object In extends SearchFilterNAryOperation
+  case object In    extends SearchFilterNAryOperation
   case object NotIn extends SearchFilterNAryOperation
 
 }

@@ -16,7 +16,7 @@ object ServiceUtils extends PhiLogging {
   def findEqFilter(filter: SearchFilterExpr, dimension: Dimension): Option[SearchFilterExpr] = {
     filter.find {
       case Atom.Binary(dimension, Eq, _) => true
-      case _ => false
+      case _                             => false
     }
   }
 

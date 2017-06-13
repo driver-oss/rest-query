@@ -14,7 +14,7 @@ import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContext, Future, Promise}
 
 class AsyncHttpClientFetcher(settings: AsyncHttpClientFetcher.Settings)
-  extends HttpFetcher with Closeable with StrictLogging {
+    extends HttpFetcher with Closeable with StrictLogging {
 
   private val es: ExecutorService = {
     val threadFactory = MdcThreadFactory.from(Executors.defaultThreadFactory())
@@ -40,17 +40,19 @@ class AsyncHttpClientFetcher(settings: AsyncHttpClientFetcher.Settings)
     logger.info("{}, apply({})", fingerPrint, url)
     val promise = Promise[Response]()
 
-    httpClient.prepareGet(url.toString).execute(new AsyncCompletionHandler[Response] {
-      override def onCompleted(response: Response): Response = {
-        promise.success(response)
-        response
-      }
+    httpClient
+      .prepareGet(url.toString)
+      .execute(new AsyncCompletionHandler[Response] {
+        override def onCompleted(response: Response): Response = {
+          promise.success(response)
+          response
+        }
 
-      override def onThrowable(t: Throwable): Unit = {
-        promise.failure(t)
-        super.onThrowable(t)
-      }
-    })
+        override def onThrowable(t: Throwable): Unit = {
+          promise.failure(t)
+          super.onThrowable(t)
+        }
+      })
 
     // Promises have their own ExecutionContext
     // So, we have to hack it.
@@ -84,7 +86,6 @@ class AsyncHttpClientFetcher(settings: AsyncHttpClientFetcher.Settings)
 
 object AsyncHttpClientFetcher {
 
-  case class Settings(connectTimeout: FiniteDuration,
-                      readTimeout: FiniteDuration)
+  case class Settings(connectTimeout: FiniteDuration, readTimeout: FiniteDuration)
 
 }

@@ -17,13 +17,13 @@ class MockDataSource extends DataSource with Closeable {
   override def getConnection(username: String, password: String): Connection = {
     throw new NotImplementedError(s"MockDataSource.getConnection($username, $password)")
   }
-  override def close(): Unit = throw new NotImplementedError("MockDataSource.close")
-  override def setLogWriter(out: PrintWriter): Unit = throw new NotImplementedError("MockDataSource.setLogWriter")
-  override def getLoginTimeout: Int = throw new NotImplementedError("MockDataSource.getLoginTimeout")
-  override def setLoginTimeout(seconds: Int): Unit = throw new NotImplementedError("MockDataSource.setLoginTimeout")
-  override def getParentLogger: Logger = throw new NotImplementedError("MockDataSource.getParentLogger")
-  override def getLogWriter: PrintWriter = throw new NotImplementedError("MockDataSource.getLogWriter")
-  override def unwrap[T](iface: Class[T]): T = throw new NotImplementedError("MockDataSource.unwrap")
+  override def close(): Unit                          = throw new NotImplementedError("MockDataSource.close")
+  override def setLogWriter(out: PrintWriter): Unit   = throw new NotImplementedError("MockDataSource.setLogWriter")
+  override def getLoginTimeout: Int                   = throw new NotImplementedError("MockDataSource.getLoginTimeout")
+  override def setLoginTimeout(seconds: Int): Unit    = throw new NotImplementedError("MockDataSource.setLoginTimeout")
+  override def getParentLogger: Logger                = throw new NotImplementedError("MockDataSource.getParentLogger")
+  override def getLogWriter: PrintWriter              = throw new NotImplementedError("MockDataSource.getLogWriter")
+  override def unwrap[T](iface: Class[T]): T          = throw new NotImplementedError("MockDataSource.unwrap")
   override def isWrapperFor(iface: Class[_]): Boolean = throw new NotImplementedError("MockDataSource.isWrapperFor")
 }
 
@@ -63,13 +63,13 @@ class MockFactory()(implicit val sqlContext: SqlContext) {
 
 object MockQueryBuilder {
 
-  type MockRunnerIn = (SearchFilterExpr, Sorting, Option[Pagination])
-  type MockRunnerOut[T] = Future[Seq[T]]
+  type MockRunnerIn       = (SearchFilterExpr, Sorting, Option[Pagination])
+  type MockRunnerOut[T]   = Future[Seq[T]]
   type MockCountRunnerOut = Future[QueryBuilder.CountResult]
 
-  def apply[T](matcher: PartialFunction[MockRunnerIn, MockRunnerOut[T]])
-              (countMatcher: PartialFunction[MockRunnerIn, MockCountRunnerOut])
-              (implicit context: SqlContext): MysqlQueryBuilder[T] = {
+  def apply[T](matcher: PartialFunction[MockRunnerIn, MockRunnerOut[T]])(
+          countMatcher: PartialFunction[MockRunnerIn, MockCountRunnerOut])(
+          implicit context: SqlContext): MysqlQueryBuilder[T] = {
     def runner(parameters: QueryBuilderParameters): MockRunnerOut[T] = {
       matcher((parameters.filter, parameters.sorting, parameters.pagination))
     }
@@ -86,4 +86,3 @@ object MockQueryBuilder {
     )(context.executionContext)
   }
 }
-

@@ -8,7 +8,6 @@ import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
 import xyz.driver.pdsuidomain.entities.Trial.{Condition, Status}
 
-
 final case class StudyDesign(id: LongId[StudyDesign], name: String)
 
 object StudyDesign {
@@ -21,23 +20,31 @@ object StudyDesign {
 object Trial {
 
   sealed trait Status {
-    def oneOf(xs: Status*): Boolean = xs.contains(this)
+    def oneOf(xs: Status*): Boolean     = xs.contains(this)
     def oneOf(xs: Set[Status]): Boolean = xs.contains(this)
   }
 
   object Status {
-    case object New extends Status
-    case object ReviewSummary extends Status
-    case object Summarized extends Status
-    case object PendingUpdate extends Status
-    case object Update extends Status
+    case object New            extends Status
+    case object ReviewSummary  extends Status
+    case object Summarized     extends Status
+    case object PendingUpdate  extends Status
+    case object Update         extends Status
     case object ReviewCriteria extends Status
-    case object Done extends Status
-    case object Flagged extends Status
-    case object Archived extends Status
+    case object Done           extends Status
+    case object Flagged        extends Status
+    case object Archived       extends Status
 
     val All = Set[Status](
-      New, ReviewSummary, Summarized, PendingUpdate, Update, ReviewCriteria, Done, Flagged, Archived
+      New,
+      ReviewSummary,
+      Summarized,
+      PendingUpdate,
+      Update,
+      ReviewCriteria,
+      Done,
+      Flagged,
+      Archived
     )
 
     val AllPrevious = Set[Status](New, ReviewSummary, Summarized, ReviewCriteria)
@@ -60,8 +67,8 @@ object Trial {
 
   object Condition {
 
-    case object Breast extends Condition
-    case object Lung extends Condition
+    case object Breast   extends Condition
+    case object Lung     extends Condition
     case object Prostate extends Condition
 
     val All = Set(Breast, Lung, Prostate)
@@ -96,7 +103,6 @@ final case class Trial(id: StringId[Trial],
   import Trial.Status._
 
   if (previousStatus.nonEmpty) {
-    assert(AllPrevious.contains(previousStatus.get),
-      s"Previous status has invalid value: ${previousStatus.get}")
+    assert(AllPrevious.contains(previousStatus.get), s"Previous status has invalid value: ${previousStatus.get}")
   }
 }

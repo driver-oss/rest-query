@@ -22,9 +22,8 @@ object Validators extends PhiLogging {
     case x if x.nonEmpty => x
   }
 
-  def deserializableTo[Refined](field: String)
-                               (value: String)
-                               (implicit m: Manifest[Refined]): Either[ValidationError, Refined] = {
+  def deserializableTo[Refined](field: String)(value: String)(
+          implicit m: Manifest[Refined]): Either[ValidationError, Refined] = {
     try {
       Right(JsonSerializer.deserialize[Refined](value))
     } catch {

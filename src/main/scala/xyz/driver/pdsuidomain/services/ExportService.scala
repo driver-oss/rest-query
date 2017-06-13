@@ -29,7 +29,7 @@ object ExportService {
   sealed trait GetTrialListReply
   object GetTrialListReply {
     case class EntityList(xs: Seq[ExportTrial], totalFound: Int, lastUpdate: Option[LocalDateTime])
-      extends GetTrialListReply
+        extends GetTrialListReply
   }
 
   sealed trait GetTrialReply
@@ -48,13 +48,12 @@ trait ExportService extends PhiLogging {
 
   import ExportService._
 
-  def getPatient(id: UuidId[Patient])
-                (implicit requestContext: AnonymousRequestContext): Future[GetPatientReply]
+  def getPatient(id: UuidId[Patient])(implicit requestContext: AnonymousRequestContext): Future[GetPatientReply]
 
-  def getTrialList(filter: SearchFilterExpr = SearchFilterExpr.Empty)
-                  (implicit requestContext: AnonymousRequestContext): Future[GetTrialListReply]
+  def getTrialList(filter: SearchFilterExpr = SearchFilterExpr.Empty)(
+          implicit requestContext: AnonymousRequestContext): Future[GetTrialListReply]
 
-  def getTrial(trialId: StringId[Trial], condition: String)
-              (implicit requestContext: AnonymousRequestContext): Future[GetTrialReply]
+  def getTrial(trialId: StringId[Trial], condition: String)(
+          implicit requestContext: AnonymousRequestContext): Future[GetTrialReply]
 
 }

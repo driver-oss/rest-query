@@ -14,11 +14,12 @@ object WkHtmlToPdfRenderer {
     lazy val downloadsPath: Path = getPathFrom(downloadsDir)
 
     private def getPathFrom(x: String): Path = {
-      val dirPath = if (x.startsWith("/")) Paths.get(x)
-      else {
-        val workingDir = Paths.get(".")
-        workingDir.resolve(x)
-      }
+      val dirPath =
+        if (x.startsWith("/")) Paths.get(x)
+        else {
+          val workingDir = Paths.get(".")
+          workingDir.resolve(x)
+        }
 
       dirPath.toAbsolutePath.normalize()
     }
@@ -82,12 +83,12 @@ class WkHtmlToPdfRenderer(settings: Settings) extends PdfRenderer with PhiLoggin
   protected def forceCreate[SourceT: SourceDocumentLike](src: SourceT, dest: Path): Path = {
     logger.trace(phi"forceCreate[${Unsafe(src.getClass.getName)}](dest=$dest)")
 
-    val destTemp = Files.createTempFile("driver", ".pdf")
+    val destTemp     = Files.createTempFile("driver", ".pdf")
     val destTempFile = destTemp.toFile
 
     Files.createDirectories(dest.getParent)
 
-    val retCode = pdf.run(src, destTempFile)
+    val retCode      = pdf.run(src, destTempFile)
     lazy val pdfSize = destTempFile.length()
     if (retCode != 0) {
       // Try to google "wkhtmltopdf returns {retCode}"

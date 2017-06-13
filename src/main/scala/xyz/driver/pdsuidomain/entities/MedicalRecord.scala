@@ -14,11 +14,12 @@ import xyz.driver.pdsuidomain.entities.MedicalRecord.Meta.{Duplicate, Reorder, R
 object MedicalRecord {
 
   @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-  @JsonSubTypes(Array(
-    new Type(value = classOf[Duplicate], name = "duplicate"),
-    new Type(value = classOf[Reorder], name = "reorder"),
-    new Type(value = classOf[Rotation], name = "rotation")
-  ))
+  @JsonSubTypes(
+    Array(
+      new Type(value = classOf[Duplicate], name = "duplicate"),
+      new Type(value = classOf[Reorder], name = "reorder"),
+      new Type(value = classOf[Rotation], name = "rotation")
+    ))
   trait Meta {
     @JsonProperty("type") def metaType: String
     def predicted: Option[Boolean]
@@ -35,9 +36,9 @@ object MedicalRecord {
                          startPage: Double,
                          endPage: Double,
                          startOriginalPage: Double,
-                         endOriginalPage: Option[Double]
-                        ) extends Meta {
-      override val metaType = "duplicate"
+                         endOriginalPage: Option[Double])
+        extends Meta {
+      override val metaType             = "duplicate"
       override def confirmed: Duplicate = copy(predicted = predicted.map(_ => false))
     }
 
@@ -49,11 +50,8 @@ object MedicalRecord {
       }
     }
 
-
-    case class Reorder(predicted: Option[Boolean],
-                       items: Seq[Int]
-                      ) extends Meta {
-      override val metaType = "reorder"
+    case class Reorder(predicted: Option[Boolean], items: Seq[Int]) extends Meta {
+      override val metaType           = "reorder"
       override def confirmed: Reorder = copy(predicted = predicted.map(_ => false))
     }
 
@@ -64,11 +62,8 @@ object MedicalRecord {
       }
     }
 
-
-    case class Rotation(predicted: Option[Boolean],
-                        items: Map[String, Int]
-                       ) extends Meta {
-      override val metaType = "rotation"
+    case class Rotation(predicted: Option[Boolean], items: Map[String, Int]) extends Meta {
+      override val metaType            = "rotation"
       override def confirmed: Rotation = copy(predicted = predicted.map(_ => false))
     }
 
@@ -79,11 +74,10 @@ object MedicalRecord {
       }
     }
 
-
     implicit def toPhiString(input: Meta): PhiString = input match {
       case x: Duplicate => Duplicate.toPhiString(x)
-      case x: Reorder => Reorder.toPhiString(x)
-      case x: Rotation => Rotation.toPhiString(x)
+      case x: Reorder   => Reorder.toPhiString(x)
+      case x: Rotation  => Rotation.toPhiString(x)
     }
 
   }
@@ -98,20 +92,30 @@ object MedicalRecord {
 
   }
   object Status {
-    case object Unprocessed extends Status
-    case object PreCleaning extends Status
-    case object New extends Status
-    case object Cleaned extends Status
-    case object PreOrganized extends Status
+    case object Unprocessed   extends Status
+    case object PreCleaning   extends Status
+    case object New           extends Status
+    case object Cleaned       extends Status
+    case object PreOrganized  extends Status
     case object PreOrganizing extends Status
-    case object Reviewed extends Status
-    case object Organized extends Status
-    case object Done extends Status
-    case object Flagged extends Status
-    case object Archived extends Status
+    case object Reviewed      extends Status
+    case object Organized     extends Status
+    case object Done          extends Status
+    case object Flagged       extends Status
+    case object Archived      extends Status
 
     val All = Set[Status](
-      Unprocessed, PreCleaning, New, Cleaned, PreOrganized, PreOrganizing, Reviewed, Organized, Done, Flagged, Archived
+      Unprocessed,
+      PreCleaning,
+      New,
+      Cleaned,
+      PreOrganized,
+      PreOrganizing,
+      Reviewed,
+      Organized,
+      Done,
+      Flagged,
+      Archived
     )
 
     val AllPrevious = Set[Status](New, Cleaned, Reviewed, Organized)
@@ -123,6 +127,7 @@ object MedicalRecord {
 
   object PdfSource {
     case object Empty extends PdfSource
+
     /** @param createResource Constructor of the resource which is represents the file */
     case class Channel(createResource: () => ReadableByteChannel) extends PdfSource
   }
@@ -152,8 +157,7 @@ case class MedicalRecord(id: LongId[MedicalRecord],
   import MedicalRecord.Status._
 
   if (previousStatus.nonEmpty) {
-    assert(AllPrevious.contains(previousStatus.get),
-      s"Previous status has invalid value: ${previousStatus.get}")
+    assert(AllPrevious.contains(previousStatus.get), s"Previous status has invalid value: ${previousStatus.get}")
   }
 
   //  TODO: with the current business logic code this constraint sometimes harmful

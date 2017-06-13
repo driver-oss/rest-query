@@ -28,7 +28,8 @@ object BridgeUploadQueue {
                         dependencyTag: Option[String]) {
 
     def dependency: Option[Dependency] = {
-      dependencyKind.zip(dependencyTag)
+      dependencyKind
+        .zip(dependencyTag)
         .headOption
         .map(Function.tupled(Dependency.apply))
     }

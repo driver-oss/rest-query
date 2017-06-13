@@ -15,7 +15,7 @@ final case class PasswordHash(value: Array[Byte]) {
   override def equals(that: Any): Boolean = {
     that match {
       case thatHash: PasswordHash => java.util.Arrays.equals(this.value, thatHash.value)
-      case _ => false
+      case _                      => false
     }
   }
 

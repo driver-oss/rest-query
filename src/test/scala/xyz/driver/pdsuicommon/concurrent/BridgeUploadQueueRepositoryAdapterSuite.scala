@@ -29,11 +29,11 @@ class BridgeUploadQueueRepositoryAdapterSuite extends BaseSuite {
 
         "a new interval should be greater than the previous one if the limit not reached" in {
           val previous = strategy.on(1)
-          val current = strategy.on(2)
+          val current  = strategy.on(2)
 
           (previous, current) match {
             case (OnAttempt.Continue(a), OnAttempt.Continue(b)) => assert(a < b)
-            case x => fail(s"Unexpected result: $x")
+            case x                                              => fail(s"Unexpected result: $x")
           }
         }
 
@@ -52,11 +52,12 @@ class BridgeUploadQueueRepositoryAdapterSuite extends BaseSuite {
 
       "should return an updated item" in {
         val repository = new BridgeUploadQueueRepository {
-          override def update(draft: EntityT): EntityT = draft
-          override def delete(id: IdT): Unit = {}
-          override def add(draft: EntityT): EntityT = fail("add should not be used!")
+          override def update(draft: EntityT): EntityT               = draft
+          override def delete(id: IdT): Unit                         = {}
+          override def add(draft: EntityT): EntityT                  = fail("add should not be used!")
           override def getById(id: LongId[EntityT]): Option[EntityT] = fail("getById should not be used!")
-          override def isCompleted(kind: String, tag: String): Future[Boolean] = fail("isCompleted should not be used!")
+          override def isCompleted(kind: String, tag: String): Future[Boolean] =
+            fail("isCompleted should not be used!")
           override def getOne(kind: String): Future[Option[Item]] = fail("getOne should not be used!")
         }
 
@@ -67,7 +68,7 @@ class BridgeUploadQueueRepositoryAdapterSuite extends BaseSuite {
         )
 
         val item = defaultItem
-        val r = adapter.tryRetry(item).futureValue
+        val r    = adapter.tryRetry(item).futureValue
         assert(r.isDefined)
         assert(!r.contains(item))
       }
@@ -80,10 +81,11 @@ class BridgeUploadQueueRepositoryAdapterSuite extends BaseSuite {
             assert(draft.attempts === (item.attempts + 1), "repository.add")
             draft
           }
-          override def delete(id: IdT): Unit = {}
-          override def add(draft: EntityT): EntityT = fail("add should not be used!")
+          override def delete(id: IdT): Unit                         = {}
+          override def add(draft: EntityT): EntityT                  = fail("add should not be used!")
           override def getById(id: LongId[EntityT]): Option[EntityT] = fail("getById should not be used!")
-          override def isCompleted(kind: String, tag: String): Future[Boolean] = fail("isCompleted should not be used!")
+          override def isCompleted(kind: String, tag: String): Future[Boolean] =
+            fail("isCompleted should not be used!")
           override def getOne(kind: String): Future[Option[Item]] = fail("getOne should not be used!")
         }
 
@@ -104,9 +106,10 @@ class BridgeUploadQueueRepositoryAdapterSuite extends BaseSuite {
           override def delete(id: IdT): Unit = {
             assert(id == item.id, "repository.delete")
           }
-          override def add(draft: EntityT): EntityT = fail("add should not be used!")
+          override def add(draft: EntityT): EntityT                  = fail("add should not be used!")
           override def getById(id: LongId[EntityT]): Option[EntityT] = fail("getById should not be used!")
-          override def isCompleted(kind: String, tag: String): Future[Boolean] = fail("isCompleted should not be used!")
+          override def isCompleted(kind: String, tag: String): Future[Boolean] =
+            fail("isCompleted should not be used!")
           override def getOne(kind: String): Future[Option[Item]] = fail("getOne should not be used!")
         }
 
@@ -127,10 +130,11 @@ class BridgeUploadQueueRepositoryAdapterSuite extends BaseSuite {
             assert(draft.nextAttempt.isAfter(item.nextAttempt), "repository.add")
             draft
           }
-          override def delete(id: IdT): Unit = {}
-          override def add(draft: EntityT): EntityT = fail("add should not be used!")
+          override def delete(id: IdT): Unit                         = {}
+          override def add(draft: EntityT): EntityT                  = fail("add should not be used!")
           override def getById(id: LongId[EntityT]): Option[EntityT] = fail("getById should not be used!")
-          override def isCompleted(kind: String, tag: String): Future[Boolean] = fail("isCompleted should not be used!")
+          override def isCompleted(kind: String, tag: String): Future[Boolean] =
+            fail("isCompleted should not be used!")
           override def getOne(kind: String): Future[Option[Item]] = fail("getOne should not be used!")
         }
 
@@ -151,11 +155,12 @@ class BridgeUploadQueueRepositoryAdapterSuite extends BaseSuite {
 
       "should not return an item" in {
         val repository = new BridgeUploadQueueRepository {
-          override def delete(id: IdT): Unit = {}
-          override def update(entity: EntityT): EntityT = fail("update should not be used!")
-          override def add(draft: EntityT): EntityT = fail("add should not be used!")
+          override def delete(id: IdT): Unit                         = {}
+          override def update(entity: EntityT): EntityT              = fail("update should not be used!")
+          override def add(draft: EntityT): EntityT                  = fail("add should not be used!")
           override def getById(id: LongId[EntityT]): Option[EntityT] = fail("getById should not be used!")
-          override def isCompleted(kind: String, tag: String): Future[Boolean] = fail("isCompleted should not be used!")
+          override def isCompleted(kind: String, tag: String): Future[Boolean] =
+            fail("isCompleted should not be used!")
           override def getOne(kind: String): Future[Option[Item]] = fail("getOne should not be used!")
         }
 
@@ -171,11 +176,12 @@ class BridgeUploadQueueRepositoryAdapterSuite extends BaseSuite {
 
       "should not add any item to the queue" in {
         val repository = new BridgeUploadQueueRepository {
-          override def update(draft: EntityT): EntityT = throw new IllegalAccessException("add should not be called")
-          override def delete(id: IdT): Unit = {}
-          override def add(draft: EntityT): EntityT = fail("add should not be used!")
+          override def update(draft: EntityT): EntityT               = throw new IllegalAccessException("add should not be called")
+          override def delete(id: IdT): Unit                         = {}
+          override def add(draft: EntityT): EntityT                  = fail("add should not be used!")
           override def getById(id: LongId[EntityT]): Option[EntityT] = fail("getById should not be used!")
-          override def isCompleted(kind: String, tag: String): Future[Boolean] = fail("isCompleted should not be used!")
+          override def isCompleted(kind: String, tag: String): Future[Boolean] =
+            fail("isCompleted should not be used!")
           override def getOne(kind: String): Future[Option[Item]] = fail("getOne should not be used!")
         }
 
@@ -193,10 +199,11 @@ class BridgeUploadQueueRepositoryAdapterSuite extends BaseSuite {
           override def delete(id: IdT): Unit = {
             assert(id == defaultItem.id, "repository.delete")
           }
-          override def update(entity: EntityT): EntityT = fail("update should not be used!")
-          override def add(draft: EntityT): EntityT = fail("add should not be used!")
+          override def update(entity: EntityT): EntityT              = fail("update should not be used!")
+          override def add(draft: EntityT): EntityT                  = fail("add should not be used!")
           override def getById(id: LongId[EntityT]): Option[EntityT] = fail("getById should not be used!")
-          override def isCompleted(kind: String, tag: String): Future[Boolean] = fail("isCompleted should not be used!")
+          override def isCompleted(kind: String, tag: String): Future[Boolean] =
+            fail("isCompleted should not be used!")
           override def getOne(kind: String): Future[Option[Item]] = fail("getOne should not be used!")
         }
 

@@ -10,12 +10,12 @@ object Config {
 
   def loadConfig[Config](implicit reader: ConfigReader[Config]): Try[Config] = pureconfig.loadConfig match {
     case Right(x) => Success(x)
-    case Left(e) => Failure(new RuntimeException(e.toString))
+    case Left(e)  => Failure(new RuntimeException(e.toString))
   }
 
-  def loadConfig[Config](namespace: String)
-                        (implicit reader: ConfigReader[Config]): Try[Config] = pureconfig.loadConfig(namespace) match {
-    case Right(x) => Success(x)
-    case Left(e) => Failure(new RuntimeException(e.toString))
-  }
+  def loadConfig[Config](namespace: String)(implicit reader: ConfigReader[Config]): Try[Config] =
+    pureconfig.loadConfig(namespace) match {
+      case Right(x) => Success(x)
+      case Left(e)  => Failure(new RuntimeException(e.toString))
+    }
 }

@@ -46,17 +46,16 @@ final case class Computation[+R, +T](future: Future[Either[R, T]]) {
 
   def flatMap[R2, T2](f: T => Computation[R2, T2])(implicit ec: ExecutionContext, ev: R <:< R2): Computation[R2, T2] = {
     Computation(future.flatMap {
-      case Left(x) => Future.successful(Left(x))
+      case Left(x)  => Future.successful(Left(x))
       case Right(x) => f(x).future
     })
   }
 
-  def processExceptions[R2](f: PartialFunction[Throwable, R2])
-                           (implicit ev1: R <:< R2,
-                            ec: ExecutionContext): Computation[R2, T] = {
+  def processExceptions[R2](f: PartialFunction[Throwable, R2])(implicit ev1: R <:< R2,
+                                                               ec: ExecutionContext): Computation[R2, T] = {
     val strategy = f.andThen(x => Left(x): Either[R2, T])
     val castedFuture: Future[Either[R2, T]] = future.map {
-      case Left(x) => Left(x)
+      case Left(x)  => Left(x)
       case Right(x) => Right(x)
     }
     Computation(castedFuture.recover(strategy))
@@ -80,16 +79,16 @@ final case class Computation[+R, +T](future: Future[Either[R, T]]) {
 
   def foreach[T2](f: T => T2)(implicit ec: ExecutionContext): Unit = future.foreach {
     case Right(x) => f(x)
-    case _ =>
+    case _        =>
   }
 
   def toFuture[R2](resultFormatter: T => R2)(implicit ec: ExecutionContext, ev: R <:< R2): Future[R2] = future.map {
-    case Left(x) => x
+    case Left(x)  => x
     case Right(x) => resultFormatter(x)
   }
 
   def toFuture[R2](implicit ec: ExecutionContext, ev1: R <:< R2, ev2: T <:< R2): Future[R2] = future.map {
-    case Left(x) => x
+    case Left(x)  => x
     case Right(x) => x
   }
 
@@ -104,6 +103,8 @@ object Computation {
   def fail(exception: Throwable): Computation[Nothing, Nothing] = Computation(Future.failed(exception))
 
   def fromFuture[T](input: Future[T])(implicit ec: ExecutionContext): Computation[Nothing, T] = Computation {
-    input.map { x => Right(x) }
+    input.map { x =>
+      Right(x)
+    }
   }
 }

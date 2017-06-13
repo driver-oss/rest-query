@@ -15,7 +15,7 @@ object Utils {
       klass.getSimpleName
     } catch {
       case _: InternalError =>
-        val fullName = klass.getName.stripSuffix("$")
+        val fullName      = klass.getName.stripSuffix("$")
         val fullClassName = fullName.substring(fullName.lastIndexOf(".") + 1)
         fullClassName.substring(fullClassName.lastIndexOf("$") + 1)
     }

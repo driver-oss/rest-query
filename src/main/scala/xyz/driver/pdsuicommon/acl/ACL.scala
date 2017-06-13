@@ -19,152 +19,175 @@ object ACL extends PhiLogging {
 
   // Common
 
-  object User extends BaseACL(
-    label = "user",
-    create = Set(RecordAdmin, TrialAdmin, TreatmentMatchingAdmin),
-    read = Allow,
-    update = Allow,
-    delete = Set(RecordAdmin, TrialAdmin, TreatmentMatchingAdmin)
-  )
+  object User
+      extends BaseACL(
+        label = "user",
+        create = Set(RecordAdmin, TrialAdmin, TreatmentMatchingAdmin),
+        read = Allow,
+        update = Allow,
+        delete = Set(RecordAdmin, TrialAdmin, TreatmentMatchingAdmin)
+      )
 
-  object Label extends BaseACL(
-    label = "label",
-    read = RepRoles ++ TcRoles ++ TreatmentMatchingRoles
-  )
+  object Label
+      extends BaseACL(
+        label = "label",
+        read = RepRoles ++ TcRoles ++ TreatmentMatchingRoles
+      )
 
   // REP
 
-  object MedicalRecord extends BaseACL(
-    label = "medical record",
-    read = RepRoles + RoutesCurator + TreatmentMatchingAdmin,
-    update = RepRoles - DocumentExtractor
-  )
+  object MedicalRecord
+      extends BaseACL(
+        label = "medical record",
+        read = RepRoles + RoutesCurator + TreatmentMatchingAdmin,
+        update = RepRoles - DocumentExtractor
+      )
 
-  object Document extends BaseACL(
-    label = "document",
-    create = Set(RecordOrganizer, RecordAdmin),
-    read = RepRoles - RecordCleaner + RoutesCurator + TreatmentMatchingAdmin,
-    update = RepRoles - RecordCleaner,
-    delete = Set(RecordOrganizer, RecordAdmin)
-  )
+  object Document
+      extends BaseACL(
+        label = "document",
+        create = Set(RecordOrganizer, RecordAdmin),
+        read = RepRoles - RecordCleaner + RoutesCurator + TreatmentMatchingAdmin,
+        update = RepRoles - RecordCleaner,
+        delete = Set(RecordOrganizer, RecordAdmin)
+      )
 
-  object ExtractedData extends BaseACL(
-    label = "extracted data",
-    create = Set(DocumentExtractor, RecordAdmin),
-    read = Set(DocumentExtractor, RecordAdmin, RoutesCurator, TreatmentMatchingAdmin),
-    update = Set(DocumentExtractor, RecordAdmin),
-    delete = Set(DocumentExtractor, RecordAdmin)
-  )
+  object ExtractedData
+      extends BaseACL(
+        label = "extracted data",
+        create = Set(DocumentExtractor, RecordAdmin),
+        read = Set(DocumentExtractor, RecordAdmin, RoutesCurator, TreatmentMatchingAdmin),
+        update = Set(DocumentExtractor, RecordAdmin),
+        delete = Set(DocumentExtractor, RecordAdmin)
+      )
 
-  object Keyword extends BaseACL(
-    label = "keyword",
-    read = Set(DocumentExtractor, RecordAdmin)
-  )
+  object Keyword
+      extends BaseACL(
+        label = "keyword",
+        read = Set(DocumentExtractor, RecordAdmin)
+      )
 
-  object ProviderType extends BaseACL(
-    label = "provider type",
-    read = RepRoles + RoutesCurator + TreatmentMatchingAdmin
-  )
+  object ProviderType
+      extends BaseACL(
+        label = "provider type",
+        read = RepRoles + RoutesCurator + TreatmentMatchingAdmin
+      )
 
-  object DocumentType extends BaseACL(
-    label = "document type",
-    read = RepRoles + RoutesCurator + TreatmentMatchingAdmin
-  )
+  object DocumentType
+      extends BaseACL(
+        label = "document type",
+        read = RepRoles + RoutesCurator + TreatmentMatchingAdmin
+      )
 
-  object Message extends BaseACL(
-    label = "message",
-    create = RepRoles ++ TreatmentMatchingRoles ++ TcRoles,
-    read = RepRoles ++ TreatmentMatchingRoles ++ TcRoles,
-    update = RepRoles ++ TreatmentMatchingRoles ++ TcRoles,
-    delete = RepRoles ++ TreatmentMatchingRoles ++ TcRoles
-  )
+  object Message
+      extends BaseACL(
+        label = "message",
+        create = RepRoles ++ TreatmentMatchingRoles ++ TcRoles,
+        read = RepRoles ++ TreatmentMatchingRoles ++ TcRoles,
+        update = RepRoles ++ TreatmentMatchingRoles ++ TcRoles,
+        delete = RepRoles ++ TreatmentMatchingRoles ++ TcRoles
+      )
 
   // TC
 
-  object Trial extends BaseACL(
-    label = "trial",
-    read = TcRoles + RoutesCurator + TreatmentMatchingAdmin,
-    update = TcRoles
-  )
+  object Trial
+      extends BaseACL(
+        label = "trial",
+        read = TcRoles + RoutesCurator + TreatmentMatchingAdmin,
+        update = TcRoles
+      )
 
-  object StudyDesign extends BaseACL(
-    label = "study design",
-    read = Set(TrialSummarizer, TrialAdmin)
-  )
+  object StudyDesign
+      extends BaseACL(
+        label = "study design",
+        read = Set(TrialSummarizer, TrialAdmin)
+      )
 
-  object Hypothesis extends BaseACL(
-    label = "hypothesis",
-    read = Set(TrialSummarizer, TrialAdmin) ++ TreatmentMatchingRoles
-  )
+  object Hypothesis
+      extends BaseACL(
+        label = "hypothesis",
+        read = Set(TrialSummarizer, TrialAdmin) ++ TreatmentMatchingRoles
+      )
 
-  object Criterion extends BaseACL(
-    label = "criterion",
-    create = Set(CriteriaCurator, TrialAdmin),
-    read = Set(CriteriaCurator, TrialAdmin, RoutesCurator, TreatmentMatchingAdmin),
-    update = Set(CriteriaCurator, TrialAdmin),
-    delete = Set(CriteriaCurator, TrialAdmin)
-  )
+  object Criterion
+      extends BaseACL(
+        label = "criterion",
+        create = Set(CriteriaCurator, TrialAdmin),
+        read = Set(CriteriaCurator, TrialAdmin, RoutesCurator, TreatmentMatchingAdmin),
+        update = Set(CriteriaCurator, TrialAdmin),
+        delete = Set(CriteriaCurator, TrialAdmin)
+      )
 
-  object Arm extends BaseACL(
-    label = "arm",
-    create = Set(TrialSummarizer, TrialAdmin),
-    read = TcRoles,
-    update = Set(TrialSummarizer, TrialAdmin),
-    delete = Set(TrialSummarizer, TrialAdmin)
-  )
+  object Arm
+      extends BaseACL(
+        label = "arm",
+        create = Set(TrialSummarizer, TrialAdmin),
+        read = TcRoles,
+        update = Set(TrialSummarizer, TrialAdmin),
+        delete = Set(TrialSummarizer, TrialAdmin)
+      )
 
-  object Category extends BaseACL(
-    label = "category",
-    read = Set(DocumentExtractor, RecordAdmin, CriteriaCurator, TrialAdmin)
-  )
+  object Category
+      extends BaseACL(
+        label = "category",
+        read = Set(DocumentExtractor, RecordAdmin, CriteriaCurator, TrialAdmin)
+      )
 
-  object Intervention extends BaseACL(
-    label = "intervention",
-    read = Set(TrialSummarizer, TrialAdmin),
-    update = Set(TrialSummarizer, TrialAdmin)
-  )
+  object Intervention
+      extends BaseACL(
+        label = "intervention",
+        read = Set(TrialSummarizer, TrialAdmin),
+        update = Set(TrialSummarizer, TrialAdmin)
+      )
 
-  object InterventionType extends BaseACL(
-    label = "intervention type",
-    read = Set(TrialSummarizer, TrialAdmin)
-  )
+  object InterventionType
+      extends BaseACL(
+        label = "intervention type",
+        read = Set(TrialSummarizer, TrialAdmin)
+      )
 
   // EV
 
-  object Patient extends BaseACL(
-    label = "patient",
-    read = TreatmentMatchingRoles,
-    update = TreatmentMatchingRoles
-  )
+  object Patient
+      extends BaseACL(
+        label = "patient",
+        read = TreatmentMatchingRoles,
+        update = TreatmentMatchingRoles
+      )
 
-  object PatientLabel extends BaseACL(
-    label = "patient label",
-    read = TreatmentMatchingRoles,
-    update = TreatmentMatchingRoles
-  )
+  object PatientLabel
+      extends BaseACL(
+        label = "patient label",
+        read = TreatmentMatchingRoles,
+        update = TreatmentMatchingRoles
+      )
 
-  object PatientCriterion extends BaseACL(
-    label = "patient criterion",
-    read = TreatmentMatchingRoles,
-    update = TreatmentMatchingRoles
-  )
+  object PatientCriterion
+      extends BaseACL(
+        label = "patient criterion",
+        read = TreatmentMatchingRoles,
+        update = TreatmentMatchingRoles
+      )
 
-  object PatientLabelEvidence extends BaseACL(
-    label = "patient label evidence",
-    read = TreatmentMatchingRoles
-  )
+  object PatientLabelEvidence
+      extends BaseACL(
+        label = "patient label evidence",
+        read = TreatmentMatchingRoles
+      )
 
-  object EligibleTrial extends BaseACL(
-    label = "eligible trial",
-    read = Set(RoutesCurator, TreatmentMatchingAdmin),
-    update = Set(RoutesCurator, TreatmentMatchingAdmin)
-  )
+  object EligibleTrial
+      extends BaseACL(
+        label = "eligible trial",
+        read = Set(RoutesCurator, TreatmentMatchingAdmin),
+        update = Set(RoutesCurator, TreatmentMatchingAdmin)
+      )
 
-  object PatientHypothesis extends BaseACL(
-    label = "patient hypothesis",
-    read = Set(RoutesCurator, TreatmentMatchingAdmin),
-    update = Set(RoutesCurator, TreatmentMatchingAdmin)
-  )
+  object PatientHypothesis
+      extends BaseACL(
+        label = "patient hypothesis",
+        read = Set(RoutesCurator, TreatmentMatchingAdmin),
+        update = Set(RoutesCurator, TreatmentMatchingAdmin)
+      )
 
   // Utility code
 

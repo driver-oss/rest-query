@@ -3,8 +3,8 @@ package xyz.driver.pdsuicommon.auth
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.domain.User
 
-class AuthenticatedRequestContext(val executor: User,
-                                  override val requestId: RequestId) extends AnonymousRequestContext(requestId) {
+class AuthenticatedRequestContext(val executor: User, override val requestId: RequestId)
+    extends AnonymousRequestContext(requestId) {
 
   override def equals(that: Any): Boolean = {
     that.getClass == this.getClass && {
@@ -15,7 +15,7 @@ class AuthenticatedRequestContext(val executor: User,
 
   override def hashCode(): Int = {
     val initial = 37
-    val first = initial * 17 + executor.hashCode()
+    val first   = initial * 17 + executor.hashCode()
     first * 17 + requestId.hashCode()
   }
 }

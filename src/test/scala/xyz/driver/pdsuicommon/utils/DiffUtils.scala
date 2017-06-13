@@ -9,9 +9,7 @@ import xyz.driver.pdsuicommon.domain.PasswordHash
 
 import scala.io.AnsiColor
 
-trait DiffUtils {
-
-  this: Assertions =>
+trait DiffUtils { this: Assertions =>
 
   def assertIdentical[T: DiffShow](left: T, right: T): Unit = {
     val diff = DiffShow.diff(left, right)
