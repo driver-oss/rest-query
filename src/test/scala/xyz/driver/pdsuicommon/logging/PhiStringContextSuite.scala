@@ -28,5 +28,4 @@ class PhiStringContextSuite extends FreeSpecLike {
     assert(!result.contains("test"))
     assert(!result.contains("42"))
   }
-
 }
