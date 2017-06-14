@@ -3,7 +3,7 @@ package xyz.driver.pdsuicommon.logging
 import java.io.File
 import java.net.{URI, URL}
 import java.nio.file.Path
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 import java.util.UUID
 
 import scala.concurrent.duration.Duration
@@ -29,23 +29,27 @@ trait Implicits {
 
   implicit def localDateTimeToPhiString(x: LocalDateTime): PhiString = Unsafe(x.toString)
 
+  implicit def localDateToPhiString(x: LocalDate): PhiString = Unsafe(x.toString)
+
   implicit def durationToPhiString(x: Duration): PhiString = Unsafe(x.toString)
 
   implicit def uuidToPhiString(x: UUID): PhiString = Unsafe(x.toString)
 
-  implicit def tuple2ToPhiString[T1, T2](x: (T1, T2))(implicit inner1: T1 => PhiString,
-                                                      inner2: T2 => PhiString): PhiString = x match {
+  implicit def tuple2ToPhiString[T1, T2](x: (T1, T2))
+                                        (implicit inner1: T1 => PhiString,
+                                         inner2: T2 => PhiString): PhiString = x match {
     case (a, b) => phi"($a, $b)"
   }
 
-  implicit def tuple3ToPhiString[T1, T2, T3](x: (T1, T2, T3))(implicit inner1: T1 => PhiString,
-                                                              inner2: T2 => PhiString,
-                                                              inner3: T3 => PhiString): PhiString = x match {
+  implicit def tuple3ToPhiString[T1, T2, T3](x: (T1, T2, T3))
+                                            (implicit inner1: T1 => PhiString,
+                                             inner2: T2 => PhiString,
+                                             inner3: T3 => PhiString): PhiString = x match {
     case (a, b, c) => phi"($a, $b, $c)"
   }
 
   implicit def optionToPhiString[T](opt: Option[T])(implicit inner: T => PhiString): PhiString = opt match {
-    case None    => phi"None"
+    case None => phi"None"
     case Some(x) => phi"Some($x)"
   }
 

@@ -40,19 +40,17 @@ class AsyncHttpClientFetcher(settings: AsyncHttpClientFetcher.Settings)
     logger.info("{}, apply({})", fingerPrint, url)
     val promise = Promise[Response]()
 
-    httpClient
-      .prepareGet(url.toString)
-      .execute(new AsyncCompletionHandler[Response] {
-        override def onCompleted(response: Response): Response = {
-          promise.success(response)
-          response
-        }
+    httpClient.prepareGet(url.toString).execute(new AsyncCompletionHandler[Response] {
+      override def onCompleted(response: Response): Response = {
+        promise.success(response)
+        response
+      }
 
-        override def onThrowable(t: Throwable): Unit = {
-          promise.failure(t)
-          super.onThrowable(t)
-        }
-      })
+      override def onThrowable(t: Throwable): Unit = {
+        promise.failure(t)
+        super.onThrowable(t)
+      }
+    })
 
     // Promises have their own ExecutionContext
     // So, we have to hack it.
@@ -62,7 +60,6 @@ class AsyncHttpClientFetcher(settings: AsyncHttpClientFetcher.Settings)
 
       if (response.getStatusCode == 200) {
         // DO NOT LOG body, it could be PHI
-        // logger.trace(response.getResponseBody())
         val bytes = response.getResponseBodyAsBytes
         logger.debug("{}, size is {}B", fingerPrint, bytes.size.asInstanceOf[AnyRef])
         Future.successful(bytes)

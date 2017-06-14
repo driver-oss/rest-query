@@ -1,6 +1,6 @@
 package xyz.driver.pdsuidomain.entities
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuicommon.logging._
@@ -13,7 +13,7 @@ case class RawPatientDocument(disease: String,
                               documentId: LongId[Document],
                               documentType: String,
                               documentProviderType: String,
-                              documentStartDate: LocalDateTime,
+                              documentStartDate: LocalDate,
                               documentStatus: Document.Status)
 
 object RawPatientDocument {

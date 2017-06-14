@@ -1,6 +1,6 @@
 package xyz.driver.pdsuidomain.entities
 
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.core.{JsonGenerator, JsonParser}
@@ -101,15 +101,15 @@ object Document {
       startDate <- Validators.nonEmpty("startDate")(input.startDate)
 
       isOrderRight <- input.endDate match {
-                       case Some(endDate) if startDate.isAfter(endDate) =>
-                         Validators.fail("The start date should be less, than the end one")
+        case Some(endDate) if startDate.isAfter(endDate) =>
+          Validators.fail("The start date should be less, than the end one")
 
-                       case _ => Validators.success(true)
-                     }
+        case _ => Validators.success(true)
+      }
 
       areDatesInThePast <- {
-        val dates      = List(input.startDate, input.endDate).flatten
-        val now        = LocalDateTime.now()
+        val dates = List(input.startDate, input.endDate).flatten
+        val now = LocalDate.now()
         val hasInvalid = dates.exists(_.isAfter(now))
 
         if (hasInvalid) Validators.fail("Dates should be in the past")
@@ -129,17 +129,18 @@ case class Document(id: LongId[Document] = LongId(0L),
                     recordId: LongId[MedicalRecord],
                     physician: Option[String],
                     typeId: Option[LongId[DocumentType]], // not null
-                    providerName: Option[String], // not null
+                    providerName: Option[String],  // not null
                     providerTypeId: Option[LongId[ProviderType]], // not null
                     meta: Option[TextJson[Meta]], // not null
-                    startDate: Option[LocalDateTime], // not null
-                    endDate: Option[LocalDateTime],
+                    startDate: Option[LocalDate], // not null
+                    endDate: Option[LocalDate],
                     lastUpdate: LocalDateTime) {
 
   import Document.Status._
 
   if (previousStatus.nonEmpty) {
-    assert(AllPrevious.contains(previousStatus.get), s"Previous status has invalid value: ${previousStatus.get}")
+    assert(AllPrevious.contains(previousStatus.get),
+      s"Previous status has invalid value: ${previousStatus.get}")
   }
 
   //  TODO: with the current business logic code this constraint sometimes harmful

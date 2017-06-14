@@ -1,6 +1,6 @@
 package xyz.driver.pdsuidomain.entities
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, UuidId}
 import xyz.driver.pdsuicommon.logging._
@@ -16,8 +16,8 @@ case class RawPatientLabel(patientId: UuidId[Patient],
                            requestId: RecordRequestId,
                            documentType: String,
                            providerType: String,
-                           startDate: LocalDateTime,
-                           endDate: Option[LocalDateTime])
+                           startDate: LocalDate,
+                           endDate: Option[LocalDate])
 
 object RawPatientLabel {
 

@@ -1,6 +1,6 @@
 package xyz.driver.pdsuidomain.entities.export.patient
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.logging._
@@ -10,7 +10,7 @@ case class ExportPatientLabelEvidenceDocument(documentId: LongId[Document],
                                               requestId: RecordRequestId,
                                               documentType: String,
                                               providerType: String,
-                                              date: LocalDateTime)
+                                              date: LocalDate)
 
 object ExportPatientLabelEvidenceDocument extends PhiLogging {
 
