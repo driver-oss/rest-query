@@ -9,6 +9,7 @@ import com.typesafe.config.Config
 import io.getquill._
 import xyz.driver.pdsuicommon.concurrent.MdcExecutionContext
 import xyz.driver.pdsuicommon.db.SqlContext.Settings
+import xyz.driver.pdsuicommon.error.IncorrectIdException
 import xyz.driver.pdsuicommon.logging.{PhiLogging, Unsafe}
 
 import scala.concurrent.ExecutionContext
@@ -58,6 +59,31 @@ class SqlContext(dataSource: DataSource with Closeable, settings: Settings)
     super.close()
     tpe.shutdownNow()
   }
+
+  /**
+    * Overrode, because Quill JDBC optionDecoder pass null inside decoders.
+    * If custom decoder don't have special null handler, it will failed.
+    *
+    * @see https://github.com/getquill/quill/issues/535
+    */
+  implicit override def optionDecoder[T](implicit d: Decoder[T]): Decoder[Option[T]] =
+  decoder(
+    sqlType = d.sqlType,
+    row => index => {
+      try {
+        val res = d(index - 1, row)
+        if (row.wasNull) {
+          None
+        }
+        else {
+          Some(res)
+        }
+      } catch {
+        case _: NullPointerException => None
+        case _: IncorrectIdException => None
+      }
+    }
+  )
 
   final implicit class LocalDateTimeDbOps(val left: LocalDateTime) {
 
