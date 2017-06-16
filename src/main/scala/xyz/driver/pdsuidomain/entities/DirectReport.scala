@@ -16,11 +16,11 @@ object DirectReport {
   }
 
   object ReportType {
-    case object IHC extends ReportType
-    case object DNA extends ReportType
+    case object IHC   extends ReportType
+    case object DNA   extends ReportType
     case object CFDNA extends ReportType
 
-    val All = Set(IHC, DNA, CFDNA)
+    val All                                            = Set(IHC, DNA, CFDNA)
     implicit def toPhiString(x: ReportType): PhiString = Unsafe(Utils.getClassSimpleName(x.getClass))
   }
 

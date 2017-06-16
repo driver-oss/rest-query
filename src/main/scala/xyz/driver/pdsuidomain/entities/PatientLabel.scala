@@ -25,7 +25,7 @@ object PatientLabelEvidence {
   implicit def toPhiString(x: PatientLabelEvidence): PhiString = {
     import x._
     phi"PatientLabelEvidence(id=$id, patientLabelId=$patientLabelId, value=${Unsafe(value)}, " +
-      phi"documentId=$documentId, evidenceId=$evidenceId)"
+      phi"documentId=$documentId, evidenceId=$evidenceId, reportId=$reportId)"
   }
 }
 
@@ -33,5 +33,6 @@ case class PatientLabelEvidence(id: LongId[PatientLabelEvidence],
                                 patientLabelId: LongId[PatientLabel],
                                 value: FuzzyValue,
                                 evidenceText: String,
-                                documentId: LongId[Document],
-                                evidenceId: LongId[ExtractedData])
+                                reportId: Option[UuidId[DirectReport]],
+                                documentId: Option[LongId[Document]],
+                                evidenceId: Option[LongId[ExtractedData]])
