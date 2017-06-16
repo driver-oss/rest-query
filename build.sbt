@@ -22,10 +22,12 @@ lazy val core = (project in file("."))
     "org.mockito"                    % "mockito-core"            % "1.9.5" % "test",
     "ai.x"                           %% "diff"                   % "1.2.0-get-simple-name-fix" % "test",
     "com.github.swagger-akka-http"   %% "swagger-akka-http"      % "0.9.1",
-    "com.google.cloud"               % "google-cloud-storage"    % "0.9.4-beta",
-    "io.getquill"                    %% "quill-jdbc"             % "1.2.1",
-    "com.typesafe.slick"             %% "slick"                  % "3.1.1",
-    "com.typesafe"                   % "config"                  % "1.2.1",
-    "com.typesafe.scala-logging"     %% "scala-logging"          % "3.4.0",
-    "ch.qos.logback"                 % "logback-classic"         % "1.1.3"
+    "com.google.cloud"               % "google-cloud-storage"    % "0.9.4-beta" excludeAll (
+      ExclusionRule(organization = "io.netty")
+    ),
+    "io.getquill"                %% "quill-jdbc"     % "1.2.1",
+    "com.typesafe.slick"         %% "slick"          % "3.1.1",
+    "com.typesafe"               % "config"          % "1.2.1",
+    "com.typesafe.scala-logging" %% "scala-logging"  % "3.4.0",
+    "ch.qos.logback"             % "logback-classic" % "1.1.3"
   ))
