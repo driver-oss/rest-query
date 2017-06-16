@@ -23,9 +23,11 @@ object PatientCriterion {
       case None                              => None
       case Some(FuzzyValue.Maybe)            => Some(FuzzyValue.Maybe)
       case Some(_) if criterionValue.isEmpty => Some(FuzzyValue.Maybe)
-      case Some(status) => Some(FuzzyValue.fromBoolean(
-        FuzzyValue.fromBoolean(criterionValue.get) == status
-      ))
+      case Some(status) =>
+        Some(
+          FuzzyValue.fromBoolean(
+            FuzzyValue.fromBoolean(criterionValue.get) == status
+          ))
     }
   }
 

@@ -6,6 +6,7 @@ import java.time.{LocalDate, LocalDateTime}
 import ai.x.diff._
 import org.scalatest.Assertions
 import xyz.driver.pdsuicommon.domain.PasswordHash
+import xyz.driver.pdsuidomain.entities.{Document, ExtractedData, MedicalRecord}
 
 import scala.io.AnsiColor
 
@@ -47,4 +48,30 @@ trait DiffUtils { this: Assertions =>
       else Different(showChange(left, right))
     }
   }
+
+  implicit def metaDiffShow: DiffShow[MedicalRecord.Meta] = new DiffShow[MedicalRecord.Meta] {
+    def show(x: MedicalRecord.Meta): String = s"MedicalRecord.Meta($x)"
+    def diff(left: MedicalRecord.Meta, right: MedicalRecord.Meta): Comparison = {
+      if (left.equals(right)) Identical(show(left))
+      else Different(showChange(left, right))
+    }
+  }
+
+  implicit def extractedDataMetaDiffShow: DiffShow[ExtractedData.Meta] = new DiffShow[ExtractedData.Meta] {
+    def show(x: ExtractedData.Meta): String = s"ExtractedData.Meta($x)"
+    def diff(left: ExtractedData.Meta, right: ExtractedData.Meta): Comparison = {
+      if (left.equals(right)) Identical(show(left))
+      else Different(showChange(left, right))
+    }
+  }
+
+  implicit def documentDiffShow: DiffShow[Document] = new DiffShow[Document] {
+    def show(x: Document): String = s"Document($x)"
+
+    def diff(left: Document, right: Document): Comparison = {
+      if (left == right) Identical(show(left))
+      else Different(showChange(left, right))
+    }
+  }
+
 }

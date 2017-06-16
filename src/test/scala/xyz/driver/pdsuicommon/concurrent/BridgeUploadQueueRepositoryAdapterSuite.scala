@@ -19,7 +19,7 @@ class BridgeUploadQueueRepositoryAdapterSuite extends BaseSuite {
 
   "Strategy" - {
     "LimitExponential" - {
-      "calculateNextInterval" - {
+      "on" - {
         val strategy = Strategy.LimitExponential(
           startInterval = 10.seconds,
           intervalFactor = 1.4,
@@ -39,6 +39,10 @@ class BridgeUploadQueueRepositoryAdapterSuite extends BaseSuite {
 
         "should limit intervals" in {
           assert(strategy.on(20) == OnAttempt.Continue(strategy.maxInterval))
+        }
+
+        "should not fail, if there is many attempts" in {
+          assert(strategy.on(1000) == OnAttempt.Continue(strategy.maxInterval))
         }
       }
     }

@@ -12,6 +12,7 @@ import xyz.driver.pdsuicommon.logging._
 
 import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 object BridgeUploadQueueRepositoryAdapter {
 
@@ -39,7 +40,8 @@ object BridgeUploadQueueRepositoryAdapter {
       }
 
       private def intervalFor(attempt: Int): Duration = {
-        startInterval * Math.pow(intervalFactor, attempt.toDouble)
+        Try(startInterval * Math.pow(intervalFactor, attempt.toDouble))
+          .getOrElse(maxInterval)
       }
     }
 
