@@ -26,7 +26,8 @@ object PatientCriterion {
       case Some(status) =>
         Some(
           FuzzyValue.fromBoolean(
-            FuzzyValue.fromBoolean(criterionValue.get) == status
+            FuzzyValue.fromBoolean(
+              criterionValue.getOrElse(throw new IllegalArgumentException("Criterion should not be empty"))) == status
           ))
     }
   }
@@ -51,7 +52,7 @@ final case class PatientCriterion(id: LongId[PatientCriterion],
                                   isVerified: Boolean,
                                   isVisible: Boolean,
                                   lastUpdate: LocalDateTime) {
-  def isIneligible: Boolean = eligibilityStatus.contains(FuzzyValue.No) && isVerified
+  def isIneligibleForEv: Boolean = eligibilityStatus.contains(FuzzyValue.No) && isVerified
 }
 
 object PatientTrialArm {
