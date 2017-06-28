@@ -50,17 +50,17 @@ object Patient {
   }
 }
 
-case class Patient(id: UuidId[Patient],
-                   status: Patient.Status,
-                   name: String,
-                   dob: LocalDate,
-                   assignee: Option[LongId[User]],
-                   previousStatus: Option[Patient.Status],
-                   previousAssignee: Option[LongId[User]],
-                   isUpdateRequired: Boolean,
-                   condition: String,
-                   orderId: PatientOrderId,
-                   lastUpdate: LocalDateTime) {
+final case class Patient(id: UuidId[Patient],
+                         status: Patient.Status,
+                         name: String,
+                         dob: LocalDate,
+                         assignee: Option[LongId[User]],
+                         previousStatus: Option[Patient.Status],
+                         previousAssignee: Option[LongId[User]],
+                         isUpdateRequired: Boolean,
+                         condition: String,
+                         orderId: PatientOrderId,
+                         lastUpdate: LocalDateTime) {
 
   import Patient.Status._
 

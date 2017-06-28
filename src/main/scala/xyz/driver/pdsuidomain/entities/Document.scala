@@ -34,7 +34,7 @@ object DocumentType {
 
 object Document {
 
-  case class Meta(predicted: Option[Boolean], startPage: Double, endPage: Double) {
+  final case class Meta(predicted: Option[Boolean], startPage: Double, endPage: Double) {
 
     /**
       * Return a regular meta: this meta is considered as not predicted
@@ -121,20 +121,20 @@ object Document {
 }
 
 @JsonIgnoreProperties(value = Array("valid"))
-case class Document(id: LongId[Document] = LongId(0L),
-                    status: Document.Status,
-                    previousStatus: Option[Document.Status],
-                    assignee: Option[LongId[User]],
-                    previousAssignee: Option[LongId[User]],
-                    recordId: LongId[MedicalRecord],
-                    physician: Option[String],
-                    typeId: Option[LongId[DocumentType]], // not null
-                    providerName: Option[String], // not null
-                    providerTypeId: Option[LongId[ProviderType]], // not null
-                    meta: Option[TextJson[Meta]], // not null
-                    startDate: Option[LocalDate], // not null
-                    endDate: Option[LocalDate],
-                    lastUpdate: LocalDateTime) {
+final case class Document(id: LongId[Document] = LongId(0L),
+                          status: Document.Status,
+                          previousStatus: Option[Document.Status],
+                          assignee: Option[LongId[User]],
+                          previousAssignee: Option[LongId[User]],
+                          recordId: LongId[MedicalRecord],
+                          physician: Option[String],
+                          typeId: Option[LongId[DocumentType]], // not null
+                          providerName: Option[String], // not null
+                          providerTypeId: Option[LongId[ProviderType]], // not null
+                          meta: Option[TextJson[Meta]], // not null
+                          startDate: Option[LocalDate], // not null
+                          endDate: Option[LocalDate],
+                          lastUpdate: LocalDateTime) {
 
   import Document.Status._
 

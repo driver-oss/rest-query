@@ -11,8 +11,8 @@ object PatientHypothesis {
   }
 }
 
-case class PatientHypothesis(id: UuidId[PatientHypothesis],
-                             patientId: UuidId[Patient],
-                             hypothesisId: UuidId[Hypothesis],
-                             rationale: Option[String],
-                             matchedTrials: Long)
+final case class PatientHypothesis(id: UuidId[PatientHypothesis],
+                                   patientId: UuidId[Patient],
+                                   hypothesisId: UuidId[Hypothesis],
+                                   rationale: Option[String],
+                                   matchedTrials: Long)

@@ -29,10 +29,10 @@ object PatientLabelEvidence {
   }
 }
 
-case class PatientLabelEvidence(id: LongId[PatientLabelEvidence],
-                                patientLabelId: LongId[PatientLabel],
-                                value: FuzzyValue,
-                                evidenceText: String,
-                                reportId: Option[UuidId[DirectReport]],
-                                documentId: Option[LongId[Document]],
-                                evidenceId: Option[LongId[ExtractedData]])
+final case class PatientLabelEvidence(id: LongId[PatientLabelEvidence],
+                                      patientLabelId: LongId[PatientLabel],
+                                      value: FuzzyValue,
+                                      evidenceText: String,
+                                      reportId: Option[UuidId[DirectReport]],
+                                      documentId: Option[LongId[Document]],
+                                      evidenceId: Option[LongId[ExtractedData]])

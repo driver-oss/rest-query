@@ -15,4 +15,16 @@ object FuzzyValue {
   def fromBoolean(x: Boolean): FuzzyValue = if (x) Yes else No
 
   implicit def toPhiString(x: FuzzyValue): PhiString = Unsafe(Utils.getClassSimpleName(x.getClass))
+
+  val fromString: PartialFunction[String, FuzzyValue] = {
+    case "Yes"   => Yes
+    case "No"    => No
+    case "Maybe" => Maybe
+  }
+
+  def valueToString(x: FuzzyValue): String = x match {
+    case Yes   => "Yes"
+    case No    => "No"
+    case Maybe => "Maybe"
+  }
 }

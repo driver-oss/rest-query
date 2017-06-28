@@ -5,11 +5,11 @@ import java.time.LocalDateTime
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuicommon.logging._
 
-case class Arm(id: LongId[Arm],
-               name: String,
-               originalName: String,
-               trialId: StringId[Trial],
-               deleted: Option[LocalDateTime] = None)
+final case class Arm(id: LongId[Arm],
+                     name: String,
+                     originalName: String,
+                     trialId: StringId[Trial],
+                     deleted: Option[LocalDateTime] = None)
 
 object Arm {
 

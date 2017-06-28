@@ -1,7 +1,7 @@
 package xyz.driver.pdsuicommon.validation
 
+import xyz.driver.pdsuicommon.json.JsonSerializer
 import xyz.driver.pdsuicommon.logging._
-import xyz.driver.pdsuicommon.utils.JsonSerializer
 
 import scala.util.control.NonFatal
 
