@@ -25,8 +25,7 @@ object ScrapedTrialsService {
 
   sealed trait GetAllRawTrialsExceptReply
   object GetAllRawTrialsExceptReply {
-    case class MultipleRawTrials(rawTrials: Seq[ScrapedTrial])
-      extends GetAllRawTrialsExceptReply
+    case class MultipleRawTrials(rawTrials: Seq[ScrapedTrial]) extends GetAllRawTrialsExceptReply
   }
 
   sealed trait GetHtmlForReply

@@ -85,6 +85,6 @@ class AsyncHttpClientFetcher(settings: AsyncHttpClientFetcher.Settings)
 
 object AsyncHttpClientFetcher {
 
-  case class Settings(connectTimeout: FiniteDuration, readTimeout: FiniteDuration)
+  final case class Settings(connectTimeout: FiniteDuration, readTimeout: FiniteDuration)
 
 }

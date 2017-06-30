@@ -13,7 +13,7 @@ object ApiCategory {
     (JsPath \ "id").format[Long] and
       (JsPath \ "name").format[String] and
       (JsPath \ "labels").format[List[ApiLabel]]
-    ) (ApiCategory.apply, unlift(ApiCategory.unapply))
+  )(ApiCategory.apply, unlift(ApiCategory.unapply))
 
   def fromDomain(categoryWithLabels: CategoryWithLabels) = ApiCategory(
     id = categoryWithLabels.category.id.id,

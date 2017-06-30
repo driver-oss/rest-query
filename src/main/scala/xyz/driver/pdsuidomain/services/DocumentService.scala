@@ -27,31 +27,28 @@ object DocumentService {
 
     type Error = GetByIdReply with DomainError
 
-    case object NotFoundError
-      extends GetByIdReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends GetByIdReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
     case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
-      extends GetByIdReply with DomainError
+        extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
       case x: DomainError => phi"GetByIdReply.Error($x)"
-      case Entity(x) => phi"GetByIdReply.Entity($x)"
+      case Entity(x)      => phi"GetByIdReply.Entity($x)"
     }
   }
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[Document],
-                          totalFound: Int,
-                          lastUpdate: Option[LocalDateTime]) extends GetListReply
+    case class EntityList(xs: Seq[Document], totalFound: Int, lastUpdate: Option[LocalDateTime]) extends GetListReply
 
     type Error = GetListReply with DomainError
 
     case object AuthorizationError
-      extends GetListReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+        extends GetListReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
     case class CommonError(userMessage: String) extends GetListReply with DomainError
   }
@@ -62,14 +59,12 @@ object DocumentService {
 
     type Error = CreateReply with DomainError
 
-    case object NotFoundError
-      extends CreateReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends CreateReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends CreateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+        extends CreateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String)
-      extends CreateReply with DomainError
+    case class CommonError(userMessage: String) extends CreateReply with DomainError
   }
 
   sealed trait UpdateReply
@@ -78,21 +73,18 @@ object DocumentService {
 
     type Error = UpdateReply with DomainError
 
-    case object NotFoundError
-      extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+        extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String)
-      extends UpdateReply with DomainError
+    case class CommonError(userMessage: String) extends UpdateReply with DomainError
 
     implicit def toPhiString(reply: UpdateReply): PhiString = reply match {
       case Updated(x) => phi"Updated($x)"
-      case x: Error => DomainError.toPhiString(x)
+      case x: Error   => DomainError.toPhiString(x)
     }
   }
-
 
   sealed trait DeleteReply
   object DeleteReply {
@@ -100,14 +92,12 @@ object DocumentService {
 
     type Error = DeleteReply with DomainError
 
-    case object NotFoundError
-      extends DeleteReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends DeleteReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends DeleteReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+        extends DeleteReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String)
-      extends DeleteReply with DomainError
+    case class CommonError(userMessage: String) extends DeleteReply with DomainError
   }
 
 }
@@ -116,42 +106,32 @@ trait DocumentService {
 
   import DocumentService._
 
-
-  def getById(id: LongId[Document])
-             (implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(id: LongId[Document])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
-             pagination: Option[Pagination] = None)
-            (implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+             pagination: Option[Pagination] = None)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
   def create(draftDocument: Document)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
 
   // Update operations are validated in internal.*Command
-  def update(orig: Document, draft: Document)
-            (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def update(orig: Document, draft: Document)(
+          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def delete(id: LongId[Document])
-            (implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
+  def delete(id: LongId[Document])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
 
-  def start(orig: Document)
-           (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def start(orig: Document)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def submit(orig: Document)
-            (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def submit(orig: Document)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def restart(orig: Document)
-             (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def restart(orig: Document)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def flag(orig: Document)
-          (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def flag(orig: Document)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def resolve(orig: Document)
-             (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def resolve(orig: Document)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def unassign(orig: Document)
-              (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def unassign(orig: Document)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def archive(orig: Document)
-             (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def archive(orig: Document)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 }

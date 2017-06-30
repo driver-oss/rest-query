@@ -12,7 +12,7 @@ object ApiArm {
     (JsPath \ "id").format[Long] and
       (JsPath \ "name").format[String] and
       (JsPath \ "trialId").format[String]
-    ) (ApiArm.apply, unlift(ApiArm.unapply))
+  )(ApiArm.apply, unlift(ApiArm.unapply))
 
   def fromDomain(arm: Arm): ApiArm = ApiArm(
     id = arm.id.id,

@@ -31,14 +31,14 @@ object ApiPartialTrial {
       (JsPath \ "studyDesignId").readTristate[Long] and
       (JsPath \ "overview").readTristate[String] and
       (JsPath \ "title").readTristate[String]
-    ) (ApiPartialTrial.apply _)
+  )(ApiPartialTrial.apply _)
 
   private val writes: Writes[ApiPartialTrial] = (
     (JsPath \ "hypothesisId").writeTristate[UUID] and
       (JsPath \ "studyDesignId").writeTristate[Long] and
       (JsPath \ "overview").writeTristate[String] and
       (JsPath \ "title").writeTristate[String]
-    ) (unlift(ApiPartialTrial.unapply))
+  )(unlift(ApiPartialTrial.unapply))
 
   implicit val format: Format[ApiPartialTrial] = Format(reads, writes)
 }

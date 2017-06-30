@@ -3,7 +3,6 @@ package xyz.driver.pdsuicommon.concurrent
 import java.time.LocalDateTime
 
 import xyz.driver.pdsuicommon.concurrent.BridgeUploadQueue.Item
-import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.logging._
 
 import scala.concurrent.Future
@@ -17,8 +16,7 @@ object BridgeUploadQueue {
     * @param created     When the task was created
     * @param nextAttempt Time of the next attempt
     */
-  final case class Item(id: LongId[Item],
-                        kind: String,
+  final case class Item(kind: String,
                         tag: String,
                         created: LocalDateTime,
                         attempts: Int,
@@ -40,7 +38,7 @@ object BridgeUploadQueue {
 
     implicit def toPhiString(x: Item): PhiString = {
       import x._
-      phi"BridgeUploadQueue.Item(id=$id, kind=${Unsafe(kind)}, tag=${Unsafe(tag)}, " +
+      phi"BridgeUploadQueue.Item(kind=${Unsafe(kind)}, tag=${Unsafe(tag)}, " +
         phi"attempts=${Unsafe(attempts)}, start=$created, nextAttempt=$nextAttempt, completed=$completed, " +
         phi"dependency=$dependency)"
     }
@@ -49,7 +47,6 @@ object BridgeUploadQueue {
       val now = LocalDateTime.now()
 
       Item(
-        id = LongId(0),
         kind = kind,
         tag = tag,
         created = now,
@@ -76,11 +73,11 @@ object BridgeUploadQueue {
 
 trait BridgeUploadQueue {
 
-  def add(item: Item): Future[Unit]
+  def add(item: Item): Future[Item]
 
   def get(kind: String): Future[Option[Item]]
 
-  def remove(item: LongId[Item]): Future[Unit]
+  def complete(kind: String, tag: String): Future[Unit]
 
   def tryRetry(item: Item): Future[Option[Item]]
 

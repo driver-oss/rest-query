@@ -54,7 +54,7 @@ object SearchFilterExpr {
     }
   }
 
-  case class Intersection private (operands: Seq[SearchFilterExpr])
+  final case class Intersection private (operands: Seq[SearchFilterExpr])
       extends SearchFilterExpr with SearchFilterExprSeqOps {
 
     override def replace(f: PartialFunction[SearchFilterExpr, SearchFilterExpr]): SearchFilterExpr = {
@@ -80,7 +80,8 @@ object SearchFilterExpr {
     }
   }
 
-  case class Union private (operands: Seq[SearchFilterExpr]) extends SearchFilterExpr with SearchFilterExprSeqOps {
+  final case class Union private (operands: Seq[SearchFilterExpr])
+      extends SearchFilterExpr with SearchFilterExprSeqOps {
 
     override def replace(f: PartialFunction[SearchFilterExpr, SearchFilterExpr]): SearchFilterExpr = {
       if (f.isDefinedAt(this)) f(this)

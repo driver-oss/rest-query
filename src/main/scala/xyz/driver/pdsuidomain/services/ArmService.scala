@@ -1,6 +1,5 @@
 package xyz.driver.pdsuidomain.services
 
-
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.LongId
@@ -27,14 +26,13 @@ object ArmService {
 
     type Error = GetByIdReply with DomainError
 
-    case object NotFoundError
-      extends GetByIdReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends GetByIdReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
     case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
-      extends GetByIdReply with DomainError
+        extends GetByIdReply with DomainError
 
   }
 
@@ -45,7 +43,7 @@ object ArmService {
     case class EntityList(xs: Seq[Arm], totalFound: Int) extends GetListReply
 
     case object AuthorizationError
-      extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
   }
 
@@ -56,14 +54,12 @@ object ArmService {
 
     type Error = UpdateReply with DomainError
 
-    case object NotFoundError
-      extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+        extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String)
-      extends UpdateReply with DomainError
+    case class CommonError(userMessage: String) extends UpdateReply with DomainError
 
     case class AlreadyExistsError(x: Arm) extends UpdateReply with DomainError {
       val userMessage = s"The arm with such name of trial already exists."
@@ -71,7 +67,7 @@ object ArmService {
 
     implicit def toPhiString(reply: UpdateReply): PhiString = reply match {
       case Updated(x) => phi"Updated($x)"
-      case x: Error => DomainError.toPhiString(x)
+      case x: Error   => DomainError.toPhiString(x)
     }
   }
 
@@ -82,10 +78,9 @@ object ArmService {
     type Error = CreateReply with DomainError
 
     case object AuthorizationError
-      extends CreateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+        extends CreateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String)
-      extends CreateReply with DomainError
+    case class CommonError(userMessage: String) extends CreateReply with DomainError
 
     case class AlreadyExistsError(x: Arm) extends CreateReply with DomainError {
       val userMessage = s"The arm with this name of trial already exists."
@@ -93,7 +88,7 @@ object ArmService {
 
     implicit def toPhiString(reply: CreateReply): PhiString = reply match {
       case Created(x) => phi"Created($x)"
-      case x: Error => DomainError.toPhiString(x)
+      case x: Error   => DomainError.toPhiString(x)
     }
   }
 
@@ -103,14 +98,12 @@ object ArmService {
 
     type Error = DeleteReply with DomainError
 
-    case object NotFoundError
-      extends DeleteReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends DeleteReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends DeleteReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+        extends DeleteReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String)
-      extends DeleteReply with DomainError
+    case class CommonError(userMessage: String) extends DeleteReply with DomainError
   }
 }
 
@@ -120,8 +113,8 @@ trait ArmService {
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
-             pagination: Option[Pagination] = None)
-            (implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+             pagination: Option[Pagination] = None)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
   def getById(armId: LongId[Arm])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 

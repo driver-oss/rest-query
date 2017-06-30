@@ -31,7 +31,21 @@ object ACL extends PhiLogging {
   object Label
       extends BaseACL(
         label = "label",
-        read = RepRoles ++ TcRoles ++ TreatmentMatchingRoles
+        read = RepRoles ++ TcRoles ++ TreatmentMatchingRoles + ResearchOncologist
+      )
+
+  object UserHistory
+      extends BaseACL(
+        label = "user history",
+        read = Set(RecordAdmin, TrialAdmin, TreatmentMatchingAdmin)
+      )
+
+  object Queue
+      extends BaseACL(
+        label = "queue",
+        create = Set(SystemUser),
+        read = Set(SystemUser),
+        update = Set(SystemUser)
       )
 
   // REP
@@ -39,7 +53,7 @@ object ACL extends PhiLogging {
   object MedicalRecord
       extends BaseACL(
         label = "medical record",
-        read = RepRoles + RoutesCurator + TreatmentMatchingAdmin,
+        read = RepRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist,
         update = RepRoles - DocumentExtractor
       )
 
@@ -47,7 +61,7 @@ object ACL extends PhiLogging {
       extends BaseACL(
         label = "document",
         create = Set(RecordOrganizer, RecordAdmin),
-        read = RepRoles - RecordCleaner + RoutesCurator + TreatmentMatchingAdmin,
+        read = RepRoles - RecordCleaner + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist,
         update = RepRoles - RecordCleaner,
         delete = Set(RecordOrganizer, RecordAdmin)
       )
@@ -56,7 +70,7 @@ object ACL extends PhiLogging {
       extends BaseACL(
         label = "extracted data",
         create = Set(DocumentExtractor, RecordAdmin),
-        read = Set(DocumentExtractor, RecordAdmin, RoutesCurator, TreatmentMatchingAdmin),
+        read = Set(DocumentExtractor, RecordAdmin, RoutesCurator, TreatmentMatchingAdmin, ResearchOncologist),
         update = Set(DocumentExtractor, RecordAdmin),
         delete = Set(DocumentExtractor, RecordAdmin)
       )
@@ -70,13 +84,13 @@ object ACL extends PhiLogging {
   object ProviderType
       extends BaseACL(
         label = "provider type",
-        read = RepRoles + RoutesCurator + TreatmentMatchingAdmin
+        read = RepRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist
       )
 
   object DocumentType
       extends BaseACL(
         label = "document type",
-        read = RepRoles + RoutesCurator + TreatmentMatchingAdmin
+        read = RepRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist
       )
 
   object Message
@@ -93,7 +107,7 @@ object ACL extends PhiLogging {
   object Trial
       extends BaseACL(
         label = "trial",
-        read = TcRoles + RoutesCurator + TreatmentMatchingAdmin,
+        read = TcRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist,
         update = TcRoles
       )
 
@@ -113,7 +127,7 @@ object ACL extends PhiLogging {
       extends BaseACL(
         label = "criterion",
         create = Set(CriteriaCurator, TrialAdmin),
-        read = Set(CriteriaCurator, TrialAdmin, RoutesCurator, TreatmentMatchingAdmin),
+        read = Set(CriteriaCurator, TrialAdmin, RoutesCurator, TreatmentMatchingAdmin, ResearchOncologist),
         update = Set(CriteriaCurator, TrialAdmin),
         delete = Set(CriteriaCurator, TrialAdmin)
       )
@@ -151,34 +165,34 @@ object ACL extends PhiLogging {
   object Patient
       extends BaseACL(
         label = "patient",
-        read = TreatmentMatchingRoles,
+        read = TreatmentMatchingRoles + ResearchOncologist,
         update = TreatmentMatchingRoles
       )
 
   object PatientLabel
       extends BaseACL(
         label = "patient label",
-        read = TreatmentMatchingRoles,
+        read = TreatmentMatchingRoles + ResearchOncologist,
         update = TreatmentMatchingRoles
       )
 
   object PatientCriterion
       extends BaseACL(
         label = "patient criterion",
-        read = TreatmentMatchingRoles,
+        read = TreatmentMatchingRoles + ResearchOncologist,
         update = TreatmentMatchingRoles
       )
 
   object PatientLabelEvidence
       extends BaseACL(
         label = "patient label evidence",
-        read = TreatmentMatchingRoles
+        read = TreatmentMatchingRoles + ResearchOncologist
       )
 
   object EligibleTrial
       extends BaseACL(
         label = "eligible trial",
-        read = Set(RoutesCurator, TreatmentMatchingAdmin),
+        read = Set(RoutesCurator, TreatmentMatchingAdmin, ResearchOncologist),
         update = Set(RoutesCurator, TreatmentMatchingAdmin)
       )
 

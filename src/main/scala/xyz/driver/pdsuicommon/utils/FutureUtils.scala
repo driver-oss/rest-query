@@ -1,7 +1,7 @@
 package xyz.driver.pdsuicommon.utils
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
+import scala.util.{Failure, Try}
 
 object FutureUtils {
 
@@ -13,6 +13,6 @@ object FutureUtils {
         override def execute(runnable: Runnable): Unit = runnable.run()
       }
     }
-    future.value.get
+    future.value.getOrElse(Failure(new IllegalStateException("Can not evaluate the result of future")))
   }
 }

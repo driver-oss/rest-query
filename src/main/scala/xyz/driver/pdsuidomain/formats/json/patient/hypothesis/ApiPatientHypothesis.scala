@@ -20,7 +20,7 @@ object ApiPatientHypothesis {
       (JsPath \ "hypothesisId").format[UUID] and
       (JsPath \ "matchedTrials").format[Long] and
       (JsPath \ "rationale").formatNullable[String]
-    ) (ApiPatientHypothesis.apply, unlift(ApiPatientHypothesis.unapply))
+  )(ApiPatientHypothesis.apply, unlift(ApiPatientHypothesis.unapply))
 
   def fromDomain(patientHypothesis: PatientHypothesis) = ApiPatientHypothesis(
     id = patientHypothesis.id.id,

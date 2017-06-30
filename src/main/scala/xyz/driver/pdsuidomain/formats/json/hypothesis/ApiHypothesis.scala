@@ -15,7 +15,7 @@ object ApiHypothesis {
       (JsPath \ "name").format[String] and
       (JsPath \ "treatmentType").format[String] and
       (JsPath \ "description").format[String]
-    ) (ApiHypothesis.apply, unlift(ApiHypothesis.unapply))
+  )(ApiHypothesis.apply, unlift(ApiHypothesis.unapply))
 
   def fromDomain(hypothesis: Hypothesis) = ApiHypothesis(
     id = hypothesis.id.id,

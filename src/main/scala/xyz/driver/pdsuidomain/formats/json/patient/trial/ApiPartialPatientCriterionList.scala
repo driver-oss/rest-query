@@ -8,8 +8,8 @@ import play.api.libs.json.{Format, JsPath, Reads, Writes}
 import xyz.driver.pdsuidomain.services.PatientCriterionService.DraftPatientCriterion
 
 final case class ApiPartialPatientCriterionList(id: Long,
-                                          eligibilityStatus: Option[String],
-                                          isVerified: Option[Boolean]) {
+                                                eligibilityStatus: Option[String],
+                                                isVerified: Option[Boolean]) {
 
   def toDomain: DraftPatientCriterion = DraftPatientCriterion(
     id = LongId[PatientCriterion](id),
@@ -23,10 +23,14 @@ object ApiPartialPatientCriterionList {
   implicit val format: Format[ApiPartialPatientCriterionList] = (
     (JsPath \ "id").format[Long] and
       (JsPath \ "eligibilityStatus").formatNullable[String](Format(
-        Reads.of[String].filter(ValidationError("unknown eligibility status"))({
-        case x if FuzzyValue.fromString.isDefinedAt(x) => true
-        case _ => false
-      }), Writes.of[String])) and
+        Reads
+          .of[String]
+          .filter(ValidationError("unknown eligibility status"))({
+            case x if FuzzyValue.fromString.isDefinedAt(x) => true
+            case _                                         => false
+          }),
+        Writes.of[String]
+      )) and
       (JsPath \ "isVerified").formatNullable[Boolean]
-    ) (ApiPartialPatientCriterionList.apply, unlift(ApiPartialPatientCriterionList.unapply))
+  )(ApiPartialPatientCriterionList.apply, unlift(ApiPartialPatientCriterionList.unapply))
 }

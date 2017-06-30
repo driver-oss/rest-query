@@ -12,7 +12,7 @@ object ApiLabel {
     (JsPath \ "id").format[Long] and
       (JsPath \ "name").format[String] and
       (JsPath \ "categoryId").format[Long]
-    ) (ApiLabel.apply, unlift(ApiLabel.unapply))
+  )(ApiLabel.apply, unlift(ApiLabel.unapply))
 
   def fromDomain(x: Label) = ApiLabel(
     id = x.id.id,

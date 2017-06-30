@@ -10,9 +10,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import xyz.driver.pdsuicommon.json.JsonSerializer
 
-final case class ApiUpdateRecord(status: Option[String],
-                                 assignee: Tristate[Long],
-                                 meta: Tristate[String]) {
+final case class ApiUpdateRecord(status: Option[String], assignee: Tristate[Long], meta: Tristate[String]) {
 
   def applyTo(orig: MedicalRecord): MedicalRecord = {
     orig.copy(
@@ -26,22 +24,29 @@ final case class ApiUpdateRecord(status: Option[String],
 object ApiUpdateRecord {
 
   private val reads: Reads[ApiUpdateRecord] = (
-    (JsPath \ "status").readNullable[String](Reads.of[String].filter(ValidationError("unknown status"))({
-      case x if MedicalRecordStatus.statusFromString.isDefinedAt(x) => true
-      case _ => false
-    })) and
+    (JsPath \ "status").readNullable[String](
+      Reads
+        .of[String]
+        .filter(ValidationError("unknown status"))({
+          case x if MedicalRecordStatus.statusFromString.isDefinedAt(x) => true
+          case _                                                        => false
+        })) and
       (JsPath \ "assignee").readTristate[Long] and
-      (JsPath \ "meta").readTristate(Reads { x => JsSuccess(Json.stringify(x)) }).map {
-        case Tristate.Present("{}") => Tristate.Absent
-        case x => x
-      }
-    ) (ApiUpdateRecord.apply _)
+      (JsPath \ "meta")
+        .readTristate(Reads { x =>
+          JsSuccess(Json.stringify(x))
+        })
+        .map {
+          case Tristate.Present("{}") => Tristate.Absent
+          case x                      => x
+        }
+  )(ApiUpdateRecord.apply _)
 
   private val writes: Writes[ApiUpdateRecord] = (
     (JsPath \ "status").writeNullable[String] and
       (JsPath \ "assignee").writeTristate[Long] and
       (JsPath \ "meta").writeTristate(Writes[String](Json.parse))
-    ) (unlift(ApiUpdateRecord.unapply))
+  )(unlift(ApiUpdateRecord.unapply))
 
   implicit val format: Format[ApiUpdateRecord] = Format(reads, writes)
 }

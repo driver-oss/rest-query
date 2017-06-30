@@ -25,14 +25,13 @@ object PatientHypothesisService {
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[PatientHypothesis], totalFound: Int)
-      extends GetListReply
+    case class EntityList(xs: Seq[PatientHypothesis], totalFound: Int) extends GetListReply
 
     case object AuthorizationError
-      extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
     case object PatientNotFoundError
-      extends GetListReply with DefaultPatientNotFoundError with DomainError.NotFoundError
+        extends GetListReply with DefaultPatientNotFoundError with DomainError.NotFoundError
 
     case class CommonError(userMessage: String) extends GetListReply with DomainError
   }
@@ -43,20 +42,19 @@ object PatientHypothesisService {
 
     type Error = GetByIdReply with DomainError
 
-    case object NotFoundError
-      extends GetByIdReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends GetByIdReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object PatientNotFoundError
-      extends GetByIdReply with DefaultPatientNotFoundError with DomainError.NotFoundError
+        extends GetByIdReply with DefaultPatientNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
     case class CommonError(userMessage: String) extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
       case x: DomainError => phi"GetByIdReply.Error($x)"
-      case Entity(x) => phi"GetByIdReply.Entity($x)"
+      case Entity(x)      => phi"GetByIdReply.Entity($x)"
     }
   }
 
@@ -66,21 +64,19 @@ object PatientHypothesisService {
 
     case class Updated(updated: PatientHypothesis) extends UpdateReply
 
-    case object NotFoundError
-      extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object PatientNotFoundError
-      extends UpdateReply with DefaultPatientNotFoundError with DomainError.NotFoundError
+        extends UpdateReply with DefaultPatientNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends UpdateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends UpdateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case class CommonError(userMessage: String)
-      extends UpdateReply with DomainError
+    case class CommonError(userMessage: String) extends UpdateReply with DomainError
 
     implicit def toPhiString(reply: UpdateReply): PhiString = reply match {
       case Updated(x) => phi"Updated($x)"
-      case x: Error => DomainError.toPhiString(x)
+      case x: Error   => DomainError.toPhiString(x)
     }
   }
 }
@@ -92,14 +88,12 @@ trait PatientHypothesisService {
   def getAll(patientId: UuidId[Patient],
              filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
-             pagination: Option[Pagination] = None)
-            (implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+             pagination: Option[Pagination] = None)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
-  def getById(patientId: UuidId[Patient],
-              hypothesisId: UuidId[Hypothesis])
-             (implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(patientId: UuidId[Patient], hypothesisId: UuidId[Hypothesis])(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
-  def update(origPatientHypothesis: PatientHypothesis,
-             draftPatientHypothesis: PatientHypothesis)
-            (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def update(origPatientHypothesis: PatientHypothesis, draftPatientHypothesis: PatientHypothesis)(
+          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 }

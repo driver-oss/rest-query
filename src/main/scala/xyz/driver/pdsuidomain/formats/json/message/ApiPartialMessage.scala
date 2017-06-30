@@ -66,7 +66,7 @@ object ApiPartialMessage {
       (JsPath \ "evidence").formatNullable[String] and
       (JsPath \ "archiveRequired").formatNullable[Boolean] and
       (JsPath \ "meta").formatNullable[String]
-    ) (ApiPartialMessage.apply, unlift(ApiPartialMessage.unapply))
+  )(ApiPartialMessage.apply, unlift(ApiPartialMessage.unapply))
 
   def fromDomain(domain: Message) = ApiPartialMessage(
     text = Some(domain.text),

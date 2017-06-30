@@ -1,9 +1,8 @@
-package xyz.driver.pdsuicommon
+package xyz.driver.pdsuicommon.logging
 
 import java.time.{LocalDateTime, ZoneId}
 
 import xyz.driver.pdsuicommon.domain.{LongId, User}
-import xyz.driver.pdsuicommon.logging._
 
 object TimeLogger extends PhiLogging {
 

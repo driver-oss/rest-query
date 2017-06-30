@@ -24,7 +24,7 @@ object ApiRecord {
   private val statusFormat = Format(
     Reads.StringReads.filter(ValidationError("unknown status")) {
       case x if MedicalRecordStatus.statusFromString.isDefinedAt(x) => true
-      case _ => false
+      case _                                                        => false
     },
     Writes.StringWrites
   )
@@ -39,8 +39,10 @@ object ApiRecord {
       (JsPath \ "previousStatus").formatNullable(statusFormat) and
       (JsPath \ "assignee").formatNullable[Long] and
       (JsPath \ "previousAssignee").formatNullable[Long] and
-      (JsPath \ "meta").format(Format(Reads { x => JsSuccess(Json.stringify(x)) }, Writes[String](Json.parse)))
-    ) (ApiRecord.apply, unlift(ApiRecord.unapply))
+      (JsPath \ "meta").format(Format(Reads { x =>
+        JsSuccess(Json.stringify(x))
+      }, Writes[String](Json.parse)))
+  )(ApiRecord.apply, unlift(ApiRecord.unapply))
 
   def fromDomain(record: MedicalRecord) = ApiRecord(
     id = record.id.id,

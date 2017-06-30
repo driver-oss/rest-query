@@ -1,5 +1,7 @@
 package xyz.driver.pdsuicommon.domain
 
+import java.math.BigInteger
+import java.security.SecureRandom
 import java.time.LocalDateTime
 
 import xyz.driver.pdsuicommon.logging._
@@ -31,16 +33,18 @@ object User {
   }
 
   object Role extends PhiLogging {
-    case object RecordAdmin            extends Role { val bit = 1 << 0 }
-    case object RecordCleaner          extends Role { val bit = 1 << 1 }
-    case object RecordOrganizer        extends Role { val bit = 1 << 2 }
-    case object DocumentExtractor      extends Role { val bit = 1 << 3 }
-    case object TrialSummarizer        extends Role { val bit = 1 << 4 }
-    case object CriteriaCurator        extends Role { val bit = 1 << 5 }
-    case object TrialAdmin             extends Role { val bit = 1 << 6 }
-    case object EligibilityVerifier    extends Role { val bit = 1 << 7 }
-    case object TreatmentMatchingAdmin extends Role { val bit = 1 << 8 }
-    case object RoutesCurator          extends Role { val bit = 1 << 9 }
+    case object RecordAdmin            extends Role { val bit = 1 << 0  }
+    case object RecordCleaner          extends Role { val bit = 1 << 1  }
+    case object RecordOrganizer        extends Role { val bit = 1 << 2  }
+    case object DocumentExtractor      extends Role { val bit = 1 << 3  }
+    case object TrialSummarizer        extends Role { val bit = 1 << 4  }
+    case object CriteriaCurator        extends Role { val bit = 1 << 5  }
+    case object TrialAdmin             extends Role { val bit = 1 << 6  }
+    case object EligibilityVerifier    extends Role { val bit = 1 << 7  }
+    case object TreatmentMatchingAdmin extends Role { val bit = 1 << 8  }
+    case object RoutesCurator          extends Role { val bit = 1 << 9  }
+    case object SystemUser             extends Role { val bit = 1 << 10 }
+    case object ResearchOncologist     extends Role { val bit = 1 << 11 }
 
     val RepRoles = Set[Role](RecordAdmin, RecordCleaner, RecordOrganizer, DocumentExtractor)
 
@@ -48,7 +52,9 @@ object User {
 
     val TreatmentMatchingRoles = Set[Role](RoutesCurator, EligibilityVerifier, TreatmentMatchingAdmin)
 
-    val All = RepRoles ++ TcRoles ++ TreatmentMatchingRoles
+    val PepRoles = Set[Role](ResearchOncologist)
+
+    val All = RepRoles ++ TcRoles ++ TreatmentMatchingRoles ++ PepRoles + SystemUser
 
     def apply(bitMask: Int): Role = {
       def extractRole(role: Role): Set[Role] =
@@ -70,5 +76,10 @@ object User {
     import x._
     phi"User(id=$id, role=$role)"
   }
+
+  // SecureRandom is thread-safe, see the implementation
+  private val random = new SecureRandom()
+
+  def createPassword: String = new BigInteger(240, random).toString(32)
 
 }

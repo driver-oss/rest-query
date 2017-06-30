@@ -42,16 +42,16 @@ object PatientCriterionService {
 
     case class EntityList(xs: Seq[(PatientCriterion, LongId[Label], List[Arm], Boolean)],
                           totalFound: Int,
-                          lastUpdate: Option[LocalDateTime]) extends GetListReply
+                          lastUpdate: Option[LocalDateTime])
+        extends GetListReply
 
     case object AuthorizationError
-      extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
     case object PatientNotFoundError
-      extends GetListReply with DomainError.NotFoundError with DefaultPatientNotFoundError
+        extends GetListReply with DomainError.NotFoundError with DefaultPatientNotFoundError
 
-    case class CommonError(userMessage: String)
-      extends GetListReply with DomainError
+    case class CommonError(userMessage: String) extends GetListReply with DomainError
 
   }
 
@@ -59,22 +59,18 @@ object PatientCriterionService {
   object GetByIdReply {
     type Error = GetByIdReply with DomainError
 
-    case class Entity(x: PatientCriterion,
-                      labelId: LongId[Label],
-                      armList: List[Arm],
-                      criterionIsCompound: Boolean) extends GetByIdReply
+    case class Entity(x: PatientCriterion, labelId: LongId[Label], armList: List[Arm], criterionIsCompound: Boolean)
+        extends GetByIdReply
 
     case object AuthorizationError
-      extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case object NotFoundError
-      extends GetByIdReply with DomainError.NotFoundError with DefaultNotFoundError
+    case object NotFoundError extends GetByIdReply with DomainError.NotFoundError with DefaultNotFoundError
 
     case object PatientNotFoundError
-      extends GetByIdReply with DomainError.NotFoundError with DefaultPatientNotFoundError
+        extends GetByIdReply with DomainError.NotFoundError with DefaultPatientNotFoundError
 
-    case class CommonError(userMessage: String)
-      extends GetByIdReply with DomainError
+    case class CommonError(userMessage: String) extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
       case x: DomainError => phi"GetByIdReply.Error($x)"
@@ -91,13 +87,12 @@ object PatientCriterionService {
     case object Updated extends UpdateReply
 
     case object AuthorizationError
-      extends UpdateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends UpdateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
     case object PatientNotFoundError
-      extends UpdateReply with DomainError.NotFoundError with DefaultPatientNotFoundError
+        extends UpdateReply with DomainError.NotFoundError with DefaultPatientNotFoundError
 
-    case class CommonError(userMessage: String)
-      extends UpdateReply with DomainError
+    case class CommonError(userMessage: String) extends UpdateReply with DomainError
   }
 }
 
@@ -108,19 +103,15 @@ trait PatientCriterionService {
   def getAll(patientId: UuidId[Patient],
              filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
-             pagination: Option[Pagination] = None)
-            (implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+             pagination: Option[Pagination] = None)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
-  def getById(patientId: UuidId[Patient],
-              id: LongId[PatientCriterion])
-             (implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(patientId: UuidId[Patient], id: LongId[PatientCriterion])(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
-  def updateList(patientId: UuidId[Patient],
-                 draftEntities: List[DraftPatientCriterion])
-                (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def updateList(patientId: UuidId[Patient], draftEntities: List[DraftPatientCriterion])(
+          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def update(origEntity: PatientCriterion,
-             draftEntity: PatientCriterion,
-             patientId: UuidId[Patient])
-            (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def update(origEntity: PatientCriterion, draftEntity: PatientCriterion, patientId: UuidId[Patient])(
+          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 }

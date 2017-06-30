@@ -16,7 +16,7 @@ import scala.concurrent.{ExecutionContext, Future}
   * {{{
   * import scala.concurrent.ExecutionContext.Implicits.global
   * import scala.concurrent.{ExecutionContext, Future}
-  * import com.drivergrp.server.com.drivergrp.server.common.utils.Computation
+  * import xyz.driver.pdsuicommon.computation.Computation
   *
   * def successful = for {
   *   x <- Computation.continue(1)
@@ -63,6 +63,13 @@ final case class Computation[+R, +T](future: Future[Either[R, T]]) {
 
   def map[T2](f: T => T2)(implicit ec: ExecutionContext): Computation[R, T2] = flatMap { a =>
     Computation.continue(f(a))
+  }
+
+  def mapLeft[R2](f: R => R2)(implicit ec: ExecutionContext): Computation[R2, T] = {
+    Computation(future.map {
+      case Left(x)  => Left(f(x))
+      case Right(x) => Right(x)
+    })
   }
 
   def andThen(f: T => Any)(implicit ec: ExecutionContext): Computation[R, T] = map { a =>

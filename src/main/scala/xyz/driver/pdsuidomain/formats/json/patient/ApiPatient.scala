@@ -28,7 +28,7 @@ object ApiPatient {
       (JsPath \ "previousAssignee").formatNullable[Long] and
       (JsPath \ "lastUpdate").format[ZonedDateTime] and
       (JsPath \ "condition").format[String]
-    ) (ApiPatient.apply, unlift(ApiPatient.unapply))
+  )(ApiPatient.apply, unlift(ApiPatient.unapply))
 
   def fromDomain(patient: Patient) = ApiPatient(
     id = patient.id.toString,

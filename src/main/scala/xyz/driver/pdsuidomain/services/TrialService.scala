@@ -1,6 +1,5 @@
 package xyz.driver.pdsuidomain.services
 
-
 import java.time.LocalDateTime
 
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
@@ -25,11 +24,10 @@ object TrialService {
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[Trial], totalFound: Int, lastUpdate: Option[LocalDateTime])
-      extends GetListReply
+    case class EntityList(xs: Seq[Trial], totalFound: Int, lastUpdate: Option[LocalDateTime]) extends GetListReply
 
     case object AuthorizationError
-      extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
   }
 
   sealed trait GetByIdReply
@@ -38,18 +36,17 @@ object TrialService {
 
     type Error = GetByIdReply with DomainError
 
-    case object NotFoundError
-      extends GetByIdReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends GetByIdReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
     case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
-      extends GetByIdReply with DomainError
+        extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
       case x: DomainError => phi"GetByIdReply.Error($x)"
-      case Entity(x) => phi"GetByIdReply.Entity($x)"
+      case Entity(x)      => phi"GetByIdReply.Entity($x)"
     }
   }
 
@@ -60,18 +57,15 @@ object TrialService {
     case class Entity(x: PdfSource) extends GetPdfSourceReply
 
     case object AuthorizationError
-      extends GetPdfSourceReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetPdfSourceReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case object NotFoundError
-      extends GetPdfSourceReply with DomainError.NotFoundError {
+    case object NotFoundError extends GetPdfSourceReply with DomainError.NotFoundError {
       def userMessage: String = "Trial's PDF hasn't been found"
     }
 
-    case object TrialNotFoundError
-      extends GetPdfSourceReply with DomainError.NotFoundError with DefaultNotFoundError
+    case object TrialNotFoundError extends GetPdfSourceReply with DomainError.NotFoundError with DefaultNotFoundError
 
-    case class CommonError(userMessage: String)
-      extends GetPdfSourceReply with DomainError
+    case class CommonError(userMessage: String) extends GetPdfSourceReply with DomainError
   }
 
   sealed trait UpdateReply
@@ -80,18 +74,16 @@ object TrialService {
 
     case class Updated(updated: Trial) extends UpdateReply
 
-    case object NotFoundError
-      extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+        extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String)
-      extends UpdateReply with DomainError
+    case class CommonError(userMessage: String) extends UpdateReply with DomainError
 
     implicit def toPhiString(reply: UpdateReply): PhiString = reply match {
       case Updated(x) => phi"Updated($x)"
-      case x: Error => DomainError.toPhiString(x)
+      case x: Error   => DomainError.toPhiString(x)
     }
   }
 }
@@ -100,19 +92,18 @@ trait TrialService {
 
   import TrialService._
 
-  def getById(id: StringId[Trial])
-             (implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(id: StringId[Trial])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
-  def getPdfSource(trialId: StringId[Trial])
-                  (implicit requestContext: AuthenticatedRequestContext): Future[GetPdfSourceReply]
+  def getPdfSource(trialId: StringId[Trial])(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetPdfSourceReply]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
-             pagination: Option[Pagination] = None)
-            (implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+             pagination: Option[Pagination] = None)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
-  def update(origTrial: Trial, draftTrial: Trial)
-            (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def update(origTrial: Trial, draftTrial: Trial)(
+          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
   def start(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 

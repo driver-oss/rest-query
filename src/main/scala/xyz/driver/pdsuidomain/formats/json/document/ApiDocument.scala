@@ -28,7 +28,7 @@ object ApiDocument {
   private val statusFormat = Format(
     Reads.StringReads.filter(ValidationError("unknown status")) {
       case x if DocumentUtils.statusFromString.isDefinedAt(x) => true
-      case _ => false
+      case _                                                  => false
     },
     Writes.StringWrites
   )
@@ -47,8 +47,10 @@ object ApiDocument {
       (JsPath \ "previousStatus").formatNullable(statusFormat) and
       (JsPath \ "assignee").formatNullable[Long] and
       (JsPath \ "previousAssignee").formatNullable[Long] and
-      (JsPath \ "meta").formatNullable(Format(Reads { x => JsSuccess(Json.stringify(x)) }, Writes[String](Json.parse)))
-    ) (ApiDocument.apply, unlift(ApiDocument.unapply))
+      (JsPath \ "meta").formatNullable(Format(Reads { x =>
+        JsSuccess(Json.stringify(x))
+      }, Writes[String](Json.parse)))
+  )(ApiDocument.apply, unlift(ApiDocument.unapply))
 
   def fromDomain(document: Document): ApiDocument = {
     ApiDocument(

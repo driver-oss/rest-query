@@ -7,7 +7,7 @@ lazy val core = (project in file("."))
   .settings(libraryDependencies ++= Seq(
     "ch.qos.logback"                 % "logback-classic"         % "1.1.7",
     "org.slf4j"                      % "slf4j-api"               % "1.7.21",
-    "com.typesafe.scala-logging"     %% "scala-logging"          % "3.4.0",
+    "com.typesafe.scala-logging"     %% "scala-logging"          % "3.5.0",
     "com.typesafe"                   % "config"                  % "1.3.0",
     "com.fasterxml.jackson.module"   %% "jackson-module-scala"   % "2.8.3",
     "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % "2.8.4",

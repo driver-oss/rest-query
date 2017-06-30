@@ -37,5 +37,5 @@ object ApiNewCriterion {
       (JsPath \ "text").formatNullable[String] and
       (JsPath \ "labels").format(seqJsonFormat[ApiCriterionLabel]) and
       (JsPath \ "trialId").format[String]
-    ) (ApiNewCriterion.apply, unlift(ApiNewCriterion.unapply))
+  )(ApiNewCriterion.apply, unlift(ApiNewCriterion.unapply))
 }

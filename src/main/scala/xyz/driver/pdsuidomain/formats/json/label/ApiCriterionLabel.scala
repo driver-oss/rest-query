@@ -21,7 +21,7 @@ final case class ApiCriterionLabel(labelId: Option[Long],
     categoryId = categoryId.map(LongId[Category]),
     value = value.map {
       case "Yes" => true
-      case "No" => false
+      case "No"  => false
     },
     isDefining = isDefining
   )
@@ -41,9 +41,13 @@ object ApiCriterionLabel {
   implicit val format: Format[ApiCriterionLabel] = (
     (JsPath \ "labelId").formatNullable[Long] and
       (JsPath \ "categoryId").formatNullable[Long] and
-      (JsPath \ "value").formatNullable[String](Format(Reads.of[String].filter(ValidationError("unknown value"))({ x =>
-        x == "Yes" || x == "No"
-      }), Writes.of[String])) and
+      (JsPath \ "value").formatNullable[String](
+        Format(Reads
+                 .of[String]
+                 .filter(ValidationError("unknown value"))({ x =>
+                   x == "Yes" || x == "No"
+                 }),
+               Writes.of[String])) and
       (JsPath \ "isDefining").format[Boolean]
-    ) (ApiCriterionLabel.apply, unlift(ApiCriterionLabel.unapply))
+  )(ApiCriterionLabel.apply, unlift(ApiCriterionLabel.unapply))
 }

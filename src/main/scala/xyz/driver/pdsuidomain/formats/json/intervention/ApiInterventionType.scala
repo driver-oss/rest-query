@@ -11,7 +11,7 @@ object ApiInterventionType {
   implicit val format: Format[ApiInterventionType] = (
     (JsPath \ "id").format[Long] and
       (JsPath \ "name").format[String]
-    ) (ApiInterventionType.apply, unlift(ApiInterventionType.unapply))
+  )(ApiInterventionType.apply, unlift(ApiInterventionType.unapply))
 
   def fromDomain(interventionType: InterventionType) = ApiInterventionType(
     id = interventionType.id.id,

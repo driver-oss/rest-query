@@ -66,7 +66,7 @@ object ApiPartialExtractedData {
       (JsPath \ "evidence").readTristate[String] and
       (JsPath \ "meta").readTristate[String] and
       (JsPath \ "labels").readTristate[List[ApiExtractedDataLabel]]
-    ) (ApiPartialExtractedData.apply _)
+  )(ApiPartialExtractedData.apply _)
 
   private val writes: Writes[ApiPartialExtractedData] = (
     (JsPath \ "documentId").writeNullable[Long] and
@@ -74,7 +74,7 @@ object ApiPartialExtractedData {
       (JsPath \ "evidence").writeTristate[String] and
       (JsPath \ "meta").writeTristate[String] and
       (JsPath \ "labels").writeTristate[List[ApiExtractedDataLabel]]
-    ) (unlift(ApiPartialExtractedData.unapply))
+  )(unlift(ApiPartialExtractedData.unapply))
 
   implicit val format: Format[ApiPartialExtractedData] = Format(reads, writes)
 }

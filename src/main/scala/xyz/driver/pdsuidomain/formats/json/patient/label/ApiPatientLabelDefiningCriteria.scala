@@ -12,11 +12,15 @@ object ApiPatientLabelDefiningCriteria {
 
   implicit val format: Format[ApiPatientLabelDefiningCriteria] = (
     (JsPath \ "labelId").format[Long] and
-      (JsPath \ "value").formatNullable[String](Format(Reads.of[String].filter(ValidationError("unknown value"))({
-        case x if FuzzyValue.fromString.isDefinedAt(x) => true
-        case _ => false
-      }), Writes.of[String]))
-    ) (ApiPatientLabelDefiningCriteria.apply, unlift(ApiPatientLabelDefiningCriteria.unapply))
+      (JsPath \ "value").formatNullable[String](
+        Format(Reads
+                 .of[String]
+                 .filter(ValidationError("unknown value"))({
+                   case x if FuzzyValue.fromString.isDefinedAt(x) => true
+                   case _                                         => false
+                 }),
+               Writes.of[String]))
+  )(ApiPatientLabelDefiningCriteria.apply, unlift(ApiPatientLabelDefiningCriteria.unapply))
 
   def fromDomain(x: PatientLabel) = ApiPatientLabelDefiningCriteria(
     labelId = x.labelId.id,

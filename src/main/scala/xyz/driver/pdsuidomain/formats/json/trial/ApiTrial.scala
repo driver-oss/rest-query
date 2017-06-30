@@ -41,7 +41,7 @@ object ApiTrial {
       (JsPath \ "overviewTemplate").format[String] and
       (JsPath \ "isUpdated").format[Boolean] and
       (JsPath \ "title").format[String]
-    ) (ApiTrial.apply, unlift(ApiTrial.unapply))
+  )(ApiTrial.apply, unlift(ApiTrial.unapply))
 
   def fromDomain(trial: Trial): ApiTrial = ApiTrial(
     id = trial.id.id,

@@ -25,28 +25,26 @@ object PatientLabelService {
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[(PatientLabel, Boolean)], totalFound: Int)
-      extends GetListReply
+    case class EntityList(xs: Seq[(PatientLabel, Boolean)], totalFound: Int) extends GetListReply
 
     case object AuthorizationError
-      extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
     case object PatientNotFoundError
-      extends GetListReply with DefaultPatientNotFoundError with DomainError.NotFoundError
+        extends GetListReply with DefaultPatientNotFoundError with DomainError.NotFoundError
 
     case class CommonError(userMessage: String) extends GetListReply with DomainError
   }
 
   sealed trait GetDefiningCriteriaListReply
   object GetDefiningCriteriaListReply {
-    case class EntityList(xs: Seq[PatientLabel], totalFound: Int)
-      extends GetDefiningCriteriaListReply
+    case class EntityList(xs: Seq[PatientLabel], totalFound: Int) extends GetDefiningCriteriaListReply
 
     case object AuthorizationError
-      extends GetDefiningCriteriaListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetDefiningCriteriaListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
     case object PatientNotFoundError
-      extends GetDefiningCriteriaListReply with DefaultPatientNotFoundError with DomainError.NotFoundError
+        extends GetDefiningCriteriaListReply with DefaultPatientNotFoundError with DomainError.NotFoundError
 
     case class CommonError(userMessage: String) extends GetDefiningCriteriaListReply with DomainError
   }
@@ -57,20 +55,19 @@ object PatientLabelService {
 
     type Error = GetByLabelIdReply with DomainError
 
-    case object NotFoundError
-      extends GetByLabelIdReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends GetByLabelIdReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object PatientNotFoundError
-      extends GetByLabelIdReply with DefaultPatientNotFoundError with DomainError.NotFoundError
+        extends GetByLabelIdReply with DefaultPatientNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends GetByLabelIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetByLabelIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
     case class CommonError(userMessage: String) extends GetByLabelIdReply with DomainError
 
     implicit def toPhiString(reply: GetByLabelIdReply): PhiString = reply match {
       case x: DomainError => phi"GetByIdReply.Error($x)"
-      case Entity(x, y) => phi"GetByIdReply.Entity($x, $y)"
+      case Entity(x, y)   => phi"GetByIdReply.Entity($x, $y)"
     }
   }
 
@@ -80,21 +77,19 @@ object PatientLabelService {
 
     case class Updated(updated: PatientLabel, isVerified: Boolean) extends UpdateReply
 
-    case object NotFoundError
-      extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object PatientNotFoundError
-      extends UpdateReply with DefaultPatientNotFoundError with DomainError.NotFoundError
+        extends UpdateReply with DefaultPatientNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends UpdateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends UpdateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case class CommonError(userMessage: String)
-      extends UpdateReply with DomainError
+    case class CommonError(userMessage: String) extends UpdateReply with DomainError
 
     implicit def toPhiString(reply: UpdateReply): PhiString = reply match {
       case Updated(x, y) => phi"Updated($x, $y)"
-      case x: Error => DomainError.toPhiString(x)
+      case x: Error      => DomainError.toPhiString(x)
     }
   }
 }
@@ -106,19 +101,17 @@ trait PatientLabelService {
   def getAll(patientId: UuidId[Patient],
              filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
-             pagination: Option[Pagination] = None)
-            (implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+             pagination: Option[Pagination] = None)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
   def getDefiningCriteriaList(patientId: UuidId[Patient],
                               hypothesisId: UuidId[Hypothesis],
-                              pagination: Option[Pagination] = None)
-                             (implicit requestContext: AuthenticatedRequestContext): Future[GetDefiningCriteriaListReply]
+                              pagination: Option[Pagination] = None)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetDefiningCriteriaListReply]
 
-  def getByLabelIdOfPatient(patientId: UuidId[Patient],
-                            labelId: LongId[Label])
-                           (implicit requestContext: AuthenticatedRequestContext): Future[GetByLabelIdReply]
+  def getByLabelIdOfPatient(patientId: UuidId[Patient], labelId: LongId[Label])(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetByLabelIdReply]
 
-  def update(origPatientLabel: PatientLabel,
-             draftPatientLabel: PatientLabel)
-            (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def update(origPatientLabel: PatientLabel, draftPatientLabel: PatientLabel)(
+          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 }

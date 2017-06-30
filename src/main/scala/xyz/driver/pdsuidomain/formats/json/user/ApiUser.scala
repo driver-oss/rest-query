@@ -15,12 +15,16 @@ object ApiUser {
     (JsPath \ "id").format[Long] and
       (JsPath \ "email").format[String](Reads.email) and
       (JsPath \ "name").format[String] and
-      (JsPath \ "roleId").format[String](Format(Reads.of[String].filter(ValidationError("unknown role"))({
-        case x if UserRole.roleFromString.isDefinedAt(x) => true
-        case _ => false
-      }), Writes.of[String])) and
+      (JsPath \ "roleId").format[String](
+        Format(Reads
+                 .of[String]
+                 .filter(ValidationError("unknown role"))({
+                   case x if UserRole.roleFromString.isDefinedAt(x) => true
+                   case _                                           => false
+                 }),
+               Writes.of[String])) and
       (JsPath \ "latestActivity").formatNullable[ZonedDateTime]
-    ) (ApiUser.apply, unlift(ApiUser.unapply))
+  )(ApiUser.apply, unlift(ApiUser.unapply))
 
   def fromDomain(user: User) = ApiUser(
     user.id.id,

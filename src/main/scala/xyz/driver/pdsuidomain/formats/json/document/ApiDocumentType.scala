@@ -11,7 +11,7 @@ object ApiDocumentType {
   implicit val format: Format[ApiDocumentType] = (
     (JsPath \ "id").format[Long] and
       (JsPath \ "name").format[String]
-    ) (ApiDocumentType.apply, unlift(ApiDocumentType.unapply))
+  )(ApiDocumentType.apply, unlift(ApiDocumentType.unapply))
 
   def fromDomain(documentType: DocumentType) = ApiDocumentType(
     id = documentType.id.id,

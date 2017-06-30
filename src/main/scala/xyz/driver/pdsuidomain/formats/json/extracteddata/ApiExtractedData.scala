@@ -26,12 +26,17 @@ object ApiExtractedData {
       (JsPath \ "keywordId").formatNullable[Long] and
       (JsPath \ "evidence").formatNullable[String] and
       (JsPath \ "meta").formatNullable[String] and
-      (JsPath \ "labels").formatNullable[List[ApiExtractedDataLabel]](Format(
-        Reads.of[List[ApiExtractedDataLabel]].filter(ValidationError("empty labels"))({
-          case x if x.nonEmpty => true
-          case _ => false
-        }), Writes.of[List[ApiExtractedDataLabel]]))
-    ) (ApiExtractedData.apply, unlift(ApiExtractedData.unapply))
+      (JsPath \ "labels").formatNullable[List[ApiExtractedDataLabel]](
+        Format(
+          Reads
+            .of[List[ApiExtractedDataLabel]]
+            .filter(ValidationError("empty labels"))({
+              case x if x.nonEmpty => true
+              case _               => false
+            }),
+          Writes.of[List[ApiExtractedDataLabel]]
+        ))
+  )(ApiExtractedData.apply, unlift(ApiExtractedData.unapply))
 
   def fromDomain(extractedDataWithLabels: RichExtractedData) = ApiExtractedData(
     id = extractedDataWithLabels.extractedData.id.id,

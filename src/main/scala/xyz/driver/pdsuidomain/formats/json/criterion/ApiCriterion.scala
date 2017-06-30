@@ -26,7 +26,7 @@ object ApiCriterion {
       (JsPath \ "isCompound").format[Boolean] and
       (JsPath \ "labels").format(seqJsonFormat[ApiCriterionLabel]) and
       (JsPath \ "trialId").format[String]
-    ) (ApiCriterion.apply, unlift(ApiCriterion.unapply))
+  )(ApiCriterion.apply, unlift(ApiCriterion.unapply))
 
   def fromDomain(richCriterion: RichCriterion) = ApiCriterion(
     id = richCriterion.criterion.id.id,

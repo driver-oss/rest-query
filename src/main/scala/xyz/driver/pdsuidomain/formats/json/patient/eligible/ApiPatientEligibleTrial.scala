@@ -26,12 +26,17 @@ object ApiPatientEligibleTrial {
       (JsPath \ "trialTitle").format[String] and
       (JsPath \ "arms").format[List[String]] and
       (JsPath \ "hypothesisId").format[UUID] and
-      (JsPath \ "eligibilityStatus").formatNullable[String](Format(Reads.of[String].filter(ValidationError("unknown eligibility status"))({
-        case x if FuzzyValue.fromString.isDefinedAt(x) => true
-        case _ => false
-      }), Writes.of[String])) and
+      (JsPath \ "eligibilityStatus").formatNullable[String](Format(
+        Reads
+          .of[String]
+          .filter(ValidationError("unknown eligibility status"))({
+            case x if FuzzyValue.fromString.isDefinedAt(x) => true
+            case _                                         => false
+          }),
+        Writes.of[String]
+      )) and
       (JsPath \ "isVerified").format[Boolean]
-    ) (ApiPatientEligibleTrial.apply, unlift(ApiPatientEligibleTrial.unapply))
+  )(ApiPatientEligibleTrial.apply, unlift(ApiPatientEligibleTrial.unapply))
 
   def fromDomain(eligibleTrialWithTrial: RichPatientEligibleTrial) = ApiPatientEligibleTrial(
     id = eligibleTrialWithTrial.group.id.id,

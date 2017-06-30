@@ -22,7 +22,7 @@ object ApiIntervention {
       (JsPath \ "isActive").format[Boolean] and
       (JsPath \ "arms").format[List[Long]] and
       (JsPath \ "trialId").format[String]
-    ) (ApiIntervention.apply, unlift(ApiIntervention.unapply))
+  )(ApiIntervention.apply, unlift(ApiIntervention.unapply))
 
   def fromDomain(interventionWithArms: InterventionWithArms): ApiIntervention = {
     import interventionWithArms.intervention

@@ -9,15 +9,14 @@ import xyz.driver.pdsuicommon.db.Sorting.{Dimension, Sequential}
 import xyz.driver.pdsuicommon.db.SortingOrder.{Ascending, Descending}
 
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.{ExecutionContext, Future}
 
 object QueryBuilder {
 
-  type Runner[T] = (QueryBuilderParameters) => Future[Seq[T]]
+  type Runner[T] = QueryBuilderParameters => Seq[T]
 
   type CountResult = (Int, Option[LocalDateTime])
 
-  type CountRunner = (QueryBuilderParameters) => Future[CountResult]
+  type CountRunner = QueryBuilderParameters => CountResult
 
   /**
     * Binder for PreparedStatement
@@ -207,12 +206,14 @@ sealed trait QueryBuilderParameters {
 
         val bindings       = ListBuffer[AnyRef]()
         val sqlPlaceholder = placeholder(dimension.name)
-        val formattedValues = values
-          .map { value =>
-            bindings += value
-            sqlPlaceholder
-          }
-          .mkString(", ")
+        val formattedValues = if (values.nonEmpty) {
+          values
+            .map { value =>
+              bindings += value
+              sqlPlaceholder
+            }
+            .mkString(", ")
+        } else "NULL"
         (s"${escapeDimension(dimension)} $sqlOp ($formattedValues)", bindings.toList)
 
       case Intersection(operands) =>
@@ -297,23 +298,18 @@ case class MysqlQueryBuilderParameters(tableData: QueryBuilder.TableData,
 
 abstract class QueryBuilder[T, D <: SqlIdiom, N <: NamingStrategy](val parameters: QueryBuilderParameters)(
         implicit runner: QueryBuilder.Runner[T],
-        countRunner: QueryBuilder.CountRunner,
-        ec: ExecutionContext) {
+        countRunner: QueryBuilder.CountRunner) {
 
-  def run: Future[Seq[T]] = runner(parameters)
+  def run: Seq[T] = runner(parameters)
 
-  def runCount: Future[QueryBuilder.CountResult] = countRunner(parameters)
+  def runCount: QueryBuilder.CountResult = countRunner(parameters)
 
   /**
     * Runs the query and returns total found rows without considering of pagination.
     */
-  def runWithCount: Future[(Seq[T], Int, Option[LocalDateTime])] = {
-    val countFuture     = runCount
-    val selectAllFuture = run
-    for {
-      (total, lastUpdate) <- countFuture
-      all                 <- selectAllFuture
-    } yield (all, total, lastUpdate)
+  def runWithCount: (Seq[T], Int, Option[LocalDateTime]) = {
+    val (total, lastUpdate) = runCount
+    (run, total, lastUpdate)
   }
 
   def withFilter(newFilter: SearchFilterExpr): QueryBuilder[T, D, N]

@@ -34,15 +34,19 @@ final case class ApiUpdateCriterion(meta: Tristate[String],
 object ApiUpdateCriterion {
 
   private val reads: Reads[ApiUpdateCriterion] = (
-    (JsPath \ "meta").readTristate(Reads { x => JsSuccess(Json.stringify(x)) }).map {
-      case Tristate.Present("{}") => Tristate.Absent
-      case x => x
-    } and
+    (JsPath \ "meta")
+      .readTristate(Reads { x =>
+        JsSuccess(Json.stringify(x))
+      })
+      .map {
+        case Tristate.Present("{}") => Tristate.Absent
+        case x                      => x
+      } and
       (JsPath \ "arms").readTristate(seqJsonFormat[Long]) and
       (JsPath \ "text").readNullable[String] and
       (JsPath \ "isCompound").readNullable[Boolean] and
       (JsPath \ "labels").readTristate(seqJsonFormat[ApiCriterionLabel])
-    ) (ApiUpdateCriterion.apply _)
+  )(ApiUpdateCriterion.apply _)
 
   private val writes: Writes[ApiUpdateCriterion] = (
     (JsPath \ "meta").writeTristate(Writes[String](Json.parse)) and
@@ -50,7 +54,7 @@ object ApiUpdateCriterion {
       (JsPath \ "text").writeNullable[String] and
       (JsPath \ "isCompound").writeNullable[Boolean] and
       (JsPath \ "labels").writeTristate(seqJsonFormat[ApiCriterionLabel])
-    ) (unlift(ApiUpdateCriterion.unapply))
+  )(unlift(ApiUpdateCriterion.unapply))
 
   implicit val format: Format[ApiUpdateCriterion] = Format(reads, writes)
 }

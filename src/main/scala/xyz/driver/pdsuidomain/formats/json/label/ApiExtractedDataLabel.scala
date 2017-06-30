@@ -22,11 +22,15 @@ object ApiExtractedDataLabel {
   implicit val format: Format[ApiExtractedDataLabel] = (
     (JsPath \ "id").formatNullable[Long] and
       (JsPath \ "categoryId").formatNullable[Long] and
-      (JsPath \ "value").formatNullable[String](Format(Reads.of[String].filter(ValidationError("unknown value"))({
-        case x if FuzzyValue.fromString.isDefinedAt(x) => true
-        case _ => false
-      }), Writes.of[String]))
-    ) (ApiExtractedDataLabel.apply, unlift(ApiExtractedDataLabel.unapply))
+      (JsPath \ "value").formatNullable[String](
+        Format(Reads
+                 .of[String]
+                 .filter(ValidationError("unknown value"))({
+                   case x if FuzzyValue.fromString.isDefinedAt(x) => true
+                   case _                                         => false
+                 }),
+               Writes.of[String]))
+  )(ApiExtractedDataLabel.apply, unlift(ApiExtractedDataLabel.unapply))
 
   def fromDomain(dataLabel: ExtractedDataLabel) = ApiExtractedDataLabel(
     id = dataLabel.labelId.map(_.id),

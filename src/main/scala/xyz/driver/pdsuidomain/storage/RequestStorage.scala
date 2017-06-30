@@ -30,13 +30,13 @@ class RequestStorage extends PhiLogging {
   }
 
   def get(patientId: UuidId[Patient], disease: String): Option[Value] = {
-    logger.debug(phi"get($patientId,${Unsafe(disease)}")
+    logger.debug(phi"get($patientId, ${Unsafe(disease)}")
     val key = (patientId, disease.toLowerCase)
     storage.get(key)
   }
 
   def contains(patientId: UuidId[Patient], disease: String, value: Set[LongId[Arm]]): Boolean = {
-    logger.debug(phi"contains(key=($patientId,${Unsafe(disease)}),value=$value")
+    logger.debug(phi"contains(key=($patientId,${Unsafe(disease)}), value=$value")
     get(patientId, disease.toLowerCase).contains(value)
   }
 

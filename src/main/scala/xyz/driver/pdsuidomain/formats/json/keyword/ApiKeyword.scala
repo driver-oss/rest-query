@@ -13,7 +13,7 @@ object ApiKeyword {
     (JsPath \ "id").format[Long] and
       (JsPath \ "keyword").format[String] and
       (JsPath \ "labels").format[List[ApiLabel]]
-    ) (ApiKeyword.apply, unlift(ApiKeyword.unapply))
+  )(ApiKeyword.apply, unlift(ApiKeyword.unapply))
 
   def fromDomain(keywordWithLabels: KeywordWithLabels) = ApiKeyword(
     id = keywordWithLabels.keyword.id.id,

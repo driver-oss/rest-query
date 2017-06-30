@@ -51,9 +51,7 @@ object ScrapedIntervention {
   implicit def toPhiString(x: ScrapedIntervention): PhiString = phi"ScrapedIntervention(${Unsafe(x.name)})"
 }
 
-final case class ScrapedArm(name: String,
-                            kind: Option[String],
-                            interventions: Set[ScrapedIntervention])
+final case class ScrapedArm(name: String, kind: Option[String], interventions: Set[ScrapedIntervention])
 
 object ScrapedArm {
 

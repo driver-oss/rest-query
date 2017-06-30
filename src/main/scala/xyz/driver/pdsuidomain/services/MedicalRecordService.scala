@@ -29,14 +29,12 @@ object MedicalRecordService {
 
     type Error = GetByIdReply with DomainError
 
-    case object NotFoundError extends GetByIdReply
-      with DomainError.NotFoundError with DefaultNotFoundError
+    case object NotFoundError extends GetByIdReply with DomainError.NotFoundError with DefaultNotFoundError
 
-    case class CommonError(userMessage: String) extends GetByIdReply
-      with DomainError
+    case class CommonError(userMessage: String) extends GetByIdReply with DomainError
 
-    case object AuthorizationError extends GetByIdReply
-      with DomainError.AuthorizationError with DefaultAccessDeniedError
+    case object AuthorizationError
+        extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
   }
 
   sealed trait GetPdfSourceReply
@@ -46,27 +44,24 @@ object MedicalRecordService {
     case class Entity(x: PdfSource.Channel) extends GetPdfSourceReply
 
     case object AuthorizationError
-      extends GetPdfSourceReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetPdfSourceReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case object NotFoundError
-      extends GetPdfSourceReply with DomainError.NotFoundError {
+    case object NotFoundError extends GetPdfSourceReply with DomainError.NotFoundError {
       def userMessage: String = "Medical record PDF hasn't been found"
     }
 
-    case object RecordNotFoundError
-      extends GetPdfSourceReply with DomainError.NotFoundError with DefaultNotFoundError
+    case object RecordNotFoundError extends GetPdfSourceReply with DomainError.NotFoundError with DefaultNotFoundError
 
-    case class CommonError(userMessage: String)
-      extends GetPdfSourceReply with DomainError
+    case class CommonError(userMessage: String) extends GetPdfSourceReply with DomainError
   }
 
   sealed trait GetListReply
   object GetListReply {
     case class EntityList(xs: Seq[MedicalRecord], totalFound: Int, lastUpdate: Option[LocalDateTime])
-      extends GetListReply
+        extends GetListReply
 
     case object AuthorizationError
-      extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
   }
 
   sealed trait CreateReply
@@ -80,14 +75,12 @@ object MedicalRecordService {
 
     case class Updated(updated: MedicalRecord) extends UpdateReply
 
-    case object NotFoundError
-      extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+        extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String)
-      extends UpdateReply with DomainError
+    case class CommonError(userMessage: String) extends UpdateReply with DomainError
   }
 
   case class Settings(pdfSourceBucket: String)
@@ -97,41 +90,33 @@ trait MedicalRecordService {
 
   import MedicalRecordService._
 
-  def getById(recordId: LongId[MedicalRecord])
-             (implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(recordId: LongId[MedicalRecord])(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
-  def getPdfSource(recordId: LongId[MedicalRecord])
-                  (implicit requestContext: AuthenticatedRequestContext): Future[GetPdfSourceReply]
+  def getPdfSource(recordId: LongId[MedicalRecord])(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetPdfSourceReply]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
-             pagination: Option[Pagination] = None)
-            (implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+             pagination: Option[Pagination] = None)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
   def create(draft: MedicalRecord): Future[CreateReply]
 
-  def update(origRecord: MedicalRecord,
-             draftRecord: MedicalRecord)
-            (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def update(origRecord: MedicalRecord, draftRecord: MedicalRecord)(
+          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def start(orig: MedicalRecord)
-           (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def start(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def submit(orig: MedicalRecord)
-            (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def submit(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def restart(orig: MedicalRecord)
-             (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def restart(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def flag(orig: MedicalRecord)
-          (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def flag(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def resolve(orig: MedicalRecord)
-             (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def resolve(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def unassign(orig: MedicalRecord)
-              (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def unassign(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def archive(orig: MedicalRecord)
-             (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def archive(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 }

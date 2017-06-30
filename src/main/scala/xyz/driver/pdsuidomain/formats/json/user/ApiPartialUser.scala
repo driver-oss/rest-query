@@ -14,9 +14,7 @@ import ApiPartialUser._
 import xyz.driver.pdsuicommon.json.JsonValidationException
 import xyz.driver.pdsuicommon.validation.{AdditionalConstraints, JsonValidationErrors}
 
-final case class ApiPartialUser(email: Option[String],
-                                name: Option[String],
-                                roleId: Option[String]) {
+final case class ApiPartialUser(email: Option[String], name: Option[String], roleId: Option[String]) {
 
   def applyTo(orig: User): Try[User] = Try {
     val validation = Map(
@@ -36,8 +34,8 @@ final case class ApiPartialUser(email: Option[String],
 
   def toDomain(id: LongId[User] = LongId(0L)): Try[User] = Try {
     val validation = Map(
-      JsPath \ "email" -> AdditionalConstraints.optionNonEmptyConstraint(email),
-      JsPath \ "name" -> AdditionalConstraints.optionNonEmptyConstraint(name),
+      JsPath \ "email"  -> AdditionalConstraints.optionNonEmptyConstraint(email),
+      JsPath \ "name"   -> AdditionalConstraints.optionNonEmptyConstraint(name),
       JsPath \ "roleId" -> AdditionalConstraints.optionNonEmptyConstraint(roleId)
     )
 
@@ -71,13 +69,19 @@ object ApiPartialUser {
 
   implicit val format: Format[ApiPartialUser] = (
     (JsPath \ "email").formatNullable[String](Format(Reads.email, Writes.StringWrites)) and
-      (JsPath \ "name").formatNullable[String](Format(
-        Reads.filterNot[String](ValidationError("Username is too long (max length is 255 chars)", 255))(_.length > 255),
-        Writes.StringWrites
-      )) and
-      (JsPath \ "roleId").formatNullable[String](Format(Reads.of[String].filter(ValidationError("unknown role"))({
-        case x if UserRole.roleFromString.isDefinedAt(x) => true
-        case _ => false
-      }), Writes.of[String]))
-    ) (ApiPartialUser.apply, unlift(ApiPartialUser.unapply))
+      (JsPath \ "name").formatNullable[String](
+        Format(
+          Reads.filterNot[String](ValidationError("Username is too long (max length is 255 chars)", 255))(
+            _.length > 255),
+          Writes.StringWrites
+        )) and
+      (JsPath \ "roleId").formatNullable[String](
+        Format(Reads
+                 .of[String]
+                 .filter(ValidationError("unknown role"))({
+                   case x if UserRole.roleFromString.isDefinedAt(x) => true
+                   case _                                           => false
+                 }),
+               Writes.of[String]))
+  )(ApiPartialUser.apply, unlift(ApiPartialUser.unapply))
 }

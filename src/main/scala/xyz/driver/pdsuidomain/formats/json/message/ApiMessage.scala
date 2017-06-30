@@ -55,5 +55,5 @@ object ApiMessage {
       (JsPath \ "evidence").formatNullable[String] and
       (JsPath \ "archiveRequired").formatNullable[Boolean] and
       (JsPath \ "meta").formatNullable[String]
-    ) (ApiMessage.apply, unlift(ApiMessage.unapply))
+  )(ApiMessage.apply, unlift(ApiMessage.unapply))
 }

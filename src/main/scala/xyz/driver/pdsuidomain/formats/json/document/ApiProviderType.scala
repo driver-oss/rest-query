@@ -11,7 +11,7 @@ object ApiProviderType {
   implicit val format: Format[ApiProviderType] = (
     (JsPath \ "id").format[Long] and
       (JsPath \ "name").format[String]
-    ) (ApiProviderType.apply, unlift(ApiProviderType.unapply))
+  )(ApiProviderType.apply, unlift(ApiProviderType.unapply))
 
   def fromDomain(providerType: ProviderType) = ApiProviderType(
     id = providerType.id.id,

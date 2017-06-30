@@ -12,7 +12,7 @@ final case class ApiPartialIntervention(typeId: Option[Long],
 
   def applyTo(orig: InterventionWithArms): InterventionWithArms = {
     val origIntervention = orig.intervention
-    val draftArmList = arms.map(_.map(x => InterventionArm(LongId(x), orig.intervention.id)))
+    val draftArmList     = arms.map(_.map(x => InterventionArm(LongId(x), orig.intervention.id)))
     orig.copy(
       intervention = origIntervention.copy(
         typeId = typeId.map(LongId(_)).orElse(origIntervention.typeId),
@@ -31,14 +31,14 @@ object ApiPartialIntervention {
       (JsPath \ "description").readNullable[String] and
       (JsPath \ "isActive").readNullable[Boolean] and
       (JsPath \ "arms").readNullable[List[Long]]
-    ) (ApiPartialIntervention.apply _)
+  )(ApiPartialIntervention.apply _)
 
   private val writes: Writes[ApiPartialIntervention] = (
     (JsPath \ "typeId").writeNullable[Long] and
       (JsPath \ "description").writeNullable[String] and
       (JsPath \ "isActive").writeNullable[Boolean] and
       (JsPath \ "arms").writeNullable[List[Long]]
-    ) (unlift(ApiPartialIntervention.unapply))
+  )(unlift(ApiPartialIntervention.unapply))
 
   implicit val format: Format[ApiPartialIntervention] = Format(reads, writes)
 }

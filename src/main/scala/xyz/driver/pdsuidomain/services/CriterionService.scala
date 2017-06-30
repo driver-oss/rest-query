@@ -21,9 +21,7 @@ object CriterionService {
     def userMessage: String = "Access denied"
   }
 
-  case class RichCriterion(criterion: Criterion,
-                           armIds: Seq[LongId[Arm]],
-                           labels: Seq[CriterionLabel])
+  case class RichCriterion(criterion: Criterion, armIds: Seq[LongId[Arm]], labels: Seq[CriterionLabel])
   object RichCriterion {
     implicit def toPhiString(x: RichCriterion): PhiString = {
       import x._
@@ -38,7 +36,7 @@ object CriterionService {
     case class Created(x: RichCriterion) extends CreateReply
 
     case object AuthorizationError
-      extends CreateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends CreateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
     case class CommonError(userMessage: String) extends CreateReply with DomainError
   }
@@ -49,29 +47,27 @@ object CriterionService {
 
     type Error = GetByIdReply with DomainError
 
-    case object NotFoundError
-      extends GetByIdReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends GetByIdReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
     case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
-      extends GetByIdReply with DomainError
+        extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
       case x: DomainError => phi"GetByIdReply.Error($x)"
-      case Entity(x) => phi"GetByIdReply.Entity($x)"
+      case Entity(x)      => phi"GetByIdReply.Entity($x)"
     }
   }
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[RichCriterion],
-                          totalFound: Int,
-                          lastUpdate: Option[LocalDateTime]) extends GetListReply
+    case class EntityList(xs: Seq[RichCriterion], totalFound: Int, lastUpdate: Option[LocalDateTime])
+        extends GetListReply
 
     case object AuthorizationError
-      extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
   }
 
   sealed trait UpdateReply
@@ -80,14 +76,12 @@ object CriterionService {
 
     case class Updated(updated: RichCriterion) extends UpdateReply
 
-    case object NotFoundError
-      extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+        extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String)
-      extends UpdateReply with DomainError
+    case class CommonError(userMessage: String) extends UpdateReply with DomainError
   }
 
   sealed trait DeleteReply
@@ -96,14 +90,12 @@ object CriterionService {
 
     type Error = DeleteReply with DomainError
 
-    case object NotFoundError
-      extends DeleteReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends DeleteReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
-      extends DeleteReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+        extends DeleteReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String)
-      extends DeleteReply with DomainError
+    case class CommonError(userMessage: String) extends DeleteReply with DomainError
   }
 }
 
@@ -111,21 +103,18 @@ trait CriterionService {
 
   import CriterionService._
 
-  def create(draftRichCriterion: RichCriterion)
-            (implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
+  def create(draftRichCriterion: RichCriterion)(
+          implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
 
-  def getById(id: LongId[Criterion])
-             (implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(id: LongId[Criterion])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
-             pagination: Option[Pagination] = None)
-            (implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+             pagination: Option[Pagination] = None)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
-  def update(origRichCriterion: RichCriterion,
-             draftRichCriterion: RichCriterion)
-            (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def update(origRichCriterion: RichCriterion, draftRichCriterion: RichCriterion)(
+          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def delete(id: LongId[Criterion])
-            (implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
+  def delete(id: LongId[Criterion])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
 }

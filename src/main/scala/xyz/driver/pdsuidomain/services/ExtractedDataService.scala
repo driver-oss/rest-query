@@ -19,8 +19,7 @@ object ExtractedDataService {
     def userMessage: String = "Access denied"
   }
 
-  case class RichExtractedData(extractedData: ExtractedData,
-                               labels: List[ExtractedDataLabel])
+  case class RichExtractedData(extractedData: ExtractedData, labels: List[ExtractedDataLabel])
 
   object RichExtractedData {
     implicit def toPhiString(x: RichExtractedData): PhiString = {
@@ -35,10 +34,9 @@ object ExtractedDataService {
     case class Entity(x: RichExtractedData) extends GetByIdReply
 
     case object AuthorizationError
-      extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case object NotFoundError
-      extends GetByIdReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends GetByIdReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case class CommonError(userMessage: String) extends GetByIdReply with DomainError
   }
@@ -48,7 +46,7 @@ object ExtractedDataService {
     case class EntityList(xs: Seq[RichExtractedData], totalFound: Int) extends GetListReply
 
     case object AuthorizationError
-      extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
   }
 
   sealed trait CreateReply
@@ -57,7 +55,7 @@ object ExtractedDataService {
     case class Created(x: RichExtractedData) extends CreateReply
 
     case object AuthorizationError
-      extends CreateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends CreateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
     case class CommonError(userMessage: String) extends CreateReply with DomainError
   }
@@ -68,13 +66,11 @@ object ExtractedDataService {
     case class Updated(updated: RichExtractedData) extends UpdateReply
 
     case object AuthorizationError
-      extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+        extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case object NotFoundError
-      extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
-    case class CommonError(userMessage: String)
-      extends UpdateReply with DomainError
+    case class CommonError(userMessage: String) extends UpdateReply with DomainError
   }
 
   sealed trait DeleteReply
@@ -83,10 +79,9 @@ object ExtractedDataService {
     case object Deleted extends DeleteReply
 
     case object AuthorizationError
-      extends DeleteReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+        extends DeleteReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case object NotFoundError
-      extends DeleteReply with DefaultNotFoundError with DomainError.NotFoundError
+    case object NotFoundError extends DeleteReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case class CommonError(userMessage: String) extends DeleteReply with DomainError
   }
@@ -96,21 +91,18 @@ trait ExtractedDataService {
 
   import ExtractedDataService._
 
-  def getById(id: LongId[ExtractedData])
-             (implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(id: LongId[ExtractedData])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
-             pagination: Option[Pagination] = None)
-            (implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+             pagination: Option[Pagination] = None)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
-  def create(draftRichExtractedData: RichExtractedData)
-            (implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
+  def create(draftRichExtractedData: RichExtractedData)(
+          implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
 
-  def update(origRichExtractedData: RichExtractedData,
-             draftRichExtractedData: RichExtractedData)
-            (implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def update(origRichExtractedData: RichExtractedData, draftRichExtractedData: RichExtractedData)(
+          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def delete(id: LongId[ExtractedData])
-            (implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
+  def delete(id: LongId[ExtractedData])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
 }
