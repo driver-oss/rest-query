@@ -30,7 +30,7 @@ object ApiDocument {
   private val statusFormat = Format(
     Reads.StringReads.filter(ValidationError("unknown status")) {
       case x if Document.Status.fromString.isDefinedAt(x) => true
-      case _                                                    => false
+      case _                                              => false
     },
     Writes.StringWrites
   )

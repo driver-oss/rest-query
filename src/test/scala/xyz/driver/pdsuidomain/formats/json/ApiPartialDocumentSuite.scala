@@ -233,11 +233,11 @@ class ApiPartialDocumentSuite extends FreeSpecLike {
   )
 
   /**
-    * Without fields:
-    * - endDate
-    * - assignee
-    * - meta
-    */
+ * Without fields:
+ * - endDate
+ * - assignee
+ * - meta
+ */
   private def json(addFields: (String, String)*): String = {
     val addJson = addFields
       .collect {
