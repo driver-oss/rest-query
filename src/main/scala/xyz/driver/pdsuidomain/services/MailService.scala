@@ -20,11 +20,11 @@ object MailService {
     factory.setObjectHandler(new ScalaObjectHandler)
 
     protected def inputStream: InputStream = getClass.getClassLoader.getResourceAsStream(filename)
-    protected def templateContent: String = Source.fromInputStream(inputStream).getLines().mkString
+    protected def templateContent: String  = Source.fromInputStream(inputStream).getLines().mkString
 
     def content: String = {
       val template = factory.compile(new StringReader(templateContent), filename)
-      val writer = new StringWriter
+      val writer   = new StringWriter
       template
         .execute(writer, parameters)
         .close()

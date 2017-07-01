@@ -17,10 +17,7 @@ object LinkedPatientService {
     def userMessage: String = "Patient not found"
   }
 
-  final case class RichLinkedPatient(email: Email,
-                                     name: String,
-                                     patientId: UuidId[Patient],
-                                     trialId: StringId[Trial]) {
+  final case class RichLinkedPatient(email: Email, name: String, patientId: UuidId[Patient], trialId: StringId[Trial]) {
     def toLinkedPatient(user: User) = LinkedPatient(
       userId = user.id,
       patientId = patientId,
@@ -45,10 +42,9 @@ object LinkedPatientService {
     final case class Created(x: RichLinkedPatient, createdUser: Option[User]) extends CreateReply
 
     case object PatientNotFoundError
-      extends CreateReply with DefaultPatientNotFoundError with DomainError.NotFoundError
+        extends CreateReply with DefaultPatientNotFoundError with DomainError.NotFoundError
 
-    case object TrialNotFoundError
-      extends CreateReply with DefaultPatientNotFoundError with DomainError.NotFoundError
+    case object TrialNotFoundError extends CreateReply with DefaultPatientNotFoundError with DomainError.NotFoundError
 
     final case class CommonError(userMessage: String) extends CreateReply with DomainError
   }

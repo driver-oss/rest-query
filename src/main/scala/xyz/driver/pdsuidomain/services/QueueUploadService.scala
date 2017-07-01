@@ -21,7 +21,8 @@ object QueueUploadService {
     type Error = CreateReply with DomainError
 
     case class Created(x: BridgeUploadQueue.Item) extends CreateReply
-    case object AuthorizationError extends CreateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+    case object AuthorizationError
+        extends CreateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
     case class CommonError(userMessage: String) extends CreateReply with DomainError
   }
 
@@ -30,8 +31,9 @@ object QueueUploadService {
     type Error = GetByIdReply with DomainError
 
     case class Entity(x: BridgeUploadQueue.Item) extends GetByIdReply
-    case object AuthorizationError extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
-    case object NotFoundError extends GetByIdReply with DomainError.NotFoundError with DefaultNotFoundError
+    case object AuthorizationError
+        extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+    case object NotFoundError                   extends GetByIdReply with DomainError.NotFoundError with DefaultNotFoundError
     case class CommonError(userMessage: String) extends GetByIdReply with DomainError
   }
 
@@ -39,11 +41,10 @@ object QueueUploadService {
   object GetListReply {
     type Error = GetListReply with DomainError
 
-    case class EntityList(xs: Seq[BridgeUploadQueue.Item],
-                          totalFound: Int) extends GetListReply
+    case class EntityList(xs: Seq[BridgeUploadQueue.Item], totalFound: Int) extends GetListReply
 
     case object AuthorizationError
-      extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+        extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
   }
 
   sealed trait ResetReply
@@ -51,9 +52,9 @@ object QueueUploadService {
     type Error = ResetReply with DomainError
 
     case class Updated(updated: BridgeUploadQueue.Item) extends ResetReply
-    case object AuthorizationError extends ResetReply with DomainError.AuthorizationError with DefaultAccessDeniedError
-    case object NotFoundError extends ResetReply with DefaultNotFoundError with DomainError.NotFoundError
-    case class CommonError(userMessage: String) extends ResetReply with DomainError
+    case object AuthorizationError                      extends ResetReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+    case object NotFoundError                           extends ResetReply with DefaultNotFoundError with DomainError.NotFoundError
+    case class CommonError(userMessage: String)         extends ResetReply with DomainError
   }
 }
 
@@ -61,18 +62,15 @@ trait QueueUploadService {
 
   import QueueUploadService._
 
-  def create(kind: String, tag: String)
-            (implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
+  def create(kind: String, tag: String)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
 
-  def getById(kind: String, tag: String)
-             (implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(kind: String, tag: String)(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
-             pagination: Option[Pagination] = None)
-            (implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+             pagination: Option[Pagination] = None)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
-  def reset(kind: String, tag: String)
-           (implicit requestContext: AuthenticatedRequestContext): Future[ResetReply]
+  def reset(kind: String, tag: String)(implicit requestContext: AuthenticatedRequestContext): Future[ResetReply]
 
 }

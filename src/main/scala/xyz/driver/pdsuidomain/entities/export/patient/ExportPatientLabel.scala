@@ -4,9 +4,7 @@ import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuidomain.entities.{Label, RawPatientLabel}
 
-final case class ExportPatientLabel(id: LongId[Label],
-                              name: String,
-                              evidences: List[ExportPatientLabelEvidence])
+final case class ExportPatientLabel(id: LongId[Label], name: String, evidences: List[ExportPatientLabelEvidence])
 
 object ExportPatientLabel extends PhiLogging {
 

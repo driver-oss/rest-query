@@ -13,8 +13,7 @@ object UserHistoryService {
   object GetListReply {
     case class EntityList(xs: Seq[UserHistory], totalFound: Int) extends GetListReply
 
-    case object AuthorizationError
-      extends GetListReply with DomainError.AuthorizationError {
+    case object AuthorizationError extends GetListReply with DomainError.AuthorizationError {
       def userMessage: String = "Access denied"
     }
   }
@@ -26,6 +25,6 @@ trait UserHistoryService {
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
-             pagination: Option[Pagination] = None)
-            (implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+             pagination: Option[Pagination] = None)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 }

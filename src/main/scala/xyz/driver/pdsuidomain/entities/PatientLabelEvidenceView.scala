@@ -8,7 +8,7 @@ import xyz.driver.pdsuicommon.logging._
 object PatientLabelEvidenceView {
   implicit def toPhiString(x: PatientLabelEvidenceView): PhiString = {
     import x._
-    phi"PatientLabelEvidenceViewRepository.Row(id=$id, value=$value, documentId=$documentId, " +
+    phi"PatientLabelEvidenceView(id=$id, value=$value, documentId=$documentId, " +
       phi"evidenceId=$evidenceId, reportId=$reportId, patientId=$patientId, labelId=$labelId, " +
       phi"isImplicitMatch=$isImplicitMatch)"
   }

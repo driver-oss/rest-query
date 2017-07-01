@@ -36,16 +36,21 @@ object ExportTrialWithLabels {
       condition = trial.condition,
       lastReviewed = trial.lastReviewed,
       labelVersion = 1, // TODO It is needed to replace this mock label version.
-      arms = rawData.groupBy(_.armId).map { case (armId, rawTrials) =>
-        ExportTrialArm(armId, rawTrials.head.armName)
-      }(breakOut),
-      criteria = rawData.groupBy { x =>
-        (x.criterionId, x.labelId)
-      }.map {
-        case (_, rawTrialLabels) =>
-          val armIds = rawTrialLabels.map(_.criterionArmId).toSet
-          ExportTrialLabelCriterion.fromRaw(rawTrialLabels.head, armIds)
-      }(breakOut)
+      arms = rawData
+        .groupBy(_.armId)
+        .map {
+          case (armId, rawTrials) =>
+            ExportTrialArm(armId, rawTrials.head.armName)
+        }(breakOut),
+      criteria = rawData
+        .groupBy { x =>
+          (x.criterionId, x.labelId)
+        }
+        .map {
+          case (_, rawTrialLabels) =>
+            val armIds = rawTrialLabels.map(_.criterionArmId).toSet
+            ExportTrialLabelCriterion.fromRaw(rawTrialLabels.head, armIds)
+        }(breakOut)
     )
   }
 

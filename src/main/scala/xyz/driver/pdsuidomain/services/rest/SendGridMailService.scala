@@ -18,11 +18,11 @@ object SendGridMailService {
 class SendGridMailService(settings: Settings) extends MailService with PhiLogging {
 
   def sendTo(email: String, template: Template): Boolean = {
-    val to = new Email(email)
+    val to      = new Email(email)
     val content = new Content(template.contentType, template.content)
-    val mail = new Mail(new Email(settings.from), template.subject, to, content)
+    val mail    = new Mail(new Email(settings.from), template.subject, to, content)
 
-    val request = new Request()
+    val request  = new Request()
     val sendGrid = new SendGrid(settings.apiKey)
 
     try {
@@ -35,8 +35,7 @@ class SendGridMailService(settings: Settings) extends MailService with PhiLoggin
       }
 
       response.statusCode == ExpectedHttpCode
-    }
-    catch {
+    } catch {
       case NonFatal(e) =>
         logger.error(phi"Can not send an email: $e")
         false

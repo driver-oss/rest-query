@@ -27,7 +27,7 @@ object ApiUserHistory {
       (JsPath \ "state").format[String] and
       (JsPath \ "action").format[String] and
       (JsPath \ "created").format[ZonedDateTime]
-    ) (ApiUserHistory.apply, unlift(ApiUserHistory.unapply))
+  )(ApiUserHistory.apply, unlift(ApiUserHistory.unapply))
 
   def fromDomain(x: UserHistory) = ApiUserHistory(
     id = x.id.id,
