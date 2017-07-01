@@ -8,7 +8,9 @@ trait WriteableImplicits {
 
   // Write JSON by default at now
   implicit def defaultWriteable[T](implicit inner: Writes[T]) = Writeable[T](
-    { x: T => Writeable.writeableOf_JsValue.transform(Json.toJson(x)) },
+    { x: T =>
+      Writeable.writeableOf_JsValue.transform(Json.toJson(x))
+    },
     Option(ContentTypes.JSON)
   )
 

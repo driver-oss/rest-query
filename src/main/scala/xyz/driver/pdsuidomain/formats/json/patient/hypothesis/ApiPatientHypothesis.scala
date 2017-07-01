@@ -10,7 +10,8 @@ final case class ApiPatientHypothesis(id: UUID,
                                       patientId: String,
                                       hypothesisId: UUID,
                                       matchedTrials: Long,
-                                      rationale: Option[String])
+                                      rationale: Option[String],
+                                      isRationaleRequired: Boolean)
 
 object ApiPatientHypothesis {
 
@@ -19,14 +20,16 @@ object ApiPatientHypothesis {
       (JsPath \ "patientId").format[String] and
       (JsPath \ "hypothesisId").format[UUID] and
       (JsPath \ "matchedTrials").format[Long] and
-      (JsPath \ "rationale").formatNullable[String]
+      (JsPath \ "rationale").formatNullable[String] and
+      (JsPath \ "isRationaleRequired").format[Boolean]
   )(ApiPatientHypothesis.apply, unlift(ApiPatientHypothesis.unapply))
 
-  def fromDomain(patientHypothesis: PatientHypothesis) = ApiPatientHypothesis(
+  def fromDomain(patientHypothesis: PatientHypothesis, isRationaleRequired: Boolean) = ApiPatientHypothesis(
     id = patientHypothesis.id.id,
     patientId = patientHypothesis.patientId.toString,
     hypothesisId = patientHypothesis.hypothesisId.id,
     matchedTrials = patientHypothesis.matchedTrials,
-    rationale = patientHypothesis.rationale
+    rationale = patientHypothesis.rationale,
+    isRationaleRequired = isRationaleRequired
   )
 }

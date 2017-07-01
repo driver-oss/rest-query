@@ -25,7 +25,7 @@ object PatientHypothesisService {
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[PatientHypothesis], totalFound: Int) extends GetListReply
+    case class EntityList(xs: Seq[(PatientHypothesis, Boolean)], totalFound: Int) extends GetListReply
 
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -38,7 +38,7 @@ object PatientHypothesisService {
 
   sealed trait GetByIdReply
   object GetByIdReply {
-    case class Entity(x: PatientHypothesis) extends GetByIdReply
+    case class Entity(x: PatientHypothesis, isRequired: Boolean) extends GetByIdReply
 
     type Error = GetByIdReply with DomainError
 
@@ -53,8 +53,8 @@ object PatientHypothesisService {
     case class CommonError(userMessage: String) extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
-      case x: DomainError => phi"GetByIdReply.Error($x)"
-      case Entity(x)      => phi"GetByIdReply.Entity($x)"
+      case x: DomainError        => phi"GetByIdReply.Error($x)"
+      case Entity(x, isRequired) => phi"GetByIdReply.Entity($x, $isRequired)"
     }
   }
 

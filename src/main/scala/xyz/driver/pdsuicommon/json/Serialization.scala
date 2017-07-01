@@ -5,6 +5,7 @@ import java.net.URI
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import xyz.driver.pdsuicommon.domain._
+import xyz.driver.pdsuidomain.entities.CaseId
 
 object Serialization {
 
@@ -44,4 +45,8 @@ object Serialization {
   private val passwordHashJsonWrites: Writes[PasswordHash] = Writes(
     passwordHash => JsString(passwordHash.value.toString))
   implicit val passwordHashJsonFormat: Format[PasswordHash] = Format(passwordHashJsonReads, passwordHashJsonWrites)
+
+  private val caseIdJsonReads: Reads[CaseId]    = Reads.StringReads.map(CaseId(_))
+  private val caseIdJsonWrites: Writes[CaseId]  = Writes(caseId => JsString(caseId.id))
+  implicit val caseIdJsonFormat: Format[CaseId] = Format(caseIdJsonReads, caseIdJsonWrites)
 }

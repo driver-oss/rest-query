@@ -4,7 +4,6 @@ import xyz.driver.pdsuicommon.auth.{AnonymousRequestContext, AuthenticatedReques
 import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterExpr, Sorting}
 import xyz.driver.pdsuicommon.domain.{Email, LongId, User}
 import xyz.driver.pdsuicommon.error.DomainError
-import xyz.driver.pdsuicommon.logging._
 
 import scala.concurrent.Future
 
@@ -95,10 +94,9 @@ object UserService {
     case object NotFoundError                   extends DeleteReply with DefaultNotFoundError with DomainError.NotFoundError
     case class CommonError(userMessage: String) extends DeleteReply with DomainError
   }
-
 }
 
-trait UserService extends PhiLogging {
+trait UserService {
 
   import UserService._
 

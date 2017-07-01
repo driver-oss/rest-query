@@ -13,6 +13,7 @@ final case class ApiTrial(id: String,
                           assignee: Option[Long],
                           previousStatus: Option[String],
                           previousAssignee: Option[Long],
+                          lastActiveUser: Option[Long],
                           condition: Option[String],
                           phase: Option[String],
                           hypothesisId: Option[UUID],
@@ -32,6 +33,7 @@ object ApiTrial {
       (JsPath \ "assignee").formatNullable[Long] and
       (JsPath \ "previousStatus").formatNullable[String] and
       (JsPath \ "previousAssignee").formatNullable[Long] and
+      (JsPath \ "lastActiveUser").formatNullable[Long] and
       (JsPath \ "condition").formatNullable[String] and
       (JsPath \ "phase").formatNullable[String] and
       (JsPath \ "hypothesisId").formatNullable[UUID] and
@@ -49,6 +51,7 @@ object ApiTrial {
     assignee = trial.assignee.map(_.id),
     previousStatus = trial.previousStatus.map(TrialStatus.statusToString),
     previousAssignee = trial.previousAssignee.map(_.id),
+    lastActiveUser = trial.lastActiveUserId.map(_.id),
     lastUpdate = Option(ZonedDateTime.of(trial.lastUpdate, ZoneId.of("Z"))),
     condition = Option(trial.condition.toString),
     phase = Option(trial.phase),

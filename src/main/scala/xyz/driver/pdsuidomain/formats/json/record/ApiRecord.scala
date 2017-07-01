@@ -17,6 +17,7 @@ final case class ApiRecord(id: Long,
                            previousStatus: Option[String],
                            assignee: Option[Long],
                            previousAssignee: Option[Long],
+                           lastActiveUser: Option[Long],
                            meta: String)
 
 object ApiRecord {
@@ -39,6 +40,7 @@ object ApiRecord {
       (JsPath \ "previousStatus").formatNullable(statusFormat) and
       (JsPath \ "assignee").formatNullable[Long] and
       (JsPath \ "previousAssignee").formatNullable[Long] and
+      (JsPath \ "lastActiveUser").formatNullable[Long] and
       (JsPath \ "meta").format(Format(Reads { x =>
         JsSuccess(Json.stringify(x))
       }, Writes[String](Json.parse)))
@@ -54,6 +56,7 @@ object ApiRecord {
     previousStatus = record.previousStatus.map(MedicalRecordStatus.statusToString),
     assignee = record.assignee.map(_.id),
     previousAssignee = record.previousAssignee.map(_.id),
+    lastActiveUser = record.lastActiveUserId.map(_.id),
     meta = record.meta.map(x => JsonSerializer.serialize(x.content)).getOrElse("[]")
   )
 }

@@ -33,6 +33,35 @@ class DocumentSuite extends BaseSuite {
     }
   }
 
+  "getRequiredType" - {
+    "getOPNType" in {
+      val documentForOPNType = sampleDocument.copy(
+        typeId = Some(LongId(1L)),
+        providerTypeId = Some(LongId(1L)),
+        startDate = Some(LocalDate.now().minus(2, ChronoUnit.DAYS))
+      )
+      val r = documentForOPNType.getRequiredType("Outpatient Physician Note", "Medical Oncology")
+      assert(r.contains(Document.RequiredType.OPN), s"document should have the requiredType=OPN, but:$r")
+    }
+
+    "getPNType" in {
+      val documentForPNType = sampleDocument.copy(
+        typeId = Some(LongId(6))
+      )
+      val r = documentForPNType.getRequiredType("Pathology Report", "")
+      assert(r.contains(Document.RequiredType.PN), s"document should have the requiredType=PN, but:$r")
+    }
+    "get None" in {
+      val document = sampleDocument.copy(
+        typeId = Some(LongId(1L)),
+        providerTypeId = Some(LongId(1L)),
+        startDate = Some(LocalDate.now().minus(7, ChronoUnit.MONTHS))
+      )
+      val r = document.getRequiredType("Outpatient Physician Note", "Medical Oncology")
+      assert(r.isEmpty, s"document should have the requiredType=None, but:$r")
+    }
+  }
+
   private def sampleDocument = {
     val lastUpdate = LocalDateTime.now()
 
@@ -42,11 +71,13 @@ class DocumentSuite extends BaseSuite {
       previousStatus = None,
       assignee = None,
       previousAssignee = None,
+      lastActiveUserId = None,
       recordId = LongId(2003),
       physician = None,
       typeId = Some(LongId(123)),
       providerName = Some("etst"),
       providerTypeId = Some(LongId(123)),
+      requiredType = None,
       startDate = Some(lastUpdate.toLocalDate.minusDays(2)),
       endDate = None,
       lastUpdate = lastUpdate,

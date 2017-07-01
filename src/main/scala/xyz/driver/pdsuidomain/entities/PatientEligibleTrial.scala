@@ -82,35 +82,8 @@ object PatientTrialArmGroup {
   implicit def toPhiString(x: PatientTrialArmGroup): PhiString = {
     import x._
     phi"PatientTrialArmGroup(id=$id, eligibleTrialId=$eligibleTrialId, " +
-      phi"eligibilityStatus=${Unsafe(eligibilityStatus)}, isVerified=$isVerified)"
-  }
-
-  /**
-    * @see https://driverinc.atlassian.net/wiki/display/DMPD/EV+Business+Process
-    */
-  def getEligibilityStatusForEvToRc(criterionList: List[(Option[Boolean], Option[FuzzyValue])]): Option[FuzzyValue] = {
-    def isEligible = {
-      // Eligible, if for all (verified for EV) label-criteria eligibilityStatus=NULL or YES and at least one has status=YES
-      // If method executes from PatientService (when EV submit patient) need to check value PatientCriterion.isVerified
-      val verifiedList = criterionList.filter { case (isVerifiedOpt, _) => isVerifiedOpt.isEmpty || isVerifiedOpt.get }
-      verifiedList.forall {
-        case (_, eligibilityStatus) =>
-          eligibilityStatus.isEmpty || eligibilityStatus.contains(FuzzyValue.Yes)
-      } && verifiedList.exists { case (_, eligibilityStatus) => eligibilityStatus.contains(FuzzyValue.Yes) }
-    }
-
-    if (criterionList.exists {
-          case (isVerified, eligibilityStatus) =>
-            eligibilityStatus.contains(FuzzyValue.No) && (isVerified.isEmpty || isVerified.get)
-        }) { Some(FuzzyValue.No) } else if (criterionList.forall {
-                                              case (_, eligibilityStatus) => eligibilityStatus.isEmpty
-                                            }) {
-      None
-    } else if (isEligible) {
-      Some(FuzzyValue.Yes)
-    } else {
-      Some(FuzzyValue.Maybe)
-    }
+      phi"eligibilityStatus=${Unsafe(eligibilityStatus)}, " +
+      phi"verifiedEligibilityStatus=${Unsafe(verifiedEligibilityStatus)}, isVerified=$isVerified)"
   }
 
   /**
@@ -131,14 +104,16 @@ object PatientTrialArmGroup {
 final case class PatientTrialArmGroup(id: LongId[PatientTrialArmGroup],
                                       eligibleTrialId: UuidId[PatientEligibleTrial],
                                       eligibilityStatus: Option[FuzzyValue],
+                                      verifiedEligibilityStatus: Option[FuzzyValue],
                                       isVerified: Boolean)
 
 object PatientTrialArmGroupView {
 
   implicit def toPhiString(x: PatientTrialArmGroupView): PhiString = {
     import x._
-    phi"PatientTrialArmGroupView(id=$id, patientId=$patientId, trialId=$trialId, hypothesisId=$hypothesisId, " +
-      phi"eligibilityStatus=${Unsafe(eligibilityStatus)}, isVerified=$isVerified)"
+    phi"PatientTrialArmGroupView(id=$id, patientId=$patientId, trialId=$trialId, " +
+      phi"hypothesisId=$hypothesisId, eligibilityStatus=${Unsafe(eligibilityStatus)}, " +
+      phi"verifiedEligibilityStatus=${Unsafe(verifiedEligibilityStatus)}, isVerified=$isVerified)"
   }
 }
 
@@ -147,11 +122,13 @@ final case class PatientTrialArmGroupView(id: LongId[PatientTrialArmGroup],
                                           trialId: StringId[Trial],
                                           hypothesisId: UuidId[Hypothesis],
                                           eligibilityStatus: Option[FuzzyValue],
+                                          verifiedEligibilityStatus: Option[FuzzyValue],
                                           isVerified: Boolean) {
 
   def applyTo(trialArmGroup: PatientTrialArmGroup) = {
     trialArmGroup.copy(
       eligibilityStatus = this.eligibilityStatus,
+      verifiedEligibilityStatus = this.verifiedEligibilityStatus,
       isVerified = this.isVerified
     )
   }

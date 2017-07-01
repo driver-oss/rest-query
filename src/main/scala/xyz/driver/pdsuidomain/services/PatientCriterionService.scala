@@ -84,7 +84,10 @@ object PatientCriterionService {
   object UpdateReply {
     type Error = UpdateReply with DomainError
 
-    case object Updated extends UpdateReply
+    case class Updated(x: PatientCriterion, labelId: LongId[Label], armList: List[Arm], criterionIsCompound: Boolean)
+        extends UpdateReply
+
+    case object UpdatedList extends UpdateReply
 
     case object AuthorizationError
         extends UpdateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -101,7 +104,7 @@ trait PatientCriterionService {
   import PatientCriterionService._
 
   def getAll(patientId: UuidId[Patient],
-             filter: SearchFilterExpr = SearchFilterExpr.Empty,
+             origFilter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]

@@ -11,7 +11,7 @@ final class StringOps(val self: String) extends AnyVal {
       ""
     } else {
       val start = self.indexWhere(shouldKeep)
-      val end = self.lastIndexWhere(shouldKeep)
+      val end   = self.lastIndexWhere(shouldKeep)
 
       if (start >= 0 && end >= 0) {
         self.substring(start, end + 1)

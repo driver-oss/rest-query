@@ -14,7 +14,7 @@ final case class ApiPatientEligibleTrial(id: Long,
                                          trialTitle: String,
                                          arms: List[String],
                                          hypothesisId: UUID,
-                                         eligibilityStatus: Option[String],
+                                         verifiedEligibilityStatus: Option[String],
                                          isVerified: Boolean)
 
 object ApiPatientEligibleTrial {
@@ -26,7 +26,7 @@ object ApiPatientEligibleTrial {
       (JsPath \ "trialTitle").format[String] and
       (JsPath \ "arms").format[List[String]] and
       (JsPath \ "hypothesisId").format[UUID] and
-      (JsPath \ "eligibilityStatus").formatNullable[String](Format(
+      (JsPath \ "verifiedEligibilityStatus").formatNullable[String](Format(
         Reads
           .of[String]
           .filter(ValidationError("unknown eligibility status"))({
@@ -45,7 +45,7 @@ object ApiPatientEligibleTrial {
     trialTitle = eligibleTrialWithTrial.trial.title,
     arms = eligibleTrialWithTrial.arms.map(_.name),
     hypothesisId = eligibleTrialWithTrial.group.hypothesisId.id,
-    eligibleTrialWithTrial.group.eligibilityStatus.map(FuzzyValue.valueToString),
+    eligibleTrialWithTrial.group.verifiedEligibilityStatus.map(FuzzyValue.valueToString),
     eligibleTrialWithTrial.group.isVerified
   )
 }

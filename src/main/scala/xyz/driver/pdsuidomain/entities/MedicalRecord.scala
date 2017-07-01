@@ -134,7 +134,8 @@ object MedicalRecord {
 
   implicit def toPhiString(x: MedicalRecord): PhiString = {
     import x._
-    phi"MedicalRecord(id=$id, status=$status, assignee=$assignee, previousAssignee=$previousAssignee)"
+    phi"MedicalRecord(id=$id, status=$status, assignee=$assignee, " +
+      phi"previousAssignee=$previousAssignee, lastActiveUserId=$lastActiveUserId)"
   }
 }
 
@@ -143,6 +144,7 @@ case class MedicalRecord(id: LongId[MedicalRecord],
                          previousStatus: Option[MedicalRecord.Status],
                          assignee: Option[LongId[User]],
                          previousAssignee: Option[LongId[User]],
+                         lastActiveUserId: Option[LongId[User]],
                          patientId: UuidId[Patient],
                          requestId: RecordRequestId,
                          disease: String,

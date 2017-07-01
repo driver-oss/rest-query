@@ -45,7 +45,7 @@ object Patient {
 
   implicit def toPhiString(x: Patient): PhiString = {
     import x._
-    phi"Patient(id=$id, status=$status, previousStatus=$previousStatus, " +
+    phi"Patient(id=$id, status=$status, previousStatus=$previousStatus, lastActiveUserId=$lastActiveUserId" +
       phi"assignee=$assignee, previousAssignee=$previousAssignee)"
   }
 }
@@ -57,6 +57,7 @@ final case class Patient(id: UuidId[Patient],
                          assignee: Option[LongId[User]],
                          previousStatus: Option[Patient.Status],
                          previousAssignee: Option[LongId[User]],
+                         lastActiveUserId: Option[LongId[User]],
                          isUpdateRequired: Boolean,
                          condition: String,
                          orderId: PatientOrderId,

@@ -50,7 +50,6 @@ final case class ApiPartialMessage(text: Option[String],
       lastUpdate = LocalDateTime.MIN
     )
   }
-
 }
 
 object ApiPartialMessage {
@@ -80,5 +79,4 @@ object ApiPartialMessage {
     archiveRequired = domain.archiveRequired,
     meta = domain.meta
   )
-
 }

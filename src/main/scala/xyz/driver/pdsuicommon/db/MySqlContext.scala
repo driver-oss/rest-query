@@ -45,8 +45,7 @@ object MySqlContext extends PhiLogging {
 }
 
 class MySqlContext(dataSource: DataSource with Closeable, settings: Settings)
-  extends MysqlJdbcContext[MysqlEscape](dataSource)
-    with TransactionalContext
+    extends MysqlJdbcContext[MysqlEscape](dataSource) with TransactionalContext
     with EntityExtractorDerivation[Literal] {
 
   private val tpe = Executors.newFixedThreadPool(settings.threadPoolSize)

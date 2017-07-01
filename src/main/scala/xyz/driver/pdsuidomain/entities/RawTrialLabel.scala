@@ -12,7 +12,6 @@ case class RawTrialLabel(nctId: StringId[Trial],
                          armName: String,
                          armId: LongId[Arm],
                          labelId: LongId[Label],
-                         label: String,
                          value: Option[Boolean],
                          criterionId: LongId[Criterion],
                          criteria: String,
@@ -25,7 +24,7 @@ object RawTrialLabel {
   implicit def toPhiString(x: RawTrialLabel): PhiString = {
     import x._
     phi"RawTrialLabel(nctId=$nctId, trialId=$trialId, condition=${Unsafe(condition)}, lastReviewed=$lastReviewed, " +
-      phi"armId=$armId, armName=${Unsafe(armName)}, labelId=$labelId, label=${Unsafe(label)}, value=$value, " +
+      phi"armId=$armId, armName=${Unsafe(armName)}, labelId=$labelId, value=$value, " +
       phi"criterionId=$criterionId, criteria=${Unsafe(criteria)}, criterionArmId=$criterionArmId, " +
       phi"isCompound=$isCompound, isDefining=$isDefining)"
   }

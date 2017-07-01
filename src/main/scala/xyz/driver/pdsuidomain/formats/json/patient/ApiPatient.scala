@@ -13,6 +13,7 @@ final case class ApiPatient(id: String,
                             assignee: Option[Long],
                             previousStatus: Option[String],
                             previousAssignee: Option[Long],
+                            lastActiveUser: Option[Long],
                             lastUpdate: ZonedDateTime,
                             condition: String)
 
@@ -26,6 +27,7 @@ object ApiPatient {
       (JsPath \ "assignee").formatNullable[Long] and
       (JsPath \ "previousStatus").formatNullable[String] and
       (JsPath \ "previousAssignee").formatNullable[Long] and
+      (JsPath \ "lastActiveUser").formatNullable[Long] and
       (JsPath \ "lastUpdate").format[ZonedDateTime] and
       (JsPath \ "condition").format[String]
   )(ApiPatient.apply, unlift(ApiPatient.unapply))
@@ -38,6 +40,7 @@ object ApiPatient {
     assignee = patient.assignee.map(_.id),
     previousStatus = patient.previousStatus.map(PatientStatus.statusToString),
     previousAssignee = patient.previousAssignee.map(_.id),
+    lastActiveUser = patient.lastActiveUserId.map(_.id),
     lastUpdate = ZonedDateTime.of(patient.lastUpdate, ZoneId.of("Z")),
     condition = patient.condition
   )

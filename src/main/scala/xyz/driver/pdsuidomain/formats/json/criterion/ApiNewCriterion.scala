@@ -11,6 +11,7 @@ import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
 final case class ApiNewCriterion(meta: Option[String],
                                  arms: Option[Seq[Long]],
                                  text: Option[String],
+                                 isCompound: Option[Boolean],
                                  labels: Seq[ApiCriterionLabel],
                                  trialId: String) {
 
@@ -19,7 +20,7 @@ final case class ApiNewCriterion(meta: Option[String],
       id = LongId(0L),
       meta = meta.getOrElse(""),
       trialId = StringId(trialId),
-      isCompound = false,
+      isCompound = isCompound.getOrElse(false),
       text = text
     ),
     armIds = arms.getOrElse(Seq.empty).map(LongId[Arm]),
@@ -35,6 +36,7 @@ object ApiNewCriterion {
     }, Writes[String](Json.parse))) and
       (JsPath \ "arms").formatNullable(seqJsonFormat[Long]) and
       (JsPath \ "text").formatNullable[String] and
+      (JsPath \ "isCompound").formatNullable[Boolean] and
       (JsPath \ "labels").format(seqJsonFormat[ApiCriterionLabel]) and
       (JsPath \ "trialId").format[String]
   )(ApiNewCriterion.apply, unlift(ApiNewCriterion.unapply))

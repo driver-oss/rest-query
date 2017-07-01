@@ -99,7 +99,6 @@ object DocumentService {
 
     case class CommonError(userMessage: String) extends DeleteReply with DomainError
   }
-
 }
 
 trait DocumentService {
@@ -115,7 +114,6 @@ trait DocumentService {
 
   def create(draftDocument: Document)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
 
-  // Update operations are validated in internal.*Command
   def update(orig: Document, draft: Document)(
           implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 

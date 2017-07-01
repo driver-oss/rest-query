@@ -33,7 +33,6 @@ object ArmService {
 
     case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
         extends GetByIdReply with DomainError
-
   }
 
   sealed trait GetListReply
@@ -44,13 +43,12 @@ object ArmService {
 
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
-
   }
 
   sealed trait UpdateReply
   object UpdateReply {
 
-    case class Updated(updated: Arm) extends UpdateReply
+    final case class Updated(updated: Arm) extends UpdateReply
 
     type Error = UpdateReply with DomainError
 
@@ -59,9 +57,9 @@ object ArmService {
     case object AuthorizationError
         extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String) extends UpdateReply with DomainError
+    final case class CommonError(userMessage: String) extends UpdateReply with DomainError
 
-    case class AlreadyExistsError(x: Arm) extends UpdateReply with DomainError {
+    final case class AlreadyExistsError(x: Arm) extends UpdateReply with DomainError {
       val userMessage = s"The arm with such name of trial already exists."
     }
 
@@ -80,9 +78,9 @@ object ArmService {
     case object AuthorizationError
         extends CreateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String) extends CreateReply with DomainError
+    final case class CommonError(userMessage: String) extends CreateReply with DomainError
 
-    case class AlreadyExistsError(x: Arm) extends CreateReply with DomainError {
+    final case class AlreadyExistsError(x: Arm) extends CreateReply with DomainError {
       val userMessage = s"The arm with this name of trial already exists."
     }
 

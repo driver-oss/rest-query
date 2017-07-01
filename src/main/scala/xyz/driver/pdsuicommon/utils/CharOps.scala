@@ -20,7 +20,7 @@ private object CharOps {
         "\u3000\u2004\u3000\u3000\u2028\n\u2007\u3000"
 
     private val Multiplier: Int = 1682554634
-    private val Shift: Int = Integer.numberOfLeadingZeros(Table.length - 1)
+    private val Shift: Int      = Integer.numberOfLeadingZeros(Table.length - 1)
 
     def matches(c: Char): Boolean = Table.charAt((Multiplier * c) >>> Shift) == c
   }

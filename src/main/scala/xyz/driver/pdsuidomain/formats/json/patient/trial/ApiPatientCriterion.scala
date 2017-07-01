@@ -11,6 +11,7 @@ import play.api.libs.json.{Format, JsPath, Reads, Writes}
 final case class ApiPatientCriterion(id: Long,
                                      labelId: Long,
                                      nctId: String,
+                                     criterionId: Long,
                                      criterionText: String,
                                      criterionValue: Option[String],
                                      criterionIsDefining: Boolean,
@@ -28,6 +29,7 @@ object ApiPatientCriterion {
     (JsPath \ "id").format[Long] and
       (JsPath \ "labelId").format[Long] and
       (JsPath \ "nctId").format[String] and
+      (JsPath \ "criterionId").format[Long] and
       (JsPath \ "criterionText").format[String] and
       (JsPath \ "criterionValue").formatNullable[String](Format(Reads.of[String].filter(ValidationError("unknown value"))({ x =>
         x == "Yes" || x == "No"
@@ -56,6 +58,7 @@ object ApiPatientCriterion {
     id = patientCriterion.id.id,
     labelId = labelId.id,
     nctId = patientCriterion.nctId.id,
+    criterionId = patientCriterion.criterionId.id,
     criterionText = patientCriterion.criterionText,
     criterionValue = patientCriterion.criterionValue.map { x =>
       FuzzyValue.valueToString(FuzzyValue.fromBoolean(x))

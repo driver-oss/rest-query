@@ -3,7 +3,6 @@ package xyz.driver.pdsuidomain.services
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db.Sorting
 import xyz.driver.pdsuicommon.error.DomainError
-import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuidomain.entities.CategoryWithLabels
 
 import scala.concurrent.Future
@@ -19,7 +18,7 @@ object CategoryService {
   }
 }
 
-trait CategoryService extends PhiLogging {
+trait CategoryService {
 
   import CategoryService._
 

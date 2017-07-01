@@ -17,7 +17,6 @@ final case class ApiPartialPatientLabel(primaryValue: Option[String], verifiedPr
         verifiedPrimaryValue.cata(x => Some(FuzzyValue.fromString(x)), None, orig.verifiedPrimaryValue)
     )
   }
-
 }
 
 object ApiPartialPatientLabel {
@@ -42,5 +41,4 @@ object ApiPartialPatientLabel {
           Writes.of[String]
         ))
   )(ApiPartialPatientLabel.apply, unlift(ApiPartialPatientLabel.unapply))
-
 }

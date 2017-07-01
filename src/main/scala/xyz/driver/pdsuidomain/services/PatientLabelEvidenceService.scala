@@ -1,7 +1,5 @@
 package xyz.driver.pdsuidomain.services
 
-import java.time.LocalDate
-
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
@@ -12,21 +10,23 @@ import scala.concurrent.Future
 
 object PatientLabelEvidenceService {
 
-  case class Aggregated(evidence: PatientLabelEvidence, date: LocalDate, documentType: String, providerType: String)
-
   trait DefaultAccessDeniedError {
     def userMessage: String = "Access denied"
   }
 
+  trait DefaultPatientNotFoundError {
+    def userMessage: String = "Patient not found"
+  }
+
   sealed trait GetByIdReply
   object GetByIdReply {
-    case class Entity(x: Aggregated) extends GetByIdReply
+    case class Entity(x: PatientLabelEvidenceView) extends GetByIdReply
 
     type Error = GetByIdReply with DomainError
 
-    case class NotFoundError(userMessage: String) extends GetByIdReply with DomainError.NotFoundError
+    final case class NotFoundError(userMessage: String) extends GetByIdReply with DomainError.NotFoundError
 
-    case class CommonError(userMessage: String) extends GetByIdReply with DomainError
+    final case class CommonError(userMessage: String) extends GetByIdReply with DomainError
 
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -34,9 +34,12 @@ object PatientLabelEvidenceService {
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[Aggregated], totalFound: Int) extends GetListReply
+    case class EntityList(xs: Seq[PatientLabelEvidenceView], totalFound: Int) extends GetListReply
 
     type Error = GetListReply with DomainError
+
+    case object PatientNotFoundError
+        extends GetListReply with DefaultPatientNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError

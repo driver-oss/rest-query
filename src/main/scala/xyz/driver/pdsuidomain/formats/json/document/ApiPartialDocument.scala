@@ -31,15 +31,17 @@ final case class ApiPartialDocument(recordId: Option[Long],
 
   def applyTo(orig: Document): Document = Document(
     id = orig.id,
-    status = status.map(DocumentUtils.statusFromString).getOrElse(orig.status),
+    status = status.map(Document.Status.fromString).getOrElse(orig.status),
     previousStatus = orig.previousStatus,
     assignee = assignee.map(LongId[User]).cata(Some(_), None, orig.assignee),
     previousAssignee = orig.previousAssignee,
+    lastActiveUserId = orig.lastActiveUserId,
     recordId = recordId.map(LongId[MedicalRecord]).getOrElse(orig.recordId),
     physician = physician.orElse(orig.physician),
     typeId = typeId.map(LongId[DocumentType]).cata(Some(_), None, orig.typeId),
     providerName = provider.cata(Some(_), None, orig.providerName),
     providerTypeId = providerTypeId.map(LongId[ProviderType]).cata(Some(_), None, orig.providerTypeId),
+    requiredType = orig.requiredType,
     meta = meta.cata(x => Some(TextJson(JsonSerializer.deserialize[Meta](x))), None, orig.meta),
     startDate = startDate.cata(Some(_), None, orig.startDate),
     endDate = endDate.cata(Some(_), None, orig.endDate),
@@ -64,10 +66,12 @@ final case class ApiPartialDocument(recordId: Option[Long],
         endDate = endDate.toOption,
         providerName = provider.toOption,
         providerTypeId = providerTypeId.map(LongId[ProviderType]).toOption,
+        requiredType = None,
         meta = meta.map(x => TextJson(JsonSerializer.deserialize[Meta](x))).toOption,
         previousStatus = None,
         assignee = None,
         previousAssignee = None,
+        lastActiveUserId = None,
         lastUpdate = LocalDateTime.MIN
       )
     } else {
@@ -87,7 +91,7 @@ object ApiPartialDocument {
       (JsPath \ "provider").readTristate[String] and
       (JsPath \ "providerTypeId").readTristate[Long] and
       (JsPath \ "status").readNullable[String](Reads.of[String].filter(ValidationError("unknown status"))({
-        case x if DocumentUtils.statusFromString.isDefinedAt(x) => true
+        case x if Document.Status.fromString.isDefinedAt(x) => true
         case _ => false
       })) and
       (JsPath \ "assignee").readTristate[Long] and

@@ -19,7 +19,6 @@ object ExtractedData {
   final case class Meta(keyword: Meta.Keyword, evidence: Meta.Evidence)
 
   object Meta {
-
     final case class Evidence(pageRatio: Double, start: TextLayerPosition, end: TextLayerPosition)
 
     final case class TextLayerPosition(page: Integer, index: Integer, offset: Integer)

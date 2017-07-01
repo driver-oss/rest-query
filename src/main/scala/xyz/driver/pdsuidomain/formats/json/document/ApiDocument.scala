@@ -17,18 +17,20 @@ final case class ApiDocument(id: Long,
                              endDate: Option[LocalDate],
                              provider: Option[String],
                              providerTypeId: Option[Long],
+                             requiredType: Option[String],
                              status: Option[String],
                              previousStatus: Option[String],
                              assignee: Option[Long],
                              previousAssignee: Option[Long],
+                             lastActiveUser: Option[Long],
                              meta: Option[String])
 
 object ApiDocument {
 
   private val statusFormat = Format(
     Reads.StringReads.filter(ValidationError("unknown status")) {
-      case x if DocumentUtils.statusFromString.isDefinedAt(x) => true
-      case _                                                  => false
+      case x if Document.RequiredType.fromString.isDefinedAt(x) => true
+      case _                                                    => false
     },
     Writes.StringWrites
   )
@@ -43,10 +45,12 @@ object ApiDocument {
       (JsPath \ "endDate").formatNullable[LocalDate] and
       (JsPath \ "provider").formatNullable[String] and
       (JsPath \ "providerTypeId").formatNullable[Long] and
+      (JsPath \ "requiredType").formatNullable[String] and
       (JsPath \ "status").formatNullable(statusFormat) and
       (JsPath \ "previousStatus").formatNullable(statusFormat) and
       (JsPath \ "assignee").formatNullable[Long] and
       (JsPath \ "previousAssignee").formatNullable[Long] and
+      (JsPath \ "lastActiveUser").formatNullable[Long] and
       (JsPath \ "meta").formatNullable(Format(Reads { x =>
         JsSuccess(Json.stringify(x))
       }, Writes[String](Json.parse)))
@@ -63,10 +67,12 @@ object ApiDocument {
       endDate = document.endDate,
       provider = document.providerName,
       providerTypeId = document.providerTypeId.map(_.id),
-      status = Option(DocumentUtils.statusToString(document.status)),
-      previousStatus = document.previousStatus.map(DocumentUtils.statusToString),
+      requiredType = document.requiredType.map(Document.RequiredType.requiredTypeToString),
+      status = Option(Document.Status.statusToString(document.status)),
+      previousStatus = document.previousStatus.map(Document.Status.statusToString),
       assignee = document.assignee.map(_.id),
       previousAssignee = document.previousAssignee.map(_.id),
+      lastActiveUser = document.lastActiveUserId.map(_.id),
       meta = document.meta.map(meta => JsonSerializer.serialize(meta.content))
     )
   }

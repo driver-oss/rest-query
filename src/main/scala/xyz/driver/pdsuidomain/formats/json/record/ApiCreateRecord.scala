@@ -15,6 +15,7 @@ final case class ApiCreateRecord(disease: String, patientId: String, requestId: 
     previousStatus = None,
     assignee = None,
     previousAssignee = None,
+    lastActiveUserId = None,
     patientId = UuidId(patientId),
     requestId = RecordRequestId(requestId),
     disease = disease,

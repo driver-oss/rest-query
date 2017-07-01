@@ -3,7 +3,6 @@ package xyz.driver.pdsuidomain.services
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db.Sorting
 import xyz.driver.pdsuicommon.error.DomainError
-import xyz.driver.pdsuicommon.logging.PhiLogging
 import xyz.driver.pdsuidomain.entities.Label
 
 import scala.concurrent.Future
@@ -20,7 +19,7 @@ object LabelService {
   }
 }
 
-trait LabelService extends PhiLogging {
+trait LabelService {
   import LabelService._
 
   def getAll(sorting: Option[Sorting] = None)(

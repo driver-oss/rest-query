@@ -14,7 +14,7 @@ object WritesUtils {
     w.transform { input: JsValue =>
       input match {
         case JsObject(map) => JsObject(map.filter(Function.tupled(p)))
-        case x => x
+        case x             => x
       }
     }
   }

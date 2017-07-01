@@ -11,8 +11,7 @@ object SafeBridgeUploadQueue {
 
   trait Tag extends Product with Serializable
 
-  case class SafeTask[T <: Tag](tag: T,
-                                private[SafeBridgeUploadQueue] val queueItem: BridgeUploadQueue.Item)
+  case class SafeTask[T <: Tag](tag: T, private[SafeBridgeUploadQueue] val queueItem: BridgeUploadQueue.Item)
 
   object SafeTask {
     implicit def toPhiString[T <: Tag](x: SafeTask[T]): PhiString = {
@@ -27,20 +26,20 @@ object SafeBridgeUploadQueue {
 
 }
 
-class SafeBridgeUploadQueue[T <: Tag](kind: String,
-                                      origQueue: BridgeUploadQueue)
-                                     (implicit
-                                      tagMarshaller: Marshaller[T, String],
-                                      dependencyResolver: DependencyResolver[T],
-                                      executionContext: ExecutionContext) {
+class SafeBridgeUploadQueue[T <: Tag](kind: String, origQueue: BridgeUploadQueue)(
+        implicit tagMarshaller: Marshaller[T, String],
+        dependencyResolver: DependencyResolver[T],
+        executionContext: ExecutionContext) {
 
   type Task = SafeTask[T]
 
-  def add(tag: T): Future[BridgeUploadQueue.Item] = origQueue.add(BridgeUploadQueue.Item(
-    kind = kind,
-    tag = tagMarshaller.write(tag),
-    dependency = dependencyResolver.getDependency(tag)
-  ))
+  def add(tag: T): Future[BridgeUploadQueue.Item] =
+    origQueue.add(
+      BridgeUploadQueue.Item(
+        kind = kind,
+        tag = tagMarshaller.write(tag),
+        dependency = dependencyResolver.getDependency(tag)
+      ))
 
   def tryRetry(task: Task): Future[Option[Task]] = wrap(origQueue.tryRetry(task.queueItem))
 

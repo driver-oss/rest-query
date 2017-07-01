@@ -1,8 +1,5 @@
 package xyz.driver.pdsuidomain.formats.json.user
 
-import java.math.BigInteger
-import java.security.SecureRandom
-
 import xyz.driver.pdsuicommon.domain.{Email, LongId, PasswordHash, User}
 import play.api.data.validation._
 import play.api.libs.functional.syntax._
@@ -10,7 +7,7 @@ import play.api.libs.json._
 
 import scala.collection._
 import scala.util.Try
-import ApiPartialUser._
+import User._
 import xyz.driver.pdsuicommon.json.JsonValidationException
 import xyz.driver.pdsuicommon.validation.{AdditionalConstraints, JsonValidationErrors}
 
@@ -62,19 +59,12 @@ final case class ApiPartialUser(email: Option[String], name: Option[String], rol
 
 object ApiPartialUser {
 
-  // SecureRandom is thread-safe, see the implementation
-  private val random = new SecureRandom()
-
-  def createPassword: String = new BigInteger(240, random).toString(32)
-
   implicit val format: Format[ApiPartialUser] = (
     (JsPath \ "email").formatNullable[String](Format(Reads.email, Writes.StringWrites)) and
-      (JsPath \ "name").formatNullable[String](
-        Format(
-          Reads.filterNot[String](ValidationError("Username is too long (max length is 255 chars)", 255))(
-            _.length > 255),
-          Writes.StringWrites
-        )) and
+      (JsPath \ "name").formatNullable[String](Format(
+        Reads.filterNot[String](ValidationError("Username is too long (max length is 255 chars)", 255))(_.size > 255),
+        Writes.StringWrites
+      )) and
       (JsPath \ "roleId").formatNullable[String](
         Format(Reads
                  .of[String]
