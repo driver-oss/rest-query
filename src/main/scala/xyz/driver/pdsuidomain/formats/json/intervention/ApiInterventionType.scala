@@ -2,9 +2,13 @@ package xyz.driver.pdsuidomain.formats.json.intervention
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Format, JsPath}
+import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuidomain.entities.InterventionType
 
-final case class ApiInterventionType(id: Long, name: String)
+final case class ApiInterventionType(id: Long, name: String) {
+
+  def toDomain = InterventionType(id = LongId[InterventionType](id), name = name)
+}
 
 object ApiInterventionType {
 

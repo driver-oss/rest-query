@@ -2,11 +2,20 @@ package xyz.driver.pdsuidomain.formats.json.hypothesis
 
 import java.util.UUID
 
-import xyz.driver.pdsuidomain.entities.Hypothesis
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Format, JsPath}
+import xyz.driver.pdsuicommon.domain.UuidId
+import xyz.driver.pdsuidomain.entities.Hypothesis
 
-final case class ApiHypothesis(id: UUID, name: String, treatmentType: String, description: String)
+final case class ApiHypothesis(id: UUID, name: String, treatmentType: String, description: String) {
+
+  def toDomain = Hypothesis(
+    id = UuidId[Hypothesis](id),
+    name = name,
+    treatmentType = treatmentType,
+    description = description
+  )
+}
 
 object ApiHypothesis {
 
