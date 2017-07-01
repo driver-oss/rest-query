@@ -15,7 +15,7 @@ object ApiExportTrial {
       (JsPath \ "trialId").format[String] and
       (JsPath \ "disease").format[String] and
       (JsPath \ "lastReviewed").format[Long]
-    ) (ApiExportTrial.apply, unlift(ApiExportTrial.unapply))
+  )(ApiExportTrial.apply, unlift(ApiExportTrial.unapply))
 
   def fromDomain(trial: ExportTrial): ApiExportTrial = ApiExportTrial(
     nctId = trial.nctId.id,

@@ -4,6 +4,7 @@ import Keys._
 lazy val core = (project in file("."))
   .driverLibrary("pds-ui-common")
   .settings(scalastyleSettings ++ /* wartRemoverSettings ++ */ formatSettings)
+  .settings(sources in (Compile, doc) := Seq.empty, publishArtifact in (Compile, packageDoc) := false)
   .settings(libraryDependencies ++= Seq(
     "ch.qos.logback"                    % "logback-classic"         % "1.1.7",
     "org.slf4j"                         % "slf4j-api"               % "1.7.21",

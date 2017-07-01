@@ -12,7 +12,7 @@ object ApiExportPatientLabel {
     (JsPath \ "labelId").format[String] and
       (JsPath \ "labelName").format[String] and
       (JsPath \ "evidence").format[List[ApiExportPatientLabelEvidence]]
-    ) (ApiExportPatientLabel.apply, unlift(ApiExportPatientLabel.unapply))
+  )(ApiExportPatientLabel.apply, unlift(ApiExportPatientLabel.unapply))
 
   def fromDomain(label: ExportPatientLabel) = ApiExportPatientLabel(
     id = label.id.toString,

@@ -23,12 +23,14 @@ object ApiExportTrialLabelCriterion {
       (JsPath \ "armIds").format[List[String]] and
       (JsPath \ "isCompound").format[Boolean] and
       (JsPath \ "isDefining").format[Boolean]
-    ) (ApiExportTrialLabelCriterion.apply, unlift(ApiExportTrialLabelCriterion.unapply))
+  )(ApiExportTrialLabelCriterion.apply, unlift(ApiExportTrialLabelCriterion.unapply))
 
   def fromDomain(x: ExportTrialLabelCriterion) = ApiExportTrialLabelCriterion(
-    value = x.value.map { x =>
-      FuzzyValue.valueToString(FuzzyValue.fromBoolean(x))
-    }.getOrElse("Unknown"),
+    value = x.value
+      .map { x =>
+        FuzzyValue.valueToString(FuzzyValue.fromBoolean(x))
+      }
+      .getOrElse("Unknown"),
     labelId = x.labelId.toString,
     criterionId = x.criterionId.toString,
     criterionText = x.criteria,

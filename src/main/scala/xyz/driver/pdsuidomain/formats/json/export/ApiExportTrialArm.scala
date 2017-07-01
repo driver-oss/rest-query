@@ -11,7 +11,7 @@ object ApiExportTrialArm {
   implicit val format: Format[ApiExportTrialArm] = (
     (JsPath \ "armId").format[String] and
       (JsPath \ "armName").format[String]
-    ) (ApiExportTrialArm.apply, unlift(ApiExportTrialArm.unapply))
+  )(ApiExportTrialArm.apply, unlift(ApiExportTrialArm.unapply))
 
   def fromDomain(arm: ExportTrialArm) = ApiExportTrialArm(
     armId = arm.armId.toString,

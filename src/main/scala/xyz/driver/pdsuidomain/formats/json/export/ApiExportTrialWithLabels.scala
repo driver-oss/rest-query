@@ -24,7 +24,7 @@ object ApiExportTrialWithLabels {
       (JsPath \ "labelVersion").format[Long] and
       (JsPath \ "arms").format[List[ApiExportTrialArm]] and
       (JsPath \ "criteria").format[List[ApiExportTrialLabelCriterion]]
-    ) (ApiExportTrialWithLabels.apply, unlift(ApiExportTrialWithLabels.unapply))
+  )(ApiExportTrialWithLabels.apply, unlift(ApiExportTrialWithLabels.unapply))
 
   def fromDomain(x: ExportTrialWithLabels) = ApiExportTrialWithLabels(
     nctId = x.nctId.id,

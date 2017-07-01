@@ -17,7 +17,7 @@ object ApiExportPatientLabelEvidence {
       (JsPath \ "labelValue").format[String](Writes[String](x => JsString(x.toUpperCase))) and
       (JsPath \ "evidenceText").format[String] and
       (JsPath \ "document").format[ApiExportPatientLabelEvidenceDocument]
-    ) (ApiExportPatientLabelEvidence.apply, unlift(ApiExportPatientLabelEvidence.unapply))
+  )(ApiExportPatientLabelEvidence.apply, unlift(ApiExportPatientLabelEvidence.unapply))
 
   def fromDomain(evidence: ExportPatientLabelEvidence) = ApiExportPatientLabelEvidence(
     evidenceId = evidence.id.toString,

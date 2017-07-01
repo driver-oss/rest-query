@@ -12,7 +12,6 @@ final case class ApiExportPatientLabelEvidenceDocument(documentId: String,
                                                        providerType: String,
                                                        date: LocalDate)
 
-
 object ApiExportPatientLabelEvidenceDocument {
 
   implicit val format: Format[ApiExportPatientLabelEvidenceDocument] = (
@@ -21,7 +20,7 @@ object ApiExportPatientLabelEvidenceDocument {
       (JsPath \ "documentType").format[String] and
       (JsPath \ "providerType").format[String] and
       (JsPath \ "date").format[LocalDate]
-    ) (ApiExportPatientLabelEvidenceDocument.apply, unlift(ApiExportPatientLabelEvidenceDocument.unapply))
+  )(ApiExportPatientLabelEvidenceDocument.apply, unlift(ApiExportPatientLabelEvidenceDocument.unapply))
 
   def fromDomain(document: ExportPatientLabelEvidenceDocument) =
     ApiExportPatientLabelEvidenceDocument(
