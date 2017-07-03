@@ -43,7 +43,7 @@ object ApiPatientEligibleTrial {
     patientId = eligibleTrialWithTrial.group.patientId.toString,
     trialId = eligibleTrialWithTrial.group.trialId.id,
     trialTitle = eligibleTrialWithTrial.trial.title,
-    arms = eligibleTrialWithTrial.arms.map(_.name),
+    arms = eligibleTrialWithTrial.arms.map(_.armName),
     hypothesisId = eligibleTrialWithTrial.group.hypothesisId.id,
     eligibleTrialWithTrial.group.verifiedEligibilityStatus.map(FuzzyValue.valueToString),
     eligibleTrialWithTrial.group.isVerified

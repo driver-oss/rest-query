@@ -3,7 +3,7 @@ package xyz.driver.pdsuidomain.formats.json.patient.trial
 import java.time.{ZoneId, ZonedDateTime}
 
 import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId}
-import xyz.driver.pdsuidomain.entities.{Arm, Label, PatientCriterion}
+import xyz.driver.pdsuidomain.entities.{Label, PatientCriterion, PatientCriterionArm}
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Format, JsPath, Reads, Writes}
@@ -53,8 +53,7 @@ object ApiPatientCriterion {
 
   def fromDomain(patientCriterion: PatientCriterion,
                  labelId: LongId[Label],
-                 arms: List[Arm],
-                 criterionIsCompound: Boolean) = ApiPatientCriterion(
+                 arms: List[PatientCriterionArm]) = ApiPatientCriterion(
     id = patientCriterion.id.id,
     labelId = labelId.id,
     nctId = patientCriterion.nctId.id,
@@ -64,8 +63,8 @@ object ApiPatientCriterion {
       FuzzyValue.valueToString(FuzzyValue.fromBoolean(x))
     },
     criterionIsDefining = patientCriterion.criterionIsDefining,
-    criterionIsCompound = criterionIsCompound,
-    arms = arms.map(_.name),
+    criterionIsCompound = patientCriterion.criterionValue.isEmpty,
+    arms = arms.map(_.armName),
     eligibilityStatus = patientCriterion.eligibilityStatus.map(FuzzyValue.valueToString),
     verifiedEligibilityStatus = patientCriterion.verifiedEligibilityStatus.map(FuzzyValue.valueToString),
     isVerified = patientCriterion.isVerified,
