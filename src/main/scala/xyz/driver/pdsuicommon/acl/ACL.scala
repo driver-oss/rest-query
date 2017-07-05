@@ -96,10 +96,10 @@ object ACL extends PhiLogging {
   object Message
       extends BaseACL(
         label = "message",
-        create = RepRoles ++ TreatmentMatchingRoles ++ TcRoles,
-        read = RepRoles ++ TreatmentMatchingRoles ++ TcRoles,
-        update = RepRoles ++ TreatmentMatchingRoles ++ TcRoles,
-        delete = RepRoles ++ TreatmentMatchingRoles ++ TcRoles
+        create = RepRoles ++ TreatmentMatchingRoles,
+        read = RepRoles ++ TreatmentMatchingRoles,
+        update = RepRoles ++ TreatmentMatchingRoles,
+        delete = RepRoles ++ TreatmentMatchingRoles
       )
 
   // TC
@@ -115,6 +115,15 @@ object ACL extends PhiLogging {
       extends BaseACL(
         label = "trial history",
         read = Set(TrialAdmin)
+      )
+
+  object TrialIssue
+      extends BaseACL(
+        label = "trial issue",
+        create = TcRoles,
+        read = TcRoles,
+        update = TcRoles,
+        delete = TcRoles
       )
 
   object StudyDesign
