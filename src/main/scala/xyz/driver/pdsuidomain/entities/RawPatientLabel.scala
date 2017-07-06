@@ -7,7 +7,6 @@ import xyz.driver.pdsuicommon.logging._
 
 final case class RawPatientLabel(patientId: UuidId[Patient],
                                  labelId: LongId[Label],
-                                 label: String,
                                  value: FuzzyValue,
                                  evidenceId: LongId[ExtractedData],
                                  evidenceText: String,
@@ -23,8 +22,7 @@ object RawPatientLabel {
 
   implicit def toPhiString(x: RawPatientLabel): PhiString = {
     import x._
-    phi"RawPatientLabel(patientId=$patientId, labelId=$labelId, label=${Unsafe(label)}, value=$value," +
-      phi"evidenceId=${Unsafe(evidenceId)}, " +
+    phi"RawPatientLabel(patientId=$patientId, labelId=$labelId, value=$value, evidenceId=${Unsafe(evidenceId)}, " +
       phi"evidenceText=${Unsafe(evidenceText)}, documentId=$documentId, requestId=${Unsafe(requestId)}, " +
       phi"documentType=${Unsafe(documentType)}, providerType=${Unsafe(providerType)}, " +
       phi"startDate=$startDate, endDate=$endDate)"
