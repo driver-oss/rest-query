@@ -4,7 +4,7 @@ import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuidomain.entities.{Label, RawPatientLabel}
 
-final case class ExportPatientLabel(id: LongId[Label], name: String, evidences: List[ExportPatientLabelEvidence])
+final case class ExportPatientLabel(id: LongId[Label], evidences: List[ExportPatientLabelEvidence])
 
 object ExportPatientLabel extends PhiLogging {
 
@@ -14,15 +14,6 @@ object ExportPatientLabel extends PhiLogging {
   }
 
   def fromRaw(labelId: LongId[Label], rawPatientLabels: List[RawPatientLabel]): ExportPatientLabel = {
-    val firstLabel = rawPatientLabels.headOption
-    if (firstLabel.isEmpty) {
-      logger.warn(phi"rawPatientLabels is empty, labelId: $labelId")
-    }
-
-    ExportPatientLabel(
-      id = labelId,
-      name = firstLabel.map(_.label).getOrElse(""),
-      evidences = rawPatientLabels.map(ExportPatientLabelEvidence.fromRaw)
-    )
+    ExportPatientLabel(id = labelId, evidences = rawPatientLabels.map(ExportPatientLabelEvidence.fromRaw))
   }
 }
