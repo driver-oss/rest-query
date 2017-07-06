@@ -45,9 +45,9 @@ class Cron(settings: Cron.Settings) extends Closeable with StrictLogging {
     * Checks unused jobs
     */
   def verify(): Unit = {
-    import scala.collection.JavaConversions.asScalaSet
+    import scala.collection.JavaConverters._
 
-    val unusedJobs = settings.intervals.keySet -- jobs.toSet
+    val unusedJobs = settings.intervals.keySet -- jobs.asScala.toSet
     unusedJobs.foreach { job =>
       logger.warn(s"The job '$job' is listed, but not registered or ignored")
     }
@@ -60,7 +60,7 @@ class Cron(settings: Cron.Settings) extends Closeable with StrictLogging {
 
 object Cron {
 
-  case class Settings(disable: String, intervals: Map[String, FiniteDuration])
+  final case class Settings(disable: String, intervals: Map[String, FiniteDuration])
 
   private class SingletonTask(taskName: String, job: () => Future[Unit])(implicit ec: ExecutionContext)
       extends TimerTask with StrictLogging {

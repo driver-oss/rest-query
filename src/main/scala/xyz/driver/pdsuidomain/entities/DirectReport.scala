@@ -32,10 +32,10 @@ object DirectReport {
   }
 }
 
-case class DirectReport(id: UuidId[DirectReport],
-                        patientId: UuidId[Patient],
-                        reportType: ReportType,
-                        date: LocalDate,
-                        documentType: String,
-                        providerType: String,
-                        providerName: String)
+final case class DirectReport(id: UuidId[DirectReport],
+                              patientId: UuidId[Patient],
+                              reportType: ReportType,
+                              date: LocalDate,
+                              documentType: String,
+                              providerType: String,
+                              providerName: String)

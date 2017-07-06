@@ -20,28 +20,28 @@ object QueueUploadService {
   object CreateReply {
     type Error = CreateReply with DomainError
 
-    case class Created(x: BridgeUploadQueue.Item) extends CreateReply
+    final case class Created(x: BridgeUploadQueue.Item) extends CreateReply
     case object AuthorizationError
         extends CreateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
-    case class CommonError(userMessage: String) extends CreateReply with DomainError
+    final case class CommonError(userMessage: String) extends CreateReply with DomainError
   }
 
   sealed trait GetByIdReply
   object GetByIdReply {
     type Error = GetByIdReply with DomainError
 
-    case class Entity(x: BridgeUploadQueue.Item) extends GetByIdReply
+    final case class Entity(x: BridgeUploadQueue.Item) extends GetByIdReply
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
-    case object NotFoundError                   extends GetByIdReply with DomainError.NotFoundError with DefaultNotFoundError
-    case class CommonError(userMessage: String) extends GetByIdReply with DomainError
+    case object NotFoundError                         extends GetByIdReply with DomainError.NotFoundError with DefaultNotFoundError
+    final case class CommonError(userMessage: String) extends GetByIdReply with DomainError
   }
 
   sealed trait GetListReply
   object GetListReply {
     type Error = GetListReply with DomainError
 
-    case class EntityList(xs: Seq[BridgeUploadQueue.Item], totalFound: Int) extends GetListReply
+    final case class EntityList(xs: Seq[BridgeUploadQueue.Item], totalFound: Int) extends GetListReply
 
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -51,10 +51,10 @@ object QueueUploadService {
   object ResetReply {
     type Error = ResetReply with DomainError
 
-    case class Updated(updated: BridgeUploadQueue.Item) extends ResetReply
-    case object AuthorizationError                      extends ResetReply with DomainError.AuthorizationError with DefaultAccessDeniedError
-    case object NotFoundError                           extends ResetReply with DefaultNotFoundError with DomainError.NotFoundError
-    case class CommonError(userMessage: String)         extends ResetReply with DomainError
+    final case class Updated(updated: BridgeUploadQueue.Item) extends ResetReply
+    case object AuthorizationError                            extends ResetReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+    case object NotFoundError                                 extends ResetReply with DefaultNotFoundError with DomainError.NotFoundError
+    final case class CommonError(userMessage: String)         extends ResetReply with DomainError
   }
 }
 

@@ -7,7 +7,7 @@ import scala.util.{Failure, Success, Try}
 final class JsResultOps[T](val self: JsResult[T]) extends AnyVal {
 
   def toTry: Try[T] = {
-    self.fold(
+    self.fold[Try[T]](
       errors => Failure(new JsonValidationException(errors)),
       Success(_)
     )

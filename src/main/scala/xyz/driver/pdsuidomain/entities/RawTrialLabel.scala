@@ -5,19 +5,19 @@ import java.time.LocalDateTime
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuicommon.logging._
 
-case class RawTrialLabel(nctId: StringId[Trial],
-                         trialId: UuidId[Trial],
-                         condition: String,
-                         lastReviewed: LocalDateTime,
-                         armName: String,
-                         armId: LongId[Arm],
-                         labelId: LongId[Label],
-                         value: Option[Boolean],
-                         criterionId: LongId[Criterion],
-                         criteria: String,
-                         criterionArmId: LongId[Arm],
-                         isCompound: Boolean,
-                         isDefining: Boolean)
+final case class RawTrialLabel(nctId: StringId[Trial],
+                               trialId: UuidId[Trial],
+                               condition: String,
+                               lastReviewed: LocalDateTime,
+                               armName: String,
+                               armId: LongId[Arm],
+                               labelId: LongId[Label],
+                               value: Option[Boolean],
+                               criterionId: LongId[Criterion],
+                               criteria: String,
+                               criterionArmId: LongId[Arm],
+                               isCompound: Boolean,
+                               isDefining: Boolean)
 
 object RawTrialLabel {
 

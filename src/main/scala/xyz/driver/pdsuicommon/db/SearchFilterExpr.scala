@@ -16,7 +16,7 @@ object SearchFilterExpr {
     value = "false"
   )
 
-  case class Dimension(tableName: Option[String], name: String) {
+  final case class Dimension(tableName: Option[String], name: String) {
     def isForeign: Boolean = tableName.isDefined
   }
 
@@ -33,13 +33,13 @@ object SearchFilterExpr {
   }
 
   object Atom {
-    case class Binary(dimension: Dimension, op: SearchFilterBinaryOperation, value: AnyRef) extends Atom
+    final case class Binary(dimension: Dimension, op: SearchFilterBinaryOperation, value: AnyRef) extends Atom
     object Binary {
       def apply(field: String, op: SearchFilterBinaryOperation, value: AnyRef): Binary =
         Binary(Dimension(None, field), op, value)
     }
 
-    case class NAry(dimension: Dimension, op: SearchFilterNAryOperation, values: Seq[AnyRef]) extends Atom
+    final case class NAry(dimension: Dimension, op: SearchFilterNAryOperation, values: Seq[AnyRef]) extends Atom
     object NAry {
       def apply(field: String, op: SearchFilterNAryOperation, values: Seq[AnyRef]): NAry =
         NAry(Dimension(None, field), op, values)

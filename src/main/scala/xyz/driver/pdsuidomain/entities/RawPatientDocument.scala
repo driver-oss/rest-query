@@ -5,16 +5,16 @@ import java.time.LocalDate
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuicommon.logging._
 
-case class RawPatientDocument(disease: String,
-                              patientId: UuidId[Patient],
-                              requestId: RecordRequestId,
-                              recordId: LongId[MedicalRecord],
-                              recordStatus: MedicalRecord.Status,
-                              documentId: LongId[Document],
-                              documentType: String,
-                              documentProviderType: String,
-                              documentStartDate: LocalDate,
-                              documentStatus: Document.Status)
+final case class RawPatientDocument(disease: String,
+                                    patientId: UuidId[Patient],
+                                    requestId: RecordRequestId,
+                                    recordId: LongId[MedicalRecord],
+                                    recordStatus: MedicalRecord.Status,
+                                    documentId: LongId[Document],
+                                    documentType: String,
+                                    documentProviderType: String,
+                                    documentStartDate: LocalDate,
+                                    documentStatus: Document.Status)
 
 object RawPatientDocument {
 

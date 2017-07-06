@@ -77,8 +77,8 @@ object BridgeUploadQueueRepositoryAdapter {
 
     sealed trait OnAttempt
     object OnAttempt {
-      case object Complete                    extends OnAttempt
-      case class Continue(interval: Duration) extends OnAttempt
+      case object Complete                          extends OnAttempt
+      final case class Continue(interval: Duration) extends OnAttempt
 
       implicit def toPhiString(x: OnAttempt): PhiString = Unsafe(x.toString)
     }

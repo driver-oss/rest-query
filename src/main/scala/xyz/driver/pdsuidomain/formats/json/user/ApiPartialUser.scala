@@ -63,10 +63,12 @@ object ApiPartialUser {
 
   implicit val format: Format[ApiPartialUser] = (
     (JsPath \ "email").formatNullable[String](Format(Reads.email, Writes.StringWrites)) and
-      (JsPath \ "name").formatNullable[String](Format(
-        Reads.filterNot[String](ValidationError("Username is too long (max length is 255 chars)", 255))(_.length > 255),
-        Writes.StringWrites
-      )) and
+      (JsPath \ "name").formatNullable[String](
+        Format(
+          Reads.filterNot[String](ValidationError("Username is too long (max length is 255 chars)", 255))(
+            _.length > 255),
+          Writes.StringWrites
+        )) and
       (JsPath \ "roleId").formatNullable[String](
         Format(Reads
                  .of[String]

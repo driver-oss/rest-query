@@ -22,7 +22,7 @@ object ArmService {
   sealed trait GetByIdReply
   object GetByIdReply {
 
-    case class Entity(x: Arm) extends GetByIdReply
+    final case class Entity(x: Arm) extends GetByIdReply
 
     type Error = GetByIdReply with DomainError
 
@@ -31,7 +31,7 @@ object ArmService {
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
+    final case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
         extends GetByIdReply with DomainError
   }
 
@@ -39,7 +39,7 @@ object ArmService {
   object GetListReply {
     type Error = GetListReply with DomainError
 
-    case class EntityList(xs: Seq[Arm], totalFound: Int) extends GetListReply
+    final case class EntityList(xs: Seq[Arm], totalFound: Int) extends GetListReply
 
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -71,7 +71,7 @@ object ArmService {
 
   sealed trait CreateReply
   object CreateReply {
-    case class Created(x: Arm) extends CreateReply
+    final case class Created(x: Arm) extends CreateReply
 
     type Error = CreateReply with DomainError
 
@@ -101,7 +101,7 @@ object ArmService {
     case object AuthorizationError
         extends DeleteReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String) extends DeleteReply with DomainError
+    final case class CommonError(userMessage: String) extends DeleteReply with DomainError
   }
 }
 

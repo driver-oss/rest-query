@@ -11,4 +11,4 @@ object LinkedPatient {
   }
 }
 
-case class LinkedPatient(userId: StringId[User], patientId: UuidId[Patient], trialId: StringId[Trial])
+final case class LinkedPatient(userId: StringId[User], patientId: UuidId[Patient], trialId: StringId[Trial])

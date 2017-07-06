@@ -23,7 +23,7 @@ object DocumentService {
 
   sealed trait GetByIdReply
   object GetByIdReply {
-    case class Entity(x: Document) extends GetByIdReply
+    final case class Entity(x: Document) extends GetByIdReply
 
     type Error = GetByIdReply with DomainError
 
@@ -32,7 +32,7 @@ object DocumentService {
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
+    final case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
         extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
@@ -43,19 +43,20 @@ object DocumentService {
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[Document], totalFound: Int, lastUpdate: Option[LocalDateTime]) extends GetListReply
+    final case class EntityList(xs: Seq[Document], totalFound: Int, lastUpdate: Option[LocalDateTime])
+        extends GetListReply
 
     type Error = GetListReply with DomainError
 
     case object AuthorizationError
         extends GetListReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String) extends GetListReply with DomainError
+    final case class CommonError(userMessage: String) extends GetListReply with DomainError
   }
 
   sealed trait CreateReply
   object CreateReply {
-    case class Created(x: Document) extends CreateReply
+    final case class Created(x: Document) extends CreateReply
 
     type Error = CreateReply with DomainError
 
@@ -64,12 +65,12 @@ object DocumentService {
     case object AuthorizationError
         extends CreateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String) extends CreateReply with DomainError
+    final case class CommonError(userMessage: String) extends CreateReply with DomainError
   }
 
   sealed trait UpdateReply
   object UpdateReply {
-    case class Updated(updated: Document) extends UpdateReply
+    final case class Updated(updated: Document) extends UpdateReply
 
     type Error = UpdateReply with DomainError
 
@@ -78,7 +79,7 @@ object DocumentService {
     case object AuthorizationError
         extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String) extends UpdateReply with DomainError
+    final case class CommonError(userMessage: String) extends UpdateReply with DomainError
 
     implicit def toPhiString(reply: UpdateReply): PhiString = reply match {
       case Updated(x) => phi"Updated($x)"
@@ -97,7 +98,7 @@ object DocumentService {
     case object AuthorizationError
         extends DeleteReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String) extends DeleteReply with DomainError
+    final case class CommonError(userMessage: String) extends DeleteReply with DomainError
   }
 }
 

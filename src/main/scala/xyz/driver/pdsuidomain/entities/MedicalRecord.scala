@@ -32,11 +32,11 @@ object MedicalRecord {
 
   object Meta {
 
-    case class Duplicate(predicted: Option[Boolean],
-                         startPage: Double,
-                         endPage: Double,
-                         startOriginalPage: Double,
-                         endOriginalPage: Option[Double])
+    final case class Duplicate(predicted: Option[Boolean],
+                               startPage: Double,
+                               endPage: Double,
+                               startOriginalPage: Double,
+                               endOriginalPage: Option[Double])
         extends Meta {
       override val metaType             = "duplicate"
       override def confirmed: Duplicate = copy(predicted = predicted.map(_ => false))
@@ -50,7 +50,7 @@ object MedicalRecord {
       }
     }
 
-    case class Reorder(predicted: Option[Boolean], items: Seq[Int]) extends Meta {
+    final case class Reorder(predicted: Option[Boolean], items: Seq[Int]) extends Meta {
       override val metaType           = "reorder"
       override def confirmed: Reorder = copy(predicted = predicted.map(_ => false))
     }
@@ -62,7 +62,7 @@ object MedicalRecord {
       }
     }
 
-    case class Rotation(predicted: Option[Boolean], items: Map[String, Int]) extends Meta {
+    final case class Rotation(predicted: Option[Boolean], items: Map[String, Int]) extends Meta {
       override val metaType            = "rotation"
       override def confirmed: Rotation = copy(predicted = predicted.map(_ => false))
     }
@@ -129,7 +129,7 @@ object MedicalRecord {
     case object Empty extends PdfSource
 
     /** @param createResource Constructor of the resource which is represents the file */
-    case class Channel(createResource: () => ReadableByteChannel) extends PdfSource
+    final case class Channel(createResource: () => ReadableByteChannel) extends PdfSource
   }
 
   implicit def toPhiString(x: MedicalRecord): PhiString = {
@@ -139,22 +139,22 @@ object MedicalRecord {
   }
 }
 
-case class MedicalRecord(id: LongId[MedicalRecord],
-                         status: MedicalRecord.Status,
-                         previousStatus: Option[MedicalRecord.Status],
-                         assignee: Option[StringId[User]],
-                         previousAssignee: Option[StringId[User]],
-                         lastActiveUserId: Option[StringId[User]],
-                         patientId: UuidId[Patient],
-                         requestId: RecordRequestId,
-                         disease: String,
-                         caseId: Option[CaseId],
-                         physician: Option[String],
-                         sourceName: String,
-                         meta: Option[TextJson[List[Meta]]],
-                         predictedMeta: Option[TextJson[List[Meta]]],
-                         predictedDocuments: Option[TextJson[List[Document]]],
-                         lastUpdate: LocalDateTime) {
+final case class MedicalRecord(id: LongId[MedicalRecord],
+                               status: MedicalRecord.Status,
+                               previousStatus: Option[MedicalRecord.Status],
+                               assignee: Option[StringId[User]],
+                               previousAssignee: Option[StringId[User]],
+                               lastActiveUserId: Option[StringId[User]],
+                               patientId: UuidId[Patient],
+                               requestId: RecordRequestId,
+                               disease: String,
+                               caseId: Option[CaseId],
+                               physician: Option[String],
+                               sourceName: String,
+                               meta: Option[TextJson[List[Meta]]],
+                               predictedMeta: Option[TextJson[List[Meta]]],
+                               predictedDocuments: Option[TextJson[List[Document]]],
+                               lastUpdate: LocalDateTime) {
 
   import MedicalRecord.Status._
 

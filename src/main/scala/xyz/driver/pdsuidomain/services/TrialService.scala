@@ -24,7 +24,8 @@ object TrialService {
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[Trial], totalFound: Int, lastUpdate: Option[LocalDateTime]) extends GetListReply
+    final case class EntityList(xs: Seq[Trial], totalFound: Int, lastUpdate: Option[LocalDateTime])
+        extends GetListReply
 
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -32,7 +33,7 @@ object TrialService {
 
   sealed trait GetByIdReply
   object GetByIdReply {
-    case class Entity(x: Trial) extends GetByIdReply
+    final case class Entity(x: Trial) extends GetByIdReply
 
     type Error = GetByIdReply with DomainError
 
@@ -41,7 +42,7 @@ object TrialService {
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
+    final case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
         extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
@@ -54,7 +55,7 @@ object TrialService {
   object GetPdfSourceReply {
     type Error = GetPdfSourceReply with DomainError
 
-    case class Entity(x: PdfSource) extends GetPdfSourceReply
+    final case class Entity(x: PdfSource) extends GetPdfSourceReply
 
     case object AuthorizationError
         extends GetPdfSourceReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -65,21 +66,21 @@ object TrialService {
 
     case object TrialNotFoundError extends GetPdfSourceReply with DomainError.NotFoundError with DefaultNotFoundError
 
-    case class CommonError(userMessage: String) extends GetPdfSourceReply with DomainError
+    final case class CommonError(userMessage: String) extends GetPdfSourceReply with DomainError
   }
 
   sealed trait UpdateReply
   object UpdateReply {
     type Error = UpdateReply with DomainError
 
-    case class Updated(updated: Trial) extends UpdateReply
+    final case class Updated(updated: Trial) extends UpdateReply
 
     case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
         extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String) extends UpdateReply with DomainError
+    final case class CommonError(userMessage: String) extends UpdateReply with DomainError
 
     implicit def toPhiString(reply: UpdateReply): PhiString = reply match {
       case Updated(x) => phi"Updated($x)"
@@ -119,5 +120,4 @@ trait TrialService {
 
   def unassign(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def removeTrialDetails(trialId: StringId[Trial]): Unit
 }

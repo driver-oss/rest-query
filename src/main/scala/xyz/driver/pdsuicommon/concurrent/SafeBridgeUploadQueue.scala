@@ -11,7 +11,7 @@ object SafeBridgeUploadQueue {
 
   trait Tag extends Product with Serializable
 
-  case class SafeTask[T <: Tag](tag: T, private[SafeBridgeUploadQueue] val queueItem: BridgeUploadQueue.Item)
+  final case class SafeTask[T <: Tag](tag: T, private[SafeBridgeUploadQueue] val queueItem: BridgeUploadQueue.Item)
 
   object SafeTask {
     implicit def toPhiString[T <: Tag](x: SafeTask[T]): PhiString = {

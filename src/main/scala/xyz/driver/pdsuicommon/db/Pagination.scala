@@ -5,7 +5,7 @@ import xyz.driver.pdsuicommon.logging._
 /**
   * @param pageNumber Starts with 1
   */
-case class Pagination(pageSize: Int, pageNumber: Int)
+final case class Pagination(pageSize: Int, pageNumber: Int)
 
 object Pagination {
 

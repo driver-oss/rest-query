@@ -25,7 +25,7 @@ object PatientHypothesisService {
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[(PatientHypothesis, Boolean)], totalFound: Int) extends GetListReply
+    final case class EntityList(xs: Seq[(PatientHypothesis, Boolean)], totalFound: Int) extends GetListReply
 
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -33,12 +33,12 @@ object PatientHypothesisService {
     case object PatientNotFoundError
         extends GetListReply with DefaultPatientNotFoundError with DomainError.NotFoundError
 
-    case class CommonError(userMessage: String) extends GetListReply with DomainError
+    final case class CommonError(userMessage: String) extends GetListReply with DomainError
   }
 
   sealed trait GetByIdReply
   object GetByIdReply {
-    case class Entity(x: PatientHypothesis, isRequired: Boolean) extends GetByIdReply
+    final case class Entity(x: PatientHypothesis, isRequired: Boolean) extends GetByIdReply
 
     type Error = GetByIdReply with DomainError
 
@@ -50,7 +50,7 @@ object PatientHypothesisService {
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case class CommonError(userMessage: String) extends GetByIdReply with DomainError
+    final case class CommonError(userMessage: String) extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
       case x: DomainError        => phi"GetByIdReply.Error($x)"
@@ -62,7 +62,7 @@ object PatientHypothesisService {
   object UpdateReply {
     type Error = UpdateReply with DomainError
 
-    case class Updated(updated: PatientHypothesis) extends UpdateReply
+    final case class Updated(updated: PatientHypothesis) extends UpdateReply
 
     case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
@@ -72,7 +72,7 @@ object PatientHypothesisService {
     case object AuthorizationError
         extends UpdateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case class CommonError(userMessage: String) extends UpdateReply with DomainError
+    final case class CommonError(userMessage: String) extends UpdateReply with DomainError
 
     implicit def toPhiString(reply: UpdateReply): PhiString = reply match {
       case Updated(x) => phi"Updated($x)"

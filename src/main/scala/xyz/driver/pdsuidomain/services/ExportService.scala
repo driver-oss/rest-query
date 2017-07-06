@@ -18,7 +18,7 @@ object ExportService {
   object GetPatientReply {
     type Error = GetPatientReply with DomainError
 
-    case class Entity(x: ExportPatientWithLabels) extends GetPatientReply
+    final case class Entity(x: ExportPatientWithLabels) extends GetPatientReply
 
     case object NotFoundError extends GetPatientReply with DomainError.NotFoundError {
       def userMessage: String = "Patient not found"
@@ -27,7 +27,7 @@ object ExportService {
 
   sealed trait GetTrialListReply
   object GetTrialListReply {
-    case class EntityList(xs: Seq[ExportTrial], totalFound: Int, lastUpdate: Option[LocalDateTime])
+    final case class EntityList(xs: Seq[ExportTrial], totalFound: Int, lastUpdate: Option[LocalDateTime])
         extends GetTrialListReply
   }
 
@@ -35,7 +35,7 @@ object ExportService {
   object GetTrialReply {
     type Error = GetTrialReply with DomainError
 
-    case class Entity(x: ExportTrialWithLabels) extends GetTrialReply
+    final case class Entity(x: ExportTrialWithLabels) extends GetTrialReply
 
     case object NotFoundError extends GetTrialReply with DomainError.NotFoundError {
       def userMessage: String = "Trial not found"

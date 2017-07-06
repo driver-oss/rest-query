@@ -8,13 +8,13 @@ import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.domain.User.Role
 import xyz.driver.pdsuicommon.utils.Utils
 
-case class User(id: StringId[User],
-                email: Email,
-                name: String,
-                role: Role,
-                passwordHash: PasswordHash,
-                latestActivity: Option[LocalDateTime],
-                deleted: Option[LocalDateTime])
+final case class User(id: StringId[User],
+                      email: Email,
+                      name: String,
+                      role: Role,
+                      passwordHash: PasswordHash,
+                      latestActivity: Option[LocalDateTime],
+                      deleted: Option[LocalDateTime])
 
 object User {
 

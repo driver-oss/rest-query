@@ -21,7 +21,7 @@ object InterventionService {
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[InterventionWithArms], totalFound: Int) extends GetListReply
+    final case class EntityList(xs: Seq[InterventionWithArms], totalFound: Int) extends GetListReply
 
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -29,7 +29,7 @@ object InterventionService {
 
   sealed trait GetByIdReply
   object GetByIdReply {
-    case class Entity(x: InterventionWithArms) extends GetByIdReply
+    final case class Entity(x: InterventionWithArms) extends GetByIdReply
 
     type Error = GetByIdReply with DomainError
 
@@ -38,7 +38,7 @@ object InterventionService {
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
+    final case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
         extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
@@ -51,14 +51,14 @@ object InterventionService {
   object UpdateReply {
     type Error = UpdateReply with DomainError
 
-    case class Updated(updated: InterventionWithArms) extends UpdateReply
+    final case class Updated(updated: InterventionWithArms) extends UpdateReply
 
     case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
         extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String) extends UpdateReply with DomainError
+    final case class CommonError(userMessage: String) extends UpdateReply with DomainError
   }
 
 }

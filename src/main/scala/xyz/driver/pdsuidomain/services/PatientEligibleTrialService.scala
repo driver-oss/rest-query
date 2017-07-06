@@ -23,7 +23,10 @@ object PatientEligibleTrialService {
     def userMessage: String = "Access denied"
   }
 
-  case class RichPatientEligibleTrial(trial: Trial, group: PatientTrialArmGroupView, arms: List[PatientCriterionArm])
+  final case class RichPatientEligibleTrial(trial: Trial,
+                                            group: PatientTrialArmGroupView,
+                                            arms: List[PatientCriterionArm])
+
   object RichPatientEligibleTrial {
     implicit def toPhiString(x: RichPatientEligibleTrial): PhiString = {
       phi"RichPatientEligibleTrial(group=${x.group}, trial=${x.trial}, arms=${x.arms})"
@@ -32,7 +35,7 @@ object PatientEligibleTrialService {
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[RichPatientEligibleTrial], totalFound: Int) extends GetListReply
+    final case class EntityList(xs: Seq[RichPatientEligibleTrial], totalFound: Int) extends GetListReply
 
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -40,12 +43,12 @@ object PatientEligibleTrialService {
     case object PatientNotFoundError
         extends GetListReply with DefaultPatientNotFoundError with DomainError.NotFoundError
 
-    case class CommonError(userMessage: String) extends GetListReply with DomainError
+    final case class CommonError(userMessage: String) extends GetListReply with DomainError
   }
 
   sealed trait GetByIdReply
   object GetByIdReply {
-    case class Entity(x: RichPatientEligibleTrial) extends GetByIdReply
+    final case class Entity(x: RichPatientEligibleTrial) extends GetByIdReply
 
     type Error = GetByIdReply with DomainError
 
@@ -57,7 +60,7 @@ object PatientEligibleTrialService {
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case class CommonError(userMessage: String) extends GetByIdReply with DomainError
+    final case class CommonError(userMessage: String) extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
       case x: DomainError => phi"GetByIdReply.Error($x)"
@@ -67,7 +70,7 @@ object PatientEligibleTrialService {
 
   sealed trait GetCriterionListOfGroupReply
   object GetCriterionListOfGroupReply {
-    case class EntityList(xs: Seq[(PatientCriterion, LongId[Label], List[PatientCriterionArm])], totalFound: Int)
+    final case class EntityList(xs: Seq[(PatientCriterion, LongId[Label], List[PatientCriterionArm])], totalFound: Int)
         extends GetCriterionListOfGroupReply
 
     type Error = GetCriterionListOfGroupReply with DomainError
@@ -81,14 +84,14 @@ object PatientEligibleTrialService {
     case object PatientNotFoundError
         extends GetCriterionListOfGroupReply with DefaultPatientNotFoundError with DomainError.NotFoundError
 
-    case class CommonError(userMessage: String) extends GetCriterionListOfGroupReply with DomainError
+    final case class CommonError(userMessage: String) extends GetCriterionListOfGroupReply with DomainError
   }
 
   sealed trait UpdateReply
   object UpdateReply {
     type Error = UpdateReply with DomainError
 
-    case class Updated(updated: RichPatientEligibleTrial) extends UpdateReply
+    final case class Updated(updated: RichPatientEligibleTrial) extends UpdateReply
 
     case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
@@ -98,7 +101,7 @@ object PatientEligibleTrialService {
     case object AuthorizationError
         extends UpdateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case class CommonError(userMessage: String) extends UpdateReply with DomainError
+    final case class CommonError(userMessage: String) extends UpdateReply with DomainError
 
     implicit def toPhiString(reply: UpdateReply): PhiString = reply match {
       case Updated(x) => phi"Updated($x)"

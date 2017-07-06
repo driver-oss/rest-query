@@ -20,7 +20,7 @@ object PatientLabelEvidenceService {
 
   sealed trait GetByIdReply
   object GetByIdReply {
-    case class Entity(x: PatientLabelEvidenceView) extends GetByIdReply
+    final case class Entity(x: PatientLabelEvidenceView) extends GetByIdReply
 
     type Error = GetByIdReply with DomainError
 
@@ -34,7 +34,7 @@ object PatientLabelEvidenceService {
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[PatientLabelEvidenceView], totalFound: Int) extends GetListReply
+    final case class EntityList(xs: Seq[PatientLabelEvidenceView], totalFound: Int) extends GetListReply
 
     type Error = GetListReply with DomainError
 
@@ -44,7 +44,7 @@ object PatientLabelEvidenceService {
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case class CommonError(userMessage: String) extends GetListReply with DomainError
+    final case class CommonError(userMessage: String) extends GetListReply with DomainError
   }
 }
 
