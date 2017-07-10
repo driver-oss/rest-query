@@ -11,6 +11,7 @@ import xyz.driver.pdsuicommon.json.JsonSerializer
 final case class ApiRecord(id: Long,
                            patientId: String,
                            caseId: Option[String],
+                           disease: String,
                            physician: Option[String],
                            lastUpdate: ZonedDateTime,
                            status: String,
@@ -34,6 +35,7 @@ object ApiRecord {
     (JsPath \ "id").format[Long] and
       (JsPath \ "patientId").format[String] and
       (JsPath \ "caseId").formatNullable[String] and
+      (JsPath \ "disease").format[String] and
       (JsPath \ "physician").formatNullable[String] and
       (JsPath \ "lastUpdate").format[ZonedDateTime] and
       (JsPath \ "status").format(statusFormat) and
@@ -50,6 +52,7 @@ object ApiRecord {
     id = record.id.id,
     patientId = record.patientId.toString,
     caseId = record.caseId.map(_.id),
+    disease = record.disease,
     physician = record.physician,
     lastUpdate = ZonedDateTime.of(record.lastUpdate, ZoneId.of("Z")),
     status = MedicalRecordStatus.statusToString(record.status),
