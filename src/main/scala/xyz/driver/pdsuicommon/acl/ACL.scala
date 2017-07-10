@@ -37,7 +37,7 @@ object ACL extends PhiLogging {
   object UserHistory
       extends BaseACL(
         label = "user history",
-        read = Set(RecordAdmin, TrialAdmin, TreatmentMatchingAdmin)
+        read = Set(RecordAdmin, TreatmentMatchingAdmin)
       )
 
   object Queue
@@ -109,6 +109,12 @@ object ACL extends PhiLogging {
         label = "trial",
         read = TcRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist,
         update = TcRoles
+      )
+
+  object TrialHistory
+      extends BaseACL(
+        label = "trial history",
+        read = Set(TrialAdmin)
       )
 
   object StudyDesign
