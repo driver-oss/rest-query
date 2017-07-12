@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type
 import com.fasterxml.jackson.annotation.{JsonProperty, JsonSubTypes, JsonTypeInfo}
-import xyz.driver.pdsuicommon.domain.{LongId, TextJson, User, UuidId}
+import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
 import xyz.driver.pdsuidomain.entities.MedicalRecord.Meta
@@ -142,9 +142,9 @@ object MedicalRecord {
 case class MedicalRecord(id: LongId[MedicalRecord],
                          status: MedicalRecord.Status,
                          previousStatus: Option[MedicalRecord.Status],
-                         assignee: Option[LongId[User]],
-                         previousAssignee: Option[LongId[User]],
-                         lastActiveUserId: Option[LongId[User]],
+                         assignee: Option[StringId[User]],
+                         previousAssignee: Option[StringId[User]],
+                         lastActiveUserId: Option[StringId[User]],
                          patientId: UuidId[Patient],
                          requestId: RecordRequestId,
                          disease: String,

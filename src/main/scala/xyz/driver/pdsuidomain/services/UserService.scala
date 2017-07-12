@@ -2,7 +2,7 @@ package xyz.driver.pdsuidomain.services
 
 import xyz.driver.pdsuicommon.auth.{AnonymousRequestContext, AuthenticatedRequestContext}
 import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterExpr, Sorting}
-import xyz.driver.pdsuicommon.domain.{Email, LongId, User}
+import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.error.DomainError
 
 import scala.concurrent.Future
@@ -103,10 +103,10 @@ trait UserService {
   /**
     * Utility method for getting request executor.
     */
-  def activateExecutor(executorId: LongId[User])(
+  def activateExecutor(executorId: StringId[User])(
           implicit requestContext: AnonymousRequestContext): Future[ActivateExecutorReply]
 
-  def getById(userId: LongId[User])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(userId: StringId[User])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
   def getByEmail(email: Email)(implicit requestContext: AnonymousRequestContext): Future[GetByEmailReply]
 
@@ -123,5 +123,5 @@ trait UserService {
   def update(origUser: User, draftUser: User)(
           implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def delete(userId: LongId[User])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
+  def delete(userId: StringId[User])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
 }

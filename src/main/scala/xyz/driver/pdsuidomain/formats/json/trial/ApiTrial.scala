@@ -10,10 +10,10 @@ import play.api.libs.json._
 final case class ApiTrial(id: String,
                           lastUpdate: Option[ZonedDateTime],
                           status: String,
-                          assignee: Option[Long],
+                          assignee: Option[String],
                           previousStatus: Option[String],
-                          previousAssignee: Option[Long],
-                          lastActiveUser: Option[Long],
+                          previousAssignee: Option[String],
+                          lastActiveUser: Option[String],
                           condition: Option[String],
                           phase: Option[String],
                           hypothesisId: Option[UUID],
@@ -30,10 +30,10 @@ object ApiTrial {
     (JsPath \ "id").format[String] and
       (JsPath \ "lastUpdate").formatNullable[ZonedDateTime] and
       (JsPath \ "status").format[String] and
-      (JsPath \ "assignee").formatNullable[Long] and
+      (JsPath \ "assignee").formatNullable[String] and
       (JsPath \ "previousStatus").formatNullable[String] and
-      (JsPath \ "previousAssignee").formatNullable[Long] and
-      (JsPath \ "lastActiveUser").formatNullable[Long] and
+      (JsPath \ "previousAssignee").formatNullable[String] and
+      (JsPath \ "lastActiveUser").formatNullable[String] and
       (JsPath \ "condition").formatNullable[String] and
       (JsPath \ "phase").formatNullable[String] and
       (JsPath \ "hypothesisId").formatNullable[UUID] and

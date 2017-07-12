@@ -7,7 +7,7 @@ import play.api.libs.json.{Format, JsPath}
 import xyz.driver.pdsuidomain.entities.UserHistory
 
 final case class ApiUserHistory(id: Long,
-                                executor: Long,
+                                executor: String,
                                 recordId: Option[Long],
                                 documentId: Option[Long],
                                 trialId: Option[String],
@@ -19,7 +19,7 @@ final case class ApiUserHistory(id: Long,
 object ApiUserHistory {
   implicit val format: Format[ApiUserHistory] = (
     (JsPath \ "id").format[Long] and
-      (JsPath \ "executor").format[Long] and
+      (JsPath \ "executor").format[String] and
       (JsPath \ "recordId").formatNullable[Long] and
       (JsPath \ "documentId").formatNullable[Long] and
       (JsPath \ "trialId").formatNullable[String] and

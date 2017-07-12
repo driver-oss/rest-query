@@ -15,7 +15,7 @@ final case class ApiPartialTrialIssue(text: String, evidence: String, archiveReq
     meta = meta
   )
 
-  def toDomain(userId: LongId[User], trialId: StringId[Trial]) = TrialIssue(
+  def toDomain(userId: StringId[User], trialId: StringId[Trial]) = TrialIssue(
     id = LongId(0),
     userId = userId,
     trialId = trialId,

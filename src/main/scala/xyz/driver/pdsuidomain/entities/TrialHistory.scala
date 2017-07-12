@@ -16,10 +16,10 @@ object TrialHistory {
 
   sealed trait State
   object State {
-    case object Summarize extends State
+    case object Summarize    extends State
     case object Criteriarize extends State
-    case object Review extends State
-    case object Flag extends State
+    case object Review       extends State
+    case object Flag         extends State
 
     val All: Set[State] = Set[State](Summarize, Criteriarize, Review, Flag)
 
@@ -50,12 +50,12 @@ object TrialHistory {
   }
 
   object Action {
-    case object Start extends Action
-    case object Submit extends Action
+    case object Start    extends Action
+    case object Submit   extends Action
     case object Unassign extends Action
-    case object Resolve extends Action
-    case object Flag extends Action
-    case object Archive extends Action
+    case object Resolve  extends Action
+    case object Flag     extends Action
+    case object Archive  extends Action
 
     val All: Set[Action] =
       Set[Action](Start, Submit, Unassign, Resolve, Flag, Archive)
@@ -85,9 +85,8 @@ object TrialHistory {
 }
 
 final case class TrialHistory(id: LongId[TrialHistory],
-                              executor: LongId[User],
+                              executor: StringId[User],
                               trialId: StringId[Trial],
                               state: State,
                               action: Action,
-                              created: LocalDateTime =
-                                LocalDateTime.now(ZoneId.of("Z")))
+                              created: LocalDateTime = LocalDateTime.now(ZoneId.of("Z")))

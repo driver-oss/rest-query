@@ -9,7 +9,7 @@ import xyz.driver.pdsuidomain.entities.TrialIssue
 final case class ApiTrialIssue(id: Long,
                                text: String,
                                lastUpdate: ZonedDateTime,
-                               userId: Long,
+                               userId: String,
                                isDraft: Boolean,
                                evidence: String,
                                archiveRequired: Boolean,
@@ -20,7 +20,7 @@ object ApiTrialIssue {
     (JsPath \ "id").format[Long] and
       (JsPath \ "text").format[String] and
       (JsPath \ "lastUpdate").format[ZonedDateTime] and
-      (JsPath \ "userId").format[Long] and
+      (JsPath \ "userId").format[String] and
       (JsPath \ "isDraft").format[Boolean] and
       (JsPath \ "evidence").format[String] and
       (JsPath \ "archiveRequired").format[Boolean] and

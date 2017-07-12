@@ -8,7 +8,7 @@ import xyz.driver.pdsuicommon.logging._
 final case class Message(id: LongId[Message],
                          text: String,
                          lastUpdate: LocalDateTime,
-                         userId: LongId[User],
+                         userId: StringId[User],
                          isDraft: Boolean,
                          recordId: Option[LongId[MedicalRecord]],
                          documentId: Option[LongId[Document]],

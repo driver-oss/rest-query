@@ -6,7 +6,7 @@ import play.api.libs.json.{Format, Json}
 import xyz.driver.pdsuidomain.entities.TrialHistory
 
 final case class ApiTrialHistory(id: Long,
-                                 executor: Long,
+                                 executor: String,
                                  trialId: String,
                                  state: String,
                                  action: String,

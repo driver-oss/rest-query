@@ -18,7 +18,7 @@ final case class ApiPartialMessage(text: Option[String],
                                    archiveRequired: Option[Boolean],
                                    meta: Option[String]) {
 
-  def toDomain(userId: LongId[User]) = Message(
+  def toDomain(userId: StringId[User]) = Message(
     id = LongId(0),
     text = text.getOrElse(""),
     userId = userId,

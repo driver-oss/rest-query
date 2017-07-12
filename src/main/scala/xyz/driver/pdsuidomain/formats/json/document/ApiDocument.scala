@@ -20,9 +20,9 @@ final case class ApiDocument(id: Long,
                              requiredType: Option[String],
                              status: Option[String],
                              previousStatus: Option[String],
-                             assignee: Option[Long],
-                             previousAssignee: Option[Long],
-                             lastActiveUser: Option[Long],
+                             assignee: Option[String],
+                             previousAssignee: Option[String],
+                             lastActiveUser: Option[String],
                              meta: Option[String])
 
 object ApiDocument {
@@ -48,9 +48,9 @@ object ApiDocument {
       (JsPath \ "requiredType").formatNullable[String] and
       (JsPath \ "status").formatNullable(statusFormat) and
       (JsPath \ "previousStatus").formatNullable(statusFormat) and
-      (JsPath \ "assignee").formatNullable[Long] and
-      (JsPath \ "previousAssignee").formatNullable[Long] and
-      (JsPath \ "lastActiveUser").formatNullable[Long] and
+      (JsPath \ "assignee").formatNullable[String] and
+      (JsPath \ "previousAssignee").formatNullable[String] and
+      (JsPath \ "lastActiveUser").formatNullable[String] and
       (JsPath \ "meta").formatNullable(Format(Reads { x =>
         JsSuccess(Json.stringify(x))
       }, Writes[String](Json.parse)))

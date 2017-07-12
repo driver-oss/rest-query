@@ -22,15 +22,11 @@ object TrialHistoryService {
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[TrialHistory],
-                          totalFound: Int,
-                          lastUpdate: Option[LocalDateTime])
+    case class EntityList(xs: Seq[TrialHistory], totalFound: Int, lastUpdate: Option[LocalDateTime])
         extends GetListReply
 
     case object AuthorizationError
-        extends GetListReply
-        with DomainError.AuthorizationError
-        with DefaultAccessDeniedError
+        extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
   }
 
 }
@@ -43,7 +39,6 @@ trait TrialHistoryService {
                        filter: SearchFilterExpr = SearchFilterExpr.Empty,
                        sorting: Option[Sorting] = None,
                        pagination: Option[Pagination] = None)(
-      implicit requestContext: AuthenticatedRequestContext)
-    : Future[GetListReply]
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
 }

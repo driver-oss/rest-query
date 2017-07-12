@@ -6,7 +6,7 @@ import xyz.driver.pdsuicommon.domain.{LongId, StringId, User}
 import xyz.driver.pdsuicommon.logging._
 
 final case class TrialIssue(id: LongId[TrialIssue],
-                            userId: LongId[User],
+                            userId: StringId[User],
                             trialId: StringId[Trial],
                             lastUpdate: LocalDateTime,
                             isDraft: Boolean,

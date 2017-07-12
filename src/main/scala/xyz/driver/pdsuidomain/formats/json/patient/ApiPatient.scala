@@ -10,10 +10,10 @@ final case class ApiPatient(id: String,
                             status: String,
                             name: String,
                             dob: LocalDate,
-                            assignee: Option[Long],
+                            assignee: Option[String],
                             previousStatus: Option[String],
-                            previousAssignee: Option[Long],
-                            lastActiveUser: Option[Long],
+                            previousAssignee: Option[String],
+                            lastActiveUser: Option[String],
                             lastUpdate: ZonedDateTime,
                             condition: String)
 
@@ -24,10 +24,10 @@ object ApiPatient {
       (JsPath \ "status").format[String] and
       (JsPath \ "name").format[String] and
       (JsPath \ "dob").format[LocalDate] and
-      (JsPath \ "assignee").formatNullable[Long] and
+      (JsPath \ "assignee").formatNullable[String] and
       (JsPath \ "previousStatus").formatNullable[String] and
-      (JsPath \ "previousAssignee").formatNullable[Long] and
-      (JsPath \ "lastActiveUser").formatNullable[Long] and
+      (JsPath \ "previousAssignee").formatNullable[String] and
+      (JsPath \ "lastActiveUser").formatNullable[String] and
       (JsPath \ "lastUpdate").format[ZonedDateTime] and
       (JsPath \ "condition").format[String]
   )(ApiPatient.apply, unlift(ApiPatient.unapply))

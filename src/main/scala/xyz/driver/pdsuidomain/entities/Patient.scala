@@ -2,7 +2,7 @@ package xyz.driver.pdsuidomain.entities
 
 import java.time.{LocalDate, LocalDateTime}
 
-import xyz.driver.pdsuicommon.domain.{LongId, User, UuidId}
+import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
 
@@ -54,10 +54,10 @@ final case class Patient(id: UuidId[Patient],
                          status: Patient.Status,
                          name: String,
                          dob: LocalDate,
-                         assignee: Option[LongId[User]],
+                         assignee: Option[StringId[User]],
                          previousStatus: Option[Patient.Status],
-                         previousAssignee: Option[LongId[User]],
-                         lastActiveUserId: Option[LongId[User]],
+                         previousAssignee: Option[StringId[User]],
+                         lastActiveUserId: Option[StringId[User]],
                          isUpdateRequired: Boolean,
                          condition: String,
                          orderId: PatientOrderId,

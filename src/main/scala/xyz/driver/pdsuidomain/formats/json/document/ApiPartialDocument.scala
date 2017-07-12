@@ -2,16 +2,16 @@ package xyz.driver.pdsuidomain.formats.json.document
 
 import java.time.{LocalDate, LocalDateTime}
 
-import xyz.driver.pdsuicommon.domain.{LongId, TextJson}
-import xyz.driver.pdsuidomain.entities.Document.Meta
-import xyz.driver.pdsuidomain.entities._
 import org.davidbild.tristate.Tristate
 import org.davidbild.tristate.contrib.play.ToJsPathOpsFromJsPath
 import play.api.data.validation._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, TextJson}
 import xyz.driver.pdsuicommon.json.{JsonSerializer, JsonValidationException}
 import xyz.driver.pdsuicommon.validation.{AdditionalConstraints, JsonValidationErrors}
+import xyz.driver.pdsuidomain.entities.Document.Meta
+import xyz.driver.pdsuidomain.entities._
 
 import scala.collection.breakOut
 import scala.util.Try
@@ -24,7 +24,7 @@ final case class ApiPartialDocument(recordId: Option[Long],
                                     provider: Tristate[String],
                                     providerTypeId: Tristate[Long],
                                     status: Option[String],
-                                    assignee: Tristate[Long],
+                                    assignee: Tristate[String],
                                     meta: Tristate[String]) {
 
   import xyz.driver.pdsuicommon.domain.User
@@ -33,7 +33,7 @@ final case class ApiPartialDocument(recordId: Option[Long],
     id = orig.id,
     status = status.map(Document.Status.fromString).getOrElse(orig.status),
     previousStatus = orig.previousStatus,
-    assignee = assignee.map(LongId[User]).cata(Some(_), None, orig.assignee),
+    assignee = assignee.map(StringId[User]).cata(Some(_), None, orig.assignee),
     previousAssignee = orig.previousAssignee,
     lastActiveUserId = orig.lastActiveUserId,
     recordId = recordId.map(LongId[MedicalRecord]).getOrElse(orig.recordId),
@@ -94,7 +94,7 @@ object ApiPartialDocument {
         case x if Document.Status.fromString.isDefinedAt(x) => true
         case _ => false
       })) and
-      (JsPath \ "assignee").readTristate[Long] and
+      (JsPath \ "assignee").readTristate[String] and
       (JsPath \ "meta").readTristate(Reads { x => JsSuccess(Json.stringify(x)) }).map {
         case Tristate.Present("{}") => Tristate.Absent
         case x => x
@@ -110,7 +110,7 @@ object ApiPartialDocument {
       (JsPath \ "provider").writeTristate[String] and
       (JsPath \ "providerTypeId").writeTristate[Long] and
       (JsPath \ "status").writeNullable[String] and
-      (JsPath \ "assignee").writeTristate[Long] and
+      (JsPath \ "assignee").writeTristate[String] and
       (JsPath \ "meta").writeTristate(Writes[String](Json.parse))
     ) (unlift(ApiPartialDocument.unapply))
 

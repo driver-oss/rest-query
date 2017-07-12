@@ -16,9 +16,9 @@ final case class ApiRecord(id: Long,
                            lastUpdate: ZonedDateTime,
                            status: String,
                            previousStatus: Option[String],
-                           assignee: Option[Long],
-                           previousAssignee: Option[Long],
-                           lastActiveUser: Option[Long],
+                           assignee: Option[String],
+                           previousAssignee: Option[String],
+                           lastActiveUser: Option[String],
                            meta: String)
 
 object ApiRecord {
@@ -40,9 +40,9 @@ object ApiRecord {
       (JsPath \ "lastUpdate").format[ZonedDateTime] and
       (JsPath \ "status").format(statusFormat) and
       (JsPath \ "previousStatus").formatNullable(statusFormat) and
-      (JsPath \ "assignee").formatNullable[Long] and
-      (JsPath \ "previousAssignee").formatNullable[Long] and
-      (JsPath \ "lastActiveUser").formatNullable[Long] and
+      (JsPath \ "assignee").formatNullable[String] and
+      (JsPath \ "previousAssignee").formatNullable[String] and
+      (JsPath \ "lastActiveUser").formatNullable[String] and
       (JsPath \ "meta").format(Format(Reads { x =>
         JsSuccess(Json.stringify(x))
       }, Writes[String](Json.parse)))

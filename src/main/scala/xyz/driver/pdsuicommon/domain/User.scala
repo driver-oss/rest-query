@@ -8,7 +8,7 @@ import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.domain.User.Role
 import xyz.driver.pdsuicommon.utils.Utils
 
-case class User(id: LongId[User],
+case class User(id: StringId[User],
                 email: Email,
                 name: String,
                 role: Role,
