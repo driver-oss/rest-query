@@ -142,7 +142,7 @@ object ACL extends PhiLogging {
       extends BaseACL(
         label = "criterion",
         create = Set(CriteriaCurator, TrialAdmin),
-        read = Set(CriteriaCurator, TrialAdmin, RoutesCurator, TreatmentMatchingAdmin, ResearchOncologist),
+        read = Set(CriteriaCurator, TrialAdmin),
         update = Set(CriteriaCurator, TrialAdmin),
         delete = Set(CriteriaCurator, TrialAdmin)
       )

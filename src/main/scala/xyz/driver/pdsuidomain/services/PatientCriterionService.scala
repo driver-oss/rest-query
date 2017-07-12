@@ -40,7 +40,7 @@ object PatientCriterionService {
   object GetListReply {
     type Error = GetListReply with DomainError
 
-    case class EntityList(xs: Seq[(PatientCriterion, LongId[Label], List[Arm], Boolean)],
+    case class EntityList(xs: Seq[(PatientCriterion, LongId[Label], List[PatientCriterionArm])],
                           totalFound: Int,
                           lastUpdate: Option[LocalDateTime])
         extends GetListReply
@@ -59,7 +59,7 @@ object PatientCriterionService {
   object GetByIdReply {
     type Error = GetByIdReply with DomainError
 
-    case class Entity(x: PatientCriterion, labelId: LongId[Label], armList: List[Arm], criterionIsCompound: Boolean)
+    case class Entity(x: PatientCriterion, labelId: LongId[Label], armList: List[PatientCriterionArm])
         extends GetByIdReply
 
     case object AuthorizationError
@@ -74,9 +74,7 @@ object PatientCriterionService {
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
       case x: DomainError => phi"GetByIdReply.Error($x)"
-      case Entity(x, labelId, armList, criterionIsCompound) =>
-        phi"GetByIdReply.Entity(entity=$x, labelId=$labelId, " +
-          phi"armList=$armList, criterionIsCompound=$criterionIsCompound)"
+      case Entity(x, labelId, armList) => phi"GetByIdReply.Entity(entity=$x, labelId=$labelId, armList=$armList)"
     }
   }
 
@@ -84,7 +82,7 @@ object PatientCriterionService {
   object UpdateReply {
     type Error = UpdateReply with DomainError
 
-    case class Updated(x: PatientCriterion, labelId: LongId[Label], armList: List[Arm], criterionIsCompound: Boolean)
+    case class Updated(x: PatientCriterion, labelId: LongId[Label], armList: List[PatientCriterionArm])
         extends UpdateReply
 
     case object UpdatedList extends UpdateReply

@@ -5,7 +5,7 @@ import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterExpr, Sorting}
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuicommon.error.DomainError
 import xyz.driver.pdsuicommon.logging._
-import xyz.driver.pdsuidomain.entities.{Arm, Trial, _}
+import xyz.driver.pdsuidomain.entities.{Trial, _}
 
 import scala.concurrent.Future
 
@@ -23,7 +23,7 @@ object PatientEligibleTrialService {
     def userMessage: String = "Access denied"
   }
 
-  case class RichPatientEligibleTrial(trial: Trial, group: PatientTrialArmGroupView, arms: List[Arm])
+  case class RichPatientEligibleTrial(trial: Trial, group: PatientTrialArmGroupView, arms: List[PatientCriterionArm])
   object RichPatientEligibleTrial {
     implicit def toPhiString(x: RichPatientEligibleTrial): PhiString = {
       phi"RichPatientEligibleTrial(group=${x.group}, trial=${x.trial}, arms=${x.arms})"
@@ -67,7 +67,7 @@ object PatientEligibleTrialService {
 
   sealed trait GetCriterionListOfGroupReply
   object GetCriterionListOfGroupReply {
-    case class EntityList(xs: Seq[(PatientCriterion, LongId[Label], List[Arm], Boolean)], totalFound: Int)
+    case class EntityList(xs: Seq[(PatientCriterion, LongId[Label], List[PatientCriterionArm])], totalFound: Int)
         extends GetCriterionListOfGroupReply
 
     type Error = GetCriterionListOfGroupReply with DomainError
