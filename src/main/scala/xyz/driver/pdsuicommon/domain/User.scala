@@ -11,7 +11,7 @@ import xyz.driver.pdsuicommon.utils.Utils
 case class User(id: StringId[User],
                 email: Email,
                 name: String,
-                role: Role,
+                roles: Set[Role],
                 passwordHash: PasswordHash,
                 latestActivity: Option[LocalDateTime],
                 deleted: Option[LocalDateTime])
@@ -74,7 +74,7 @@ object User {
 
   implicit def toPhiString(x: User): PhiString = {
     import x._
-    phi"User(id=$id, role=$role)"
+    phi"User(id=$id, roles=${Unsafe(roles.map(_.toString).mkString(", "))})"
   }
 
   // SecureRandom is thread-safe, see the implementation
