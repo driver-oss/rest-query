@@ -34,7 +34,7 @@ class RestMessageService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ApiMessage, CreateReply](response) { api =>
                 CreateReply.Created(api.toDomain)
-              }()
+              }
     } yield {
       reply
     }
@@ -66,7 +66,7 @@ class RestMessageService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ListResponse[ApiMessage], GetListReply](response) { api =>
                 GetListReply.EntityList(api.items.map(_.toDomain), api.meta.itemsCount, api.meta.lastUpdate)
-              }()
+              }
     } yield {
       reply
     }
@@ -81,7 +81,7 @@ class RestMessageService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ApiMessage, UpdateReply](response) { api =>
                 UpdateReply.Updated(api.toDomain)
-              }()
+              }
     } yield {
       reply
     }
@@ -94,7 +94,7 @@ class RestMessageService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ApiMessage, DeleteReply](response) { _ =>
                 DeleteReply.Deleted
-              }()
+              }
     } yield {
       reply
     }

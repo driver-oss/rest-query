@@ -41,7 +41,7 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ApiTrial, GetByIdReply](response) { api =>
                 GetByIdReply.Entity(api.toDomain)
-              }()
+              }
     } yield {
       reply
     }
@@ -64,7 +64,7 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ListResponse[ApiTrial], GetListReply](response) { api =>
                 GetListReply.EntityList(api.items.map(_.toDomain), api.meta.itemsCount, api.meta.lastUpdate)
-              }()
+              }
     } yield {
       reply
     }
@@ -79,7 +79,7 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ApiTrial, UpdateReply](response) { api =>
                 UpdateReply.Updated(api.toDomain)
-              }()
+              }
     } yield {
       reply
     }
@@ -93,7 +93,7 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ApiTrial, UpdateReply](response) { api =>
                 UpdateReply.Updated(api.toDomain)
-              }()
+              }
     } yield {
       reply
     }

@@ -36,7 +36,7 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ApiCriterion, CreateReply](response) { api =>
                 CreateReply.Created(api.toDomain)
-              }()
+              }
     } yield {
       reply
     }
@@ -48,7 +48,7 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ApiCriterion, GetByIdReply](response) { api =>
                 GetByIdReply.Entity(api.toDomain)
-              }()
+              }
     } yield {
       reply
     }
@@ -72,7 +72,7 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
                   api.meta.itemsCount,
                   api.meta.lastUpdate
                 )
-              }()
+              }
     } yield {
       reply
     }
@@ -87,7 +87,7 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ApiCriterion, UpdateReply](response) { api =>
                 UpdateReply.Updated(api.toDomain)
-              }()
+              }
     } yield {
       reply
     }
@@ -99,7 +99,7 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ApiCriterion, DeleteReply](response) { _ =>
                 DeleteReply.Deleted
-              }()
+              }
     } yield {
       reply
     }

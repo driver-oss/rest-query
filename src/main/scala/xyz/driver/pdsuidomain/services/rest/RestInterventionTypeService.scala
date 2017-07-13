@@ -7,7 +7,6 @@ import akka.stream.ActorMaterializer
 import xyz.driver.core.rest._
 import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
-import xyz.driver.pdsuicommon.error.DomainError
 import xyz.driver.pdsuidomain.formats.json.intervention.ApiInterventionType
 import xyz.driver.pdsuidomain.services.InterventionTypeService
 
@@ -23,14 +22,12 @@ class RestInterventionTypeService(transport: ServiceTransport, baseUri: Uri)(
   def getAll(sorting: Option[Sorting] = None)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] = {
 
+    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, "/v1/intervention-type", sortingQuery(sorting)))
     for {
-      response <- transport.sendRequestGetResponse(requestContext)(
-                   get(baseUri, "/v1/intervention-type", query = sortingQuery(sorting)))
+      response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ListResponse[ApiInterventionType], GetListReply](response) { list =>
                 val domain = list.items.map(_.toDomain)
                 GetListReply.EntityList(domain.toList, list.meta.itemsCount)
-              } {
-                case _: DomainError.AuthorizationError => GetListReply.AuthorizationError
               }
     } yield {
       reply

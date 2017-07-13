@@ -1,10 +1,8 @@
 package xyz.driver.pdsuidomain.services.rest
 
-import java.lang.RuntimeException
-
 import scala.concurrent.{ExecutionContext, Future}
 
-import akka.http.scaladsl.model.{HttpMethods, HttpRequest, HttpResponse, ResponseEntity, StatusCode, StatusCodes, Uri}
+import akka.http.scaladsl.model.{HttpResponse, ResponseEntity, StatusCodes, Uri}
 import akka.http.scaladsl.unmarshalling.{Unmarshal, Unmarshaller}
 import akka.stream.Materializer
 import xyz.driver.core.rest.ServiceRequestContext
@@ -17,7 +15,8 @@ import xyz.driver.pdsuicommon.db.{
   Sorting,
   SortingOrder
 }
-import xyz.driver.pdsuicommon.error.DomainError
+import xyz.driver.pdsuicommon.serialization.PlayJsonSupport
+import xyz.driver.pdsuicommon.error._
 
 trait RestHelper {
 
@@ -29,9 +28,6 @@ trait RestHelper {
 
   protected def endpointUri(baseUri: Uri, path: String, query: Seq[(String, String)]) =
     baseUri.withPath(Uri.Path(path)).withQuery(Uri.Query(query: _*))
-
-  def get(baseUri: Uri, path: String, query: Seq[(String, String)] = Seq.empty): HttpRequest =
-    HttpRequest(HttpMethods.GET, endpointUri(baseUri, path, query))
 
   def sortingQuery(sorting: Option[Sorting]): Seq[(String, String)] = {
     def dimensionQuery(dimension: Sorting.Dimension) = {
@@ -97,33 +93,30 @@ trait RestHelper {
     * @param unmarshaller An unmarshaller that converts a successful response to an api reply.
     */
   def apiResponse[ApiReply, DomainReply](response: HttpResponse)(successMapper: ApiReply => DomainReply)(
-          errorMapper: PartialFunction[DomainError, DomainReply] = PartialFunction.empty)(
           implicit unmarshaller: Unmarshaller[ResponseEntity, ApiReply]): Future[DomainReply] = {
 
-    val domainErrors: Map[StatusCode, DomainError] = Map(
-      StatusCodes.Unauthorized -> new DomainError.AuthenticationError {
-        override protected def userMessage: String = "unauthorized"
-      }, // 401
-      StatusCodes.Forbidden -> new DomainError.AuthorizationError {
-        override protected def userMessage: String = "forbidden"
-      }, // 403
-      StatusCodes.NotFound -> new DomainError.NotFoundError {
-        override protected def userMessage: String = "not found"
-      } // 404
-    )
+    def extractErrorMessage(response: HttpResponse): Future[String] = {
+      import PlayJsonSupport._
+      Unmarshal(response.entity)
+        .to[ErrorsResponse.ResponseError]
+        .transform(
+          _.message,
+          ex => new DomainException(ex.getMessage)
+        )
+    }
 
     if (response.status.isSuccess) {
       val reply = Unmarshal(response.entity).to[ApiReply]
       reply.map(successMapper)
     } else {
-      val domainError = domainErrors.get(response.status)
-      domainError.flatMap(errorMapper.lift) match {
-        case Some(error) => Future.successful(error)
-        case None =>
-          Future.failed(
-            new RuntimeException(
-              s"Unhandled domain error for HTTP status ${response.status}. Message ${response.entity}")
-          )
+      extractErrorMessage(response).flatMap { message =>
+        Future.failed(response.status match {
+          case StatusCodes.Unauthorized => new AuthenticationException(message)
+          case StatusCodes.Forbidden    => new AuthorizationException(message)
+          case StatusCodes.NotFound     => new NotFoundException(message)
+          case other =>
+            new DomainException(s"Unhandled domain error for HTTP status ${other.value}. Message ${message}")
+        })
       }
     }
   }

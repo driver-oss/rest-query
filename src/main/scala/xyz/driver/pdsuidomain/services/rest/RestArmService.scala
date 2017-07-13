@@ -40,7 +40,7 @@ class RestArmService(transport: ServiceTransport, baseUri: Uri)(implicit protect
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ListResponse[ApiArm], GetListReply](response) { api =>
                 GetListReply.EntityList(api.items.map(_.toDomain), api.meta.itemsCount)
-              }()
+              }
     } yield {
       reply
     }
@@ -52,7 +52,7 @@ class RestArmService(transport: ServiceTransport, baseUri: Uri)(implicit protect
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ApiArm, GetByIdReply](response) { api =>
                 GetByIdReply.Entity(api.toDomain)
-              }()
+              }
     } yield {
       reply
     }
@@ -65,7 +65,7 @@ class RestArmService(transport: ServiceTransport, baseUri: Uri)(implicit protect
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ApiArm, CreateReply](response) { api =>
                 CreateReply.Created(api.toDomain)
-              }()
+              }
     } yield {
       reply
     }
@@ -78,7 +78,7 @@ class RestArmService(transport: ServiceTransport, baseUri: Uri)(implicit protect
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ApiArm, UpdateReply](response) { api =>
                 UpdateReply.Updated(api.toDomain)
-              }()
+              }
     } yield {
       reply
     }
@@ -90,7 +90,7 @@ class RestArmService(transport: ServiceTransport, baseUri: Uri)(implicit protect
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ApiArm, DeleteReply](response) { _ =>
                 DeleteReply.Deleted
-              }()
+              }
     } yield {
       reply
     }

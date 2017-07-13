@@ -28,3 +28,11 @@ object DomainError {
     Unsafe(Utils.getClassSimpleName(x.getClass))
   }
 }
+
+/** Subclasses of this exception correspond to subclasses of DomainError. They
+  * are used in REST service implementations to fail futures rather than
+  * returning successful futures, completed with corresponding DomainErrors. */
+class DomainException(message: String)         extends RuntimeException(message)
+class NotFoundException(message: String)       extends DomainException(message) // 404
+class AuthenticationException(message: String) extends DomainException(message) // 401
+class AuthorizationException(message: String)  extends DomainException(message) // 403

@@ -40,7 +40,7 @@ class RestInterventionService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ListResponse[ApiIntervention], GetListReply](response) { api =>
                 GetListReply.EntityList(api.items.map(_.toDomain), api.meta.itemsCount)
-              }()
+              }
     } yield {
       reply
     }
@@ -53,7 +53,7 @@ class RestInterventionService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ApiIntervention, GetByIdReply](response) { api =>
                 GetByIdReply.Entity(api.toDomain)
-              }()
+              }
     } yield {
       reply
     }
@@ -69,7 +69,7 @@ class RestInterventionService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ApiIntervention, UpdateReply](response) { api =>
                 UpdateReply.Updated(api.toDomain)
-              }()
+              }
     } yield {
       reply
     }

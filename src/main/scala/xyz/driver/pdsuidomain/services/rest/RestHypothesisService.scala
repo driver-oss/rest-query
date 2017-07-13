@@ -30,7 +30,7 @@ class RestHypothesisService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply <- apiResponse[ListResponse[ApiHypothesis], GetListReply](response) { api =>
                 GetListReply.EntityList(api.items.map(_.toDomain), api.meta.itemsCount)
-              }()
+              }
     } yield {
       reply
     }
