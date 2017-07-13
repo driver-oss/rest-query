@@ -9,11 +9,11 @@ import play.api.libs.json._
 
 import scala.collection._
 import scala.util.Try
-import User._
 import xyz.driver.pdsuicommon.json.JsonValidationException
+import xyz.driver.pdsuicommon.json.Serialization.seqJsonFormat
 import xyz.driver.pdsuicommon.validation.{AdditionalConstraints, JsonValidationErrors}
 
-final case class ApiPartialUser(email: Option[String], name: Option[String], roleId: Option[String]) {
+final case class ApiPartialUser(email: Option[String], name: Option[String], roles: Option[Seq[String]]) {
 
   def applyTo(orig: User): Try[User] = Try {
     val validation = Map(
@@ -33,9 +33,9 @@ final case class ApiPartialUser(email: Option[String], name: Option[String], rol
 
   def toDomain(id: StringId[User] = StringId(UUID.randomUUID().toString)): Try[User] = Try {
     val validation = Map(
-      JsPath \ "email"  -> AdditionalConstraints.optionNonEmptyConstraint(email),
-      JsPath \ "name"   -> AdditionalConstraints.optionNonEmptyConstraint(name),
-      JsPath \ "roleId" -> AdditionalConstraints.optionNonEmptyConstraint(roleId)
+      JsPath \ "email" -> AdditionalConstraints.optionNonEmptyConstraint(email),
+      JsPath \ "name"  -> AdditionalConstraints.optionNonEmptyConstraint(name),
+      JsPath \ "roles" -> AdditionalConstraints.optionNonEmptyConstraint(roles)
     )
 
     val validationErrors: JsonValidationErrors = validation.collect({
@@ -48,8 +48,7 @@ final case class ApiPartialUser(email: Option[String], name: Option[String], rol
         id = id,
         email = userEmail,
         name = name.get,
-        role = roleId.map(UserRole.roleFromString).get,
-        passwordHash = PasswordHash(createPassword),
+        roles = roles.toSeq.flatMap(_.map(UserRole.roleFromString)).toSet,
         latestActivity = None,
         deleted = None
       )
@@ -69,13 +68,9 @@ object ApiPartialUser {
             _.length > 255),
           Writes.StringWrites
         )) and
-      (JsPath \ "roleId").formatNullable[String](
-        Format(Reads
-                 .of[String]
-                 .filter(ValidationError("unknown role"))({
-                   case x if UserRole.roleFromString.isDefinedAt(x) => true
-                   case _                                           => false
-                 }),
-               Writes.of[String]))
+      (JsPath \ "roles").formatNullable[Seq[String]](
+        Format(seqJsonFormat[String].filter(ValidationError("unknown roles"))(
+                 _.forall(UserRole.roleFromString.isDefinedAt)),
+               Writes.of[Seq[String]]))
   )(ApiPartialUser.apply, unlift(ApiPartialUser.unapply))
 }

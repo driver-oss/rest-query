@@ -5,7 +5,6 @@ import java.time.{LocalDate, LocalDateTime}
 
 import ai.x.diff._
 import org.scalatest.Assertions
-import xyz.driver.pdsuicommon.domain.PasswordHash
 import xyz.driver.pdsuidomain.entities.{Document, ExtractedData, MedicalRecord}
 
 import scala.io.AnsiColor
@@ -36,14 +35,6 @@ trait DiffUtils { this: Assertions =>
   implicit def urlDiffShow: DiffShow[URI] = new DiffShow[URI] {
     def show(x: URI): String = s"URI($x)"
     def diff(left: URI, right: URI): Comparison = {
-      if (left.equals(right)) Identical(show(left))
-      else Different(showChange(left, right))
-    }
-  }
-
-  implicit def passwordHashDiffShow: DiffShow[PasswordHash] = new DiffShow[PasswordHash] {
-    def show(x: PasswordHash): String = s"PasswordHash($x)"
-    def diff(left: PasswordHash, right: PasswordHash): Comparison = {
       if (left.equals(right)) Identical(show(left))
       else Different(showChange(left, right))
     }

@@ -72,6 +72,14 @@ final case class Computation[+R, +T](future: Future[Either[R, T]]) {
     })
   }
 
+  def mapAll[R2, T2](onLeft: R => Computation[R2, T2])(onRight: T => Computation[R2, T2])(
+          onFailure: () => Computation[R2, T2])(implicit ec: ExecutionContext): Computation[R2, T2] = {
+
+    Computation(future.flatMap(_.fold(onLeft, onRight).future).recoverWith {
+      case _ => onFailure().future
+    })
+  }
+
   def andThen(f: T => Any)(implicit ec: ExecutionContext): Computation[R, T] = map { a =>
     f(a)
     a
@@ -98,7 +106,6 @@ final case class Computation[+R, +T](future: Future[Either[R, T]]) {
     case Left(x)  => x
     case Right(x) => x
   }
-
 }
 
 object Computation {

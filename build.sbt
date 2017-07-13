@@ -25,7 +25,6 @@ lazy val core = (project in file("."))
     "com.google.cloud"                  % "google-cloud-storage"    % "1.2.1",
     "com.sendgrid"                      % "sendgrid-java"           % "3.1.0" exclude ("org.mockito", "mockito-core"),
     "com.typesafe"                      % "config"                  % "1.3.0",
-    "de.svenkubiak"                     % "jBCrypt"                 % "0.4.1",
     "org.asynchttpclient"               % "async-http-client"       % "2.0.24",
     "org.slf4j"                         % "slf4j-api"               % "1.7.21",
     "ai.x"                              %% "diff"                   % "1.2.0-get-simple-name-fix" % "test",

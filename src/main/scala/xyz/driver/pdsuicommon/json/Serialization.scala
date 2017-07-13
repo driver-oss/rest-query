@@ -40,12 +40,6 @@ object Serialization {
   private val emailJsonWrites: Writes[Email]  = Writes(email => JsString(email.value))
   implicit val emailJsonFormat: Format[Email] = Format(emailJsonReads, emailJsonWrites)
 
-  private val passwordHashJsonReads: Reads[PasswordHash] =
-    Reads.StringReads.map(hash => PasswordHash(hash.getBytes("UTF-8")))
-  private val passwordHashJsonWrites: Writes[PasswordHash] = Writes(
-    passwordHash => JsString(passwordHash.value.toString))
-  implicit val passwordHashJsonFormat: Format[PasswordHash] = Format(passwordHashJsonReads, passwordHashJsonWrites)
-
   private val caseIdJsonReads: Reads[CaseId]    = Reads.StringReads.map(CaseId(_))
   private val caseIdJsonWrites: Writes[CaseId]  = Writes(caseId => JsString(caseId.id))
   implicit val caseIdJsonFormat: Format[CaseId] = Format(caseIdJsonReads, caseIdJsonWrites)

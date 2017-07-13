@@ -142,7 +142,7 @@ object ACL extends PhiLogging {
       extends BaseACL(
         label = "criterion",
         create = Set(CriteriaCurator, TrialAdmin),
-        read = Set(CriteriaCurator, TrialAdmin),
+        read = Set(CriteriaCurator, TrialAdmin, RoutesCurator, TreatmentMatchingAdmin, ResearchOncologist),
         update = Set(CriteriaCurator, TrialAdmin),
         delete = Set(CriteriaCurator, TrialAdmin)
       )
@@ -227,28 +227,26 @@ object ACL extends PhiLogging {
                          delete: AclCheck = Forbid) {
 
     def isCreateAllow()(implicit requestContext: AuthenticatedRequestContext): Boolean = {
-      check("create", create)(requestContext.executor.role)
+      check("create", create)(requestContext.executor.roles)
     }
 
     def isReadAllow()(implicit requestContext: AuthenticatedRequestContext): Boolean = {
-      check("read", read)(requestContext.executor.role)
+      check("read", read)(requestContext.executor.roles)
     }
 
     def isUpdateAllow()(implicit requestContext: AuthenticatedRequestContext): Boolean = {
-      check("update", update)(requestContext.executor.role)
+      check("update", update)(requestContext.executor.roles)
     }
 
     def isDeleteAllow()(implicit requestContext: AuthenticatedRequestContext): Boolean = {
-      check("delete", delete)(requestContext.executor.role)
+      check("delete", delete)(requestContext.executor.roles)
     }
 
-    private def check(action: String, isAllowed: AclCheck)(executorRole: Role): Boolean = {
+    private def check(action: String, isAllowed: AclCheck)(executorRoles: Set[Role]): Boolean = {
       loggedError(
-        isAllowed(executorRole),
-        phi"$executorRole has no access to ${Unsafe(action)} a ${Unsafe(label)}"
+        executorRoles.exists(isAllowed),
+        phi"${Unsafe(executorRoles.mkString(", "))} has no access to ${Unsafe(action)} a ${Unsafe(label)}"
       )
     }
-
   }
-
 }
