@@ -5,7 +5,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.stream.ActorMaterializer
-import xyz.driver.core.rest._
+import xyz.driver.core.rest.{Pagination => _, _}
 import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
