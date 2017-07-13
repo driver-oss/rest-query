@@ -6,7 +6,7 @@ import org.scalatest.FreeSpecLike
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Span}
 import xyz.driver.pdsuicommon.db._
-import xyz.driver.pdsuicommon.domain.{Email, LongId, PasswordHash, User}
+import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.error.UnexpectedFilterException
 import xyz.driver.pdsuicommon.utils.DiffUtils
 
@@ -16,7 +16,7 @@ trait BaseSuite extends FreeSpecLike with DiffUtils with ScalaFutures {
   implicit val sqlContext      = new MockMySqlContext()
 
   def sampleUser(role: User.Role, email: String = "test@example.com", password: String = "123") = User(
-    id = LongId(2001),
+    id = StringId("2001"),
     email = Email(email),
     name = "Test",
     role = role,

@@ -7,7 +7,7 @@ import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
 
 final case class UserHistory(id: LongId[UserHistory],
-                             executor: LongId[User],
+                             executor: StringId[User],
                              recordId: Option[LongId[MedicalRecord]] = None,
                              documentId: Option[LongId[Document]] = None,
                              trialId: Option[StringId[Trial]] = None,
@@ -18,7 +18,7 @@ final case class UserHistory(id: LongId[UserHistory],
 
 object UserHistory {
 
-  def forDocument(executor: LongId[User],
+  def forDocument(executor: StringId[User],
                   documentId: LongId[Document],
                   state: UserHistory.State,
                   action: UserHistory.Action): UserHistory = UserHistory(
@@ -29,7 +29,7 @@ object UserHistory {
     action = action
   )
 
-  def forRecord(executor: LongId[User],
+  def forRecord(executor: StringId[User],
                 recordId: LongId[MedicalRecord],
                 state: UserHistory.State,
                 action: UserHistory.Action): UserHistory = UserHistory(
@@ -40,18 +40,7 @@ object UserHistory {
     action = action
   )
 
-  def forTrial(executor: LongId[User],
-               trialId: StringId[Trial],
-               state: UserHistory.State,
-               action: UserHistory.Action): UserHistory = UserHistory(
-    id = LongId(0L),
-    executor = executor,
-    trialId = Some(trialId),
-    state = state,
-    action = action
-  )
-
-  def forPatient(executor: LongId[User],
+  def forPatient(executor: StringId[User],
                  patientId: UuidId[Patient],
                  state: UserHistory.State,
                  action: UserHistory.Action): UserHistory = UserHistory(

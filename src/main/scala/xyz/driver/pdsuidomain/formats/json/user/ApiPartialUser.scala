@@ -1,6 +1,8 @@
 package xyz.driver.pdsuidomain.formats.json.user
 
-import xyz.driver.pdsuicommon.domain.{Email, LongId, PasswordHash, User}
+import java.util.UUID
+
+import xyz.driver.pdsuicommon.domain._
 import play.api.data.validation._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -29,7 +31,7 @@ final case class ApiPartialUser(email: Option[String], name: Option[String], rol
     }
   }
 
-  def toDomain(id: LongId[User] = LongId(0L)): Try[User] = Try {
+  def toDomain(id: StringId[User] = StringId(UUID.randomUUID().toString)): Try[User] = Try {
     val validation = Map(
       JsPath \ "email"  -> AdditionalConstraints.optionNonEmptyConstraint(email),
       JsPath \ "name"   -> AdditionalConstraints.optionNonEmptyConstraint(name),
@@ -62,7 +64,7 @@ object ApiPartialUser {
   implicit val format: Format[ApiPartialUser] = (
     (JsPath \ "email").formatNullable[String](Format(Reads.email, Writes.StringWrites)) and
       (JsPath \ "name").formatNullable[String](Format(
-        Reads.filterNot[String](ValidationError("Username is too long (max length is 255 chars)", 255))(_.size > 255),
+        Reads.filterNot[String](ValidationError("Username is too long (max length is 255 chars)", 255))(_.length > 255),
         Writes.StringWrites
       )) and
       (JsPath \ "roleId").formatNullable[String](

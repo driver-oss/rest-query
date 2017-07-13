@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 import io.getquill.MysqlEscape
 import org.scalatest.FreeSpecLike
 import xyz.driver.pdsuicommon.db.QueryBuilder.TableData
-import xyz.driver.pdsuicommon.domain.{Email, LongId, User}
+import xyz.driver.pdsuicommon.domain._
 
 class QueryBuilderParametersSuite extends FreeSpecLike {
 
@@ -20,7 +20,7 @@ class QueryBuilderParametersSuite extends FreeSpecLike {
   case class Entity(id: LongId[Entity],
                     name: String,
                     email: Email,
-                    optionUser: Option[LongId[User]],
+                    optionUser: Option[StringId[User]],
                     date: LocalDateTime,
                     optionDate: Option[LocalDateTime],
                     kindId: Long)

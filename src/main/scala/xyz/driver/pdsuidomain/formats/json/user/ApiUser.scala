@@ -7,12 +7,16 @@ import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-final case class ApiUser(id: Long, email: String, name: String, roleId: String, latestActivity: Option[ZonedDateTime])
+final case class ApiUser(id: String,
+                         email: String,
+                         name: String,
+                         roleId: String,
+                         latestActivity: Option[ZonedDateTime])
 
 object ApiUser {
 
   implicit val format: Format[ApiUser] = (
-    (JsPath \ "id").format[Long] and
+    (JsPath \ "id").format[String] and
       (JsPath \ "email").format[String](Reads.email) and
       (JsPath \ "name").format[String] and
       (JsPath \ "roleId").format[String](

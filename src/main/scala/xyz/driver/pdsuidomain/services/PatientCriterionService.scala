@@ -73,7 +73,7 @@ object PatientCriterionService {
     case class CommonError(userMessage: String) extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
-      case x: DomainError => phi"GetByIdReply.Error($x)"
+      case x: DomainError              => phi"GetByIdReply.Error($x)"
       case Entity(x, labelId, armList) => phi"GetByIdReply.Entity(entity=$x, labelId=$labelId, armList=$armList)"
     }
   }

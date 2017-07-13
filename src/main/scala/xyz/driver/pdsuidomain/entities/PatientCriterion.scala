@@ -64,6 +64,4 @@ object PatientCriterionArm {
 
 }
 
-final case class PatientCriterionArm(patientCriterionId: LongId[PatientCriterion],
-                                     armId: LongId[Arm],
-                                     armName: String)
+final case class PatientCriterionArm(patientCriterionId: LongId[PatientCriterion], armId: LongId[Arm], armName: String)

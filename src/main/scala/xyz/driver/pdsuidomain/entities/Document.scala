@@ -6,13 +6,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.core.{JsonGenerator, JsonParser}
 import com.fasterxml.jackson.databind._
 import com.fasterxml.jackson.databind.annotation.{JsonDeserialize, JsonSerialize}
-import xyz.driver.pdsuicommon.domain.{LongId, TextJson, User}
+import xyz.driver.pdsuicommon.compat.Implicits._
+import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
 import xyz.driver.pdsuicommon.validation.Validators
 import xyz.driver.pdsuicommon.validation.Validators.Validator
 import xyz.driver.pdsuidomain.entities.Document.Meta
-import xyz.driver.pdsuicommon.compat.Implicits._
 
 final case class ProviderType(id: LongId[ProviderType], name: String)
 
@@ -269,9 +269,9 @@ object Document {
 final case class Document(id: LongId[Document] = LongId(0L),
                           status: Document.Status,
                           previousStatus: Option[Document.Status],
-                          assignee: Option[LongId[User]],
-                          previousAssignee: Option[LongId[User]],
-                          lastActiveUserId: Option[LongId[User]],
+                          assignee: Option[StringId[User]],
+                          previousAssignee: Option[StringId[User]],
+                          lastActiveUserId: Option[StringId[User]],
                           recordId: LongId[MedicalRecord],
                           physician: Option[String],
                           typeId: Option[LongId[DocumentType]], // not null

@@ -9,7 +9,7 @@ import xyz.driver.pdsuidomain.entities.Message
 final case class ApiMessage(id: Long,
                             text: String,
                             lastUpdate: ZonedDateTime,
-                            userId: Long,
+                            userId: String,
                             isDraft: Boolean,
                             recordId: Option[Long],
                             documentId: Option[Long],
@@ -44,7 +44,7 @@ object ApiMessage {
     (JsPath \ "id").format[Long] and
       (JsPath \ "text").format[String] and
       (JsPath \ "lastUpdate").format[ZonedDateTime] and
-      (JsPath \ "userId").format[Long] and
+      (JsPath \ "userId").format[String] and
       (JsPath \ "isDraft").format[Boolean] and
       (JsPath \ "recordId").formatNullable[Long] and
       (JsPath \ "documentId").formatNullable[Long] and

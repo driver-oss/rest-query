@@ -126,7 +126,7 @@ class ApiPartialDocumentSuite extends FreeSpecLike {
           val apiPartialDocument = apiPartialDocumentExample.copy(assignee = newAssignee)
 
           val newDocument = apiPartialDocument.applyTo(origDocument)
-          assert(newDocument.assignee === newAssignee.toOption.map(LongId[User]))
+          assert(newDocument.assignee === newAssignee.toOption.map(StringId[User]))
         }
       }
 
