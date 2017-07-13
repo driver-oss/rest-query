@@ -21,16 +21,15 @@ class RestInterventionTypeService(transport: ServiceTransport, baseUri: Uri)(
 
   def getAll(sorting: Option[Sorting] = None)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] = {
-
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, "/v1/intervention-type", sortingQuery(sorting)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply <- apiResponse[ListResponse[ApiInterventionType], GetListReply](response) { list =>
-                val domain = list.items.map(_.toDomain)
-                GetListReply.EntityList(domain.toList, list.meta.itemsCount)
-              }
+      reply    <- apiResponse[ListResponse[ApiInterventionType]](response)
     } yield {
-      reply
+      {
+        val domain = reply.items.map(_.toDomain)
+        GetListReply.EntityList(domain.toList, reply.meta.itemsCount)
+      }
     }
   }
 

@@ -19,18 +19,14 @@ class RestStudyDesignService(transport: ServiceTransport, baseUri: Uri)(
   import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
   import xyz.driver.pdsuidomain.services.StudyDesignService._
 
-  // GET               /v1/study-design           xyz.driver.server.controllers.StudyDesignController.getList
-
   def getAll(sorting: Option[Sorting] = None)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, "/v1/study-design", sortingQuery(sorting)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply <- apiResponse[ListResponse[ApiStudyDesign], GetListReply](response) { api =>
-                GetListReply.EntityList(api.items.map(_.toDomain), api.meta.itemsCount)
-              }
+      reply    <- apiResponse[ListResponse[ApiStudyDesign]](response)
     } yield {
-      reply
+      GetListReply.EntityList(reply.items.map(_.toDomain), reply.meta.itemsCount)
     }
   }
 

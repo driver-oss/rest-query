@@ -22,23 +22,15 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
   import xyz.driver.pdsuidomain.formats.json.criterion.ApiCriterion
   import xyz.driver.pdsuidomain.services.CriterionService._
 
-  // GET               /v1/criterion              xyz.driver.server.controllers.CriterionController.getList
-  // GET               /v1/criterion/:id          xyz.driver.server.controllers.CriterionController.getById(id: Long)
-  // PATCH             /v1/criterion/:id          xyz.driver.server.controllers.CriterionController.update(id: Long)
-  // POST              /v1/criterion              xyz.driver.server.controllers.CriterionController.create
-  // DELETE            /v1/criterion/:id          xyz.driver.server.controllers.CriterionController.delete(id: Long)
-
   def create(draftRichCriterion: RichCriterion)(
           implicit requestContext: AuthenticatedRequestContext): Future[CreateReply] = {
     for {
       entity <- Marshal(ApiCriterion.fromDomain(draftRichCriterion)).to[RequestEntity]
       request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, "/v1/criterion")).withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply <- apiResponse[ApiCriterion, CreateReply](response) { api =>
-                CreateReply.Created(api.toDomain)
-              }
+      reply    <- apiResponse[ApiCriterion](response)
     } yield {
-      reply
+      CreateReply.Created(reply.toDomain)
     }
   }
 
@@ -46,11 +38,9 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/criterion/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply <- apiResponse[ApiCriterion, GetByIdReply](response) { api =>
-                GetByIdReply.Entity(api.toDomain)
-              }
+      reply    <- apiResponse[ApiCriterion](response)
     } yield {
-      reply
+      GetByIdReply.Entity(reply.toDomain)
     }
   }
 
@@ -58,23 +48,15 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] = {
-
     val request = HttpRequest(HttpMethods.GET,
                               endpointUri(baseUri,
                                           s"/v1/criterion",
                                           filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
-
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply <- apiResponse[ListResponse[ApiCriterion], GetListReply](response) { api =>
-                GetListReply.EntityList(
-                  api.items.map(_.toDomain),
-                  api.meta.itemsCount,
-                  api.meta.lastUpdate
-                )
-              }
+      reply    <- apiResponse[ListResponse[ApiCriterion]](response)
     } yield {
-      reply
+      GetListReply.EntityList(reply.items.map(_.toDomain), reply.meta.itemsCount, reply.meta.lastUpdate)
     }
   }
 
@@ -85,11 +67,9 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
       entity <- Marshal(ApiCriterion.fromDomain(draftRichCriterion)).to[RequestEntity]
       request = HttpRequest(HttpMethods.PATCH, endpointUri(baseUri, s"/v1/criterion/$id")).withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply <- apiResponse[ApiCriterion, UpdateReply](response) { api =>
-                UpdateReply.Updated(api.toDomain)
-              }
+      reply    <- apiResponse[ApiCriterion](response)
     } yield {
-      reply
+      UpdateReply.Updated(reply.toDomain)
     }
   }
 
@@ -97,11 +77,9 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
     val request = HttpRequest(HttpMethods.DELETE, endpointUri(baseUri, s"/v1/criterion/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply <- apiResponse[ApiCriterion, DeleteReply](response) { _ =>
-                DeleteReply.Deleted
-              }
+      reply    <- apiResponse[ApiCriterion](response)
     } yield {
-      reply
+      DeleteReply.Deleted
     }
   }
 

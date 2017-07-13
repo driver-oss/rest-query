@@ -15,7 +15,6 @@ import xyz.driver.pdsuicommon.db.{
   Sorting,
   SortingOrder
 }
-import xyz.driver.pdsuicommon.serialization.PlayJsonSupport
 import xyz.driver.pdsuicommon.error._
 
 trait RestHelper {
@@ -92,11 +91,11 @@ trait RestHelper {
     * is not explicitly handled, it will be encoded as a failure in the returned future.
     * @param unmarshaller An unmarshaller that converts a successful response to an api reply.
     */
-  def apiResponse[ApiReply, DomainReply](response: HttpResponse)(successMapper: ApiReply => DomainReply)(
-          implicit unmarshaller: Unmarshaller[ResponseEntity, ApiReply]): Future[DomainReply] = {
+  def apiResponse[ApiReply](response: HttpResponse)(
+          implicit unmarshaller: Unmarshaller[ResponseEntity, ApiReply]): Future[ApiReply] = {
 
     def extractErrorMessage(response: HttpResponse): Future[String] = {
-      import PlayJsonSupport._
+      import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
       Unmarshal(response.entity)
         .to[ErrorsResponse.ResponseError]
         .transform(
@@ -106,8 +105,7 @@ trait RestHelper {
     }
 
     if (response.status.isSuccess) {
-      val reply = Unmarshal(response.entity).to[ApiReply]
-      reply.map(successMapper)
+      Unmarshal(response.entity).to[ApiReply]
     } else {
       extractErrorMessage(response).flatMap { message =>
         Future.failed(response.status match {
