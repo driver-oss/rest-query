@@ -243,12 +243,10 @@ object ACL extends PhiLogging {
     }
 
     private def check(action: String, isAllowed: AclCheck)(executorRoles: Set[Role]): Boolean = {
-      executorRoles.exists { role =>
-        loggedError(
-          isAllowed(role),
-          phi"$role has no access to ${Unsafe(action)} a ${Unsafe(label)}"
-        )
-      }
+      loggedError(
+        executorRoles.exists(isAllowed),
+        phi"${Unsafe(executorRoles.mkString(", "))} has no access to ${Unsafe(action)} a ${Unsafe(label)}"
+      )
     }
   }
 }

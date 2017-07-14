@@ -20,7 +20,6 @@ lazy val core = (project in file("."))
     "org.asynchttpclient"               % "async-http-client"       % "2.0.24",
     "io.getquill"                       %% "quill-jdbc"             % "1.2.1",
     "io.github.cloudify"                %% "spdf"                   % "1.4.0",
-    "com.sendgrid"                      % "sendgrid-java"           % "3.1.0" exclude ("org.mockito", "mockito-core"),
     "com.github.spullara.mustache.java" % "scala-extensions-2.11"   % "0.9.4",
     "de.svenkubiak"                     % "jBCrypt"                 % "0.4.1",
     "com.google.cloud"                  % "google-cloud-storage"    % "0.9.4-beta",

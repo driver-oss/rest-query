@@ -2,7 +2,7 @@ package xyz.driver.pdsuicommon.domain
 
 import java.math.BigInteger
 import java.security.SecureRandom
-import java.time.LocalDateTime
+import java.time.{Instant, LocalDateTime, ZoneId}
 
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.domain.User.Role
@@ -14,7 +14,21 @@ case class User(id: StringId[User],
                 roles: Set[Role],
                 passwordHash: PasswordHash,
                 latestActivity: Option[LocalDateTime],
-                deleted: Option[LocalDateTime])
+                deleted: Option[LocalDateTime]) {
+
+  def this(driverUser: xyz.driver.entities.users.UserInfo) {
+    this(
+      id = StringId[xyz.driver.pdsuicommon.domain.User](driverUser.id.value),
+      email = Email(driverUser.email.toString),
+      name = driverUser.name.toString,
+      roles = driverUser.roles.flatMap(User.mapRoles),
+      passwordHash = PasswordHash(""),
+      latestActivity =
+        driverUser.lastLoginTime.map(t => Instant.ofEpochMilli(t.millis).atZone(ZoneId.of("Z")).toLocalDateTime),
+      deleted = Option.empty[LocalDateTime]
+    )
+  }
+}
 
 object User {
 
@@ -82,4 +96,39 @@ object User {
 
   def createPassword: String = new BigInteger(240, random).toString(32)
 
+  def mapRoles(coreRole: xyz.driver.core.auth.Role): Set[xyz.driver.pdsuicommon.domain.User.Role] = {
+    coreRole match {
+      case xyz.driver.entities.auth.AdministratorRole =>
+        Set(
+          xyz.driver.pdsuicommon.domain.User.Role.SystemUser,
+          xyz.driver.pdsuicommon.domain.User.Role.RecordAdmin,
+          xyz.driver.pdsuicommon.domain.User.Role.TrialAdmin,
+          xyz.driver.pdsuicommon.domain.User.Role.TreatmentMatchingAdmin
+        )
+      case xyz.driver.entities.auth.RecordAdmin =>
+        Set(xyz.driver.pdsuicommon.domain.User.Role.RecordAdmin)
+      case xyz.driver.entities.auth.RecordCleaner =>
+        Set(xyz.driver.pdsuicommon.domain.User.Role.RecordCleaner)
+      case xyz.driver.entities.auth.RecordOrganizer =>
+        Set(xyz.driver.pdsuicommon.domain.User.Role.RecordOrganizer)
+      case xyz.driver.entities.auth.DocumentExtractor =>
+        Set(xyz.driver.pdsuicommon.domain.User.Role.DocumentExtractor)
+      case xyz.driver.entities.auth.TrialSummarizer =>
+        Set(xyz.driver.pdsuicommon.domain.User.Role.TrialSummarizer)
+      case xyz.driver.entities.auth.CriteriaCurator =>
+        Set(xyz.driver.pdsuicommon.domain.User.Role.CriteriaCurator)
+      case xyz.driver.entities.auth.TrialAdmin =>
+        Set(xyz.driver.pdsuicommon.domain.User.Role.TrialAdmin)
+      case xyz.driver.entities.auth.EligibilityVerifier =>
+        Set(xyz.driver.pdsuicommon.domain.User.Role.EligibilityVerifier)
+      case xyz.driver.entities.auth.TreatmentMatchingAdmin =>
+        Set(xyz.driver.pdsuicommon.domain.User.Role.TreatmentMatchingAdmin)
+      case xyz.driver.entities.auth.RoutesCurator =>
+        Set(xyz.driver.pdsuicommon.domain.User.Role.RoutesCurator)
+      case xyz.driver.entities.auth.ResearchOncologist =>
+        Set(xyz.driver.pdsuicommon.domain.User.Role.ResearchOncologist)
+      case _ =>
+        Set.empty[xyz.driver.pdsuicommon.domain.User.Role]
+    }
+  }
 }
