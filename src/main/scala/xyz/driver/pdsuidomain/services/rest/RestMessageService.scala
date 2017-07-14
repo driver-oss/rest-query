@@ -76,7 +76,7 @@ class RestMessageService(transport: ServiceTransport, baseUri: Uri)(
   }
 
   def delete(messageId: LongId[Message])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply] = {
-    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/message/${messageId.id}"))
+    val request = HttpRequest(HttpMethods.DELETE, endpointUri(baseUri, s"/v1/message/${messageId.id}"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply    <- apiResponse[ApiMessage](response)

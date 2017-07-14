@@ -70,10 +70,11 @@ object Trial {
     case object Lung     extends Condition
     case object Prostate extends Condition
 
-    def fromString(condition: String): Condition = condition match {
-      case "Breast"   => Breast
-      case "Lung"     => Lung
-      case "Prostate" => Prostate
+    def fromString(condition: String): Option[Condition] = condition match {
+      case "Breast"   => Some(Breast)
+      case "Lung"     => Some(Lung)
+      case "Prostate" => Some(Prostate)
+      case _          => None
     }
 
     val All: Set[Condition] = Set(Breast, Lung, Prostate)

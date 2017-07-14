@@ -37,7 +37,11 @@ final case class ApiTrial(id: String,
     previousAssignee = this.previousAssignee.map(id => StringId(id)),
     lastActiveUserId = this.lastActiveUser.map(id => StringId(id)),
     lastUpdate = this.lastUpdate.toLocalDateTime(),
-    condition = Trial.Condition.fromString(this.condition),
+    condition = Trial.Condition
+      .fromString(this.condition)
+      .getOrElse(
+        throw new NoSuchElementException(s"unknown condition ${this.condition}")
+      ),
     phase = this.phase,
     hypothesisId = this.hypothesisId.map(id => UuidId(id)),
     studyDesignId = this.studyDesignId.map(id => LongId(id)),

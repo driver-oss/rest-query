@@ -74,21 +74,16 @@ trait RestHelper {
     case Some(pp) =>
       Seq(
         "pageNumber" -> pp.pageNumber.toString,
-        "pageSize"   -> pp.pageSize.toHexString
+        "pageSize"   -> pp.pageSize.toString
       )
   }
 
-  /** Utility method to parse responses that encode success and errors as subtypes
-    * of a common reply type.
+  /** Utility method to parse responses from records-acquisition-server.
     *
+    * Non-2xx HTTP error codes will be cause the returned future to fail with a corresponding
+    * `DomainException`.
     * @tparam ApiReply The type of the serialized reply object, contained in the HTTP entity
-    * @tparam DomainReply The type of the domain object that will be created from a successful reply.
-    *
     * @param response The HTTP response to parse.
-    * @param successMapper Transformation function from a deserialized api entity to a domain object.
-    * @param errorMapper Transformation function from general domain errors to
-    * specialized errors of the given DomainReply. Note that if a domain error
-    * is not explicitly handled, it will be encoded as a failure in the returned future.
     * @param unmarshaller An unmarshaller that converts a successful response to an api reply.
     */
   def apiResponse[ApiReply](response: HttpResponse)(
