@@ -24,10 +24,10 @@ object Message {
   implicit def toPhiString(x: Message): PhiString = {
     import x._
 
-    val entityId = recordId
-      .orElse(documentId)
-      .orElse(patientId)
+    val entityId: Option[String] = recordId
       .map(_.toString)
+      .orElse(documentId.map(_.toString))
+      .orElse(patientId.map(_.toString))
 
     phi"Message(id=$id, userId=$userId, isDraft=$isDraft, entityId=${Unsafe(entityId)}"
   }

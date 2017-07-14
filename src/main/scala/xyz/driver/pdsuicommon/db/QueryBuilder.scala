@@ -23,15 +23,15 @@ object QueryBuilder {
     */
   type Binder = PreparedStatement => PreparedStatement
 
-  case class TableData(tableName: String,
-                       lastUpdateFieldName: Option[String] = None,
-                       nullableFields: Set[String] = Set.empty)
+  final case class TableData(tableName: String,
+                             lastUpdateFieldName: Option[String] = None,
+                             nullableFields: Set[String] = Set.empty)
 
   val AllFields = Set("*")
 
 }
 
-case class TableLink(keyColumnName: String, foreignTableName: String, foreignKeyColumnName: String)
+final case class TableLink(keyColumnName: String, foreignTableName: String, foreignKeyColumnName: String)
 
 object QueryBuilderParameters {
   val AllFields = Set("*")
@@ -57,10 +57,11 @@ sealed trait QueryBuilderParameters {
   def toSql(countQuery: Boolean, fields: Set[String], namingStrategy: NamingStrategy): (String, QueryBuilder.Binder) = {
     val escapedTableName = namingStrategy.table(tableData.tableName)
     val fieldsSql: String = if (countQuery) {
-      "count(*)" + (tableData.lastUpdateFieldName match {
+      val suffix: String = (tableData.lastUpdateFieldName match {
         case Some(lastUpdateField) => s", max($escapedTableName.${namingStrategy.column(lastUpdateField)})"
         case None                  => ""
       })
+      "count(*)" + suffix
     } else {
       if (fields == QueryBuilderParameters.AllFields) {
         s"$escapedTableName.*"
@@ -260,11 +261,11 @@ sealed trait QueryBuilderParameters {
 
 }
 
-case class PostgresQueryBuilderParameters(tableData: QueryBuilder.TableData,
-                                          links: Map[String, TableLink] = Map.empty,
-                                          filter: SearchFilterExpr = SearchFilterExpr.Empty,
-                                          sorting: Sorting = Sorting.Empty,
-                                          pagination: Option[Pagination] = None)
+final case class PostgresQueryBuilderParameters(tableData: QueryBuilder.TableData,
+                                                links: Map[String, TableLink] = Map.empty,
+                                                filter: SearchFilterExpr = SearchFilterExpr.Empty,
+                                                sorting: Sorting = Sorting.Empty,
+                                                pagination: Option[Pagination] = None)
     extends QueryBuilderParameters {
 
   def limitToSql(): String = {
@@ -279,11 +280,11 @@ case class PostgresQueryBuilderParameters(tableData: QueryBuilder.TableData,
 /**
   * @param links Links to another tables grouped by foreignTableName
   */
-case class MysqlQueryBuilderParameters(tableData: QueryBuilder.TableData,
-                                       links: Map[String, TableLink] = Map.empty,
-                                       filter: SearchFilterExpr = SearchFilterExpr.Empty,
-                                       sorting: Sorting = Sorting.Empty,
-                                       pagination: Option[Pagination] = None)
+final case class MysqlQueryBuilderParameters(tableData: QueryBuilder.TableData,
+                                             links: Map[String, TableLink] = Map.empty,
+                                             filter: SearchFilterExpr = SearchFilterExpr.Empty,
+                                             sorting: Sorting = Sorting.Empty,
+                                             pagination: Option[Pagination] = None)
     extends QueryBuilderParameters {
 
   def limitToSql(): String =

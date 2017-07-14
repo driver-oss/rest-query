@@ -4,6 +4,7 @@ import java.time.{ZoneId, ZonedDateTime}
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Format, JsPath}
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuidomain.entities.Message
 
 final case class ApiMessage(id: Long,
@@ -19,7 +20,26 @@ final case class ApiMessage(id: Long,
                             endPage: Option[Double],
                             evidence: Option[String],
                             archiveRequired: Option[Boolean],
-                            meta: Option[String])
+                            meta: Option[String]) {
+
+  def toDomain = Message(
+    id = LongId(this.id),
+    text = this.text,
+    lastUpdate = this.lastUpdate.toLocalDateTime(),
+    userId = StringId(this.userId),
+    isDraft = this.isDraft,
+    recordId = this.recordId.map(id => LongId(id)),
+    documentId = this.documentId.map(id => LongId(id)),
+    patientId = this.patientId.map(id => UuidId(id)),
+    trialId = this.trialId.map(id => StringId(id)),
+    startPage = this.startPage,
+    endPage = this.endPage,
+    evidence = this.evidence,
+    archiveRequired = this.archiveRequired,
+    meta = this.meta
+  )
+
+}
 
 object ApiMessage {
 

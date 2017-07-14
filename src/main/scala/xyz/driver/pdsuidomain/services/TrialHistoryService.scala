@@ -22,10 +22,10 @@ object TrialHistoryService {
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[TrialHistory], totalFound: Int, lastUpdate: Option[LocalDateTime])
+    final case class EntityList(xs: Seq[TrialHistory], totalFound: Int, lastUpdate: Option[LocalDateTime])
         extends GetListReply
 
-    case object AuthorizationError
+    final case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
   }
 

@@ -1,6 +1,7 @@
 package xyz.driver.pdsuidomain.formats.json.intervention
 
-import xyz.driver.pdsuidomain.entities.InterventionWithArms
+import xyz.driver.pdsuicommon.domain.{LongId, StringId}
+import xyz.driver.pdsuidomain.entities.{Intervention, InterventionArm, InterventionWithArms}
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Format, JsPath}
 
@@ -10,7 +11,31 @@ final case class ApiIntervention(id: Long,
                                  description: String,
                                  isActive: Boolean,
                                  arms: List[Long],
-                                 trialId: String)
+                                 trialId: String,
+                                 originalName: String,
+                                 originalDescription: String,
+                                 originalType: Option[String]) {
+
+  def toDomain = {
+    val intervention = Intervention(
+      id = LongId(this.id),
+      trialId = StringId(this.trialId),
+      name = this.name,
+      originalName = this.originalName,
+      typeId = this.typeId.map(id => LongId(id)),
+      originalType = this.originalType.map(id => id.toString),
+      description = this.description,
+      originalDescription = this.originalDescription,
+      isActive = this.isActive
+    )
+
+    InterventionWithArms(intervention, this.arms.map { armId =>
+      InterventionArm(LongId(armId), intervention.id)
+    })
+
+  }
+
+}
 
 object ApiIntervention {
 
@@ -21,7 +46,10 @@ object ApiIntervention {
       (JsPath \ "description").format[String] and
       (JsPath \ "isActive").format[Boolean] and
       (JsPath \ "arms").format[List[Long]] and
-      (JsPath \ "trialId").format[String]
+      (JsPath \ "trialId").format[String] and
+      (JsPath \ "originalName").format[String] and
+      (JsPath \ "originalDescription").format[String] and
+      (JsPath \ "originalType").formatNullable[String]
   )(ApiIntervention.apply, unlift(ApiIntervention.unapply))
 
   def fromDomain(interventionWithArms: InterventionWithArms): ApiIntervention = {
@@ -35,7 +63,10 @@ object ApiIntervention {
       description = intervention.description,
       isActive = intervention.isActive,
       arms = arms.map(_.armId.id),
-      trialId = intervention.trialId.id
+      trialId = intervention.trialId.id,
+      originalName = intervention.originalName,
+      originalDescription = intervention.originalDescription,
+      originalType = intervention.originalType
     )
   }
 }

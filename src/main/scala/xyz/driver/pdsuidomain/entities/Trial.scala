@@ -52,16 +52,15 @@ object Trial {
     implicit def toPhiString(x: Status): PhiString = Unsafe(Utils.getClassSimpleName(x.getClass))
   }
 
-  case class PdfSource(path: Path) extends AnyVal
+  final case class PdfSource(path: Path) extends AnyVal
 
   implicit def toPhiString(x: Trial): PhiString = {
     import x._
     phi"Trial(id=$id, externalId=$externalId, status=$status, previousStatus=$previousStatus, " +
-      phi"lastActiveUserId=$lastActiveUserId, assignee=$assignee, previousAssignee=$previousAssignee, " +
-      phi"isSummaryReviewed=$isSummaryReviewed, isCriteriaReviewed=$isCriteriaReviewed)"
+      phi"lastActiveUserId=$lastActiveUserId, assignee=$assignee, previousAssignee=$previousAssignee, "
   }
 
-  case class Locations(locations: List[String])
+  final case class Locations(locations: List[String])
 
   sealed trait Condition
 
@@ -71,7 +70,14 @@ object Trial {
     case object Lung     extends Condition
     case object Prostate extends Condition
 
-    val All = Set(Breast, Lung, Prostate)
+    def fromString(condition: String): Option[Condition] = condition match {
+      case "Breast"   => Some(Breast)
+      case "Lung"     => Some(Lung)
+      case "Prostate" => Some(Prostate)
+      case _          => None
+    }
+
+    val All: Set[Condition] = Set(Breast, Lung, Prostate)
   }
 }
 
@@ -93,14 +99,7 @@ final case class Trial(id: StringId[Trial],
                        overviewTemplate: String,
                        isUpdated: Boolean,
                        title: String,
-                       originalTitle: String,
-                       isSummaryReviewed: Boolean,
-                       isCriteriaReviewed: Boolean,
-                       eligibilityCriteriaChecksum: String,
-                       briefSummaryChecksum: String,
-                       detailedDescriptionChecksum: String,
-                       armDescriptionChecksum: String) {
-
+                       originalTitle: String) {
   import Trial.Status._
 
   if (previousStatus.nonEmpty) {

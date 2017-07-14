@@ -11,7 +11,7 @@ object ScrapedTrialsService {
   object GetRawTrialReply {
     type Error = GetRawTrialReply with DomainError
 
-    case class TrialRawEntity(rawTrial: ScrapedTrial) extends GetRawTrialReply
+    final case class TrialRawEntity(rawTrial: ScrapedTrial) extends GetRawTrialReply
 
     case object NotFoundError extends GetRawTrialReply with DomainError.NotFoundError {
       override def userMessage: String = "Raw clinical trial not found"
@@ -20,12 +20,12 @@ object ScrapedTrialsService {
 
   sealed trait GetRawTrialOptReply
   object GetRawTrialOptReply {
-    case class TrialRawEntity(rawTrial: Option[ScrapedTrial]) extends GetRawTrialOptReply
+    final case class TrialRawEntity(rawTrial: Option[ScrapedTrial]) extends GetRawTrialOptReply
   }
 
   sealed trait GetAllRawTrialsExceptReply
   object GetAllRawTrialsExceptReply {
-    case class MultipleRawTrials(rawTrials: Seq[ScrapedTrial]) extends GetAllRawTrialsExceptReply
+    final case class MultipleRawTrials(rawTrials: Seq[ScrapedTrial]) extends GetAllRawTrialsExceptReply
   }
 
   sealed trait GetHtmlForReply
@@ -35,7 +35,7 @@ object ScrapedTrialsService {
     /**
       * @param trialHtmlMap nctId -> html
       */
-    case class HtmlMap(trialHtmlMap: TrialHtmlMap) extends GetHtmlForReply
+    final case class HtmlMap(trialHtmlMap: TrialHtmlMap) extends GetHtmlForReply
   }
 }
 

@@ -10,7 +10,7 @@ import scala.concurrent.Future
 object StudyDesignService {
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[StudyDesign], totalFound: Int) extends GetListReply
+    final case class EntityList(xs: Seq[StudyDesign], totalFound: Int) extends GetListReply
 
     case object AuthorizationError extends GetListReply with DomainError.AuthorizationError {
       def userMessage: String = "Access denied"
