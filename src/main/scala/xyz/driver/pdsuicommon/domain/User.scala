@@ -131,4 +131,35 @@ object User {
         Set.empty[xyz.driver.pdsuicommon.domain.User.Role]
     }
   }
+
+  def mapRolesToDriver(pdsuiRole: xyz.driver.pdsuicommon.domain.User.Role): Set[xyz.driver.core.auth.Role] = {
+    pdsuiRole match {
+      case xyz.driver.pdsuicommon.domain.User.Role.SystemUser =>
+        Set(xyz.driver.entities.auth.AdministratorRole)
+      case xyz.driver.pdsuicommon.domain.User.Role.RecordAdmin =>
+        Set(xyz.driver.entities.auth.RecordAdmin)
+      case xyz.driver.pdsuicommon.domain.User.Role.RecordCleaner =>
+        Set(xyz.driver.entities.auth.RecordCleaner)
+      case xyz.driver.pdsuicommon.domain.User.Role.RecordOrganizer =>
+        Set(xyz.driver.entities.auth.RecordOrganizer)
+      case xyz.driver.pdsuicommon.domain.User.Role.DocumentExtractor =>
+        Set(xyz.driver.entities.auth.DocumentExtractor)
+      case xyz.driver.pdsuicommon.domain.User.Role.TrialSummarizer =>
+        Set(xyz.driver.entities.auth.TrialSummarizer)
+      case xyz.driver.pdsuicommon.domain.User.Role.CriteriaCurator =>
+        Set(xyz.driver.entities.auth.CriteriaCurator)
+      case xyz.driver.pdsuicommon.domain.User.Role.TrialAdmin =>
+        Set(xyz.driver.entities.auth.TrialAdmin)
+      case xyz.driver.pdsuicommon.domain.User.Role.EligibilityVerifier =>
+        Set(xyz.driver.entities.auth.EligibilityVerifier)
+      case xyz.driver.pdsuicommon.domain.User.Role.TreatmentMatchingAdmin =>
+        Set(xyz.driver.entities.auth.TreatmentMatchingAdmin)
+      case xyz.driver.pdsuicommon.domain.User.Role.RoutesCurator =>
+        Set(xyz.driver.entities.auth.RoutesCurator)
+      case xyz.driver.pdsuicommon.domain.User.Role.ResearchOncologist =>
+        Set(xyz.driver.entities.auth.ResearchOncologist)
+      case _ =>
+        Set.empty[xyz.driver.core.auth.Role]
+    }
+  }
 }
