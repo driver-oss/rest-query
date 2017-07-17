@@ -22,7 +22,7 @@ lazy val core = (project in file("."))
     "ch.qos.logback"                    % "logback-classic"         % "1.1.7",
     "com.fasterxml.jackson.datatype"    % "jackson-datatype-jsr310" % "2.8.4",
     "com.github.spullara.mustache.java" % "scala-extensions-2.11"   % "0.9.4",
-    "com.google.cloud"                  % "google-cloud-storage"    % "0.9.4-beta",
+    "com.google.cloud"                  % "google-cloud-storage"    % "1.2.1",
     "com.sendgrid"                      % "sendgrid-java"           % "3.1.0" exclude ("org.mockito", "mockito-core"),
     "com.typesafe"                      % "config"                  % "1.3.0",
     "de.svenkubiak"                     % "jBCrypt"                 % "0.4.1",
