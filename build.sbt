@@ -14,7 +14,7 @@ lazy val core = (project in file("."))
     "com.fasterxml.jackson.datatype"    % "jackson-datatype-jsr310" % "2.8.4",
     "com.typesafe.play"                 %% "play"                   % "2.5.15",
     "xyz.driver"                        %% "core"                   % "0.13.22",
-    "xyz.driver"                        %% "domain-model"           % "0.11.1",
+    "xyz.driver"                        %% "domain-model"           % "0.11.5",
     "org.davidbild"                     %% "tristate-core"          % "0.2.0",
     "org.davidbild"                     %% "tristate-play"          % "0.2.0" exclude ("com.typesafe.play", "play-json"),
     "org.asynchttpclient"               % "async-http-client"       % "2.0.24",
