@@ -9,7 +9,6 @@ import play.api.libs.json._
 
 import scala.collection._
 import scala.util.Try
-import User._
 import xyz.driver.pdsuicommon.json.JsonValidationException
 import xyz.driver.pdsuicommon.json.Serialization.seqJsonFormat
 import xyz.driver.pdsuicommon.validation.{AdditionalConstraints, JsonValidationErrors}
@@ -50,7 +49,6 @@ final case class ApiPartialUser(email: Option[String], name: Option[String], rol
         email = userEmail,
         name = name.get,
         roles = roles.toSeq.flatMap(_.map(UserRole.roleFromString)).toSet,
-        passwordHash = PasswordHash(createPassword),
         latestActivity = None,
         deleted = None
       )

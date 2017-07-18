@@ -12,7 +12,6 @@ case class User(id: StringId[User],
                 email: Email,
                 name: String,
                 roles: Set[Role],
-                passwordHash: PasswordHash,
                 latestActivity: Option[LocalDateTime],
                 deleted: Option[LocalDateTime]) {
 
@@ -22,7 +21,6 @@ case class User(id: StringId[User],
       email = Email(driverUser.email.toString),
       name = driverUser.name.toString,
       roles = driverUser.roles.flatMap(User.mapRoles),
-      passwordHash = PasswordHash(""),
       latestActivity =
         driverUser.lastLoginTime.map(t => Instant.ofEpochMilli(t.millis).atZone(ZoneId.of("Z")).toLocalDateTime),
       deleted = Option.empty[LocalDateTime]

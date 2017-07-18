@@ -20,7 +20,6 @@ trait BaseSuite extends FreeSpecLike with DiffUtils with ScalaFutures {
     email = Email(email),
     name = "Test",
     roles = Set(role),
-    passwordHash = PasswordHash(password),
     latestActivity = Some(LocalDateTime.now(ZoneId.of("Z"))),
     deleted = None
   )
