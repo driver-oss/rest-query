@@ -4,7 +4,7 @@ import xyz.driver.entities.users.UserInfo
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.domain.User
 
-class AuthenticatedRequestContext(val driverUser: UserInfo, override val requestId: RequestId)
+class AuthenticatedRequestContext(val driverUser: UserInfo, override val requestId: RequestId, authToken: String = "")
     extends AnonymousRequestContext(requestId) {
 
   val executor: User = new User(driverUser)
@@ -25,8 +25,8 @@ class AuthenticatedRequestContext(val driverUser: UserInfo, override val request
 
 object AuthenticatedRequestContext {
 
-  def apply(driverUser: UserInfo) =
-    new AuthenticatedRequestContext(driverUser, RequestId())
+  def apply(driverUser: UserInfo, authToken: String = "") =
+    new AuthenticatedRequestContext(driverUser, RequestId(), authToken)
 
   implicit def toPhiString(x: AuthenticatedRequestContext): PhiString = {
     phi"AuthenticatedRequestContext(executor=${x.executor}, requestId=${x.requestId})"
