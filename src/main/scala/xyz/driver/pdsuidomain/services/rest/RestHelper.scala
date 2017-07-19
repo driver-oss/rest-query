@@ -92,10 +92,10 @@ trait RestHelper {
     def extractErrorMessage(response: HttpResponse): Future[String] = {
       import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
       Unmarshal(response.entity)
-        .to[ErrorsResponse.ResponseError]
+        .to[ErrorsResponse]
         .transform(
-          _.message,
-          ex => new DomainException(ex.getMessage)
+          response => response.errors.map(_.message).mkString(", "),
+          ex => new DomainException("Response has invalid format", ex)
         )
     }
 
@@ -108,7 +108,7 @@ trait RestHelper {
           case StatusCodes.Forbidden    => new AuthorizationException(message)
           case StatusCodes.NotFound     => new NotFoundException(message)
           case other =>
-            new DomainException(s"Unhandled domain error for HTTP status ${other.value}. Message ${message}")
+            new DomainException(s"Unhandled domain error for HTTP status ${other.value}. ${message}")
         })
       }
     }

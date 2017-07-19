@@ -32,7 +32,10 @@ object DomainError {
 /** Subclasses of this exception correspond to subclasses of DomainError. They
   * are used in REST service implementations to fail futures rather than
   * returning successful futures, completed with corresponding DomainErrors. */
-class DomainException(message: String)         extends RuntimeException(message)
-class NotFoundException(message: String)       extends DomainException(message) // 404
-class AuthenticationException(message: String) extends DomainException(message) // 401
-class AuthorizationException(message: String)  extends DomainException(message) // 403
+// scalastyle:off null
+@SuppressWarnings(Array("org.wartremover.warts.Null"))
+class DomainException(message: String, cause: Throwable = null) extends RuntimeException(message, cause)
+class NotFoundException(message: String)                        extends DomainException(message) // 404
+class AuthenticationException(message: String)                  extends DomainException(message) // 401
+class AuthorizationException(message: String)                   extends DomainException(message) // 403
+// scalastyle:on null

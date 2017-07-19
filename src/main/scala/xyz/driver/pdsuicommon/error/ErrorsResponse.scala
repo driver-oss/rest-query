@@ -5,15 +5,12 @@ import ErrorCode.{ErrorCode, Unspecified}
 import ErrorsResponse.ResponseError
 import xyz.driver.pdsuicommon.auth.{AnonymousRequestContext, RequestId}
 import xyz.driver.pdsuicommon.utils.Utils
-import play.api.http.Writeable
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import play.api.mvc.{Result, Results}
+import play.api.mvc.Results
 import xyz.driver.pdsuicommon.validation.JsonValidationErrors
 
-class ErrorsResponse(val errors: Seq[ResponseError], private val httpStatus: Results#Status, val requestId: RequestId) {
-  def toResult(implicit writeable: Writeable[ErrorsResponse]): Result = httpStatus(this)
-}
+final case class ErrorsResponse(errors: Seq[ResponseError], requestId: RequestId)
 
 object ErrorsResponse {
 
@@ -36,12 +33,10 @@ object ErrorsResponse {
 
   }
 
-  implicit val writes: Writes[ErrorsResponse] = Writes { errorsResponse =>
-    Json.obj(
-      "errors"    -> Json.toJson(errorsResponse.errors),
-      "requestId" -> Json.toJson(errorsResponse.requestId.value)
-    )
-  }
+  implicit val errorsResponseJsonFormat: Format[ErrorsResponse] = (
+    (JsPath \ "errors").format[Seq[ResponseError]] and
+      (JsPath \ "requestId").format[String]
+  )((errs, req) => ErrorsResponse.apply(errs, RequestId(req)), res => (res.errors, res.requestId.value))
 
   // deprecated, will be removed in REP-436
   def fromString(message: String, httpStatus: Results#Status)(
@@ -53,7 +48,6 @@ object ErrorsResponse {
           message = message,
           code = Unspecified
         )),
-      httpStatus = httpStatus,
       requestId = context.requestId
     )
   }
@@ -83,7 +77,7 @@ object ErrorsResponse {
         )
     }
 
-    new ErrorsResponse(errors, Results.BadRequest, context.requestId)
+    new ErrorsResponse(errors, context.requestId)
   }
 
 }
