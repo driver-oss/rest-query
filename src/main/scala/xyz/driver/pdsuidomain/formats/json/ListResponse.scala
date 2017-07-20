@@ -7,11 +7,11 @@ import xyz.driver.pdsuicommon.json.Serialization.seqJsonFormat
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-case class ListResponse[+T](items: Seq[T], meta: ListResponse.Meta)
+final case class ListResponse[+T](items: Seq[T], meta: ListResponse.Meta)
 
 object ListResponse {
 
-  case class Meta(itemsCount: Int, pageNumber: Int, pageSize: Int, lastUpdate: Option[LocalDateTime])
+  final case class Meta(itemsCount: Int, pageNumber: Int, pageSize: Int, lastUpdate: Option[LocalDateTime])
 
   object Meta {
     def apply(itemsCount: Int, pagination: Pagination, lastUpdate: Option[LocalDateTime]): Meta = {

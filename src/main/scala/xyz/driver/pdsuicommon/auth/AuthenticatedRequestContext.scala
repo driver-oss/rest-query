@@ -4,7 +4,7 @@ import xyz.driver.entities.users.UserInfo
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.domain.User
 
-class AuthenticatedRequestContext(val driverUser: UserInfo, override val requestId: RequestId, val authToken: String = "")
+class AuthenticatedRequestContext(val driverUser: UserInfo, override val requestId: RequestId, val authToken: String)
     extends AnonymousRequestContext(requestId) {
 
   val executor: User = new User(driverUser)

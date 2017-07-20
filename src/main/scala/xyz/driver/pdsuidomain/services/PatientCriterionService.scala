@@ -13,9 +13,9 @@ import scala.concurrent.Future
 
 object PatientCriterionService {
 
-  case class DraftPatientCriterion(id: LongId[PatientCriterion],
-                                   eligibilityStatus: Option[FuzzyValue],
-                                   isVerified: Option[Boolean]) {
+  final case class DraftPatientCriterion(id: LongId[PatientCriterion],
+                                         eligibilityStatus: Option[FuzzyValue],
+                                         isVerified: Option[Boolean]) {
     def applyTo(orig: PatientCriterion) = {
       orig.copy(
         eligibilityStatus = eligibilityStatus.orElse(orig.eligibilityStatus),
@@ -40,9 +40,9 @@ object PatientCriterionService {
   object GetListReply {
     type Error = GetListReply with DomainError
 
-    case class EntityList(xs: Seq[(PatientCriterion, LongId[Label], List[PatientCriterionArm])],
-                          totalFound: Int,
-                          lastUpdate: Option[LocalDateTime])
+    final case class EntityList(xs: Seq[(PatientCriterion, LongId[Label], List[PatientCriterionArm])],
+                                totalFound: Int,
+                                lastUpdate: Option[LocalDateTime])
         extends GetListReply
 
     case object AuthorizationError
@@ -51,7 +51,7 @@ object PatientCriterionService {
     case object PatientNotFoundError
         extends GetListReply with DomainError.NotFoundError with DefaultPatientNotFoundError
 
-    case class CommonError(userMessage: String) extends GetListReply with DomainError
+    final case class CommonError(userMessage: String) extends GetListReply with DomainError
 
   }
 
@@ -59,7 +59,7 @@ object PatientCriterionService {
   object GetByIdReply {
     type Error = GetByIdReply with DomainError
 
-    case class Entity(x: PatientCriterion, labelId: LongId[Label], armList: List[PatientCriterionArm])
+    final case class Entity(x: PatientCriterion, labelId: LongId[Label], armList: List[PatientCriterionArm])
         extends GetByIdReply
 
     case object AuthorizationError
@@ -70,7 +70,7 @@ object PatientCriterionService {
     case object PatientNotFoundError
         extends GetByIdReply with DomainError.NotFoundError with DefaultPatientNotFoundError
 
-    case class CommonError(userMessage: String) extends GetByIdReply with DomainError
+    final case class CommonError(userMessage: String) extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
       case x: DomainError              => phi"GetByIdReply.Error($x)"
@@ -82,7 +82,7 @@ object PatientCriterionService {
   object UpdateReply {
     type Error = UpdateReply with DomainError
 
-    case class Updated(x: PatientCriterion, labelId: LongId[Label], armList: List[PatientCriterionArm])
+    final case class Updated(x: PatientCriterion, labelId: LongId[Label], armList: List[PatientCriterionArm])
         extends UpdateReply
 
     case object UpdatedList extends UpdateReply
@@ -93,7 +93,7 @@ object PatientCriterionService {
     case object PatientNotFoundError
         extends UpdateReply with DomainError.NotFoundError with DefaultPatientNotFoundError
 
-    case class CommonError(userMessage: String) extends UpdateReply with DomainError
+    final case class CommonError(userMessage: String) extends UpdateReply with DomainError
   }
 }
 

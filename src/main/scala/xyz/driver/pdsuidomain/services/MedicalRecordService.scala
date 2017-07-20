@@ -25,13 +25,13 @@ object MedicalRecordService {
 
   sealed trait GetByIdReply
   object GetByIdReply {
-    case class Entity(x: MedicalRecord) extends GetByIdReply
+    final case class Entity(x: MedicalRecord) extends GetByIdReply
 
     type Error = GetByIdReply with DomainError
 
     case object NotFoundError extends GetByIdReply with DomainError.NotFoundError with DefaultNotFoundError
 
-    case class CommonError(userMessage: String) extends GetByIdReply with DomainError
+    final case class CommonError(userMessage: String) extends GetByIdReply with DomainError
 
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -41,7 +41,7 @@ object MedicalRecordService {
   object GetPdfSourceReply {
     type Error = GetPdfSourceReply with DomainError
 
-    case class Entity(x: PdfSource.Channel) extends GetPdfSourceReply
+    final case class Entity(x: PdfSource.Channel) extends GetPdfSourceReply
 
     case object AuthorizationError
         extends GetPdfSourceReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -52,12 +52,12 @@ object MedicalRecordService {
 
     case object RecordNotFoundError extends GetPdfSourceReply with DomainError.NotFoundError with DefaultNotFoundError
 
-    case class CommonError(userMessage: String) extends GetPdfSourceReply with DomainError
+    final case class CommonError(userMessage: String) extends GetPdfSourceReply with DomainError
   }
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[MedicalRecord], totalFound: Int, lastUpdate: Option[LocalDateTime])
+    final case class EntityList(xs: Seq[MedicalRecord], totalFound: Int, lastUpdate: Option[LocalDateTime])
         extends GetListReply
 
     case object AuthorizationError
@@ -66,24 +66,24 @@ object MedicalRecordService {
 
   sealed trait CreateReply
   object CreateReply {
-    case class Created(x: MedicalRecord) extends CreateReply
+    final case class Created(x: MedicalRecord) extends CreateReply
   }
 
   sealed trait UpdateReply
   object UpdateReply {
     type Error = UpdateReply with DomainError
 
-    case class Updated(updated: MedicalRecord) extends UpdateReply
+    final case class Updated(updated: MedicalRecord) extends UpdateReply
 
     case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
         extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String) extends UpdateReply with DomainError
+    final case class CommonError(userMessage: String) extends UpdateReply with DomainError
   }
 
-  case class Settings(pdfSourceBucket: String)
+  final case class Settings(pdfSourceBucket: String)
 }
 
 trait MedicalRecordService {

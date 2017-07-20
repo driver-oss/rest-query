@@ -23,11 +23,11 @@ object Sorting {
     * @param name      Dimension name
     * @param order     Order
     */
-  case class Dimension(tableName: Option[String], name: String, order: SortingOrder) extends Sorting {
+  final case class Dimension(tableName: Option[String], name: String, order: SortingOrder) extends Sorting {
     def isForeign: Boolean = tableName.isDefined
   }
 
-  case class Sequential(sorting: Seq[Dimension]) extends Sorting {
+  final case class Sequential(sorting: Seq[Dimension]) extends Sorting {
     override def toString: String = if (isEmpty(this)) "Empty" else super.toString
   }
 

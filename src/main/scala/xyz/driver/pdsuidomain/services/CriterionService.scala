@@ -21,7 +21,7 @@ object CriterionService {
     def userMessage: String = "Access denied"
   }
 
-  case class RichCriterion(criterion: Criterion, armIds: Seq[LongId[Arm]], labels: Seq[CriterionLabel])
+  final case class RichCriterion(criterion: Criterion, armIds: Seq[LongId[Arm]], labels: Seq[CriterionLabel])
   object RichCriterion {
     implicit def toPhiString(x: RichCriterion): PhiString = {
       import x._
@@ -33,17 +33,17 @@ object CriterionService {
   object CreateReply {
     type Error = CreateReply with DomainError
 
-    case class Created(x: RichCriterion) extends CreateReply
+    final case class Created(x: RichCriterion) extends CreateReply
 
     case object AuthorizationError
         extends CreateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case class CommonError(userMessage: String) extends CreateReply with DomainError
+    final case class CommonError(userMessage: String) extends CreateReply with DomainError
   }
 
   sealed trait GetByIdReply
   object GetByIdReply {
-    case class Entity(x: RichCriterion) extends GetByIdReply
+    final case class Entity(x: RichCriterion) extends GetByIdReply
 
     type Error = GetByIdReply with DomainError
 
@@ -52,7 +52,7 @@ object CriterionService {
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
+    final case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
         extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
@@ -63,7 +63,7 @@ object CriterionService {
 
   sealed trait GetListReply
   object GetListReply {
-    case class EntityList(xs: Seq[RichCriterion], totalFound: Int, lastUpdate: Option[LocalDateTime])
+    final case class EntityList(xs: Seq[RichCriterion], totalFound: Int, lastUpdate: Option[LocalDateTime])
         extends GetListReply
 
     case object AuthorizationError
@@ -74,14 +74,14 @@ object CriterionService {
   object UpdateReply {
     type Error = UpdateReply with DomainError
 
-    case class Updated(updated: RichCriterion) extends UpdateReply
+    final case class Updated(updated: RichCriterion) extends UpdateReply
 
     case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
     case object AuthorizationError
         extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String) extends UpdateReply with DomainError
+    final case class CommonError(userMessage: String) extends UpdateReply with DomainError
   }
 
   sealed trait DeleteReply
@@ -95,7 +95,7 @@ object CriterionService {
     case object AuthorizationError
         extends DeleteReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
-    case class CommonError(userMessage: String) extends DeleteReply with DomainError
+    final case class CommonError(userMessage: String) extends DeleteReply with DomainError
   }
 }
 

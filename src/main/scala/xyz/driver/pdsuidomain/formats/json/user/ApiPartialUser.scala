@@ -68,9 +68,9 @@ object ApiPartialUser {
             _.length > 255),
           Writes.StringWrites
         )) and
-      (JsPath \ "roleId").formatNullable[Seq[String]](
-        Format(
-          seqJsonFormat[String].filter(ValidationError("unknown role"))(_.forall(UserRole.roleFromString.isDefinedAt)),
-          Writes.of[Seq[String]]))
+      (JsPath \ "roles").formatNullable[Seq[String]](
+        Format(seqJsonFormat[String].filter(ValidationError("unknown roles"))(
+                 _.forall(UserRole.roleFromString.isDefinedAt)),
+               Writes.of[Seq[String]]))
   )(ApiPartialUser.apply, unlift(ApiPartialUser.unapply))
 }

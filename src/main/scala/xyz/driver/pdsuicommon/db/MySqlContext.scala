@@ -18,20 +18,20 @@ import scala.util.{Failure, Success, Try}
 
 object MySqlContext extends PhiLogging {
 
-  case class DbCredentials(user: String,
-                           password: String,
-                           host: String,
-                           port: Int,
-                           dbName: String,
-                           dbCreateFlag: Boolean,
-                           dbContext: String,
-                           connectionParams: String,
-                           url: String)
+  final case class DbCredentials(user: String,
+                                 password: String,
+                                 host: String,
+                                 port: Int,
+                                 dbName: String,
+                                 dbCreateFlag: Boolean,
+                                 dbContext: String,
+                                 connectionParams: String,
+                                 url: String)
 
-  case class Settings(credentials: DbCredentials,
-                      connection: Config,
-                      connectionAttemptsOnStartup: Int,
-                      threadPoolSize: Int)
+  final case class Settings(credentials: DbCredentials,
+                            connection: Config,
+                            connectionAttemptsOnStartup: Int,
+                            threadPoolSize: Int)
 
   def apply(settings: Settings): MySqlContext = {
     // Prevent leaking credentials to a log
