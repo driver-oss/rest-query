@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
-import xyz.driver.pdsuicommon.domain.LongId
+import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuicommon.error._
 import xyz.driver.pdsuidomain.entities.MedicalRecord.PdfSource
 import xyz.driver.pdsuidomain.entities._
@@ -92,6 +92,9 @@ trait MedicalRecordService {
 
   def getById(recordId: LongId[MedicalRecord])(
           implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+
+  def getPatientRecords(patientId: UuidId[Patient])(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
   def getPdfSource(recordId: LongId[MedicalRecord])(
           implicit requestContext: AuthenticatedRequestContext): Future[GetPdfSourceReply]

@@ -1,8 +1,6 @@
 package xyz.driver.pdsuidomain.services.rest
 
-import scala.NotImplementedError
 import scala.concurrent.{ExecutionContext, Future}
-
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.stream.ActorMaterializer
@@ -12,6 +10,7 @@ import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.formats.json.ListResponse
+import xyz.driver.pdsuidomain.formats.json.export.ApiExportTrialWithLabels
 import xyz.driver.pdsuidomain.formats.json.trial.ApiTrial
 import xyz.driver.pdsuidomain.services.TrialService
 
@@ -30,6 +29,17 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(
       reply    <- apiResponse[ApiTrial](response)
     } yield {
       GetByIdReply.Entity(reply.toDomain)
+    }
+  }
+
+  def getTrialWithLabels(trialId: StringId[Trial], condition: String)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetTrialWithLabelsReply] = {
+    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/export/trial/$trialId"))
+    for {
+      response <- transport.sendRequestGetResponse(requestContext)(request)
+      reply    <- apiResponse[ApiExportTrialWithLabels](response)
+    } yield {
+      GetTrialWithLabelsReply.Entity(reply.toDomain)
     }
   }
 
@@ -91,5 +101,4 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(
     singleAction(origTrial, "archive")
   def unassign(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
     singleAction(origTrial, "unassign")
-
 }
