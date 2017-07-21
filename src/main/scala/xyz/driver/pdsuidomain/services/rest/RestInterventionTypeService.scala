@@ -3,7 +3,7 @@ package xyz.driver.pdsuidomain.services.rest
 import scala.concurrent.{ExecutionContext, Future}
 
 import akka.http.scaladsl.model._
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import xyz.driver.core.rest._
 import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
@@ -11,7 +11,7 @@ import xyz.driver.pdsuidomain.formats.json.intervention.ApiInterventionType
 import xyz.driver.pdsuidomain.services.InterventionTypeService
 
 class RestInterventionTypeService(transport: ServiceTransport, baseUri: Uri)(
-        implicit protected val materializer: ActorMaterializer,
+        implicit protected val materializer: Materializer,
         protected val exec: ExecutionContext)
     extends InterventionTypeService with RestHelper {
 

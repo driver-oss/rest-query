@@ -5,7 +5,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import xyz.driver.core.rest.{Pagination => _, _}
 import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
@@ -15,9 +15,8 @@ import xyz.driver.pdsuidomain.formats.json.ListResponse
 import xyz.driver.pdsuidomain.formats.json.trial.ApiTrial
 import xyz.driver.pdsuidomain.services.TrialService
 
-class RestTrialService(transport: ServiceTransport, baseUri: Uri)(
-        implicit protected val materializer: ActorMaterializer,
-        protected val exec: ExecutionContext)
+class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit protected val materializer: Materializer,
+                                                                  protected val exec: ExecutionContext)
     extends TrialService with RestHelper {
 
   import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._

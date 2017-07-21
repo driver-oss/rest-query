@@ -4,7 +4,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import xyz.driver.core.rest.{Pagination => _, _}
 import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
@@ -14,9 +14,8 @@ import xyz.driver.pdsuidomain.formats.json.ListResponse
 import xyz.driver.pdsuidomain.formats.json.message.ApiMessage
 import xyz.driver.pdsuidomain.services.MessageService
 
-class RestMessageService(transport: ServiceTransport, baseUri: Uri)(
-        implicit protected val materializer: ActorMaterializer,
-        protected val exec: ExecutionContext)
+class RestMessageService(transport: ServiceTransport, baseUri: Uri)(implicit protected val materializer: Materializer,
+                                                                    protected val exec: ExecutionContext)
     extends MessageService with RestHelper {
 
   import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
