@@ -4,7 +4,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import xyz.driver.core.rest.{Pagination => _, _}
 import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
@@ -15,7 +15,7 @@ import xyz.driver.pdsuidomain.formats.json.intervention.ApiIntervention
 import xyz.driver.pdsuidomain.services.InterventionService
 
 class RestInterventionService(transport: ServiceTransport, baseUri: Uri)(
-        implicit protected val materializer: ActorMaterializer,
+        implicit protected val materializer: Materializer,
         protected val exec: ExecutionContext)
     extends InterventionService with RestHelper {
 
