@@ -88,7 +88,7 @@ trait PatientService {
 
   def getById(id: UuidId[Patient])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
-  def getExportPatient(id: UuidId[Patient])(
+  def getPatientWithLabels(id: UuidId[Patient])(
           implicit requestContext: AuthenticatedRequestContext): Future[GetPatientWithLabelsReply]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
