@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
-import xyz.driver.pdsuicommon.domain.LongId
+import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuicommon.error._
 import xyz.driver.pdsuidomain.entities.MedicalRecord.PdfSource
 import xyz.driver.pdsuidomain.entities._
@@ -60,8 +60,14 @@ object MedicalRecordService {
     final case class EntityList(xs: Seq[MedicalRecord], totalFound: Int, lastUpdate: Option[LocalDateTime])
         extends GetListReply
 
+    type Error = GetListReply with DomainError
+
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+
+    case object NotFoundError extends GetListReply with DomainError.NotFoundError {
+      def userMessage: String = "Patient wasn't found"
+    }
   }
 
   sealed trait CreateReply
@@ -92,6 +98,9 @@ trait MedicalRecordService {
 
   def getById(recordId: LongId[MedicalRecord])(
           implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+
+  def getPatientRecords(patientId: UuidId[Patient])(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
   def getPdfSource(recordId: LongId[MedicalRecord])(
           implicit requestContext: AuthenticatedRequestContext): Future[GetPdfSourceReply]

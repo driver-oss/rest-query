@@ -1,11 +1,15 @@
 package xyz.driver.pdsuidomain.services.fake
 
 import java.time.LocalDateTime
+
+import xyz.driver.core.generators
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
-import xyz.driver.pdsuicommon.domain.{StringId, UuidId}
-import xyz.driver.pdsuidomain.entities.Trial
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
+import xyz.driver.pdsuidomain.entities.{Arm, Criterion, Label, Trial}
+import xyz.driver.pdsuidomain.entities.export.trial.{ExportTrialArm, ExportTrialLabelCriterion, ExportTrialWithLabels}
 import xyz.driver.pdsuidomain.services.TrialService
+
 import scala.concurrent.Future
 
 class FakeTrialService extends TrialService {
@@ -48,6 +52,31 @@ class FakeTrialService extends TrialService {
              pagination: Option[Pagination] = None)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] =
     Future.successful(GetListReply.EntityList(Seq(trial), 1, None))
+
+  override def getTrialWithLabels(trialId: StringId[Trial], condition: String)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetTrialWithLabelsReply] = {
+    Future.successful(
+      GetTrialWithLabelsReply.Entity(ExportTrialWithLabels(
+        StringId[Trial]("NCT" + generators.nextInt(999999).toString),
+        UuidId[Trial](generators.nextUuid()),
+        generators.oneOf("adenocarcinoma", "breast", "prostate"),
+        LocalDateTime.now(),
+        labelVersion = 1L,
+        generators.listOf(new ExportTrialArm(
+          LongId[Arm](generators.nextInt(999999).toLong),
+          generators.nextName().value
+        )),
+        generators.listOf(new ExportTrialLabelCriterion(
+          LongId[Criterion](generators.nextInt(999999).toLong),
+          generators.nextOption(generators.nextBoolean()),
+          LongId[Label](generators.nextInt(999999).toLong),
+          generators.setOf(LongId[Arm](generators.nextInt(999999).toLong)),
+          generators.nextName().value,
+          generators.nextBoolean(),
+          generators.nextBoolean()
+        ))
+      )))
+  }
 
   def update(origTrial: Trial, draftTrial: Trial)(
           implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =

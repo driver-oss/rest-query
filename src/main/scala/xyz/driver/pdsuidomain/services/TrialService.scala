@@ -9,6 +9,7 @@ import xyz.driver.pdsuicommon.error.DomainError
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuidomain.entities.Trial
 import xyz.driver.pdsuidomain.entities.Trial.PdfSource
+import xyz.driver.pdsuidomain.entities.export.trial.ExportTrialWithLabels
 
 import scala.concurrent.Future
 
@@ -49,6 +50,20 @@ object TrialService {
       case x: DomainError => phi"GetByIdReply.Error($x)"
       case Entity(x)      => phi"GetByIdReply.Entity($x)"
     }
+  }
+
+  sealed trait GetTrialWithLabelsReply
+  object GetTrialWithLabelsReply {
+    type Error = GetTrialWithLabelsReply with DomainError
+
+    final case class Entity(x: ExportTrialWithLabels) extends GetTrialWithLabelsReply
+
+    case object NotFoundError extends GetTrialWithLabelsReply with DomainError.NotFoundError {
+      def userMessage: String = "Trial not found"
+    }
+
+    case object AuthorizationError
+        extends GetTrialWithLabelsReply with DomainError.AuthorizationError with DefaultAccessDeniedError
   }
 
   sealed trait GetPdfSourceReply
@@ -94,6 +109,9 @@ trait TrialService {
   import TrialService._
 
   def getById(id: StringId[Trial])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+
+  def getTrialWithLabels(trialId: StringId[Trial], condition: String)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetTrialWithLabelsReply]
 
   def getPdfSource(trialId: StringId[Trial])(
           implicit requestContext: AuthenticatedRequestContext): Future[GetPdfSourceReply]

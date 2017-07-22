@@ -19,21 +19,6 @@ object ACL extends PhiLogging {
 
   // Common
 
-  object User
-      extends BaseACL(
-        label = "user",
-        create = Set(RecordAdmin, TrialAdmin, TreatmentMatchingAdmin),
-        read = Allow,
-        update = Allow,
-        delete = Set(RecordAdmin, TrialAdmin, TreatmentMatchingAdmin)
-      )
-
-  object Label
-      extends BaseACL(
-        label = "label",
-        read = RepRoles ++ TcRoles ++ TreatmentMatchingRoles + ResearchOncologist
-      )
-
   object UserHistory
       extends BaseACL(
         label = "user history",
@@ -53,7 +38,7 @@ object ACL extends PhiLogging {
   object MedicalRecord
       extends BaseACL(
         label = "medical record",
-        read = RepRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist,
+        read = RepRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist + SystemUser,
         update = RepRoles - DocumentExtractor
       )
 
@@ -73,12 +58,6 @@ object ACL extends PhiLogging {
         read = Set(DocumentExtractor, RecordAdmin, RoutesCurator, TreatmentMatchingAdmin, ResearchOncologist),
         update = Set(DocumentExtractor, RecordAdmin),
         delete = Set(DocumentExtractor, RecordAdmin)
-      )
-
-  object Keyword
-      extends BaseACL(
-        label = "keyword",
-        read = Set(DocumentExtractor, RecordAdmin)
       )
 
   object ProviderType
@@ -107,7 +86,7 @@ object ACL extends PhiLogging {
   object Trial
       extends BaseACL(
         label = "trial",
-        read = TcRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist,
+        read = TcRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist + SystemUser,
         update = TcRoles
       )
 
@@ -156,12 +135,6 @@ object ACL extends PhiLogging {
         delete = Set(TrialSummarizer, TrialAdmin)
       )
 
-  object Category
-      extends BaseACL(
-        label = "category",
-        read = Set(DocumentExtractor, RecordAdmin, CriteriaCurator, TrialAdmin)
-      )
-
   object Intervention
       extends BaseACL(
         label = "intervention",
@@ -180,7 +153,7 @@ object ACL extends PhiLogging {
   object Patient
       extends BaseACL(
         label = "patient",
-        read = TreatmentMatchingRoles + ResearchOncologist,
+        read = TreatmentMatchingRoles + ResearchOncologist + SystemUser,
         update = TreatmentMatchingRoles
       )
 

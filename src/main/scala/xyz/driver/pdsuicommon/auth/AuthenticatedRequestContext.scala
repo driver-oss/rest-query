@@ -31,5 +31,4 @@ object AuthenticatedRequestContext {
   implicit def toPhiString(x: AuthenticatedRequestContext): PhiString = {
     phi"AuthenticatedRequestContext(executor=${x.executor}, requestId=${x.requestId})"
   }
-
 }

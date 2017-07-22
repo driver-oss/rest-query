@@ -1,9 +1,10 @@
 package xyz.driver.pdsuidomain.formats.json.export
 
-import xyz.driver.pdsuicommon.domain.FuzzyValue
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId}
 import xyz.driver.pdsuidomain.entities.export.trial.ExportTrialLabelCriterion
+import xyz.driver.pdsuidomain.entities.{Arm, Criterion, Label}
 
 final case class ApiExportTrialLabelCriterion(value: String,
                                               labelId: String,
@@ -11,7 +12,20 @@ final case class ApiExportTrialLabelCriterion(value: String,
                                               criterionText: String,
                                               armIds: List[String],
                                               isCompound: Boolean,
-                                              isDefining: Boolean)
+                                              isDefining: Boolean) {
+
+  def toDomain: ExportTrialLabelCriterion = {
+    ExportTrialLabelCriterion(
+      LongId[Criterion](criterionId.toLong),
+      FuzzyValue.fromString.lift(value).map(_ == FuzzyValue.Yes),
+      LongId[Label](labelId.toLong),
+      armIds.map(armId => LongId[Arm](armId.toLong)).toSet,
+      criterionText,
+      isCompound,
+      isDefining
+    )
+  }
+}
 
 object ApiExportTrialLabelCriterion {
 

@@ -1,9 +1,11 @@
 package xyz.driver.pdsuidomain.formats.json.export
 
-import java.time.ZoneId
+import java.time.{Instant, ZoneId}
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Format, JsPath}
+import xyz.driver.pdsuicommon.domain.{StringId, UuidId}
+import xyz.driver.pdsuidomain.entities.Trial
 import xyz.driver.pdsuidomain.entities.export.trial.ExportTrialWithLabels
 
 final case class ApiExportTrialWithLabels(nctId: String,
@@ -12,7 +14,20 @@ final case class ApiExportTrialWithLabels(nctId: String,
                                           lastReviewed: Long,
                                           labelVersion: Long,
                                           arms: List[ApiExportTrialArm],
-                                          criteria: List[ApiExportTrialLabelCriterion])
+                                          criteria: List[ApiExportTrialLabelCriterion]) {
+
+  def toDomain: ExportTrialWithLabels = {
+    ExportTrialWithLabels(
+      StringId[Trial](nctId),
+      UuidId[Trial](trialId),
+      condition,
+      lastReviewed = Instant.ofEpochMilli(lastReviewed).atZone(ZoneId.of("Z")).toLocalDateTime,
+      labelVersion,
+      arms.map(_.toDomain),
+      criteria.map(_.toDomain)
+    )
+  }
+}
 
 object ApiExportTrialWithLabels {
 

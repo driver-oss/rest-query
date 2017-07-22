@@ -36,7 +36,7 @@ final case class ApiTrial(id: String,
     previousStatus = this.previousStatus.map(s => TrialStatus.statusFromString(s)),
     previousAssignee = this.previousAssignee.map(id => StringId(id)),
     lastActiveUserId = this.lastActiveUser.map(id => StringId(id)),
-    lastUpdate = this.lastUpdate.toLocalDateTime(),
+    lastUpdate = this.lastUpdate.toLocalDateTime,
     condition = Trial.Condition
       .fromString(this.condition)
       .getOrElse(

@@ -2,10 +2,11 @@ package xyz.driver.pdsuidomain.services
 
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterExpr, Sorting}
-import xyz.driver.pdsuicommon.domain.LongId
+import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuicommon.error.DomainError
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuidomain.entities._
+import xyz.driver.pdsuidomain.entities.export.patient.ExportPatientWithLabels
 
 import scala.concurrent.Future
 
@@ -47,6 +48,17 @@ object ExtractedDataService {
 
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+  }
+
+  sealed trait GetPatientLabelsReply
+  object GetPatientLabelsReply {
+    type Error = GetPatientLabelsReply with DomainError
+
+    final case class Entity(x: ExportPatientWithLabels) extends GetPatientLabelsReply
+
+    case object NotFoundError extends GetPatientLabelsReply with DomainError.NotFoundError {
+      def userMessage: String = "Patient not found"
+    }
   }
 
   sealed trait CreateReply
@@ -92,6 +104,9 @@ trait ExtractedDataService {
   import ExtractedDataService._
 
   def getById(id: LongId[ExtractedData])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+
+  def getPatientLabels(id: UuidId[Patient])(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetPatientLabelsReply]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
