@@ -8,7 +8,6 @@ import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.error.DomainError
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuidomain.entities._
-import xyz.driver.pdsuidomain.entities.export.patient.ExportPatientWithLabels
 
 import scala.concurrent.Future
 
@@ -51,17 +50,6 @@ object PatientService {
     }
   }
 
-  sealed trait GetPatientWithLabelsReply
-  object GetPatientWithLabelsReply {
-    type Error = GetPatientWithLabelsReply with DomainError
-
-    final case class Entity(x: ExportPatientWithLabels) extends GetPatientWithLabelsReply
-
-    case object NotFoundError extends GetPatientWithLabelsReply with DomainError.NotFoundError {
-      def userMessage: String = "Patient not found"
-    }
-  }
-
   sealed trait UpdateReply
   object UpdateReply {
     type Error = UpdateReply with DomainError
@@ -87,9 +75,6 @@ trait PatientService {
   import PatientService._
 
   def getById(id: UuidId[Patient])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
-
-  def getPatientWithLabels(id: UuidId[Patient])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetPatientWithLabelsReply]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
