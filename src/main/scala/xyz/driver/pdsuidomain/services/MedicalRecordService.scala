@@ -60,8 +60,14 @@ object MedicalRecordService {
     final case class EntityList(xs: Seq[MedicalRecord], totalFound: Int, lastUpdate: Option[LocalDateTime])
         extends GetListReply
 
+    type Error = GetListReply with DomainError
+
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+
+    case object NotFoundError extends GetListReply with DomainError.NotFoundError {
+      def userMessage: String = "Patient wasn't found"
+    }
   }
 
   sealed trait CreateReply
