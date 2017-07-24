@@ -77,7 +77,7 @@ object ApiTrial {
       (JsPath \ "overviewTemplate").format[String] and
       (JsPath \ "isUpdated").format[Boolean] and
       (JsPath \ "title").format[String] and
-      (JsPath \ "otiginalTitle").format[String]
+      (JsPath \ "originalTitle").format[String]
   )(ApiTrial.apply, unlift(ApiTrial.unapply))
 
   def fromDomain(trial: Trial): ApiTrial = ApiTrial(
