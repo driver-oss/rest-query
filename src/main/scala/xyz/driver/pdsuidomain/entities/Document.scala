@@ -181,13 +181,14 @@ object Document {
     val All         = Set[Status](New, Organized, Extracted, Done, Flagged, Archived)
     val AllPrevious = Set[Status](Organized, Extracted)
 
-    val fromString: PartialFunction[String, Status] = {
-      case "New"       => Status.New
-      case "Organized" => Status.Organized
-      case "Extracted" => Status.Extracted
-      case "Done"      => Status.Done
-      case "Flagged"   => Status.Flagged
-      case "Archived"  => Status.Archived
+    def fromString(status: String): Option[Status] = status match {
+      case "New"       => Some(Status.New)
+      case "Organized" => Some(Status.Organized)
+      case "Extracted" => Some(Status.Extracted)
+      case "Done"      => Some(Status.Done)
+      case "Flagged"   => Some(Status.Flagged)
+      case "Archived"  => Some(Status.Archived)
+      case _           => None
     }
 
     def statusToString(x: Status): String = x match {
@@ -216,9 +217,10 @@ object Document {
 
     val All = Set[RequiredType](OPN, PN)
 
-    val fromString: PartialFunction[String, RequiredType] = {
-      case "OPN" => RequiredType.OPN
-      case "PN"  => RequiredType.PN
+    def fromString(tpe: String): Option[RequiredType] = tpe match {
+      case "OPN" => Some(RequiredType.OPN)
+      case "PN"  => Some(RequiredType.PN)
+      case _     => None
     }
 
     def requiredTypeToString(x: RequiredType): String = x match {

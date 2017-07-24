@@ -104,6 +104,21 @@ object MedicalRecord {
     case object Flagged       extends Status
     case object Archived      extends Status
 
+    def fromString(status: String): Option[Status] = status match {
+      case "Unprocessed"   => Some(Unprocessed)
+      case "PreCleaning"   => Some(PreCleaning)
+      case "New"           => Some(New)
+      case "Cleaned"       => Some(Cleaned)
+      case "PreOrganized"  => Some(PreOrganized)
+      case "PreOrganizing" => Some(PreOrganizing)
+      case "Reviewed"      => Some(Reviewed)
+      case "Organized"     => Some(Organized)
+      case "Done"          => Some(Done)
+      case "Flagged"       => Some(Flagged)
+      case "Archived"      => Some(Archived)
+      case _               => None
+    }
+
     val All = Set[Status](
       Unprocessed,
       PreCleaning,
@@ -150,7 +165,6 @@ final case class MedicalRecord(id: LongId[MedicalRecord],
                                disease: String,
                                caseId: Option[CaseId],
                                physician: Option[String],
-                               sourceName: String,
                                meta: Option[TextJson[List[Meta]]],
                                predictedMeta: Option[TextJson[List[Meta]]],
                                predictedDocuments: Option[TextJson[List[Document]]],

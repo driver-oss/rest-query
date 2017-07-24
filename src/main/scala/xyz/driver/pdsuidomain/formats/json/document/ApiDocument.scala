@@ -1,6 +1,8 @@
 package xyz.driver.pdsuidomain.formats.json.document
 
 import java.time.{LocalDate, ZoneId, ZonedDateTime}
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, TextJson}
+import xyz.driver.pdsuicommon.json.JsonSerializer
 
 import xyz.driver.pdsuidomain.entities._
 import play.api.data.validation.ValidationError
@@ -11,7 +13,7 @@ import xyz.driver.pdsuicommon.json.JsonSerializer
 final case class ApiDocument(id: Long,
                              recordId: Long,
                              physician: Option[String],
-                             lastUpdate: Option[ZonedDateTime],
+                             lastUpdate: ZonedDateTime,
                              typeId: Option[Long],
                              startDate: Option[LocalDate],
                              endDate: Option[LocalDate],
@@ -23,14 +25,40 @@ final case class ApiDocument(id: Long,
                              assignee: Option[String],
                              previousAssignee: Option[String],
                              lastActiveUser: Option[String],
-                             meta: Option[String])
+                             meta: Option[String]) {
+
+  private def extractStatus(status: String): Document.Status =
+    Document.Status.fromString(status).getOrElse(throw new NoSuchElementException(s"Status $status unknown"))
+
+  private def extractRequiredType(tpe: String): Document.RequiredType =
+    Document.RequiredType.fromString(tpe).getOrElse(throw new NoSuchElementException(s"RequitedType $tpe unknown"))
+
+  def toDomain = Document(
+    id = LongId(this.id),
+    status = extractStatus(this.status.getOrElse("")),
+    previousStatus = previousStatus.map(extractStatus),
+    assignee = this.assignee.map(StringId(_)),
+    previousAssignee = this.previousAssignee.map(StringId(_)),
+    lastActiveUserId = this.lastActiveUser.map(StringId(_)),
+    recordId = LongId(this.recordId),
+    physician = this.physician,
+    typeId = this.typeId.map(LongId(_)),
+    providerName = this.provider,
+    providerTypeId = this.providerTypeId.map(LongId(_)),
+    requiredType = this.requiredType.map(extractRequiredType),
+    meta = this.meta.map(x => TextJson(JsonSerializer.deserialize[Document.Meta](x))),
+    startDate = this.startDate,
+    endDate = this.endDate,
+    lastUpdate = this.lastUpdate.toLocalDateTime()
+  )
+
+}
 
 object ApiDocument {
 
   private val statusFormat = Format(
-    Reads.StringReads.filter(ValidationError("unknown status")) {
-      case x if Document.Status.fromString.isDefinedAt(x) => true
-      case _                                              => false
+    Reads.StringReads.filter(ValidationError("unknown status")) { x =>
+      Document.Status.fromString(x).isDefined
     },
     Writes.StringWrites
   )
@@ -39,7 +67,7 @@ object ApiDocument {
     (JsPath \ "id").format[Long] and
       (JsPath \ "recordId").format[Long] and
       (JsPath \ "physician").formatNullable[String] and
-      (JsPath \ "lastUpdate").formatNullable[ZonedDateTime] and
+      (JsPath \ "lastUpdate").format[ZonedDateTime] and
       (JsPath \ "typeId").formatNullable[Long] and
       (JsPath \ "startDate").formatNullable[LocalDate] and
       (JsPath \ "endDate").formatNullable[LocalDate] and
@@ -61,7 +89,7 @@ object ApiDocument {
       id = document.id.id,
       recordId = document.recordId.id,
       physician = document.physician,
-      lastUpdate = Option(document.lastUpdate).map(ZonedDateTime.of(_, ZoneId.of("Z"))),
+      lastUpdate = ZonedDateTime.of(document.lastUpdate, ZoneId.of("Z")),
       typeId = document.typeId.map(_.id),
       startDate = document.startDate,
       endDate = document.endDate,

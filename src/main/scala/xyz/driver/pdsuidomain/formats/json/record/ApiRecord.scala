@@ -1,12 +1,17 @@
 package xyz.driver.pdsuidomain.formats.json.record
 
 import java.time.{ZoneId, ZonedDateTime}
+import java.util.UUID
 
+import xyz.driver.pdsuidomain.entities.CaseId
 import xyz.driver.pdsuidomain.entities.MedicalRecord
+import xyz.driver.pdsuidomain.entities.MedicalRecord.Status
+import xyz.driver.pdsuidomain.entities.RecordRequestId
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import xyz.driver.pdsuicommon.json.JsonSerializer
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, TextJson, UuidId}
 
 final case class ApiRecord(id: Long,
                            patientId: String,
@@ -19,7 +24,35 @@ final case class ApiRecord(id: Long,
                            assignee: Option[String],
                            previousAssignee: Option[String],
                            lastActiveUser: Option[String],
-                           meta: String)
+                           requestId: UUID,
+                           meta: String) {
+
+  private def extractStatus(status: String): Status =
+    Status
+      .fromString(status)
+      .getOrElse(
+        throw new NoSuchElementException(s"Status $status not found")
+      )
+
+  def toDomain = MedicalRecord(
+    id = LongId(this.id),
+    status = extractStatus(this.status),
+    previousStatus = this.previousStatus.map(extractStatus),
+    assignee = this.assignee.map(StringId(_)),
+    previousAssignee = this.previousAssignee.map(StringId(_)),
+    lastActiveUserId = this.lastActiveUser.map(StringId(_)),
+    patientId = UuidId(patientId),
+    requestId = RecordRequestId(this.requestId),
+    disease = this.disease,
+    caseId = caseId.map(CaseId(_)),
+    physician = this.physician,
+    meta = Some(TextJson(JsonSerializer.deserialize[List[MedicalRecord.Meta]](this.meta))),
+    predictedMeta = None,
+    predictedDocuments = None,
+    lastUpdate = this.lastUpdate.toLocalDateTime()
+  )
+
+}
 
 object ApiRecord {
 
@@ -43,6 +76,7 @@ object ApiRecord {
       (JsPath \ "assignee").formatNullable[String] and
       (JsPath \ "previousAssignee").formatNullable[String] and
       (JsPath \ "lastActiveUser").formatNullable[String] and
+      (JsPath \ "requestId").format[UUID] and
       (JsPath \ "meta").format(Format(Reads { x =>
         JsSuccess(Json.stringify(x))
       }, Writes[String](Json.parse)))
@@ -60,6 +94,7 @@ object ApiRecord {
     assignee = record.assignee.map(_.id),
     previousAssignee = record.previousAssignee.map(_.id),
     lastActiveUser = record.lastActiveUserId.map(_.id),
+    requestId = record.requestId.id,
     meta = record.meta.map(x => JsonSerializer.serialize(x.content)).getOrElse("[]")
   )
 }

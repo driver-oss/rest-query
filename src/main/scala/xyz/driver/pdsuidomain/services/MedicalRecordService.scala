@@ -1,10 +1,12 @@
 package xyz.driver.pdsuidomain.services
 
+import akka.NotUsed
+import akka.stream.scaladsl.Source
+import akka.util.ByteString
 import java.time.LocalDateTime
-
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.pdsuicommon.auth.{AnonymousRequestContext, AuthenticatedRequestContext}
 import xyz.driver.pdsuicommon.db._
-import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
+import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.error._
 import xyz.driver.pdsuidomain.entities.MedicalRecord.PdfSource
 import xyz.driver.pdsuidomain.entities._
@@ -35,24 +37,6 @@ object MedicalRecordService {
 
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
-  }
-
-  sealed trait GetPdfSourceReply
-  object GetPdfSourceReply {
-    type Error = GetPdfSourceReply with DomainError
-
-    final case class Entity(x: PdfSource.Channel) extends GetPdfSourceReply
-
-    case object AuthorizationError
-        extends GetPdfSourceReply with DomainError.AuthorizationError with DefaultAccessDeniedError
-
-    case object NotFoundError extends GetPdfSourceReply with DomainError.NotFoundError {
-      def userMessage: String = "Medical record PDF hasn't been found"
-    }
-
-    case object RecordNotFoundError extends GetPdfSourceReply with DomainError.NotFoundError with DefaultNotFoundError
-
-    final case class CommonError(userMessage: String) extends GetPdfSourceReply with DomainError
   }
 
   sealed trait GetListReply
@@ -99,18 +83,15 @@ trait MedicalRecordService {
   def getById(recordId: LongId[MedicalRecord])(
           implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
-  def getPatientRecords(patientId: UuidId[Patient])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
-
   def getPdfSource(recordId: LongId[MedicalRecord])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetPdfSourceReply]
+          implicit requestContext: AuthenticatedRequestContext): Future[Source[ByteString, NotUsed]]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
-  def create(draft: MedicalRecord): Future[CreateReply]
+  def create(draft: MedicalRecord)(implicit requestContext: AnonymousRequestContext): Future[CreateReply]
 
   def update(origRecord: MedicalRecord, draftRecord: MedicalRecord)(
           implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]

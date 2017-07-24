@@ -1,16 +1,29 @@
 package xyz.driver.pdsuidomain.formats.json.export
 
 import java.time.LocalDate
+import java.util.UUID
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Format, JsPath}
+import xyz.driver.pdsuicommon.domain.LongId
+import xyz.driver.pdsuidomain.entities.RecordRequestId
 import xyz.driver.pdsuidomain.entities.export.patient.ExportPatientLabelEvidenceDocument
 
 final case class ApiExportPatientLabelEvidenceDocument(documentId: String,
                                                        requestId: String,
                                                        documentType: String,
                                                        providerType: String,
-                                                       date: LocalDate)
+                                                       date: LocalDate) {
+
+  def toDomain = ExportPatientLabelEvidenceDocument(
+    documentId = LongId(this.documentId.toLong),
+    requestId = RecordRequestId(UUID.fromString(this.requestId)),
+    documentType = this.documentType,
+    providerType = this.providerType,
+    date = this.date
+  )
+
+}
 
 object ApiExportPatientLabelEvidenceDocument {
 

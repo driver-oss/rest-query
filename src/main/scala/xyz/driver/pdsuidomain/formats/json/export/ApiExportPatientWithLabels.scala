@@ -2,9 +2,18 @@ package xyz.driver.pdsuidomain.formats.json.export
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Format, JsPath}
+import xyz.driver.pdsuicommon.domain.UuidId
 import xyz.driver.pdsuidomain.entities.export.patient.ExportPatientWithLabels
 
-final case class ApiExportPatientWithLabels(patientId: String, labelVersion: Long, labels: List[ApiExportPatientLabel])
+final case class ApiExportPatientWithLabels(patientId: String, labelVersion: Long, labels: List[ApiExportPatientLabel]) {
+
+  def toDomain = ExportPatientWithLabels(
+    patientId = UuidId(this.patientId),
+    labelVersion = this.labelVersion,
+    labels = this.labels.map(_.toDomain)
+  )
+
+}
 
 object ApiExportPatientWithLabels {
 

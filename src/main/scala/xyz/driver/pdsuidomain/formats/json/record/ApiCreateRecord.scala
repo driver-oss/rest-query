@@ -7,7 +7,7 @@ import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.entities._
 import play.api.libs.json._
 
-final case class ApiCreateRecord(disease: String, patientId: String, requestId: UUID, filename: String) {
+final case class ApiCreateRecord(disease: String, patientId: String, requestId: UUID) {
 
   def toDomain = MedicalRecord(
     id = LongId(0),
@@ -21,7 +21,6 @@ final case class ApiCreateRecord(disease: String, patientId: String, requestId: 
     disease = disease,
     caseId = None,
     physician = None,
-    sourceName = filename,
     meta = None,
     predictedMeta = None,
     predictedDocuments = None,

@@ -31,7 +31,7 @@ final case class ApiPartialDocument(recordId: Option[Long],
 
   def applyTo(orig: Document): Document = Document(
     id = orig.id,
-    status = status.map(Document.Status.fromString).getOrElse(orig.status),
+    status = status.flatMap(Document.Status.fromString).getOrElse(orig.status),
     previousStatus = orig.previousStatus,
     assignee = assignee.map(StringId[User]).cata(Some(_), None, orig.assignee),
     previousAssignee = orig.previousAssignee,
@@ -90,16 +90,22 @@ object ApiPartialDocument {
       (JsPath \ "endDate").readTristate[LocalDate] and
       (JsPath \ "provider").readTristate[String] and
       (JsPath \ "providerTypeId").readTristate[Long] and
-      (JsPath \ "status").readNullable[String](Reads.of[String].filter(ValidationError("unknown status"))({
-        case x if Document.Status.fromString.isDefinedAt(x) => true
-        case _ => false
-      })) and
+      (JsPath \ "status").readNullable[String](
+        Reads
+          .of[String]
+          .filter(ValidationError("unknown status"))(
+            Document.Status.fromString(_).isDefined
+          )) and
       (JsPath \ "assignee").readTristate[String] and
-      (JsPath \ "meta").readTristate(Reads { x => JsSuccess(Json.stringify(x)) }).map {
-        case Tristate.Present("{}") => Tristate.Absent
-        case x => x
-      }
-    ) (ApiPartialDocument.apply _)
+      (JsPath \ "meta")
+        .readTristate(Reads { x =>
+          JsSuccess(Json.stringify(x))
+        })
+        .map {
+          case Tristate.Present("{}") => Tristate.Absent
+          case x                      => x
+        }
+  )(ApiPartialDocument.apply _)
 
   private val writes: Writes[ApiPartialDocument] = (
     (JsPath \ "recordId").writeNullable[Long] and
@@ -112,7 +118,7 @@ object ApiPartialDocument {
       (JsPath \ "status").writeNullable[String] and
       (JsPath \ "assignee").writeTristate[String] and
       (JsPath \ "meta").writeTristate(Writes[String](Json.parse))
-    ) (unlift(ApiPartialDocument.unapply))
+  )(unlift(ApiPartialDocument.unapply))
 
   implicit val format: Format[ApiPartialDocument] = Format(reads, writes)
 }

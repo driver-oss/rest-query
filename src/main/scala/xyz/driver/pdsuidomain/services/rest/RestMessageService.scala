@@ -78,7 +78,7 @@ class RestMessageService(transport: ServiceTransport, baseUri: Uri)(implicit pro
     val request = HttpRequest(HttpMethods.DELETE, endpointUri(baseUri, s"/v1/message/${messageId.id}"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiMessage](response)
+      _        <- apiResponse[HttpEntity](response)
     } yield {
       DeleteReply.Deleted
     }
