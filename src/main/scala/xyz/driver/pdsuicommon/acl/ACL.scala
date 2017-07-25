@@ -22,7 +22,7 @@ object ACL extends PhiLogging {
   object UserHistory
       extends BaseACL(
         label = "user history",
-        read = Set(RecordAdmin, TreatmentMatchingAdmin)
+        read = Set(TreatmentMatchingAdmin)
       )
 
   object Queue
@@ -42,6 +42,12 @@ object ACL extends PhiLogging {
         update = RepRoles - DocumentExtractor
       )
 
+  object MedicalRecordHistory
+      extends BaseACL(
+        label = "medical record history",
+        read = Set(RecordAdmin)
+      )
+
   object Document
       extends BaseACL(
         label = "document",
@@ -49,6 +55,12 @@ object ACL extends PhiLogging {
         read = RepRoles - RecordCleaner + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist,
         update = RepRoles - RecordCleaner,
         delete = Set(RecordOrganizer, RecordAdmin)
+      )
+
+  object DocumentHistory
+      extends BaseACL(
+        label = "document history",
+        read = Set(RecordAdmin)
       )
 
   object ExtractedData
