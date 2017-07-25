@@ -72,7 +72,7 @@ class RestArmService(transport: ServiceTransport, baseUri: Uri)(implicit protect
     val request = HttpRequest(HttpMethods.DELETE, endpointUri(baseUri, s"/v1/arm/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiArm](response)
+      _        <- apiResponse[HttpEntity](response)
     } yield {
       DeleteReply.Deleted
     }

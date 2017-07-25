@@ -77,7 +77,7 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
     val request = HttpRequest(HttpMethods.DELETE, endpointUri(baseUri, s"/v1/criterion/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiCriterion](response)
+      _        <- apiResponse[HttpEntity](response)
     } yield {
       DeleteReply.Deleted
     }
