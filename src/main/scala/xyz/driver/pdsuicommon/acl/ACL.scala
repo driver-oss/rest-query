@@ -104,7 +104,11 @@ object ACL extends PhiLogging {
 
   object Message
       extends BaseACL(
-        label = "message"
+        label = "message",
+        create = RepRoles ++ TreatmentMatchingRoles,
+        read = RepRoles ++ TreatmentMatchingRoles,
+        update = RepRoles ++ TreatmentMatchingRoles,
+        delete = RepRoles ++ TreatmentMatchingRoles
       )
 
   // TC
