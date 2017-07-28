@@ -48,6 +48,15 @@ object ACL extends PhiLogging {
         read = Set(RecordAdmin)
       )
 
+  object MedicalRecordIssue
+      extends BaseACL(
+        label = "medical record issue",
+        create = Set(RecordCleaner, RecordOrganizer, RecordAdmin),
+        read = Set(RecordCleaner, RecordOrganizer, RecordAdmin),
+        update = Set(RecordCleaner, RecordOrganizer, RecordAdmin),
+        delete = Set(RecordCleaner, RecordOrganizer, RecordAdmin)
+      )
+
   object Document
       extends BaseACL(
         label = "document",
@@ -61,6 +70,15 @@ object ACL extends PhiLogging {
       extends BaseACL(
         label = "document history",
         read = Set(RecordAdmin)
+      )
+
+  object DocumentIssue
+      extends BaseACL(
+        label = "document issue",
+        create = Set(RecordAdmin, DocumentExtractor),
+        read = Set(RecordAdmin, DocumentExtractor),
+        update = Set(RecordAdmin, DocumentExtractor),
+        delete = Set(RecordAdmin, DocumentExtractor)
       )
 
   object ExtractedData
@@ -86,11 +104,7 @@ object ACL extends PhiLogging {
 
   object Message
       extends BaseACL(
-        label = "message",
-        create = RepRoles ++ TreatmentMatchingRoles,
-        read = RepRoles ++ TreatmentMatchingRoles,
-        update = RepRoles ++ TreatmentMatchingRoles,
-        delete = RepRoles ++ TreatmentMatchingRoles
+        label = "message"
       )
 
   // TC
@@ -167,6 +181,15 @@ object ACL extends PhiLogging {
         label = "patient",
         read = TreatmentMatchingRoles + ResearchOncologist + SystemUser,
         update = TreatmentMatchingRoles
+      )
+
+  object PatientIssue
+      extends BaseACL(
+        label = "patient issue",
+        create = TreatmentMatchingRoles,
+        read = TreatmentMatchingRoles,
+        update = TreatmentMatchingRoles,
+        delete = TreatmentMatchingRoles
       )
 
   object PatientLabel
