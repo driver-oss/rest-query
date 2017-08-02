@@ -11,9 +11,7 @@ final case class PatientIssue(id: LongId[PatientIssue],
                               lastUpdate: LocalDateTime,
                               isDraft: Boolean,
                               text: String,
-                              evidence: String,
-                              archiveRequired: Boolean,
-                              meta: String)
+                              archiveRequired: Boolean)
 
 object PatientIssue {
   implicit def toPhiString(x: PatientIssue): PhiString = {
