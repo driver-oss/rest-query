@@ -85,7 +85,11 @@ object ACL extends PhiLogging {
       extends BaseACL(
         label = "extracted data",
         create = Set(DocumentExtractor, RecordAdmin),
-        read = Set(DocumentExtractor, RecordAdmin, RoutesCurator, TreatmentMatchingAdmin, ResearchOncologist),
+        read = Set(DocumentExtractor,
+                   RecordAdmin,
+                   RoutesCurator,
+                   TreatmentMatchingAdmin,
+                   ResearchOncologist),
         update = Set(DocumentExtractor, RecordAdmin),
         delete = Set(DocumentExtractor, RecordAdmin)
       )
@@ -151,7 +155,11 @@ object ACL extends PhiLogging {
       extends BaseACL(
         label = "criterion",
         create = Set(CriteriaCurator, TrialAdmin),
-        read = Set(CriteriaCurator, TrialAdmin, RoutesCurator, TreatmentMatchingAdmin, ResearchOncologist),
+        read = Set(CriteriaCurator,
+                   TrialAdmin,
+                   RoutesCurator,
+                   TreatmentMatchingAdmin,
+                   ResearchOncologist),
         update = Set(CriteriaCurator, TrialAdmin),
         delete = Set(CriteriaCurator, TrialAdmin)
       )
@@ -185,6 +193,12 @@ object ACL extends PhiLogging {
         label = "patient",
         read = TreatmentMatchingRoles + ResearchOncologist + SystemUser,
         update = TreatmentMatchingRoles
+      )
+
+  object PatientHistory
+      extends BaseACL(
+        label = "patient history",
+        read = Set(TreatmentMatchingAdmin)
       )
 
   object PatientIssue
@@ -238,26 +252,32 @@ object ACL extends PhiLogging {
                          update: AclCheck = Forbid,
                          delete: AclCheck = Forbid) {
 
-    def isCreateAllow()(implicit requestContext: AuthenticatedRequestContext): Boolean = {
+    def isCreateAllow()(
+        implicit requestContext: AuthenticatedRequestContext): Boolean = {
       check("create", create)(requestContext.executor.roles)
     }
 
-    def isReadAllow()(implicit requestContext: AuthenticatedRequestContext): Boolean = {
+    def isReadAllow()(
+        implicit requestContext: AuthenticatedRequestContext): Boolean = {
       check("read", read)(requestContext.executor.roles)
     }
 
-    def isUpdateAllow()(implicit requestContext: AuthenticatedRequestContext): Boolean = {
+    def isUpdateAllow()(
+        implicit requestContext: AuthenticatedRequestContext): Boolean = {
       check("update", update)(requestContext.executor.roles)
     }
 
-    def isDeleteAllow()(implicit requestContext: AuthenticatedRequestContext): Boolean = {
+    def isDeleteAllow()(
+        implicit requestContext: AuthenticatedRequestContext): Boolean = {
       check("delete", delete)(requestContext.executor.roles)
     }
 
-    private def check(action: String, isAllowed: AclCheck)(executorRoles: Set[Role]): Boolean = {
+    private def check(action: String, isAllowed: AclCheck)(
+        executorRoles: Set[Role]): Boolean = {
       loggedError(
         executorRoles.exists(isAllowed),
-        phi"${Unsafe(executorRoles.mkString(", "))} has no access to ${Unsafe(action)} a ${Unsafe(label)}"
+        phi"${Unsafe(executorRoles.mkString(", "))} has no access to ${Unsafe(
+          action)} a ${Unsafe(label)}"
       )
     }
   }
