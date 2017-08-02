@@ -10,6 +10,7 @@ lazy val core = (project in file("."))
   .settings(libraryDependencies ++= Seq(
     "com.fasterxml.jackson.module"      %% "jackson-module-scala"   % "2.8.3",
     "com.github.pureconfig"             %% "pureconfig"             % "0.7.2",
+    "com.lihaoyi"                       %% "fastparse"              % "0.3.7",
     "com.typesafe.akka"                 %% "akka-http"              % "10.0.9",
     "com.typesafe.play"                 %% "play"                   % "2.5.15",
     "com.typesafe.scala-logging"        %% "scala-logging"          % "3.5.0",
