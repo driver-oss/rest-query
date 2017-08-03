@@ -10,16 +10,12 @@ import xyz.driver.pdsuidomain.entities.{MedicalRecord, MedicalRecordIssue}
 final case class ApiPartialRecordIssue(startPage: Option[Double],
                                        endPage: Option[Double],
                                        text: String,
-                                       evidence: String,
-                                       archiveRequired: Boolean,
-                                       meta: String) {
+                                       archiveRequired: Boolean) {
   def applyTo(x: MedicalRecordIssue): MedicalRecordIssue = x.copy(
     startPage = startPage,
     endPage = endPage,
     text = text,
-    evidence = evidence,
-    archiveRequired = archiveRequired,
-    meta = meta
+    archiveRequired = archiveRequired
   )
 
   def toDomain(userId: StringId[User], recordId: LongId[MedicalRecord]) =
@@ -32,9 +28,7 @@ final case class ApiPartialRecordIssue(startPage: Option[Double],
       lastUpdate = LocalDateTime.MIN,
       isDraft = true,
       text = text,
-      evidence = evidence,
-      archiveRequired = false,
-      meta = meta
+      archiveRequired = false
     )
 }
 
@@ -43,10 +37,6 @@ object ApiPartialRecordIssue {
     (JsPath \ "startPage").formatNullable[Double] and
       (JsPath \ "endPage").formatNullable[Double] and
       (JsPath \ "text").format[String] and
-      (JsPath \ "evidence").format[String] and
-      (JsPath \ "archiveRequired").format[Boolean] and
-      (JsPath \ "meta").format[String](Format(Reads { x =>
-        JsSuccess(Json.stringify(x))
-      }, Writes[String](Json.parse)))
+      (JsPath \ "archiveRequired").format[Boolean]
   )(ApiPartialRecordIssue.apply, unlift(ApiPartialRecordIssue.unapply))
 }

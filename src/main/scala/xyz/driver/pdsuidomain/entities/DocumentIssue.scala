@@ -13,9 +13,7 @@ final case class DocumentIssue(id: LongId[DocumentIssue],
                                lastUpdate: LocalDateTime,
                                isDraft: Boolean,
                                text: String,
-                               evidence: String,
-                               archiveRequired: Boolean,
-                               meta: String)
+                               archiveRequired: Boolean)
 
 object DocumentIssue {
   implicit def toPhiString(x: DocumentIssue): PhiString = {

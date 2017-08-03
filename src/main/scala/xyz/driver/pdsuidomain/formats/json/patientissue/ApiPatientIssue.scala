@@ -11,9 +11,7 @@ final case class ApiPatientIssue(id: Long,
                                  lastUpdate: ZonedDateTime,
                                  userId: String,
                                  isDraft: Boolean,
-                                 evidence: String,
-                                 archiveRequired: Boolean,
-                                 meta: String)
+                                 archiveRequired: Boolean)
 
 object ApiPatientIssue {
   implicit val format: Format[ApiPatientIssue] = (
@@ -22,11 +20,7 @@ object ApiPatientIssue {
       (JsPath \ "lastUpdate").format[ZonedDateTime] and
       (JsPath \ "userId").format[String] and
       (JsPath \ "isDraft").format[Boolean] and
-      (JsPath \ "evidence").format[String] and
-      (JsPath \ "archiveRequired").format[Boolean] and
-      (JsPath \ "meta").format[String](Format(Reads { x =>
-        JsSuccess(Json.stringify(x))
-      }, Writes[String](Json.parse)))
+      (JsPath \ "archiveRequired").format[Boolean]
   )(ApiPatientIssue.apply, unlift(ApiPatientIssue.unapply))
 
   def fromDomain(x: PatientIssue) = ApiPatientIssue(
@@ -35,8 +29,6 @@ object ApiPatientIssue {
     lastUpdate = ZonedDateTime.of(x.lastUpdate, ZoneId.of("Z")),
     userId = x.userId.id,
     isDraft = x.isDraft,
-    evidence = x.evidence,
-    archiveRequired = x.archiveRequired,
-    meta = x.meta
+    archiveRequired = x.archiveRequired
   )
 }

@@ -7,12 +7,10 @@ import play.api.libs.json._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.entities.{Patient, PatientIssue}
 
-final case class ApiPartialPatientIssue(text: String, evidence: String, archiveRequired: Boolean, meta: String) {
+final case class ApiPartialPatientIssue(text: String, archiveRequired: Boolean) {
   def applyTo(x: PatientIssue): PatientIssue = x.copy(
     text = text,
-    evidence = evidence,
-    archiveRequired = archiveRequired,
-    meta = meta
+    archiveRequired = archiveRequired
   )
 
   def toDomain(userId: StringId[User], patientId: UuidId[Patient]) =
@@ -23,19 +21,13 @@ final case class ApiPartialPatientIssue(text: String, evidence: String, archiveR
       lastUpdate = LocalDateTime.MIN,
       isDraft = true,
       text = text,
-      evidence = evidence,
-      archiveRequired = false,
-      meta = meta
+      archiveRequired = false
     )
 }
 
 object ApiPartialPatientIssue {
   implicit val format: Format[ApiPartialPatientIssue] = (
     (JsPath \ "text").format[String] and
-      (JsPath \ "evidence").format[String] and
-      (JsPath \ "archiveRequired").format[Boolean] and
-      (JsPath \ "meta").format[String](Format(Reads { x =>
-        JsSuccess(Json.stringify(x))
-      }, Writes[String](Json.parse)))
+      (JsPath \ "archiveRequired").format[Boolean]
   )(ApiPartialPatientIssue.apply, unlift(ApiPartialPatientIssue.unapply))
 }
