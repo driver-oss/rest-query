@@ -22,15 +22,11 @@ object PatientHistoryService {
 
   sealed trait GetListReply
   object GetListReply {
-    final case class EntityList(xs: Seq[PatientHistory],
-                                totalFound: Int,
-                                lastUpdate: Option[LocalDateTime])
+    final case class EntityList(xs: Seq[PatientHistory], totalFound: Int, lastUpdate: Option[LocalDateTime])
         extends GetListReply
 
     final case object AuthorizationError
-        extends GetListReply
-        with DomainError.AuthorizationError
-        with DefaultAccessDeniedError
+        extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
   }
 
 }
@@ -43,6 +39,6 @@ trait PatientHistoryService {
                          filter: SearchFilterExpr = SearchFilterExpr.Empty,
                          sorting: Option[Sorting] = None,
                          pagination: Option[Pagination] = None)(
-      implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
 }

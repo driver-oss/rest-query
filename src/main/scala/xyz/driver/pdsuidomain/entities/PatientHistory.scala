@@ -16,25 +16,25 @@ object PatientHistory {
 
   sealed trait State
   object State {
-    case object Verify    extends State
+    case object Verify extends State
     case object Curate extends State
-    case object Review       extends State
-    case object Flag         extends State
+    case object Review extends State
+    case object Flag   extends State
 
     val All: Set[State] = Set[State](Verify, Curate, Review, Flag)
 
     val fromString: PartialFunction[String, State] = {
-      case "Verify"       => State.Verify
-      case "Curate"       => State.Curate
-      case "Review"       => State.Review
-      case "Flag"         => State.Flag
+      case "Verify" => State.Verify
+      case "Curate" => State.Curate
+      case "Review" => State.Review
+      case "Flag"   => State.Flag
     }
 
     def stateToString(x: State): String = x match {
-      case State.Verify       => "Verify"
-      case State.Curate       => "Curate"
-      case State.Review       => "Review"
-      case State.Flag         => "Flag"
+      case State.Verify => "Verify"
+      case State.Curate => "Curate"
+      case State.Review => "Review"
+      case State.Flag   => "Flag"
     }
 
     implicit def toPhiString(x: State): PhiString =
