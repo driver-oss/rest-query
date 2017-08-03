@@ -187,6 +187,12 @@ object ACL extends PhiLogging {
         update = TreatmentMatchingRoles
       )
 
+  object PatientHistory
+      extends BaseACL(
+        label = "patient history",
+        read = Set(TreatmentMatchingAdmin)
+      )
+
   object PatientIssue
       extends BaseACL(
         label = "patient issue",
