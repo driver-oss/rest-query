@@ -1,11 +1,10 @@
 package xyz.driver.pdsuidomain.services.rest
 
 import scala.concurrent.{ExecutionContext, Future}
-
 import akka.http.scaladsl.model.{HttpResponse, ResponseEntity, StatusCodes, Uri}
 import akka.http.scaladsl.unmarshalling.{Unmarshal, Unmarshaller}
 import akka.stream.Materializer
-import xyz.driver.core.rest.ServiceRequestContext
+import xyz.driver.core.rest.{ContextHeaders, ServiceRequestContext}
 import xyz.driver.pdsuicommon.auth.{AnonymousRequestContext, AuthenticatedRequestContext}
 import xyz.driver.pdsuicommon.db.{
   Pagination,
@@ -116,10 +115,14 @@ trait RestHelper {
 
   implicit def toServiceRequestContext(requestContext: AnonymousRequestContext): ServiceRequestContext = {
     val auth: Map[String, String] = requestContext match {
-      case ctx: AuthenticatedRequestContext => Map("Auth-token" -> ctx.authToken)
-      case _                                => Map()
+      case ctx: AuthenticatedRequestContext =>
+        Map(
+          ContextHeaders.AuthenticationTokenHeader -> ctx.authToken,
+          ContextHeaders.TrackingIdHeader          -> ctx.requestId.value
+        )
+      case _ =>
+        Map()
     }
     new ServiceRequestContext(contextHeaders = auth)
   }
-
 }
