@@ -1,8 +1,7 @@
-package xyz.driver.server.parsers
+package xyz.driver.pdsuicommon.parsers
 
-import play.api.libs.json._
-import play.api.routing.sird._
-import xyz.driver.pdsuicommon.utils.WritesUtils
+//import play.api.libs.json._
+//import xyz.driver.pdsuicommon.utils.WritesUtils
 
 import scala.util.{Failure, Success, Try}
 
@@ -12,14 +11,15 @@ class Dimensions(private val xs: Set[String] = Set.empty) {
 
 object DimensionsParser {
 
+  /*
   private class DimensionsWrapper[T](dimensions: Dimensions)(implicit orig: Writes[T]) extends Writes[T] {
     private val filteredWrites         = WritesUtils.filterKeys[T](dimensions.contains)
     override def writes(o: T): JsValue = filteredWrites.writes(o)
   }
+   */
 
-  def tryParse(queryString: QueryString): Try[Dimensions] = {
-    val rawDimensions = queryString.getOrElse("dimensions", Seq.empty)
-    rawDimensions match {
+  def tryParse(query: Seq[(String, String)]): Try[Dimensions] = {
+    query.collect{ case ("dimensions", value) => value }  match {
       case Nil => Success(new Dimensions())
 
       case x +: Nil =>

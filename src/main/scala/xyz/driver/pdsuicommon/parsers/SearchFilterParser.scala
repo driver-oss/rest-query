@@ -1,11 +1,9 @@
-package xyz.driver.server.parsers
+package xyz.driver.pdsuicommon.parsers
 
-import xyz.driver.server.parsers.errors.ParseQueryArgException
 import xyz.driver.pdsuicommon.utils.Implicits.{toCharOps, toStringOps}
 import fastparse.all._
 import fastparse.core.Parsed
 import fastparse.parsers.Intrinsics.CharPred
-import play.api.routing.sird._
 import xyz.driver.pdsuicommon.db.{SearchFilterBinaryOperation, SearchFilterExpr, SearchFilterNAryOperation}
 
 import scala.util.Try
@@ -110,11 +108,11 @@ object SearchFilterParser {
 
   private val atomParser: Parser[SearchFilterExpr.Atom] = P(binaryAtomParser | nAryAtomParser)
 
-  def parse(queryString: QueryString): Try[SearchFilterExpr] = Try {
-    queryString.getOrElse("filters", Seq.empty) match {
+  def parse(query: Seq[(String, String)]): Try[SearchFilterExpr] = Try {
+    query.toList.collect { case ("filters", value) => value } match {
       case Nil => SearchFilterExpr.Empty
 
-      case head +: Nil =>
+      case head :: Nil =>
         atomParser.parse(head) match {
           case Parsed.Success(x, _) => x
           case e: Parsed.Failure    => throw new ParseQueryArgException("filters" -> formatFailure(1, e))

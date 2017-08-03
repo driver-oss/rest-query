@@ -1,10 +1,8 @@
-package xyz.driver.server.parsers
+package xyz.driver.pdsuicommon.parsers
 
-import xyz.driver.server.parsers.errors.ParseQueryArgException
 import xyz.driver.pdsuicommon.db.{Sorting, SortingOrder}
 import fastparse.all._
 import fastparse.core.Parsed
-import play.api.routing.sird._
 
 import scala.util.Try
 
@@ -32,11 +30,11 @@ object SortingParser {
     }
   }
 
-  def parse(validDimensions: Set[String], queryString: QueryString): Try[Sorting] = Try {
-    queryString.getOrElse("sort", Seq.empty) match {
+  def parse(validDimensions: Set[String], query: Seq[(String, String)]): Try[Sorting] = Try {
+    query.toList.collect { case ("sort", value) => value } match {
       case Nil => Sorting.Sequential(Seq.empty)
 
-      case rawSorting +: Nil =>
+      case rawSorting :: Nil =>
         val parser = sequentialSortingParser(validDimensions.toSeq)
         parser.parse(rawSorting) match {
           case Parsed.Success(x, _) => x
@@ -44,7 +42,7 @@ object SortingParser {
             throw new ParseQueryArgException("sort" -> formatFailure(e))
         }
 
-      case xs => throw new ParseQueryArgException("sort" -> "multiple sections are not allowed")
+      case _ => throw new ParseQueryArgException("sort" -> "multiple sections are not allowed")
     }
   }
 
