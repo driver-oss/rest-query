@@ -110,8 +110,9 @@ object SearchFilterParser {
 
   @deprecated("play-akka transition", "0")
   def parse(query: Map[String, Seq[String]]): Try[SearchFilterExpr] =
-    parse(query.toSeq.flatMap{ case (key, values) =>
-      values.map(value => key -> value)
+    parse(query.toSeq.flatMap {
+      case (key, values) =>
+        values.map(value => key -> value)
     })
 
   def parse(query: Seq[(String, String)]): Try[SearchFilterExpr] = Try {

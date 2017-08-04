@@ -4,13 +4,19 @@ import akka.http.scaladsl.marshalling._
 import akka.http.scaladsl.server.Directive1
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.model._
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
+import xyz.driver.core.rest.ContextHeaders
+import xyz.driver.entities.users.UserInfo
 import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.error._
 import xyz.driver.pdsuicommon.error.DomainError._
 import xyz.driver.pdsuicommon.error.ErrorsResponse.ResponseError
 import xyz.driver.pdsuicommon.parsers._
 import xyz.driver.pdsuicommon.db.{Pagination, Sorting, SearchFilterExpr}
+
 import scala.util._
+import scala.concurrent._
 
 trait Directives {
 
@@ -32,7 +38,7 @@ trait Directives {
     }
   }
 
-  @annotation.implicitNotFound("An ApiExtractor is required to complete service replies.")
+  @annotation.implicitNotFound("An ApiExtractor of ${Reply} to ${Api} is required to complete service replies.")
   trait ApiExtractor[Reply, Api] extends PartialFunction[Reply, Api]
   object ApiExtractor {
     // Note: make sure the Reply here is the most common response
@@ -45,45 +51,42 @@ trait Directives {
     }
   }
 
-  def completeService[Reply, Api](reply: => Reply)(implicit requestId: RequestId,
-                                                   apiExtractor: ApiExtractor[Reply, Api],
-                                                   apiMarshaller: ToEntityMarshaller[Api],
-                                                   errorMarshaller: ToEntityMarshaller[ErrorsResponse]): Route = {
+  implicit def replyMarshaller[Reply, Api](
+          implicit ctx: AuthenticatedRequestContext,
+          apiExtractor: ApiExtractor[Reply, Api],
+          apiMarshaller: ToEntityMarshaller[Api],
+          errorMarshaller: ToEntityMarshaller[ErrorsResponse]
+  ): ToResponseMarshaller[Reply] = {
 
     def errorResponse(err: DomainError) =
-      ErrorsResponse(Seq(ResponseError(None, err.getMessage, ErrorCode.Unspecified)), requestId)
+      ErrorsResponse(Seq(ResponseError(None, err.getMessage, ErrorCode.Unspecified)), ctx.requestId)
 
-    // TODO: rather than completing the bad requests here, we should
-    // consider throwing a corresponding exception and then handling
-    // it in an error handler
-    reply match {
-      case apiReply if apiExtractor.isDefinedAt(apiReply) =>
-        complete(apiExtractor(reply))
-      case err: NotFoundError =>
-        complete(401 -> errorResponse(err))
-      case err: AuthenticationError =>
-        complete(401 -> errorResponse(err))
-      case err: AuthorizationError =>
-        complete(403 -> errorResponse(err))
-      case err: DomainError =>
-        complete(400 -> errorResponse(err))
-      case other =>
-        val msg = s"Got unexpected response type in completion directive: ${other.getClass.getSimpleName}"
-        val res = ErrorsResponse(Seq(ResponseError(None, msg, ErrorCode.Unspecified)), requestId)
-        complete(500 -> res)
+    Marshaller[Reply, HttpResponse] { (executionContext: ExecutionContext) => (reply: Reply) =>
+      implicit val ec = executionContext
+      reply match {
+        case apiReply if apiExtractor.isDefinedAt(apiReply) =>
+          Marshaller.fromToEntityMarshaller[Api](StatusCodes.OK).apply(apiExtractor(apiReply))
+        case err: NotFoundError =>
+          Marshaller.fromToEntityMarshaller[ErrorsResponse](StatusCodes.Unauthorized).apply(errorResponse(err))
+        case err: AuthorizationError =>
+          Marshaller.fromToEntityMarshaller[ErrorsResponse](StatusCodes.Forbidden).apply(errorResponse(err))
+        case err: DomainError =>
+          Marshaller.fromToEntityMarshaller[ErrorsResponse](StatusCodes.BadRequest).apply(errorResponse(err))
+        case other =>
+          val msg = s"Got unexpected response type in completion directive: ${other.getClass.getSimpleName}"
+          val res = ErrorsResponse(Seq(ResponseError(None, msg, ErrorCode.Unspecified)), ctx.requestId)
+          Marshaller.fromToEntityMarshaller[ErrorsResponse](StatusCodes.InternalServerError).apply(res)
+      }
     }
   }
 
-  import xyz.driver.core.rest.AuthorizedServiceRequestContext
-  import xyz.driver.core.rest.ContextHeaders
-  import xyz.driver.entities.users.UserInfo
-
-  implicit def authContext(core: AuthorizedServiceRequestContext[UserInfo]): AuthenticatedRequestContext =
-    new AuthenticatedRequestContext(
+  implicit class PdsContext(core: AuthorizedServiceRequestContext[UserInfo]) {
+    def authenticated = new AuthenticatedRequestContext(
       core.authenticatedUser,
       RequestId(),
       core.contextHeaders(ContextHeaders.AuthenticationTokenHeader)
     )
+  }
 
 }
 

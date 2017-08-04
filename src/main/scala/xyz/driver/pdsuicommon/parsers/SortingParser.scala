@@ -32,8 +32,9 @@ object SortingParser {
 
   @deprecated("play-akka transition", "0")
   def parse(validDimensions: Set[String], query: Map[String, Seq[String]]): Try[Sorting] =
-    parse(validDimensions, query.toSeq.flatMap{ case (key, values) =>
-      values.map(value => key -> value)
+    parse(validDimensions, query.toSeq.flatMap {
+      case (key, values) =>
+        values.map(value => key -> value)
     })
 
   def parse(validDimensions: Set[String], query: Seq[(String, String)]): Try[Sorting] = Try {

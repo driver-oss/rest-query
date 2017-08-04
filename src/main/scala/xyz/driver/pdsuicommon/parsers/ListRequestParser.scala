@@ -12,8 +12,8 @@ class ListRequestParser(validSortingFields: Set[String]) {
   def tryParse(request: Request[AnyContent]): Try[ListRequestParameters] = {
     for {
       queryFilters <- SearchFilterParser.parse(request.queryString)
-      sorting <- SortingParser.parse(validSortingFields, request.queryString)
-      pagination <- PaginationParser.parse(request.queryString)
+      sorting      <- SortingParser.parse(validSortingFields, request.queryString)
+      pagination   <- PaginationParser.parse(request.queryString)
     } yield ListRequestParameters(queryFilters, sorting, pagination)
   }
 

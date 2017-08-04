@@ -10,8 +10,9 @@ object DimensionsParser {
 
   @deprecated("play-akka transition", "0")
   def tryParse(query: Map[String, Seq[String]]): Try[Dimensions] =
-    tryParse(query.toSeq.flatMap{ case (key, values) =>
-      values.map(value => key -> value)
+    tryParse(query.toSeq.flatMap {
+      case (key, values) =>
+        values.map(value => key -> value)
     })
 
   def tryParse(query: Seq[(String, String)]): Try[Dimensions] = {
