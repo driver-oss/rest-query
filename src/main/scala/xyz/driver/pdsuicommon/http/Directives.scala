@@ -74,6 +74,17 @@ trait Directives {
     }
   }
 
+  import xyz.driver.core.rest.AuthorizedServiceRequestContext
+  import xyz.driver.core.rest.ContextHeaders
+  import xyz.driver.entities.users.UserInfo
+
+  implicit def authContext(core: AuthorizedServiceRequestContext[UserInfo]): AuthenticatedRequestContext =
+    new AuthenticatedRequestContext(
+      core.authenticatedUser,
+      RequestId(),
+      core.contextHeaders(ContextHeaders.AuthenticationTokenHeader)
+    )
+
 }
 
 object Directives extends Directives
