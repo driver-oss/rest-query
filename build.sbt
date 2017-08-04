@@ -4,6 +4,7 @@ import Keys._
 lazy val core = (project in file("."))
   .driverLibrary("pds-ui-common")
   .settings(scalastyleSettings ++ wartRemoverSettings ++ formatSettings)
+  .settings(scalacOptions -= "-Xfatal-warnings") // TODO re-enable after migration
   .settings(wartremoverErrors in (Compile, compile) --= Seq(
     Wart.ImplicitConversion, Wart.MutableDataStructures, Wart.TraversableOps, Wart.OptionPartial))
   .settings(sources in (Compile, doc) := Seq.empty, publishArtifact in (Compile, packageDoc) := false)

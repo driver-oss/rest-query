@@ -8,6 +8,12 @@ class Dimensions(private val xs: Set[String] = Set.empty) {
 
 object DimensionsParser {
 
+  @deprecated("play-akka transition", "0")
+  def tryParse(query: Map[String, Seq[String]]): Try[Dimensions] =
+    tryParse(query.toSeq.flatMap{ case (key, values) =>
+      values.map(value => key -> value)
+    })
+
   def tryParse(query: Seq[(String, String)]): Try[Dimensions] = {
     query.collect { case ("dimensions", value) => value } match {
       case Nil => Success(new Dimensions())

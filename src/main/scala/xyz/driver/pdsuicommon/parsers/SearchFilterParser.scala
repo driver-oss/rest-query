@@ -108,6 +108,12 @@ object SearchFilterParser {
 
   private val atomParser: Parser[SearchFilterExpr.Atom] = P(binaryAtomParser | nAryAtomParser)
 
+  @deprecated("play-akka transition", "0")
+  def parse(query: Map[String, Seq[String]]): Try[SearchFilterExpr] =
+    parse(query.toSeq.flatMap{ case (key, values) =>
+      values.map(value => key -> value)
+    })
+
   def parse(query: Seq[(String, String)]): Try[SearchFilterExpr] = Try {
     query.toList.collect { case ("filters", value) => value } match {
       case Nil => SearchFilterExpr.Empty
