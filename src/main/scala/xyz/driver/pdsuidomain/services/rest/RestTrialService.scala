@@ -1,6 +1,9 @@
 package xyz.driver.pdsuidomain.services.rest
 
 import scala.concurrent.{ExecutionContext, Future}
+import akka.NotUsed
+import akka.stream.scaladsl.Source
+import akka.util.ByteString
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
@@ -43,8 +46,15 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
   }
 
   def getPdfSource(trialId: StringId[Trial])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetPdfSourceReply] =
-    Future.failed(new NotImplementedError("Streaming PDF over network is not supported."))
+    implicit requestContext: AuthenticatedRequestContext): Future[Source[ByteString, NotUsed]] = {
+    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/trial/${trialId}/source"))
+    for {
+      response <- transport.sendRequestGetResponse(requestContext)(request)
+      reply    <- apiResponse[HttpEntity](response)
+    } yield {
+      reply.dataBytes.mapMaterializedValue(_ => NotUsed)
+    }
+  }
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,

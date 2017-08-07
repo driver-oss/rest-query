@@ -1,6 +1,5 @@
 package xyz.driver.pdsuidomain.entities
 
-import java.nio.file.Path
 import java.time.LocalDateTime
 
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, User, UuidId}
@@ -51,8 +50,6 @@ object Trial {
 
     implicit def toPhiString(x: Status): PhiString = Unsafe(Utils.getClassSimpleName(x.getClass))
   }
-
-  final case class PdfSource(path: Path) extends AnyVal
 
   implicit def toPhiString(x: Trial): PhiString = {
     import x._

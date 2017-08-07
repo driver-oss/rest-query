@@ -2,13 +2,15 @@ package xyz.driver.pdsuidomain.services
 
 import java.time.LocalDateTime
 
+import akka.NotUsed
+import akka.stream.scaladsl.Source
+import akka.util.ByteString
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.StringId
 import xyz.driver.pdsuicommon.error.DomainError
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuidomain.entities.Trial
-import xyz.driver.pdsuidomain.entities.Trial.PdfSource
 import xyz.driver.pdsuidomain.entities.export.trial.ExportTrialWithLabels
 
 import scala.concurrent.Future
@@ -66,24 +68,6 @@ object TrialService {
         extends GetTrialWithLabelsReply with DomainError.AuthorizationError with DefaultAccessDeniedError
   }
 
-  sealed trait GetPdfSourceReply
-  object GetPdfSourceReply {
-    type Error = GetPdfSourceReply with DomainError
-
-    final case class Entity(x: PdfSource) extends GetPdfSourceReply
-
-    case object AuthorizationError
-        extends GetPdfSourceReply with DomainError.AuthorizationError with DefaultAccessDeniedError
-
-    case object NotFoundError extends GetPdfSourceReply with DomainError.NotFoundError {
-      def userMessage: String = "Trial's PDF hasn't been found"
-    }
-
-    case object TrialNotFoundError extends GetPdfSourceReply with DomainError.NotFoundError with DefaultNotFoundError
-
-    final case class CommonError(userMessage: String) extends GetPdfSourceReply with DomainError
-  }
-
   sealed trait UpdateReply
   object UpdateReply {
     type Error = UpdateReply with DomainError
@@ -114,7 +98,7 @@ trait TrialService {
           implicit requestContext: AuthenticatedRequestContext): Future[GetTrialWithLabelsReply]
 
   def getPdfSource(trialId: StringId[Trial])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetPdfSourceReply]
+          implicit requestContext: AuthenticatedRequestContext): Future[Source[ByteString, NotUsed]]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
