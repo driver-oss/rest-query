@@ -3,7 +3,7 @@ package xyz.driver.pdsuicommon.http
 import akka.http.scaladsl.marshalling._
 import akka.http.scaladsl.server.Directive1
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.server.{PathMatcher1, PathMatchers}
 import akka.http.scaladsl.model._
 import xyz.driver.core.rest.AuthorizedServiceRequestContext
 import xyz.driver.core.rest.ContextHeaders
@@ -14,6 +14,7 @@ import xyz.driver.pdsuicommon.error.DomainError._
 import xyz.driver.pdsuicommon.error.ErrorsResponse.ResponseError
 import xyz.driver.pdsuicommon.parsers._
 import xyz.driver.pdsuicommon.db.{Pagination, Sorting, SearchFilterExpr}
+import xyz.driver.pdsuicommon.domain._
 
 import scala.util._
 import scala.concurrent._
@@ -37,6 +38,15 @@ trait Directives {
       case Failure(ex)      => failWith(ex)
     }
   }
+
+  def StringIdInPath[T]: PathMatcher1[StringId[T]] =
+    PathMatchers.Segment.map((id) => StringId(id.toString.toLowerCase))
+
+  def LongIdInPath[T]: PathMatcher1[LongId[T]] =
+    PathMatchers.LongNumber.map((id) => LongId(id))
+
+  def UuidIdInPath[T]: PathMatcher1[UuidId[T]] =
+    PathMatchers.JavaUUID.map((id) => UuidId(id))
 
   @annotation.implicitNotFound("An ApiExtractor of ${Reply} to ${Api} is required to complete service replies.")
   trait ApiExtractor[Reply, Api] extends PartialFunction[Reply, Api]
