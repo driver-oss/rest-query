@@ -13,7 +13,7 @@ object PaginationParser {
     })
 
   def parse(query: Seq[(String, String)]): Try[Pagination] = {
-    val IntString = """\d+""".r
+    val IntString = """(\d+)""".r
     def validate(field: String) = query.collectFirst { case (`field`, size) => size } match {
       case Some(IntString(x)) => x.toInt
       case Some(str)          => throw new ParseQueryArgException((field, s"must be an integer (found $str)"))
