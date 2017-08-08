@@ -46,7 +46,7 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
   }
 
   def getPdfSource(trialId: StringId[Trial])(
-    implicit requestContext: AuthenticatedRequestContext): Future[Source[ByteString, NotUsed]] = {
+          implicit requestContext: AuthenticatedRequestContext): Future[Source[ByteString, NotUsed]] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/trial/${trialId}/source"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
