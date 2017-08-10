@@ -1,5 +1,7 @@
 package xyz.driver.pdsuidomain.formats.json.sprayformats
 
+import java.time.{ZoneId, ZonedDateTime}
+
 import spray.json._
 import xyz.driver.core.json.EnumJsonFormat
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
@@ -33,7 +35,7 @@ object trial {
       JsObject(
         "id"                    -> obj.id.toJson,
         "externalid"            -> obj.externalId.toJson,
-        "lastUpdate"            -> obj.lastUpdate.toJson,
+        "lastUpdate"            -> ZonedDateTime.of(obj.lastUpdate, ZoneId.of("Z")).toJson,
         "status"                -> obj.status.toJson,
         "assignee"              -> obj.assignee.toJson,
         "previousStatus"        -> obj.previousStatus.toJson,
@@ -57,22 +59,22 @@ object trial {
     case JsObject(fields) =>
       val hypothesisId = fields
         .get("hypothesisId")
-        .map(_.convertTo[UuidId[Hypothesis]])
-        .orElse(orig.hypothesisId)
+        .map(_.convertTo[Option[UuidId[Hypothesis]]])
+        .getOrElse(orig.hypothesisId)
 
       val studyDesignId = fields
         .get("studyDesignId")
-        .map(_.convertTo[LongId[StudyDesign]])
-        .orElse(orig.studyDesignId)
+        .map(_.convertTo[Option[LongId[StudyDesign]]])
+        .getOrElse(orig.studyDesignId)
 
       val overview = fields
         .get("overview")
-        .map(_.convertTo[String])
-        .orElse(orig.overview)
+        .map(_.convertTo[Option[String]])
+        .getOrElse(orig.overview)
 
       val title = fields
         .get("title")
-        .map(_.convertTo[String])
+        .map(_.convertTo[Option[String]].getOrElse(""))
         .getOrElse(orig.title)
 
       orig.copy(

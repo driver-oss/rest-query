@@ -57,6 +57,45 @@ object criterion {
     case _ => deserializationError(s"Expected Json Object as CriterionLabel, but got $json")
   }
 
+  def applyUpdateToCriterion(json: JsValue, orig: RichCriterion): RichCriterion = json match {
+    case JsObject(fields) =>
+      val text = fields
+        .get("text")
+        .map(_.convertTo[String])
+
+      val isCompound = fields
+        .get("isCompound")
+        .exists(_.convertTo[Boolean])
+
+      val meta = fields
+        .get("meta")
+        .map(_.convertTo[Option[String]].getOrElse("{}"))
+        .getOrElse(orig.criterion.meta)
+
+      val arms = fields
+        .get("arms")
+        .map(_.convertTo[Option[List[LongId[Arm]]]].getOrElse(List.empty[LongId[Arm]]))
+        .getOrElse(orig.armIds)
+
+      val labels = fields
+        .get("labels")
+        .map(_.convertTo[Option[List[JsValue]]].getOrElse(List.empty[JsValue]))
+        .map(_.map(l => jsValueToCriterionLabel(l, orig.criterion.id)))
+        .getOrElse(orig.labels)
+
+      orig.copy(
+        criterion = orig.criterion.copy(
+          meta = meta,
+          text = text,
+          isCompound = isCompound
+        ),
+        armIds = arms,
+        labels = labels
+      )
+
+    case _ => deserializationError(s"Expected Json Object as partial Criterion, but got $json")
+  }
+
   val richCriterionFormat = new RootJsonFormat[RichCriterion] {
     override def write(obj: RichCriterion): JsValue =
       JsObject(
@@ -71,11 +110,6 @@ object criterion {
 
     override def read(json: JsValue): RichCriterion = json match {
       case JsObject(fields) =>
-        val id = fields
-          .get("id")
-          .map(_.convertTo[LongId[Criterion]])
-          .getOrElse(LongId[Criterion](0))
-
         val trialId = fields
           .get("trialId")
           .map(_.convertTo[StringId[Trial]])
@@ -102,12 +136,12 @@ object criterion {
         val labels = fields
           .get("labels")
           .map(_.convertTo[List[JsValue]])
-          .map(_.map(l => jsValueToCriterionLabel(l, id)))
+          .map(_.map(l => jsValueToCriterionLabel(l, LongId(0))))
           .getOrElse(List.empty[CriterionLabel])
 
         RichCriterion(
           criterion = Criterion(
-            id = id,
+            id = LongId(0),
             trialId = trialId,
             text = text,
             isCompound = isCompound,
