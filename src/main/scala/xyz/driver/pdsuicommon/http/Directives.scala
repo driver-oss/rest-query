@@ -4,7 +4,7 @@ import akka.http.scaladsl.server._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.model._
 import xyz.driver.core.rest.ContextHeaders
-import xyz.driver.entities.users.UserInfo
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.error._
 import xyz.driver.pdsuicommon.error.DomainError._
@@ -82,7 +82,7 @@ trait Directives {
       handleExceptions(domainExceptionHandler(id))
   }
 
-  implicit class AuthProviderWrapper(provider: AuthProvider[UserInfo]) {
+  implicit class AuthProviderWrapper(provider: AuthProvider[AuthUserInfo]) {
     val authenticate: Directive1[AuthenticatedRequestContext] = (provider.authorize() & tracked) tflatMap {
       case (core, requestId) =>
         provide(
