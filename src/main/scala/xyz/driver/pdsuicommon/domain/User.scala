@@ -15,7 +15,7 @@ final case class User(id: StringId[User],
                       latestActivity: Option[LocalDateTime],
                       deleted: Option[LocalDateTime]) {
 
-  def this(driverUser: xyz.driver.entities.users.UserInfo) {
+  def this(driverUser: xyz.driver.entities.users.AuthUserInfo) {
     this(
       id = StringId[xyz.driver.pdsuicommon.domain.User](driverUser.id.value),
       email = Email(driverUser.email.toString),

@@ -123,6 +123,6 @@ trait RestHelper {
       case _ =>
         Map()
     }
-    new ServiceRequestContext(contextHeaders = auth)
+    new ServiceRequestContext(contextHeaders = auth, trackingId = requestContext.requestId.value)
   }
 }
