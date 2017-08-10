@@ -18,27 +18,6 @@ final case class ScrapedOverall(affiliation: String,
                                 email: Option[String],
                                 isBackup: Boolean)
 
-final case class ScrapedLocationContact(firstName: Option[String],
-                                        lastName: Option[String],
-                                        phone: Option[String],
-                                        phoneExt: Option[String],
-                                        email: Option[String],
-                                        isBackup: Boolean)
-
-final case class ScrapedLocation(id: UuidId[ScrapedLocation],
-                                 createdAt: LocalDateTime,
-                                 facilityName: Option[String],
-                                 city: Option[String],
-                                 state: Option[String],
-                                 zip: Option[String],
-                                 country: Option[String],
-                                 latitude: Option[Double],
-                                 longitude: Option[Double],
-                                 preferredName: Option[String],
-                                 partnershipStatus: Option[String],
-                                 lastReviewed: LocalDateTime,
-                                 contacts: Set[ScrapedLocationContact])
-
 final case class ScrapedInterventionType(value: String)
 
 final case class ScrapedIntervention(name: String,
@@ -48,7 +27,8 @@ final case class ScrapedIntervention(name: String,
 
 object ScrapedIntervention {
 
-  implicit def toPhiString(x: ScrapedIntervention): PhiString = phi"ScrapedIntervention(${Unsafe(x.name)})"
+  implicit def toPhiString(x: ScrapedIntervention): PhiString =
+    phi"ScrapedIntervention(${Unsafe(x.name)})"
 }
 
 final case class ScrapedArm(name: String, kind: Option[String], interventions: Set[ScrapedIntervention])
@@ -79,8 +59,7 @@ object ScrapedTrial {
 
   implicit def toPhiString(x: ScrapedTrial): PhiString = {
     import x._
-    phi"ScrapedTrial(rawId=$rawId, nctId=${Unsafe(nctId)}, " +
-      phi"location.size=${Unsafe(locations.size)}, arms=$arms, checksum=$checksum)"
+    phi"ScrapedTrial(rawId=$rawId, nctId=${Unsafe(nctId)}, arms=$arms, checksum=$checksum)"
   }
 }
 
@@ -94,7 +73,6 @@ final case class ScrapedTrial(rawId: UuidId[ScrapedTrial],
                               phase: String,
                               studyDesign: Option[ScrapedStudyDesign],
                               overall: Set[ScrapedOverall],
-                              locations: Set[ScrapedLocation],
                               // // see ClinicalTrialRaw
                               // trialHtml: String,
                               // eligibilityText: String,
