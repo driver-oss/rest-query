@@ -21,7 +21,7 @@ object extracteddata {
     override def read(json: JsValue): TextJson[Meta] = TextJson(extractedDataMetaFormat.read(json))
   }
 
-  implicit val extractedDataLabelFormat: RootJsonFormat[ExtractedDataLabel] = new RootJsonFormat[ExtractedDataLabel] {
+  implicit val extractedDataLabelWriter: JsonWriter[ExtractedDataLabel] = new JsonWriter[ExtractedDataLabel] {
     override def write(label: ExtractedDataLabel): JsObject = {
       JsObject(
         "id"         -> label.labelId.toJson,
@@ -29,59 +29,57 @@ object extracteddata {
         "value"      -> label.value.toJson
       )
     }
+  }
 
-    override def read(json: JsValue): ExtractedDataLabel = json match {
-      case JsObject(fields) =>
-        val labelId = fields
-          .get("id")
-          .map(_.convertTo[LongId[Label]])
+  def applyLabelsForExtractedData(json: JsValue, dataId: LongId[ExtractedData]): ExtractedDataLabel = json match {
+    case JsObject(fields) =>
+      val labelId = fields
+        .get("id")
+        .map(_.convertTo[LongId[Label]])
 
-        val categoryId = fields
-          .get("categoryId")
-          .map(_.convertTo[LongId[Category]])
+      val categoryId = fields
+        .get("categoryId")
+        .map(_.convertTo[LongId[Category]])
 
-        val value = fields
-          .get("value")
-          .map(_.convertTo[FuzzyValue])
+      val value = fields
+        .get("value")
+        .map(_.convertTo[FuzzyValue])
 
-        ExtractedDataLabel(
-          id = LongId(0),
-          dataId = LongId(0),
-          labelId = labelId,
-          categoryId = categoryId,
-          value = value
-        )
+      ExtractedDataLabel(
+        id = LongId(0),
+        dataId = dataId,
+        labelId = labelId,
+        categoryId = categoryId,
+        value = value
+      )
 
-      case _ => deserializationError(s"Expected Json Object as ExtractedDataLabel, but got $json")
-    }
+    case _ => deserializationError(s"Expected Json Object as ExtractedDataLabel, but got $json")
   }
 
   def applyUpdateToExtractedData(json: JsValue, orig: RichExtractedData): RichExtractedData = json match {
     case JsObject(fields) =>
-      val keywordId = if (fields.contains("keywordId")) {
-        fields
-          .get("keywordId")
-          .map(_.convertTo[LongId[Keyword]])
-      } else orig.extractedData.keywordId
+      val keywordId = fields
+        .get("keywordId")
+        .map(_.convertTo[Option[LongId[Keyword]]])
+        .getOrElse(orig.extractedData.keywordId)
 
-      val evidence = if (fields.contains("evidence")) {
-        fields
-          .get("evidence")
-          .map(_.convertTo[String])
-      } else orig.extractedData.evidenceText
+      val evidence = fields
+        .get("evidence")
+        .map(_.convertTo[Option[String]])
+        .getOrElse(orig.extractedData.evidenceText)
 
-      val meta = if (fields.contains("meta")) {
-        fields
-          .get("meta")
-          .map(_.convertTo[TextJson[Meta]])
-      } else orig.extractedData.meta
+      val meta = fields
+        .get("meta")
+        .map(_.convertTo[Option[TextJson[Meta]]])
+        .getOrElse(orig.extractedData.meta)
 
-      val labels = if (fields.contains("labels")) {
-        fields
-          .get("labels")
-          .map(_.convertTo[List[ExtractedDataLabel]])
-          .getOrElse(List.empty[ExtractedDataLabel])
-      } else orig.labels
+      val labels = fields
+        .get("labels")
+        .map(
+          _.convertTo[Option[List[JsValue]]]
+            .getOrElse(List.empty[JsValue])
+            .map(l => applyLabelsForExtractedData(l, orig.extractedData.id)))
+        .getOrElse(orig.labels)
 
       val extractedData = orig.extractedData.copy(
         keywordId = keywordId,
@@ -105,7 +103,7 @@ object extracteddata {
         "keywordId"  -> richData.extractedData.keywordId.toJson,
         "evidence"   -> richData.extractedData.evidenceText.toJson,
         "meta"       -> richData.extractedData.meta.toJson,
-        "labels"     -> richData.labels.toJson
+        "labels"     -> richData.labels.map(_.toJson).toJson
       )
 
     override def read(json: JsValue): RichExtractedData = json match {
@@ -130,8 +128,9 @@ object extracteddata {
 
         val labels = fields
           .get("labels")
-          .map(_.convertTo[List[ExtractedDataLabel]])
-          .getOrElse(List.empty[ExtractedDataLabel])
+          .map(_.convertTo[List[JsValue]])
+          .getOrElse(List.empty[JsValue])
+          .map(l => applyLabelsForExtractedData(l, LongId(0)))
 
         val extractedData = ExtractedData(
           documentId = documentId,

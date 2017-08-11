@@ -6,6 +6,7 @@ import java.util.UUID
 import spray.json._
 import xyz.driver.core.json.{EnumJsonFormat, GadtJsonFormat}
 import xyz.driver.pdsuicommon.domain.{LongId, TextJson, UuidId}
+import xyz.driver.pdsuidomain.entities.MedicalRecord.Meta._
 import xyz.driver.pdsuidomain.entities._
 
 object record {
@@ -43,12 +44,116 @@ object record {
     }
   }
 
+  implicit val duplicateMetaFormat: RootJsonFormat[Duplicate] = new RootJsonFormat[Duplicate] {
+    override def write(obj: Duplicate) =
+      JsObject(
+        "type"              -> "duplicate".toJson,
+        "predicted"         -> obj.predicted.toJson,
+        "startPage"         -> obj.startPage.toJson,
+        "endPage"           -> obj.endPage.toJson,
+        "startOriginalPage" -> obj.startOriginalPage.toJson,
+        "endOriginalPage"   -> obj.endOriginalPage.toJson
+      )
+
+    override def read(json: JsValue): Duplicate = json match {
+      case JsObject(fields) =>
+        val predicted = fields
+          .get("predicted")
+          .map(_.convertTo[Boolean])
+
+        val startPage = fields
+          .get("startPage")
+          .map(_.convertTo[Double])
+          .getOrElse(deserializationError(s"Duplicate meta json object does not contain `startPage` field: $json"))
+
+        val endPage = fields
+          .get("endPage")
+          .map(_.convertTo[Double])
+          .getOrElse(deserializationError(s"Duplicate meta json object does not contain `endPage` field: $json"))
+
+        val startOriginalPage = fields
+          .get("startOriginalPage")
+          .map(_.convertTo[Double])
+          .getOrElse(
+            deserializationError(s"Duplicate meta json object does not contain `startOriginalPage` field: $json"))
+
+        val endOriginalPage = fields
+          .get("endOriginalPage")
+          .map(_.convertTo[Double])
+
+        Duplicate(
+          predicted = predicted,
+          startPage = startPage,
+          endPage = endPage,
+          startOriginalPage = startOriginalPage,
+          endOriginalPage = endOriginalPage
+        )
+
+      case _ => deserializationError(s"Expected JsObject as Duplicate meta of medical record, but got $json")
+    }
+  }
+
+  implicit val reorderMetaFormat: RootJsonFormat[Reorder] = new RootJsonFormat[Reorder] {
+    override def write(obj: Reorder) =
+      JsObject(
+        "type"      -> "reorder".toJson,
+        "predicted" -> obj.predicted.toJson,
+        "items"     -> obj.items.toJson
+      )
+
+    override def read(json: JsValue): Reorder = json match {
+      case JsObject(fields) =>
+        val predicted = fields
+          .get("predicted")
+          .map(_.convertTo[Boolean])
+
+        val items = fields
+          .get("items")
+          .map(_.convertTo[Seq[Int]])
+          .getOrElse(deserializationError(s"Reorder meta json object does not contain `items` field: $json"))
+
+        Reorder(
+          predicted = predicted,
+          items = items
+        )
+
+      case _ => deserializationError(s"Expected JsObject as Reorder meta of medical record, but got $json")
+    }
+  }
+
+  implicit val rotateMetaFormat: RootJsonFormat[Rotation] = new RootJsonFormat[Rotation] {
+    override def write(obj: Rotation) =
+      JsObject(
+        "type"      -> "rotation".toJson,
+        "predicted" -> obj.predicted.toJson,
+        "items"     -> obj.items.toJson
+      )
+
+    override def read(json: JsValue): Rotation = json match {
+      case JsObject(fields) =>
+        val predicted = fields
+          .get("predicted")
+          .map(_.convertTo[Boolean])
+
+        val items = fields
+          .get("items")
+          .map(_.convertTo[Map[String, Int]])
+          .getOrElse(deserializationError(s"Rotation meta json object does not contain `items` field: $json"))
+
+        Rotation(
+          predicted = predicted,
+          items = items
+        )
+
+      case _ => deserializationError(s"Expected JsObject as Rotation meta of medical record, but got $json")
+    }
+  }
+
   implicit val recordMetaTypeFormat: GadtJsonFormat[MedicalRecord.Meta] = {
-    import Meta._
-    GadtJsonFormat.create[Meta]("meta")({ case m => m.metaType }) {
-      case "duplicate" => jsonFormat5(Duplicate.apply)
-      case "reorder"   => jsonFormat2(Reorder.apply)
-      case "rotation"  => jsonFormat2(Rotation.apply)
+    GadtJsonFormat.create[Meta]("type")({ case m => m.metaType }) {
+      case "duplicate" => duplicateMetaFormat
+      case "reorder"   => reorderMetaFormat
+      case "rotation"  => rotateMetaFormat
     }
   }
 
@@ -120,11 +225,10 @@ object record {
 
   def applyUpdateToMedicalRecord(json: JsValue, orig: MedicalRecord): MedicalRecord = json match {
     case JsObject(fields) =>
-      val meta = if (fields.contains("meta")) {
-        fields
-          .get("meta")
-          .map(_.convertTo[TextJson[List[Meta]]])
-      } else orig.meta
+      val meta = fields
+        .get("meta")
+        .map(_.convertTo[Option[TextJson[List[Meta]]]])
+        .getOrElse(orig.meta)
       orig.copy(meta = meta)
 
     case _ => deserializationError(s"Expected Json Object as partial MedicalRecord, but got $json")

@@ -39,41 +39,35 @@ object document {
         .get("physician")
         .map(_.convertTo[String])
 
-      val typeId = if (fields.contains("typeId")) {
-        fields
-          .get("typeId")
-          .map(_.convertTo[LongId[DocumentType]])
-      } else orig.typeId
+      val typeId = fields
+        .get("typeId")
+        .map(_.convertTo[Option[LongId[DocumentType]]])
+        .getOrElse(orig.typeId)
 
-      val provider = if (fields.contains("provider")) {
-        fields
-          .get("provider")
-          .map(_.convertTo[String])
-      } else orig.providerName
+      val provider = fields
+        .get("provider")
+        .map(_.convertTo[Option[String]])
+        .getOrElse(orig.providerName)
 
-      val providerTypeId = if (fields.contains("providerTypeId")) {
-        fields
-          .get("providerTypeId")
-          .map(_.convertTo[LongId[ProviderType]])
-      } else orig.providerTypeId
+      val providerTypeId = fields
+        .get("providerTypeId")
+        .map(_.convertTo[Option[LongId[ProviderType]]])
+        .getOrElse(orig.providerTypeId)
 
-      val meta = if (fields.contains("meta")) {
-        fields
-          .get("meta")
-          .map(_.convertTo[TextJson[Meta]])
-      } else orig.meta
+      val meta = fields
+        .get("meta")
+        .map(_.convertTo[Option[TextJson[Meta]]])
+        .getOrElse(orig.meta)
 
-      val startDate = if (fields.contains("startDate")) {
-        fields
-          .get("startDate")
-          .map(_.convertTo[LocalDate])
-      } else orig.startDate
+      val startDate = fields
+        .get("startDate")
+        .map(_.convertTo[Option[LocalDate]])
+        .getOrElse(orig.startDate)
 
-      val endDate = if (fields.contains("endDate")) {
-        fields
-          .get("endDate")
-          .map(_.convertTo[LocalDate])
-      } else orig.endDate
+      val endDate = fields
+        .get("endDate")
+        .map(_.convertTo[Option[LocalDate]])
+        .getOrElse(orig.endDate)
 
       orig.copy(
         physician = physician.orElse(orig.physician),

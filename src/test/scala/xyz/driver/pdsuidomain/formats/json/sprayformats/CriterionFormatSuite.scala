@@ -6,7 +6,7 @@ import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuidomain.entities.{Arm, Criterion, CriterionLabel}
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
 
-class CriterionFormatTestSuite extends FlatSpec with Matchers {
+class CriterionFormatSuite extends FlatSpec with Matchers {
   import criterion._
 
   "Json format for Criterion" should "read and write correct JSON" in {

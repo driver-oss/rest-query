@@ -46,12 +46,6 @@ object recordissue {
         .map(_.convertTo[String])
         .getOrElse(deserializationError(s"MedicalRecordIssue json object does not contain `text` field: $json"))
 
-      val archiveRequired = fields
-        .get("archiveRequired")
-        .map(_.convertTo[Boolean])
-        .getOrElse(
-          deserializationError(s"MedicalRecordIssue json object does not contain `archiveRequired` field: $json"))
-
       val startPage = fields.get("startPage").map(_.convertTo[Double])
       val endPage   = fields.get("endPage").map(_.convertTo[Double])
       MedicalRecordIssue(
@@ -61,7 +55,7 @@ object recordissue {
         lastUpdate = LocalDateTime.MIN,
         isDraft = true,
         text = text,
-        archiveRequired = archiveRequired,
+        archiveRequired = false,
         startPage = startPage,
         endPage = endPage
       )

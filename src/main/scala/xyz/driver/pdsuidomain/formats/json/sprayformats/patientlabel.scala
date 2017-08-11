@@ -10,17 +10,15 @@ object patientlabel {
 
   def applyUpdateToPatientLabel(json: JsValue, orig: PatientLabel): PatientLabel = json match {
     case JsObject(fields) =>
-      val primaryValue = if (fields.contains("primaryValue")) {
-        fields
-          .get("primaryValue")
-          .map(_.convertTo[FuzzyValue])
-      } else orig.primaryValue
+      val primaryValue = fields
+        .get("primaryValue")
+        .map(_.convertTo[Option[FuzzyValue]])
+        .getOrElse(orig.primaryValue)
 
-      val verifiedPrimaryValue = if (fields.contains("verifiedPrimaryValue")) {
-        fields
-          .get("verifiedPrimaryValue")
-          .map(_.convertTo[FuzzyValue])
-      } else orig.verifiedPrimaryValue
+      val verifiedPrimaryValue = fields
+        .get("verifiedPrimaryValue")
+        .map(_.convertTo[Option[FuzzyValue]])
+        .getOrElse(orig.verifiedPrimaryValue)
 
       orig.copy(
         primaryValue = primaryValue,
@@ -56,7 +54,7 @@ object patientlabel {
           "evidenceText" -> evidence.evidenceText.toJson,
           "documentId"   -> evidence.documentId.toJson,
           "evidenceId"   -> evidence.evidenceId.toJson,
-          "reportId"     -> evidence.isImplicitMatch.toJson,
+          "reportId"     -> evidence.reportId.toJson,
           "documentType" -> evidence.documentType.toJson,
           "date"         -> evidence.date.toJson,
           "providerType" -> evidence.providerType.toJson

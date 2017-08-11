@@ -1,7 +1,6 @@
 package xyz.driver.pdsuidomain.formats.json.sprayformats
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
+import java.time.{LocalDate, LocalDateTime, ZoneId, ZonedDateTime}
 
 import spray.json._
 import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, StringId, UuidId}
@@ -33,9 +32,9 @@ object common {
   }
 
   implicit def dateTimeFormat = new RootJsonFormat[LocalDateTime] {
-    override def write(date: LocalDateTime): JsString = JsString(date.toString)
+    override def write(date: LocalDateTime): JsString = JsString(ZonedDateTime.of(date, ZoneId.of("Z")).toString)
     override def read(json: JsValue): LocalDateTime = json match {
-      case JsString(value) => LocalDateTime.parse(value)
+      case JsString(value) => ZonedDateTime.parse(value).toLocalDateTime
       case _               => deserializationError(s"Expected date as LocalDateTime, but got $json")
     }
   }

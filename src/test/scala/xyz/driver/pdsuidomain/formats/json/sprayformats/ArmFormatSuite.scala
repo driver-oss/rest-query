@@ -5,7 +5,7 @@ import org.scalatest.{FlatSpec, Matchers}
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuidomain.entities.Arm
 
-class ArmFormatTestSuite extends FlatSpec with Matchers {
+class ArmFormatSuite extends FlatSpec with Matchers {
   import arm._
 
   "Json format for Arm" should "read and write correct JSON" in {

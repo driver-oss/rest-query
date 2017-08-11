@@ -23,8 +23,8 @@ object patientissue {
   }
 
   def jsValueToPatientIssue(json: JsValue, patientId: UuidId[Patient], userId: StringId[User]): PatientIssue = {
-    json.asJsObject.getFields("text", "archiveRequired") match {
-      case Seq(text, archiveRequired) =>
+    json.asJsObject.getFields("text") match {
+      case Seq(text) =>
         PatientIssue(
           id = LongId(0),
           userId = userId,
@@ -32,7 +32,7 @@ object patientissue {
           lastUpdate = LocalDateTime.MIN,
           isDraft = true,
           text = text.convertTo[String],
-          archiveRequired = archiveRequired.convertTo[Boolean]
+          archiveRequired = false
         )
 
       case _ => deserializationError(s"Expected Json Object as PatientIssue, but got $json")

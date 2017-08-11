@@ -7,7 +7,7 @@ import org.scalatest.{FlatSpec, Matchers}
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuidomain.entities.Trial
 
-class TrialFormatTestSuite extends FlatSpec with Matchers {
+class TrialFormatSuite extends FlatSpec with Matchers {
   import trial._
 
   "Json format for Trial" should "read and write correct JSON" in {
@@ -45,6 +45,6 @@ class TrialFormatTestSuite extends FlatSpec with Matchers {
     val expectedUpdatedTrial = orig.copy(hypothesisId = None, overview = Some("new overview"))
     val parsedUpdateTrial = applyUpdateToTrial(updateTrialJson, orig)
     parsedUpdateTrial should be(expectedUpdatedTrial)
-
   }
+
 }

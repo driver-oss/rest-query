@@ -5,7 +5,7 @@ import org.scalatest.{FlatSpec, Matchers}
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuidomain.entities.{Intervention, InterventionArm, InterventionType, InterventionWithArms}
 
-class InterventionFormatTestSuite extends FlatSpec with Matchers {
+class InterventionFormatSuite extends FlatSpec with Matchers {
   import intervention._
 
   "Json format for Intervention" should "read and write correct JSON" in {
