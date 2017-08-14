@@ -31,7 +31,11 @@ object patientcriterion {
     case _ => deserializationError(s"Expected Json Object as partial PatientCriterion, but got $json")
   }
 
-  implicit val patientCriterionFormat: RootJsonFormat[DraftPatientCriterion] = jsonFormat3(DraftPatientCriterion.apply)
+  implicit val draftPatientCriterionFormat: RootJsonFormat[DraftPatientCriterion] = jsonFormat3(
+    DraftPatientCriterion.apply)
+  implicit val draftPatientCriterionListReader = new JsonReader[List[DraftPatientCriterion]] {
+    override def read(json: JsValue) = json.convertTo[List[JsValue]].map(_.convertTo[DraftPatientCriterion])
+  }
 
   implicit val patientCriterionWriter: JsonWriter[(PatientCriterion, LongId[Label], List[PatientCriterionArm])] =
     new JsonWriter[(PatientCriterion, LongId[Label], List[PatientCriterionArm])] {
