@@ -42,7 +42,6 @@ object MockMySqlContext {
       url = ""
     ),
     connection = ConfigFactory.empty(),
-    connectionAttemptsOnStartup = 1,
     threadPoolSize = 10
   )
 }
