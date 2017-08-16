@@ -19,8 +19,11 @@ import scala.util._
 
 trait Directives {
 
-  val paginated: Directive1[Pagination] = parameters(('pageSize.as[Int], 'pageNumber.as[Int])).tmap {
-    case (size, number) => Pagination(size, number)
+  val paginated: Directive1[Pagination] = parameterSeq.flatMap { params =>
+    PaginationParser.parse(params) match {
+      case Success(pagination) => provide(pagination)
+      case Failure(ex)         => failWith(ex)
+    }
   }
 
   def sorted(validDimensions: Set[String] = Set.empty): Directive1[Sorting] = parameterSeq.flatMap { params =>
