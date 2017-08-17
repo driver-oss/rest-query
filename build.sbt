@@ -28,5 +28,6 @@ lazy val core = (project in file("."))
     "org.asynchttpclient"               % "async-http-client"       % "2.0.24",
     "org.slf4j"                         % "slf4j-api"               % "1.7.21",
     "ai.x"                              %% "diff"                   % "1.2.0-get-simple-name-fix" % "test",
-    "org.scalatest"                     %% "scalatest"              % "3.0.0" % "test"
+    "org.scalatest"                     %% "scalatest"              % "3.0.0" % "test",
+    "xyz.driver"                        %% "core"                   % "0.16.3" excludeAll (ExclusionRule(organization = "io.netty"))
   ))
