@@ -110,25 +110,33 @@ sealed trait SlickQueryBuilderParameters {
     // Combine links from sorting and filter without duplicates
     val foreignTableLinks = (filtersTableLinks ++ sortingTableLinks).distinct
 
-    foreignTableLinks.foreach {
-      case SlickTableLink(keyColumnName, foreignTableName, foreignKeyColumnName) =>
-        sql = sql concat sql"""inner join #$foreignTableName
-             on #$escapedTableName.#$keyColumnName = #$foreignTableName.#$foreignKeyColumnName"""
+    def fkSql(fkLinksSql: SQLActionBuilder, tableLinks: Seq[SlickTableLink]): SQLActionBuilder = {
+      if (tableLinks.nonEmpty) {
+        tableLinks.head match {
+          case SlickTableLink(keyColumnName, foreignTableName, foreignKeyColumnName) =>
+            fkSql(
+              fkLinksSql concat sql""" inner join #$foreignTableName
+             on #$escapedTableName.#$keyColumnName = #$foreignTableName.#$foreignKeyColumnName""",
+              tableLinks.tail
+            )
+        }
+      } else fkLinksSql
     }
+    val foreignTableLinksSql = fkSql(sql"", foreignTableLinks)
 
-    if (where.toString.nonEmpty) {
-      sql = sql concat sql"where #$where"
-    }
+    val whereSql = if (where.toString.nonEmpty) {
+      sql" where " concat where
+    } else sql""
 
-    if (orderBy.toString.nonEmpty && !countQuery) {
-      sql = sql concat sql"order by #$orderBy"
-    }
+    val orderSql = if (orderBy.toString.nonEmpty && !countQuery) {
+      sql" order by" concat orderBy
+    } else sql""
 
-    if (limitSql.toString.nonEmpty && !countQuery) {
-      sql = sql concat sql"#$limitSql"
-    }
+    val limSql = if (limitSql.toString.nonEmpty && !countQuery) {
+      limitSql
+    } else sql""
 
-    sql
+    sql concat foreignTableLinksSql concat whereSql concat orderSql concat limSql
   }
 
   /**
@@ -146,25 +154,25 @@ sealed trait SlickQueryBuilderParameters {
 
     def escapeDimension(dimension: SearchFilterExpr.Dimension) = {
       val tableName = escapedTableName
-      s"$tableName.$dimension.name"
+      s"$tableName.${dimension.name}"
     }
 
     def filterToSqlMultiple(operands: Seq[SearchFilterExpr]) = operands.collect {
       case x if !SearchFilterExpr.isEmpty(x) => filterToSql(escapedTableName, x)
     }
 
-    def multipleSqlToAction(op: String, conditions: Seq[SQLActionBuilder]): SQLActionBuilder = {
-      var first     = true
-      var filterSql = sql"("
-      for (condition <- conditions) {
+    def multipleSqlToAction(first: Boolean,
+                            op: String,
+                            conditions: Seq[SQLActionBuilder],
+                            sql: SQLActionBuilder): SQLActionBuilder = {
+      if (conditions.nonEmpty) {
+        val condition = conditions.head
         if (first) {
-          filterSql = filterSql concat condition
-          first = false
+          multipleSqlToAction(false, op, conditions.tail, condition)
         } else {
-          filterSql = filterSql concat sql" #$op " concat condition
+          multipleSqlToAction(false, op, conditions.tail, sql concat sql" #${op} " concat condition)
         }
-      }
-      filterSql concat sql")"
+      } else sql
     }
 
     filter match {
@@ -188,7 +196,7 @@ sealed trait SlickQueryBuilderParameters {
         // So, to handle NotEq for nullable fields we need to use more complex SQL expression.
         // http://dev.mysql.com/doc/refman/5.7/en/working-with-null.html
         val escapedColumn = escapeDimension(dimension)
-        sql"(#$escapedColumn is null or #$escapedColumn != #$value)"
+        sql"(#${escapedColumn} is null or #${escapedColumn} != ${value.toString})"
 
       case Atom.Binary(dimension, op, value) =>
         val operator = op match {
@@ -200,7 +208,7 @@ sealed trait SlickQueryBuilderParameters {
           case Lt    => sql"<"
           case LtEq  => sql"<="
         }
-        sql"#${escapeDimension(dimension)}" concat operator concat sql"#$value"
+        sql"#${escapeDimension(dimension)}" concat operator concat sql"""${value.toString}"""
 
       case Atom.NAry(dimension, op, values) =>
         val sqlOp = op match {
@@ -209,15 +217,17 @@ sealed trait SlickQueryBuilderParameters {
         }
 
         val formattedValues = if (values.nonEmpty) {
-          sql"#$values"
+          sql"${values.mkString(",")}"
         } else sql"NULL"
         sql"#${escapeDimension(dimension)}" concat sqlOp concat formattedValues
 
       case Intersection(operands) =>
-        multipleSqlToAction("and", filterToSqlMultiple(operands))
+        val filter = multipleSqlToAction(true, "and", filterToSqlMultiple(operands), sql"")
+        sql"(" concat filter concat sql")"
 
       case Union(operands) =>
-        multipleSqlToAction("or", filterToSqlMultiple(operands))
+        val filter = multipleSqlToAction(true, "or", filterToSqlMultiple(operands), sql"")
+        sql"(" concat filter concat sql")"
     }
   }
 
@@ -234,10 +244,10 @@ sealed trait SlickQueryBuilderParameters {
         val sortingTableName = optSortingTableName.getOrElse(escapedMainTableName)
         val fullName         = s"$sortingTableName.$field"
 
-        sql"#$fullName #${orderToSql(order)}"
+        sql"#$fullName ${orderToSql(order)}"
 
       case Sequential(xs) =>
-        sql"#${xs.map(sortingToSql(escapedMainTableName, _)).mkString(", ")}"
+        sql"${xs.map(sortingToSql(escapedMainTableName, _)).mkString(", ")}"
     }
   }
 
@@ -268,7 +278,7 @@ final case class SlickPostgresQueryBuilderParameters(tableData: SlickQueryBuilde
     import profile.api._
     pagination.map { pagination =>
       val startFrom = (pagination.pageNumber - 1) * pagination.pageSize
-      sql"limit #${pagination.pageSize} OFFSET #$startFrom"
+      sql"limit ${pagination.pageSize} OFFSET $startFrom"
     } getOrElse (sql"")
   }
 
@@ -289,7 +299,7 @@ final case class SlickMysqlQueryBuilderParameters(tableData: SlickQueryBuilder.T
     pagination
       .map { pagination =>
         val startFrom = (pagination.pageNumber - 1) * pagination.pageSize
-        sql"limit #$startFrom, #${pagination.pageSize}"
+        sql"limit $startFrom, ${pagination.pageSize}"
       }
       .getOrElse(sql"")
   }

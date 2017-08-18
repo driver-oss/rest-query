@@ -5,11 +5,12 @@ import java.time.{LocalDateTime, ZoneOffset}
 import slick.driver.JdbcProfile
 import slick.jdbc.GetResult
 import xyz.driver.core.database.SlickDal
+import xyz.driver.pdsuicommon.logging._
 
 import scala.collection.breakOut
 import scala.concurrent.ExecutionContext
 
-object SlickPostgresQueryBuilder {
+object SlickPostgresQueryBuilder extends PhiLogging {
 
   import xyz.driver.pdsuicommon.db.SlickQueryBuilder._
 
@@ -36,7 +37,7 @@ object SlickPostgresQueryBuilder {
                                            profile: JdbcProfile,
                                            getResult: GetResult[T],
                                            ec: ExecutionContext): SlickPostgresQueryBuilder[T] = {
-    apply(tableName, SlickQueryBuilderParameters.AllFields, lastUpdateFieldName, nullableFields, links)
+    apply[T](tableName, SlickQueryBuilderParameters.AllFields, lastUpdateFieldName, nullableFields, links)
   }
 
   def apply[T](tableName: String,
@@ -50,6 +51,7 @@ object SlickPostgresQueryBuilder {
 
     val runner: Runner[T] = { parameters =>
       val sql = parameters.toSql(countQuery = false, fields = fields).as[T]
+      logger.debug(phi"${Unsafe(sql)}")
       sqlContext.execute(sql)
     }
 
@@ -62,6 +64,7 @@ object SlickPostgresQueryBuilder {
         (count, lastUpdate)
       })
       val sql = parameters.toSql(countQuery = true).as[(Int, Option[LocalDateTime])]
+      logger.debug(phi"${Unsafe(sql)}")
       sqlContext.execute(sql).map(_.head)
     }
 
