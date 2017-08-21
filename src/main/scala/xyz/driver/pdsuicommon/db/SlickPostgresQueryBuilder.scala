@@ -14,7 +14,8 @@ object SlickPostgresQueryBuilder extends PhiLogging {
 
   import xyz.driver.pdsuicommon.db.SlickQueryBuilder._
 
-  def apply[T](tableName: String,
+  def apply[T](databaseName: String,
+               tableName: String,
                lastUpdateFieldName: Option[String],
                nullableFields: Set[String],
                links: Set[SlickTableLink],
@@ -24,23 +25,31 @@ object SlickPostgresQueryBuilder extends PhiLogging {
                                          getResult: GetResult[T],
                                          ec: ExecutionContext): SlickPostgresQueryBuilder[T] = {
     val parameters = SlickPostgresQueryBuilderParameters(
+      databaseName = databaseName,
       tableData = TableData(tableName, lastUpdateFieldName, nullableFields),
       links = links.map(x => x.foreignTableName -> x)(breakOut)
     )
     new SlickPostgresQueryBuilder[T](parameters)(runner, countRunner)
   }
 
-  def apply[T](tableName: String,
+  def apply[T](databaseName: String,
+               tableName: String,
                lastUpdateFieldName: Option[String],
                nullableFields: Set[String],
                links: Set[SlickTableLink])(implicit sqlContext: SlickDal,
                                            profile: JdbcProfile,
                                            getResult: GetResult[T],
                                            ec: ExecutionContext): SlickPostgresQueryBuilder[T] = {
-    apply[T](tableName, SlickQueryBuilderParameters.AllFields, lastUpdateFieldName, nullableFields, links)
+    apply[T](databaseName,
+             tableName,
+             SlickQueryBuilderParameters.AllFields,
+             lastUpdateFieldName,
+             nullableFields,
+             links)
   }
 
-  def apply[T](tableName: String,
+  def apply[T](databaseName: String,
+               tableName: String,
                fields: Set[String],
                lastUpdateFieldName: Option[String],
                nullableFields: Set[String],
@@ -69,6 +78,7 @@ object SlickPostgresQueryBuilder extends PhiLogging {
     }
 
     apply[T](
+      databaseName = databaseName,
       tableName = tableName,
       lastUpdateFieldName = lastUpdateFieldName,
       nullableFields = nullableFields,

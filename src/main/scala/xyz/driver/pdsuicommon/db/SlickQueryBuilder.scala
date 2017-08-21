@@ -50,11 +50,14 @@ object SlickQueryBuilderParameters {
 sealed trait SlickQueryBuilderParameters {
   import SlickQueryBuilder._
 
+  def databaseName: String
   def tableData: SlickQueryBuilder.TableData
   def links: Map[String, SlickTableLink]
   def filter: SearchFilterExpr
   def sorting: Sorting
   def pagination: Option[Pagination]
+
+  def qs: String
 
   def findLink(tableName: String): SlickTableLink = links.get(tableName) match {
     case None       => throw new IllegalArgumentException(s"Cannot find a link for `$tableName`")
@@ -67,20 +70,20 @@ sealed trait SlickQueryBuilderParameters {
 
   def toSql(countQuery: Boolean, fields: Set[String])(implicit profile: JdbcProfile): SQLActionBuilder = {
     import profile.api._
-    val escapedTableName = tableData.tableName
+    val escapedTableName = s"""$qs$databaseName$qs.$qs${tableData.tableName}$qs"""
     val fieldsSql: String = if (countQuery) {
       val suffix: String = tableData.lastUpdateFieldName match {
-        case Some(lastUpdateField) => s", max($escapedTableName.$lastUpdateField)"
+        case Some(lastUpdateField) => s", max($escapedTableName.$qs$lastUpdateField$qs)"
         case None                  => ""
       }
-      "count(*)" + suffix
+      s"count(*) $suffix"
     } else {
       if (fields == SlickQueryBuilderParameters.AllFields) {
         s"$escapedTableName.*"
       } else {
         fields
           .map { field =>
-            s"$escapedTableName.$field"
+            s"$escapedTableName.$qs$field$qs"
           }
           .mkString(", ")
       }
@@ -90,7 +93,7 @@ sealed trait SlickQueryBuilderParameters {
 
     val limitSql = limitToSql()
 
-    val sql = sql"select #$fieldsSql from #$escapedTableName"
+    val sql = sql"""select #$fieldsSql from #$escapedTableName"""
 
     val filtersTableLinks: Seq[SlickTableLink] = {
       import SearchFilterExpr._
@@ -114,26 +117,25 @@ sealed trait SlickQueryBuilderParameters {
       if (tableLinks.nonEmpty) {
         tableLinks.head match {
           case SlickTableLink(keyColumnName, foreignTableName, foreignKeyColumnName) =>
-            fkSql(
-              fkLinksSql concat sql""" inner join #$foreignTableName
-             on #$escapedTableName.#$keyColumnName = #$foreignTableName.#$foreignKeyColumnName""",
-              tableLinks.tail
-            )
+            val escapedForeignTableName = s"$qs$databaseName$qs.$qs$foreignTableName$qs"
+            val join                    = sql""" inner join #$escapedForeignTableName
+             on #$escapedTableName.#$qs#$keyColumnName#$qs=#$escapedForeignTableName.#$qs#$foreignKeyColumnName#$qs"""
+            fkSql(fkLinksSql concat join, tableLinks.tail)
         }
       } else fkLinksSql
     }
     val foreignTableLinksSql = fkSql(sql"", foreignTableLinks)
 
-    val whereSql = if (where.toString.nonEmpty) {
+    val whereSql = if (where.queryParts.size > 1) {
       sql" where " concat where
     } else sql""
 
-    val orderSql = if (orderBy.toString.nonEmpty && !countQuery) {
-      sql" order by" concat orderBy
+    val orderSql = if (orderBy.nonEmpty && !countQuery) {
+      sql" order by #$orderBy"
     } else sql""
 
-    val limSql = if (limitSql.toString.nonEmpty && !countQuery) {
-      limitSql
+    val limSql = if (limitSql.queryParts.size > 1 && !countQuery) {
+      sql" " concat limitSql
     } else sql""
 
     sql concat foreignTableLinksSql concat whereSql concat orderSql concat limSql
@@ -153,8 +155,7 @@ sealed trait SlickQueryBuilderParameters {
     def isNull(string: AnyRef) = Option(string).isEmpty || string.toString.toLowerCase == "null"
 
     def escapeDimension(dimension: SearchFilterExpr.Dimension) = {
-      val tableName = escapedTableName
-      s"$tableName.${dimension.name}"
+      s"$escapedTableName.$qs${dimension.name}$qs"
     }
 
     def filterToSqlMultiple(operands: Seq[SearchFilterExpr]) = operands.collect {
@@ -236,18 +237,17 @@ sealed trait SlickQueryBuilderParameters {
   /**
     * @param escapedMainTableName Should be escaped
     */
-  protected def sortingToSql(escapedMainTableName: String, sorting: Sorting)(
-          implicit profile: JdbcProfile): SQLActionBuilder = {
-    import profile.api._
+  protected def sortingToSql(escapedMainTableName: String, sorting: Sorting)(implicit profile: JdbcProfile): String = {
     sorting match {
       case Dimension(optSortingTableName, field, order) =>
-        val sortingTableName = optSortingTableName.getOrElse(escapedMainTableName)
-        val fullName         = s"$sortingTableName.$field"
+        val sortingTableName =
+          optSortingTableName.map(x => s"$qs$databaseName$qs.$qs$x$qs").getOrElse(escapedMainTableName)
+        val fullName = s"$sortingTableName.$qs$field$qs"
 
-        sql"#$fullName ${orderToSql(order)}"
+        s"$fullName ${orderToSql(order)}"
 
       case Sequential(xs) =>
-        sql"${xs.map(sortingToSql(escapedMainTableName, _)).mkString(", ")}"
+        xs.map(sortingToSql(escapedMainTableName, _)).mkString(", ")
     }
   }
 
@@ -267,7 +267,8 @@ sealed trait SlickQueryBuilderParameters {
 
 }
 
-final case class SlickPostgresQueryBuilderParameters(tableData: SlickQueryBuilder.TableData,
+final case class SlickPostgresQueryBuilderParameters(databaseName: String,
+                                                     tableData: SlickQueryBuilder.TableData,
                                                      links: Map[String, SlickTableLink] = Map.empty,
                                                      filter: SearchFilterExpr = SearchFilterExpr.Empty,
                                                      sorting: Sorting = Sorting.Empty,
@@ -278,16 +279,19 @@ final case class SlickPostgresQueryBuilderParameters(tableData: SlickQueryBuilde
     import profile.api._
     pagination.map { pagination =>
       val startFrom = (pagination.pageNumber - 1) * pagination.pageSize
-      sql"limit ${pagination.pageSize} OFFSET $startFrom"
+      sql"limit #${pagination.pageSize} OFFSET #$startFrom"
     } getOrElse (sql"")
   }
+
+  val qs = """""""
 
 }
 
 /**
   * @param links Links to another tables grouped by foreignTableName
   */
-final case class SlickMysqlQueryBuilderParameters(tableData: SlickQueryBuilder.TableData,
+final case class SlickMysqlQueryBuilderParameters(databaseName: String,
+                                                  tableData: SlickQueryBuilder.TableData,
                                                   links: Map[String, SlickTableLink] = Map.empty,
                                                   filter: SearchFilterExpr = SearchFilterExpr.Empty,
                                                   sorting: Sorting = Sorting.Empty,
@@ -299,10 +303,12 @@ final case class SlickMysqlQueryBuilderParameters(tableData: SlickQueryBuilder.T
     pagination
       .map { pagination =>
         val startFrom = (pagination.pageNumber - 1) * pagination.pageSize
-        sql"limit $startFrom, ${pagination.pageSize}"
+        sql"limit #$startFrom, #${pagination.pageSize}"
       }
       .getOrElse(sql"")
   }
+
+  val qs = """`"""
 
 }
 
