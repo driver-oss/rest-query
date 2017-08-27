@@ -1,7 +1,6 @@
 package xyz.driver.pdsuicommon.db
 
 import java.io.Closeable
-import java.sql.Types
 import java.time._
 import java.util.UUID
 import java.util.concurrent.Executors
@@ -57,24 +56,6 @@ class PostgresContext(val dataSource: DataSource with Closeable, settings: Setti
   def timestampToLocalDateTime(timestamp: java.sql.Timestamp): LocalDateTime = {
     LocalDateTime.ofInstant(timestamp.toInstant, ZoneOffset.UTC)
   }
-
-  // Override localDateTime encoder and decoder cause
-  // clinicaltrials.gov uses bigint to store timestamps
-
-  override implicit val localDateTimeEncoder: Encoder[LocalDateTime] =
-    encoder(Types.BIGINT,
-            (index, value, row) => row.setLong(index, value.atZone(ZoneOffset.UTC).toInstant.toEpochMilli))
-
-  override implicit val localDateTimeDecoder: Decoder[LocalDateTime] =
-    decoder(
-      Types.BIGINT,
-      (index, row) => {
-        row.getLong(index) match {
-          case 0 => throw new NullPointerException("0 is decoded as null")
-          case x => LocalDateTime.ofInstant(Instant.ofEpochMilli(x), ZoneId.of("Z"))
-        }
-      }
-    )
 
   implicit def encodeUuidId[T] = MappedEncoding[UuidId[T], String](_.toString)
   implicit def decodeUuidId[T] = MappedEncoding[String, UuidId[T]] { uuid =>
