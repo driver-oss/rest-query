@@ -55,7 +55,7 @@ object SearchFilterParser {
   val dimensionParser: Parser[SearchFilterExpr.Dimension] = {
     val identParser = P(
       CharPred(c => c.isLetterOrDigit)
-        .rep(min = 1)).!.map(SearchFilterExpr.Dimension(None, _))
+        .rep(min = 1)).!.map(s => SearchFilterExpr.Dimension(None, toSnakeCase(s)))
     val pathParser = P(identParser.! ~ "." ~ identParser.!) map {
       case (left, right) =>
         SearchFilterExpr.Dimension(Some(toSnakeCase(left)), toSnakeCase(right))

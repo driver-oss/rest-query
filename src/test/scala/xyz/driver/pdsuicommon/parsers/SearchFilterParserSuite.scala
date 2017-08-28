@@ -9,7 +9,10 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Gen, Prop}
 import org.scalatest.FreeSpecLike
 import org.scalatest.prop.Checkers
+import xyz.driver.pdsuicommon.db.SearchFilterNAryOperation.In
 import xyz.driver.pdsuicommon.utils.Utils._
+
+import scala.util.Success
 
 object SearchFilterParserSuite {
 
@@ -22,6 +25,20 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
   import SearchFilterParserSuite._
 
   "parse" - {
+    "should convert column names to snake case" in {
+      import SearchFilterBinaryOperation._
+
+      val filter = SearchFilterParser.parse(Seq(
+        "filters" -> "status IN Summarized,ReviewCriteria,Flagged,Done",
+        "filters" -> "previousStatus NOTEQ New",
+        "filters" -> "previousStatus NOTEQ ReviewSummary"
+      ))
+
+      assert(filter === Success(SearchFilterExpr.Intersection(List(
+        SearchFilterExpr.Atom.NAry(Dimension(None, "status"), In, Seq("Summarized", "ReviewCriteria", "Flagged", "Done")),
+        SearchFilterExpr.Atom.Binary(Dimension(None, "previous_status"), NotEq, "New"),
+        SearchFilterExpr.Atom.Binary(Dimension(None, "previous_status"), NotEq, "ReviewSummary")))))
+    }
     "dimensions" - {
       "with table name" in check {
         val dimensionGen = {
@@ -35,7 +52,7 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
             val r = toSnakeCase(right)
               SearchFilterParser.dimensionParser.parse(raw) match {
               case Parsed.Success(Dimension(Some(`l`), `r`), _) => true
-              case res => false
+              case _ => false
             }
         }
       }
