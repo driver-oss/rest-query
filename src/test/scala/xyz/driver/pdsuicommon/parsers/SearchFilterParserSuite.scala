@@ -9,6 +9,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Gen, Prop}
 import org.scalatest.FreeSpecLike
 import org.scalatest.prop.Checkers
+import xyz.driver.pdsuicommon.utils.Utils._
 
 object SearchFilterParserSuite {
 
@@ -30,8 +31,10 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
         Prop.forAllNoShrink(dimensionGen) {
           case (left, right) =>
             val raw = s"$left.$right"
-            SearchFilterParser.dimensionParser.parse(raw) match {
-              case Parsed.Success(Dimension(Some(`left`), `right`), _) => true
+            val l = toSnakeCase(left)
+            val r = toSnakeCase(right)
+              SearchFilterParser.dimensionParser.parse(raw) match {
+              case Parsed.Success(Dimension(Some(`l`), `r`), _) => true
               case res => false
             }
         }
