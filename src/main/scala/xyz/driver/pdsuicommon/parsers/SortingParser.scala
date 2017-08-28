@@ -3,6 +3,7 @@ package xyz.driver.pdsuicommon.parsers
 import xyz.driver.pdsuicommon.db.{Sorting, SortingOrder}
 import fastparse.all._
 import fastparse.core.Parsed
+import xyz.driver.pdsuicommon.utils.Utils._
 
 import scala.util.Try
 
@@ -18,8 +19,11 @@ object SortingParser {
       case (sortingOrder, field) =>
         val prefixedFields = field.split("\\.", 2)
         prefixedFields.size match {
-          case 1 => Sorting.Dimension(None, field, sortingOrder)
-          case 2 => Sorting.Dimension(Some(prefixedFields.head), prefixedFields.last, sortingOrder)
+          case 1 => Sorting.Dimension(None, toSnakeCase(field), sortingOrder)
+          case 2 =>
+            Sorting.Dimension(Some(prefixedFields.head).map(toSnakeCase),
+                              toSnakeCase(prefixedFields.last),
+                              sortingOrder)
         }
     }
   }

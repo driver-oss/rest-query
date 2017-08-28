@@ -5,6 +5,7 @@ import fastparse.all._
 import fastparse.core.Parsed
 import fastparse.parsers.Intrinsics.CharPred
 import xyz.driver.pdsuicommon.db.{SearchFilterBinaryOperation, SearchFilterExpr, SearchFilterNAryOperation}
+import xyz.driver.pdsuicommon.utils.Utils._
 
 import scala.util.Try
 
@@ -56,7 +57,8 @@ object SearchFilterParser {
       CharPred(c => c.isLetterOrDigit)
         .rep(min = 1)).!.map(SearchFilterExpr.Dimension(None, _))
     val pathParser = P(identParser.! ~ "." ~ identParser.!) map {
-      case (left, right) => SearchFilterExpr.Dimension(Some(left), right)
+      case (left, right) =>
+        SearchFilterExpr.Dimension(Some(toSnakeCase(left)), toSnakeCase(right))
     }
     P(pathParser | identParser)
   }
