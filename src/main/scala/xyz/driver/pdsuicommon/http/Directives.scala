@@ -24,7 +24,7 @@ trait Directives {
     PaginationParser.parse(params) match {
       case Success(pagination) => provide(pagination)
       case Failure(ex) =>
-        reject(new ValidationRejection("invalid pagination parameter", Some(ex)))
+        reject(ValidationRejection("invalid pagination parameter", Some(ex)))
     }
   }
 
@@ -32,7 +32,7 @@ trait Directives {
     SortingParser.parse(validDimensions, params) match {
       case Success(sorting) => provide(sorting)
       case Failure(ex) =>
-        reject(new ValidationRejection("invalid sorting parameter", Some(ex)))
+        reject(ValidationRejection("invalid sorting parameter", Some(ex)))
     }
   }
 
@@ -40,7 +40,7 @@ trait Directives {
     DimensionsParser.tryParse(params) match {
       case Success(dims) => provide(dims)
       case Failure(ex) =>
-        reject(new ValidationRejection("invalid dimension parameter", Some(ex)))
+        reject(ValidationRejection("invalid dimension parameter", Some(ex)))
     }
   }
 
@@ -48,7 +48,7 @@ trait Directives {
     SearchFilterParser.parse(params) match {
       case Success(sorting) => provide(sorting)
       case Failure(ex) =>
-        reject(new ValidationRejection("invalid filter parameter", Some(ex)))
+        reject(ValidationRejection("invalid filter parameter", Some(ex)))
     }
   }
 
