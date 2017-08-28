@@ -10,6 +10,7 @@ import org.scalacheck.{Gen, Prop}
 import org.scalatest.FreeSpecLike
 import org.scalatest.prop.Checkers
 import xyz.driver.pdsuicommon.db.SearchFilterNAryOperation.In
+import xyz.driver.pdsuicommon.utils.Utils
 import xyz.driver.pdsuicommon.utils.Utils._
 
 import scala.util.Success
@@ -58,8 +59,9 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
       }
       "just with field name" in check {
         Prop.forAllNoShrink(Gen.identifier) { s =>
+          val databaseS = Utils.toSnakeCase(s)
           SearchFilterParser.dimensionParser.parse(s) match {
-            case Parsed.Success(Dimension(None, `s`), _) => true
+            case Parsed.Success(Dimension(None, `databaseS`), _) => true
             case _ => false
           }
         }
