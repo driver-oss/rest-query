@@ -53,7 +53,7 @@ trait Directives {
   }
 
   def StringIdInPath[T]: PathMatcher1[StringId[T]] =
-    PathMatchers.Segment.map((id) => StringId(id.toString.toLowerCase))
+    PathMatchers.Segment.map((id) => StringId(id.toString))
 
   def LongIdInPath[T]: PathMatcher1[LongId[T]] =
     PathMatchers.LongNumber.map((id) => LongId(id))
