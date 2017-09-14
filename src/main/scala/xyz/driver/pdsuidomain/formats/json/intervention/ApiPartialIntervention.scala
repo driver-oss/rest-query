@@ -6,7 +6,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 final case class ApiPartialIntervention(typeId: Option[Long],
-                                        description: Option[String],
+                                        dosage: Option[String],
                                         isActive: Option[Boolean],
                                         arms: Option[List[Long]]) {
 
@@ -16,7 +16,7 @@ final case class ApiPartialIntervention(typeId: Option[Long],
     orig.copy(
       intervention = origIntervention.copy(
         typeId = typeId.map(LongId(_)).orElse(origIntervention.typeId),
-        description = description.getOrElse(origIntervention.description),
+        dosage = dosage.getOrElse(origIntervention.dosage),
         isActive = isActive.getOrElse(origIntervention.isActive)
       ),
       arms = draftArmList.getOrElse(orig.arms)
@@ -28,14 +28,14 @@ object ApiPartialIntervention {
 
   private val reads: Reads[ApiPartialIntervention] = (
     (JsPath \ "typeId").readNullable[Long] and
-      (JsPath \ "description").readNullable[String] and
+      (JsPath \ "dosage").readNullable[String] and
       (JsPath \ "isActive").readNullable[Boolean] and
       (JsPath \ "arms").readNullable[List[Long]]
   )(ApiPartialIntervention.apply _)
 
   private val writes: Writes[ApiPartialIntervention] = (
     (JsPath \ "typeId").writeNullable[Long] and
-      (JsPath \ "description").writeNullable[String] and
+      (JsPath \ "dosage").writeNullable[String] and
       (JsPath \ "isActive").writeNullable[Boolean] and
       (JsPath \ "arms").writeNullable[List[Long]]
   )(unlift(ApiPartialIntervention.unapply))

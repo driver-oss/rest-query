@@ -8,7 +8,7 @@ import play.api.libs.json.{Format, JsPath}
 final case class ApiIntervention(id: Long,
                                  name: String,
                                  typeId: Option[Long],
-                                 description: String,
+                                 dosage: String,
                                  isActive: Boolean,
                                  arms: List[Long],
                                  trialId: String,
@@ -24,7 +24,7 @@ final case class ApiIntervention(id: Long,
       originalName = this.originalName,
       typeId = this.typeId.map(id => LongId(id)),
       originalType = this.originalType.map(id => id.toString),
-      description = this.description,
+      dosage = this.dosage,
       originalDescription = this.originalDescription,
       isActive = this.isActive
     )
@@ -43,7 +43,7 @@ object ApiIntervention {
     (JsPath \ "id").format[Long] and
       (JsPath \ "name").format[String] and
       (JsPath \ "typeId").formatNullable[Long] and
-      (JsPath \ "description").format[String] and
+      (JsPath \ "dosage").format[String] and
       (JsPath \ "isActive").format[Boolean] and
       (JsPath \ "arms").format[List[Long]] and
       (JsPath \ "trialId").format[String] and
@@ -60,7 +60,7 @@ object ApiIntervention {
       id = intervention.id.id,
       name = intervention.name,
       typeId = intervention.typeId.map(_.id),
-      description = intervention.description,
+      dosage = intervention.dosage,
       isActive = intervention.isActive,
       arms = arms.map(_.armId.id),
       trialId = intervention.trialId.id,
