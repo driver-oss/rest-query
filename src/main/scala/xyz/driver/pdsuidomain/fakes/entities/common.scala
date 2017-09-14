@@ -22,7 +22,7 @@ object common {
 
   def nextLocalDate = {
     val date = generators.nextDate()
-    LocalDate.of(date.year, date.month, date.day)
+    LocalDate.of(date.year, date.month + 1, date.day + 1)
   }
 
   def nextCondition = generators.oneOf[Trial.Condition](Trial.Condition.All)
