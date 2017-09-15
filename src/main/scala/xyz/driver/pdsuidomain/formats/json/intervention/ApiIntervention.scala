@@ -13,7 +13,7 @@ final case class ApiIntervention(id: Long,
                                  arms: List[Long],
                                  trialId: String,
                                  originalName: String,
-                                 originalDescription: String,
+                                 originalDosage: String,
                                  originalType: Option[String]) {
 
   def toDomain = {
@@ -25,7 +25,7 @@ final case class ApiIntervention(id: Long,
       typeId = this.typeId.map(id => LongId(id)),
       originalType = this.originalType.map(id => id.toString),
       dosage = this.dosage,
-      originalDescription = this.originalDescription,
+      originalDosage = this.originalDosage,
       isActive = this.isActive
     )
 
@@ -48,7 +48,7 @@ object ApiIntervention {
       (JsPath \ "arms").format[List[Long]] and
       (JsPath \ "trialId").format[String] and
       (JsPath \ "originalName").format[String] and
-      (JsPath \ "originalDescription").format[String] and
+      (JsPath \ "originalDosage").format[String] and
       (JsPath \ "originalType").formatNullable[String]
   )(ApiIntervention.apply, unlift(ApiIntervention.unapply))
 
@@ -65,7 +65,7 @@ object ApiIntervention {
       arms = arms.map(_.armId.id),
       trialId = intervention.trialId.id,
       originalName = intervention.originalName,
-      originalDescription = intervention.originalDescription,
+      originalDosage = intervention.originalDosage,
       originalType = intervention.originalType
     )
   }
