@@ -11,16 +11,16 @@ object intervention {
   implicit val interventionWriter: JsonWriter[InterventionWithArms] = new JsonWriter[InterventionWithArms] {
     override def write(obj: InterventionWithArms) =
       JsObject(
-        "id"                  -> obj.intervention.id.toJson,
-        "name"                -> obj.intervention.name.toJson,
-        "typeId"              -> obj.intervention.typeId.toJson,
-        "dosage"              -> obj.intervention.dosage.toJson,
-        "isActive"            -> obj.intervention.isActive.toJson,
-        "arms"                -> obj.arms.map(_.armId).toJson,
-        "trialId"             -> obj.intervention.trialId.toJson,
-        "originalName"        -> obj.intervention.originalName.toJson,
-        "originalDescription" -> obj.intervention.originalDescription.toJson,
-        "originalType"        -> obj.intervention.originalType.toJson
+        "id"             -> obj.intervention.id.toJson,
+        "name"           -> obj.intervention.name.toJson,
+        "typeId"         -> obj.intervention.typeId.toJson,
+        "dosage"         -> obj.intervention.dosage.toJson,
+        "isActive"       -> obj.intervention.isActive.toJson,
+        "arms"           -> obj.arms.map(_.armId).toJson,
+        "trialId"        -> obj.intervention.trialId.toJson,
+        "originalName"   -> obj.intervention.originalName.toJson,
+        "originalDosage" -> obj.intervention.originalDosage.toJson,
+        "originalType"   -> obj.intervention.originalType.toJson
       )
   }
 

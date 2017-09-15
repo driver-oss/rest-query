@@ -75,7 +75,7 @@ object trialcuration {
     typeId = Option(nextLongId[InterventionType]),
     originalType = Option(generators.nextString()),
     dosage = generators.nextString(),
-    originalDescription = generators.nextString(),
+    originalDosage = generators.nextString(),
     isActive = generators.nextBoolean()
   )
 

@@ -28,7 +28,7 @@ final case class Intervention(id: LongId[Intervention],
                               typeId: Option[LongId[InterventionType]],
                               originalType: Option[String],
                               dosage: String,
-                              originalDescription: String,
+                              originalDosage: String,
                               isActive: Boolean)
 
 object Intervention {
