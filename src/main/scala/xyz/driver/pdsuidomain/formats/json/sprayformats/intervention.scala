@@ -11,16 +11,16 @@ object intervention {
   implicit val interventionWriter: JsonWriter[InterventionWithArms] = new JsonWriter[InterventionWithArms] {
     override def write(obj: InterventionWithArms) =
       JsObject(
-        "id"                  -> obj.intervention.id.toJson,
-        "name"                -> obj.intervention.name.toJson,
-        "typeId"              -> obj.intervention.typeId.toJson,
-        "description"         -> obj.intervention.description.toJson,
-        "isActive"            -> obj.intervention.isActive.toJson,
-        "arms"                -> obj.arms.map(_.armId).toJson,
-        "trialId"             -> obj.intervention.trialId.toJson,
-        "originalName"        -> obj.intervention.originalName.toJson,
-        "originalDescription" -> obj.intervention.originalDescription.toJson,
-        "originalType"        -> obj.intervention.originalType.toJson
+        "id"             -> obj.intervention.id.toJson,
+        "name"           -> obj.intervention.name.toJson,
+        "typeId"         -> obj.intervention.typeId.toJson,
+        "dosage"         -> obj.intervention.dosage.toJson,
+        "isActive"       -> obj.intervention.isActive.toJson,
+        "arms"           -> obj.arms.map(_.armId).toJson,
+        "trialId"        -> obj.intervention.trialId.toJson,
+        "originalName"   -> obj.intervention.originalName.toJson,
+        "originalDosage" -> obj.intervention.originalDosage.toJson,
+        "originalType"   -> obj.intervention.originalType.toJson
       )
   }
 
@@ -30,8 +30,8 @@ object intervention {
         .get("typeId")
         .map(_.convertTo[LongId[InterventionType]])
 
-      val description = fields
-        .get("description")
+      val dosage = fields
+        .get("dosage")
         .map(_.convertTo[String])
 
       val isActive = fields
@@ -46,7 +46,7 @@ object intervention {
       orig.copy(
         intervention = origIntervention.copy(
           typeId = typeId.orElse(origIntervention.typeId),
-          description = description.getOrElse(origIntervention.description),
+          dosage = dosage.getOrElse(origIntervention.dosage),
           isActive = isActive.getOrElse(origIntervention.isActive)
         ),
         arms = arms.getOrElse(orig.arms)

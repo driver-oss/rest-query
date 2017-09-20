@@ -10,6 +10,7 @@ lazy val core = (project in file("."))
   .settings(libraryDependencies ++= Seq(
     "com.fasterxml.jackson.module"      %% "jackson-module-scala"   % "2.8.3",
     "com.github.pureconfig"             %% "pureconfig"             % "0.7.2",
+    "com.lihaoyi"                       %% "fastparse"              % "0.3.7",
     "com.typesafe.akka"                 %% "akka-http"              % "10.0.9",
     "com.typesafe.play"                 %% "play"                   % "2.5.15",
     "com.typesafe.scala-logging"        %% "scala-logging"          % "3.5.0",
@@ -17,8 +18,8 @@ lazy val core = (project in file("."))
     "io.github.cloudify"                %% "spdf"                   % "1.4.0",
     "org.davidbild"                     %% "tristate-core"          % "0.2.0",
     "org.davidbild"                     %% "tristate-play"          % "0.2.0" exclude ("com.typesafe.play", "play-json"),
-    "xyz.driver"                        %% "core"                   % "0.16.3",
-    "xyz.driver"                        %% "domain-model"           % "0.12.5",
+    "xyz.driver"                        %% "core"                   % "0.16.7",
+    "xyz.driver"                        %% "domain-model"           % "0.12.26",
     "ch.qos.logback"                    % "logback-classic"         % "1.1.7",
     "com.fasterxml.jackson.datatype"    % "jackson-datatype-jsr310" % "2.8.4",
     "com.github.spullara.mustache.java" % "scala-extensions-2.11"   % "0.9.4",
@@ -28,6 +29,6 @@ lazy val core = (project in file("."))
     "org.asynchttpclient"               % "async-http-client"       % "2.0.24",
     "org.slf4j"                         % "slf4j-api"               % "1.7.21",
     "ai.x"                              %% "diff"                   % "1.2.0-get-simple-name-fix" % "test",
-    "org.scalatest"                     %% "scalatest"              % "3.0.0" % "test",
-    "xyz.driver"                        %% "core"                   % "0.16.3" excludeAll (ExclusionRule(organization = "io.netty"))
+    "org.scalacheck"                    %% "scalacheck"              % "1.13.4" % "test",
+    "org.scalatest"                     %% "scalatest"              % "3.0.1"  % "test"
   ))

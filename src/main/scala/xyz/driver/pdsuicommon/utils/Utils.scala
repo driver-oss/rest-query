@@ -1,6 +1,7 @@
 package xyz.driver.pdsuicommon.utils
 
 import java.time.LocalDateTime
+import java.util.regex.{Matcher, Pattern}
 
 object Utils {
 
@@ -20,4 +21,23 @@ object Utils {
         fullClassName.substring(fullClassName.lastIndexOf("$") + 1)
     }
   }
+
+  def toSnakeCase(str: String): String =
+    str
+      .replaceAll("([A-Z]+)([A-Z][a-z])", "$1_$2")
+      .replaceAll("([a-z\\d])([A-Z])", "$1_$2")
+      .toLowerCase
+
+  def toCamelCase(str: String): String = {
+    val sb = new StringBuffer()
+    def loop(m: Matcher): Unit = if (m.find()) {
+      m.appendReplacement(sb, m.group(1).toUpperCase())
+      loop(m)
+    }
+    val m: Matcher = Pattern.compile("_(.)").matcher(str)
+    loop(m)
+    m.appendTail(sb)
+    sb.toString
+  }
+
 }

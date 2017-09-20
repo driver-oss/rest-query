@@ -63,17 +63,6 @@ object recordissue {
     case _ => deserializationError(s"Expected Json Object as MedicalRecordIssue, but got $json")
   }
 
-  implicit val recordIssueWriter = new JsonWriter[MedicalRecordIssue] {
-    override def write(obj: MedicalRecordIssue) = JsObject(
-      "id"              -> obj.id.toJson,
-      "startPage"       -> obj.startPage.toJson,
-      "endPage"         -> obj.endPage.toJson,
-      "text"            -> obj.text.toJson,
-      "lastUpdate"      -> obj.lastUpdate.toJson,
-      "userId"          -> obj.userId.toJson,
-      "isDraft"         -> obj.isDraft.toJson,
-      "archiveRequired" -> obj.archiveRequired.toJson
-    )
-  }
+  implicit val recordIssueFormat = jsonFormat9(MedicalRecordIssue.apply)
 
 }

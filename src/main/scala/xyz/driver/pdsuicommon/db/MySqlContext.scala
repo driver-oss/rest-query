@@ -28,10 +28,7 @@ object MySqlContext extends PhiLogging {
                                  connectionParams: String,
                                  url: String)
 
-  final case class Settings(credentials: DbCredentials,
-                            connection: Config,
-                            connectionAttemptsOnStartup: Int,
-                            threadPoolSize: Int)
+  final case class Settings(credentials: DbCredentials, connection: Config, threadPoolSize: Int)
 
   def apply(settings: Settings): MySqlContext = {
     // Prevent leaking credentials to a log

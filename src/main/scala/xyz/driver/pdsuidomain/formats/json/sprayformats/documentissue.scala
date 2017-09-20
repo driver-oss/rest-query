@@ -61,17 +61,6 @@ object documentissue {
       case _ => deserializationError(s"Expected Json Object as DocumentIssue, but got $json")
     }
 
-  implicit val documentIssueWriter = new JsonWriter[DocumentIssue] {
-    override def write(obj: DocumentIssue) = JsObject(
-      "id"              -> obj.id.toJson,
-      "startPage"       -> obj.startPage.toJson,
-      "endPage"         -> obj.endPage.toJson,
-      "text"            -> obj.text.toJson,
-      "lastUpdate"      -> obj.lastUpdate.toJson,
-      "userId"          -> obj.userId.toJson,
-      "isDraft"         -> obj.isDraft.toJson,
-      "archiveRequired" -> obj.archiveRequired.toJson
-    )
-  }
+  implicit val documentIssueFormat: RootJsonFormat[DocumentIssue] = jsonFormat9(DocumentIssue.apply)
 
 }

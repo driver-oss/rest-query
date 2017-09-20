@@ -2,6 +2,9 @@ package xyz.driver.pdsuidomain.services.fake
 
 import java.time.LocalDateTime
 
+import akka.NotUsed
+import akka.stream.scaladsl.Source
+import akka.util.ByteString
 import xyz.driver.core.generators
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
@@ -44,7 +47,7 @@ class FakeTrialService extends TrialService {
     )
 
   def getPdfSource(trialId: StringId[Trial])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetPdfSourceReply] =
+          implicit requestContext: AuthenticatedRequestContext): Future[Source[ByteString, NotUsed]] =
     Future.failed(new NotImplementedError("fake pdf download is not implemented"))
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,

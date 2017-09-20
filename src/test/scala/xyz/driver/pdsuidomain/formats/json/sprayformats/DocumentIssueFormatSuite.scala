@@ -22,10 +22,10 @@ class DocumentIssueFormatSuite extends FlatSpec with Matchers {
       startPage = Some(1.0),
       endPage = Some(2.0)
     )
-    val writtenJson = documentIssueWriter.write(documentIssue)
+    val writtenJson = documentIssueFormat.write(documentIssue)
 
     writtenJson should be(
-      """{"id":10,"userId":"userId-001","lastUpdate":"2017-08-10T18:00Z","isDraft":false,
+      """{"id":10,"userId":"userId-001","documentId":1,"lastUpdate":"2017-08-10T18:00Z","isDraft":false,
         "text":"message text","archiveRequired":false,"startPage":1.0,"endPage":2.0}""".parseJson)
 
     val createDocumentIssueJson = """{"text":"message text","startPage":1.0,"endPage":2.0}""".parseJson
