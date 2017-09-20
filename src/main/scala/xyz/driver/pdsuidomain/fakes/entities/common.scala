@@ -4,6 +4,7 @@ import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuidomain.entities.{Trial, TrialHistory}
+import scala.util.Random
 
 object common {
   import xyz.driver.core.generators
@@ -20,10 +21,11 @@ object common {
 
   def nextLocalDateTime = LocalDateTime.of(nextLocalDate, LocalTime.MIDNIGHT)
 
-  def nextLocalDate = {
-    val date = generators.nextDate()
-    LocalDate.of(date.year, date.month + 1, date.day + 1)
-  }
+  def nextLocalDate = LocalDate.of(
+    1970 + Random.nextInt(68),
+    1 + Random.nextInt(12),
+    1 + Random.nextInt(28) // all months have at least 28 days
+  )
 
   def nextCondition = generators.oneOf[Trial.Condition](Trial.Condition.All)
 
