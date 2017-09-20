@@ -28,7 +28,7 @@ object PostgresContext extends PhiLogging {
       case Success(dataSource) => new PostgresContext(dataSource, settings)
       case Failure(NonFatal(e)) =>
         logger.error(phi"Can not load dataSource, error: ${Unsafe(e.getClass.getName)}")
-        throw new IllegalArgumentException("Can not load dataSource from config. Check your database and config")
+        throw new IllegalArgumentException("Can not load dataSource from config. Check your database and config", e)
     }
   }
 
