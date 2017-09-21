@@ -203,7 +203,7 @@ sealed trait SlickQueryBuilderParameters {
         val operator = op match {
           case Eq    => sql"="
           case NotEq => sql"!="
-          case Like  => sql"like"
+          case Like  => sql" like "
           case Gt    => sql">"
           case GtEq  => sql">="
           case Lt    => sql"<"
@@ -213,12 +213,13 @@ sealed trait SlickQueryBuilderParameters {
 
       case Atom.NAry(dimension, op, values) =>
         val sqlOp = op match {
-          case SearchFilterNAryOperation.In    => sql"in"
-          case SearchFilterNAryOperation.NotIn => sql"not in"
+          case SearchFilterNAryOperation.In    => sql" in "
+          case SearchFilterNAryOperation.NotIn => sql" not in "
         }
 
         val formattedValues = if (values.nonEmpty) {
-          sql"${values.mkString(",")}"
+          val condition = s"(${values.map(v => "'" + v.toString + "'").mkString(",")})"
+          sql"#${condition}"
         } else sql"NULL"
         sql"#${escapeDimension(dimension)}" concat sqlOp concat formattedValues
 
