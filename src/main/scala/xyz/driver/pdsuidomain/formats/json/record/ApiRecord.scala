@@ -42,7 +42,7 @@ object ApiRecord {
       (JsPath \ "meta").format(Format(Reads { x =>
         JsSuccess(Json.stringify(x))
       }, Writes[String](Json.parse)))
-    )(ApiRecord.apply, unlift(ApiRecord.unapply))
+  )(ApiRecord.apply, unlift(ApiRecord.unapply))
 
   def fromDomain(record: MedicalRecord) = ApiRecord(
     id = record.id.id,

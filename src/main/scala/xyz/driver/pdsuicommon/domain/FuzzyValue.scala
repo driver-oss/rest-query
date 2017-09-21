@@ -14,25 +14,22 @@ object FuzzyValue {
   private val no    = "No"
   private val maybe = "Maybe"
 
-  val All: Set[FuzzyValue] = {
+  val All: Set[FuzzyValue] =
     Set(Yes, No, Maybe)
-  }
 
-  def fromBoolean(x: Boolean): FuzzyValue = {
+  def fromBoolean(x: Boolean): FuzzyValue =
     if (x) Yes else No
-  }
 
-  implicit def toPhiString(x: FuzzyValue): PhiString = {
+  implicit def toPhiString(x: FuzzyValue): PhiString =
     Unsafe(Utils.getClassSimpleName(x.getClass))
-  }
-
 
   val fromString: PartialFunction[String, FuzzyValue] = {
-    case fuzzy => fuzzy.toLowerCase.capitalize match {
-      case `yes`   => Yes
-      case `no`    => No
-      case `maybe` => Maybe
-    }
+    case fuzzy =>
+      fuzzy.toLowerCase.capitalize match {
+        case `yes`   => Yes
+        case `no`    => No
+        case `maybe` => Maybe
+      }
   }
 
   def valueToString(x: FuzzyValue): String = x match {
