@@ -13,48 +13,10 @@ import play.api.libs.json._
 import xyz.driver.pdsuicommon.json.JsonSerializer
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, TextJson, UuidId}
 
-final case class ApiRecord(id: Long,
-                           patientId: String,
-                           caseId: Option[String],
-                           disease: String,
-                           physician: Option[String],
-                           lastUpdate: ZonedDateTime,
-                           status: String,
-                           previousStatus: Option[String],
-                           assignee: Option[String],
-                           previousAssignee: Option[String],
-                           lastActiveUser: Option[String],
-                           requestId: UUID,
-                           meta: String) {
-
-  private def extractStatus(status: String): Status =
-    Status
-      .fromString(status)
-      .getOrElse(
-        throw new NoSuchElementException(s"Status $status not found")
-      )
-
-  def toDomain = MedicalRecord(
-    id = LongId(this.id),
-    status = extractStatus(this.status),
-    previousStatus = this.previousStatus.map(extractStatus),
-    assignee = this.assignee.map(StringId(_)),
-    previousAssignee = this.previousAssignee.map(StringId(_)),
-    lastActiveUserId = this.lastActiveUser.map(StringId(_)),
-    patientId = UuidId(patientId),
-    requestId = RecordRequestId(this.requestId),
-    disease = this.disease,
-    caseId = caseId.map(CaseId(_)),
-    physician = this.physician,
-    meta = Some(TextJson(JsonSerializer.deserialize[List[MedicalRecord.Meta]](this.meta))),
-    predictedMeta = None,
-    predictedDocuments = None,
-    lastUpdate = this.lastUpdate.toLocalDateTime()
-  )
-
-}
-
 object ApiRecord {
+
+  private val emptyMeta: String =
+    "[]"
 
   private val statusFormat = Format(
     Reads.StringReads.filter(ValidationError("unknown status")) {
@@ -95,6 +57,52 @@ object ApiRecord {
     previousAssignee = record.previousAssignee.map(_.id),
     lastActiveUser = record.lastActiveUserId.map(_.id),
     requestId = record.requestId.id,
-    meta = record.meta.map(x => JsonSerializer.serialize(x.content)).getOrElse("[]")
+    meta = record.meta.map(x => JsonSerializer.serialize(x.content)).getOrElse(emptyMeta)
+  )
+}
+
+final case class ApiRecord(id: Long,
+                           patientId: String,
+                           caseId: Option[String],
+                           disease: String,
+                           physician: Option[String],
+                           lastUpdate: ZonedDateTime,
+                           status: String,
+                           previousStatus: Option[String],
+                           assignee: Option[String],
+                           previousAssignee: Option[String],
+                           lastActiveUser: Option[String],
+                           requestId: UUID,
+                           meta: String) {
+
+  private def extractStatus(status: String): Status =
+    Status
+      .fromString(status)
+      .getOrElse(
+        throw new NoSuchElementException(s"Status $status not found")
+      )
+
+  def toDomain = MedicalRecord(
+    id = LongId(this.id),
+    status = extractStatus(this.status),
+    previousStatus = this.previousStatus.map(extractStatus),
+    assignee = this.assignee.map(StringId(_)),
+    previousAssignee = this.previousAssignee.map(StringId(_)),
+    lastActiveUserId = this.lastActiveUser.map(StringId(_)),
+    patientId = UuidId(patientId),
+    requestId = RecordRequestId(this.requestId),
+    disease = this.disease,
+    caseId = caseId.map(CaseId(_)),
+    physician = this.physician,
+    meta = {
+      if (this.meta == ApiRecord.emptyMeta) {
+        None
+      } else {
+        Some(TextJson(JsonSerializer.deserialize[List[MedicalRecord.Meta]](this.meta)))
+      }
+    },
+    predictedMeta = None,
+    predictedDocuments = None,
+    lastUpdate = this.lastUpdate.toLocalDateTime()
   )
 }
