@@ -2,6 +2,8 @@ package xyz.driver.pdsuidomain.formats.json.eligibilityarm
 
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuidomain.entities.EligibilityArm
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 final case class ApiEligibilityArm(id: Long, name: String, originalName: String, trialId: String) {
 
