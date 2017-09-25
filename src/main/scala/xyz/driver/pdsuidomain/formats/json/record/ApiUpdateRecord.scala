@@ -37,7 +37,7 @@ object ApiUpdateRecord {
           JsSuccess(Json.stringify(x))
         })
         .map {
-          case Tristate.Present("{}") => Tristate.Absent
+          case Tristate.Present("[]") => Tristate.Absent
           case x                      => x
         }
   )(ApiUpdateRecord.apply _)
