@@ -20,7 +20,7 @@ final case class ApiPartialIntervention(name: Option[String],
 
   def applyTo(orig: InterventionWithArms): InterventionWithArms = {
     val origIntervention = orig.intervention
-    val draftArmList     = arms.map(_.map(x => InterventionArm(LongId(x), orig.intervention.id)))
+    val draftArmList     = arms.map(_.map(x => InterventionArm(armId = LongId(x), interventionId = orig.intervention.id)))
     orig.copy(
       intervention = origIntervention.copy(
         typeId = typeId.map(LongId(_)).orElse(origIntervention.typeId),
@@ -31,7 +31,6 @@ final case class ApiPartialIntervention(name: Option[String],
     )
   }
 
-  //TODO: need to discuss
   def toDomain: Try[InterventionWithArms] = Try {
     val validation = Map(JsPath \ "trialId" -> AdditionalConstraints.optionNonEmptyConstraint(trialId))
 
@@ -52,7 +51,8 @@ final case class ApiPartialIntervention(name: Option[String],
           originalDosage = dosage.getOrElse(""),
           isActive = isActive.getOrElse(false)
         ),
-        arms = arms.map(_.map(x => InterventionArm(LongId(x), LongId(0)))).getOrElse(List.empty)
+        arms =
+          arms.map(_.map(x => InterventionArm(armId = LongId(x), interventionId = LongId(0)))).getOrElse(List.empty)
       )
     } else {
       throw new JsonValidationException(validationErrors)
