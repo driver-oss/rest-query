@@ -23,6 +23,7 @@ final case class ApiPartialIntervention(name: Option[String],
     val draftArmList     = arms.map(_.map(x => InterventionArm(armId = LongId(x), interventionId = orig.intervention.id)))
     orig.copy(
       intervention = origIntervention.copy(
+        name = name.getOrElse(origIntervention.name),
         typeId = typeId.map(LongId(_)).orElse(origIntervention.typeId),
         dosage = dosage.getOrElse(origIntervention.dosage),
         isActive = isActive.getOrElse(origIntervention.isActive)

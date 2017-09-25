@@ -74,6 +74,10 @@ object intervention {
 
   def applyUpdateToInterventionWithArms(json: JsValue, orig: InterventionWithArms): InterventionWithArms = json match {
     case JsObject(fields) =>
+      val name = fields
+        .get("name")
+        .map(_.convertTo[String])
+
       val typeId = fields
         .get("typeId")
         .map(_.convertTo[LongId[InterventionType]])
@@ -93,6 +97,7 @@ object intervention {
 
       orig.copy(
         intervention = origIntervention.copy(
+          name = name.getOrElse(origIntervention.name),
           typeId = typeId.orElse(origIntervention.typeId),
           dosage = dosage.getOrElse(origIntervention.dosage),
           isActive = isActive.getOrElse(origIntervention.isActive)

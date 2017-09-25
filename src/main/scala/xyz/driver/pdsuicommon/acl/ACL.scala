@@ -168,8 +168,10 @@ object ACL extends PhiLogging {
   object Intervention
       extends BaseACL(
         label = "intervention",
+        create = Set(TrialSummarizer, TrialAdmin),
         read = Set(TrialSummarizer, TrialAdmin),
-        update = Set(TrialSummarizer, TrialAdmin)
+        update = Set(TrialSummarizer, TrialAdmin),
+        delete = Set(TrialSummarizer, TrialAdmin)
       )
 
   object InterventionType
