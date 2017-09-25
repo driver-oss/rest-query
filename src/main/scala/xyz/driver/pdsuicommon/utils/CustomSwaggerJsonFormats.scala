@@ -42,7 +42,7 @@ object CustomSwaggerJsonFormats {
       xyz.driver.pdsuidomain.fakes.entities.trialcuration.nextTrialIssue()),
     classOf[RichCriterion] -> richCriterionFormat.write(
       xyz.driver.pdsuidomain.fakes.entities.trialcuration.nextRichCriterion()),
-    classOf[InterventionWithArms] -> interventionWriter.write(
+    classOf[InterventionWithArms] -> interventionFormat.write(
       xyz.driver.pdsuidomain.fakes.entities.trialcuration.nextInterventionWithArms()),
     classOf[InterventionType] -> interventionTypeFormat.write(
       xyz.driver.pdsuidomain.fakes.entities.trialcuration.nextInterventionType()),

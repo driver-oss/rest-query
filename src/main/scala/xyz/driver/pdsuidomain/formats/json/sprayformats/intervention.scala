@@ -1,14 +1,14 @@
 package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import spray.json._
-import xyz.driver.pdsuicommon.domain.LongId
+import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuidomain.entities._
 
 object intervention {
   import DefaultJsonProtocol._
   import common._
 
-  implicit val interventionWriter: JsonWriter[InterventionWithArms] = new JsonWriter[InterventionWithArms] {
+  implicit val interventionFormat: JsonFormat[InterventionWithArms] = new RootJsonFormat[InterventionWithArms] {
     override def write(obj: InterventionWithArms) =
       JsObject(
         "id"             -> obj.intervention.id.toJson,
@@ -22,6 +22,54 @@ object intervention {
         "originalDosage" -> obj.intervention.originalDosage.toJson,
         "originalType"   -> obj.intervention.originalType.toJson
       )
+
+    override def read(json: JsValue): InterventionWithArms = json match {
+      case JsObject(fields) =>
+        val trialId = fields
+          .get("trialId")
+          .map(_.convertTo[StringId[Trial]])
+          .getOrElse(deserializationError(s"Intervention json object does not contain `trialId` field: $json"))
+
+        val typeId = fields
+          .get("typeId")
+          .map(_.convertTo[LongId[InterventionType]])
+
+        val name = fields
+          .get("name")
+          .map(_.convertTo[String])
+          .getOrElse("")
+
+        val dosage = fields
+          .get("dosage")
+          .map(_.convertTo[String])
+          .getOrElse("")
+
+        val isActive = fields
+          .get("isActive")
+          .exists(_.convertTo[Boolean])
+
+        val arms = fields
+          .get("arms")
+          .map(_.convertTo[List[LongId[Arm]]].map(x => InterventionArm(armId = x, interventionId = LongId(0))))
+          .getOrElse(List.empty[InterventionArm])
+
+        InterventionWithArms(
+          intervention = Intervention(
+            id = LongId(0),
+            trialId = trialId,
+            name = name,
+            originalName = name,
+            typeId = typeId,
+            originalType = None,
+            dosage = dosage,
+            originalDosage = dosage,
+            isActive = isActive
+          ),
+          arms = arms
+        )
+
+      case _ => deserializationError(s"Expected Json Object as create Intervention json, but got $json")
+    }
   }
 
   def applyUpdateToInterventionWithArms(json: JsValue, orig: InterventionWithArms): InterventionWithArms = json match {
