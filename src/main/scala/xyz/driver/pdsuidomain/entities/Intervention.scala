@@ -29,12 +29,13 @@ final case class Intervention(id: LongId[Intervention],
                               originalType: Option[String],
                               dosage: String,
                               originalDosage: String,
-                              isActive: Boolean)
+                              isActive: Boolean,
+                              deliveryMethod: Option[String])
 
 object Intervention {
   implicit def toPhiString(x: Intervention): PhiString = {
     import x._
-    phi"Intervention(id=$id, trialId=$trialId, name=${Unsafe(name)}, typeId=$typeId, isActive=$isActive)"
+    phi"Intervention(id=$id, trialId=$trialId, name=${Unsafe(name)}, typeId=$typeId, isActive=$isActive, deliveryMethod=${Unsafe(deliveryMethod)})"
   }
 }
 
