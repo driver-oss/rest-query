@@ -28,7 +28,7 @@ object Criterion {
   }
 }
 
-final case class CriterionArm(criterionId: LongId[Criterion], armId: LongId[Arm])
+final case class CriterionArm(criterionId: LongId[Criterion], armId: LongId[EligibilityArm])
 
 object CriterionArm {
 

@@ -81,7 +81,7 @@ object trialcuration {
 
   def nextInterventionArm(interventionId: LongId[Intervention]): InterventionArm = InterventionArm(
     interventionId = interventionId,
-    armId = nextLongId[Arm]
+    armId = nextLongId[SlotArm]
   )
 
   def nextInterventionWithArms(): InterventionWithArms = {
