@@ -18,6 +18,7 @@ object intervention {
         "isActive"       -> obj.intervention.isActive.toJson,
         "arms"           -> obj.arms.map(_.armId).toJson,
         "trialId"        -> obj.intervention.trialId.toJson,
+        "deliveryMethod" -> obj.intervention.deliveryMethod.toJson,
         "originalName"   -> obj.intervention.originalName.toJson,
         "originalDosage" -> obj.intervention.originalDosage.toJson,
         "originalType"   -> obj.intervention.originalType.toJson
@@ -48,6 +49,10 @@ object intervention {
           .get("isActive")
           .exists(_.convertTo[Boolean])
 
+        val deliveryMethod = fields
+          .get("deliveryMethod")
+          .map(_.convertTo[String])
+
         val arms = fields
           .get("arms")
           .map(_.convertTo[List[LongId[Arm]]].map(x => InterventionArm(armId = x, interventionId = LongId(0))))
@@ -63,7 +68,8 @@ object intervention {
             originalType = None,
             dosage = dosage,
             originalDosage = dosage,
-            isActive = isActive
+            isActive = isActive,
+            deliveryMethod = deliveryMethod
           ),
           arms = arms
         )
@@ -90,6 +96,10 @@ object intervention {
         .get("isActive")
         .map(_.convertTo[Boolean])
 
+      val deliveryMethod = fields
+        .get("deliveryMethod")
+        .map(_.convertTo[String])
+
       val origIntervention = orig.intervention
       val arms = fields
         .get("arms")
@@ -100,7 +110,8 @@ object intervention {
           name = name.getOrElse(origIntervention.name),
           typeId = typeId.orElse(origIntervention.typeId),
           dosage = dosage.getOrElse(origIntervention.dosage),
-          isActive = isActive.getOrElse(origIntervention.isActive)
+          isActive = isActive.getOrElse(origIntervention.isActive),
+          deliveryMethod = deliveryMethod.orElse(origIntervention.deliveryMethod)
         ),
         arms = arms.getOrElse(orig.arms)
       )

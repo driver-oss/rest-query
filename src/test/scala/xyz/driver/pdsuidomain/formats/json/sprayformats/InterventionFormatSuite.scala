@@ -18,7 +18,8 @@ class InterventionFormatSuite extends FlatSpec with Matchers {
       originalType = Some("orig type"),
       dosage = "",
       originalDosage = "",
-      isActive = true
+      isActive = true,
+      deliveryMethod = Some("pill")
     )
     val arms = List(
       InterventionArm(interventionId = intervention.id, armId = LongId(20)),
@@ -33,11 +34,11 @@ class InterventionFormatSuite extends FlatSpec with Matchers {
 
     writtenJson should be(
       """{"id":1,"name":"intervention name","typeId":10,"dosage":"","isActive":true,"arms":[20,21,22],
-        "trialId":"NCT000001","originalName":"orig name","originalDosage":"","originalType":"orig type"}""".parseJson)
+        "trialId":"NCT000001","deliveryMethod":"pill","originalName":"orig name","originalDosage":"","originalType":"orig type"}""".parseJson)
 
     val createInterventionJson =
       """{"id":1,"name":"intervention name","typeId":10,"dosage":"","isActive":true,"arms":[20,21,22],
-        "trialId":"NCT000001"}""".parseJson
+        "trialId":"NCT000001","deliveryMethod":"pill"}""".parseJson
     val parsedCreateIntervention = interventionFormat.read(createInterventionJson)
     val expectedCreateIntervention = parsedCreateIntervention.copy(
       intervention = intervention.copy(id = LongId(0), originalType = None, originalName = "intervention name"),

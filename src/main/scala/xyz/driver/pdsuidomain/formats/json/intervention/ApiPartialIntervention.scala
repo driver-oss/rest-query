@@ -16,6 +16,7 @@ final case class ApiPartialIntervention(name: Option[String],
                                         typeId: Option[Long],
                                         dosage: Option[String],
                                         isActive: Option[Boolean],
+                                        deliveryMethod: Option[String],
                                         arms: Option[List[Long]]) {
 
   def applyTo(orig: InterventionWithArms): InterventionWithArms = {
@@ -26,7 +27,8 @@ final case class ApiPartialIntervention(name: Option[String],
         name = name.getOrElse(origIntervention.name),
         typeId = typeId.map(LongId(_)).orElse(origIntervention.typeId),
         dosage = dosage.getOrElse(origIntervention.dosage),
-        isActive = isActive.getOrElse(origIntervention.isActive)
+        isActive = isActive.getOrElse(origIntervention.isActive),
+        deliveryMethod = deliveryMethod.orElse(origIntervention.deliveryMethod)
       ),
       arms = draftArmList.getOrElse(orig.arms)
     )
@@ -50,7 +52,8 @@ final case class ApiPartialIntervention(name: Option[String],
           originalType = Option(""),
           dosage = dosage.getOrElse(""),
           originalDosage = dosage.getOrElse(""),
-          isActive = isActive.getOrElse(false)
+          isActive = isActive.getOrElse(false),
+          deliveryMethod = deliveryMethod
         ),
         arms =
           arms.map(_.map(x => InterventionArm(armId = LongId(x), interventionId = LongId(0)))).getOrElse(List.empty)
@@ -69,6 +72,7 @@ object ApiPartialIntervention {
       (JsPath \ "typeId").readNullable[Long] and
       (JsPath \ "dosage").readNullable[String] and
       (JsPath \ "isActive").readNullable[Boolean] and
+      (JsPath \ "deliveryMethod").readNullable[String] and
       (JsPath \ "arms").readNullable[List[Long]]
   )(ApiPartialIntervention.apply _)
 
@@ -78,6 +82,7 @@ object ApiPartialIntervention {
       (JsPath \ "typeId").writeNullable[Long] and
       (JsPath \ "dosage").writeNullable[String] and
       (JsPath \ "isActive").writeNullable[Boolean] and
+      (JsPath \ "deliveryMethod").writeNullable[String] and
       (JsPath \ "arms").writeNullable[List[Long]]
   )(unlift(ApiPartialIntervention.unapply))
 

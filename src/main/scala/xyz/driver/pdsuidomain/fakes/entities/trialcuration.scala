@@ -76,7 +76,8 @@ object trialcuration {
     originalType = Option(generators.nextString()),
     dosage = generators.nextString(),
     originalDosage = generators.nextString(),
-    isActive = generators.nextBoolean()
+    isActive = generators.nextBoolean(),
+    deliveryMethod = Option(generators.nextString())
   )
 
   def nextInterventionArm(interventionId: LongId[Intervention]): InterventionArm = InterventionArm(

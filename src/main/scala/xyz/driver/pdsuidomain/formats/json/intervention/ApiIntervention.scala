@@ -12,6 +12,7 @@ final case class ApiIntervention(id: Long,
                                  isActive: Boolean,
                                  arms: List[Long],
                                  trialId: String,
+                                 deliveryMethod: Option[String],
                                  originalName: String,
                                  originalDosage: String,
                                  originalType: Option[String]) {
@@ -26,7 +27,8 @@ final case class ApiIntervention(id: Long,
       originalType = this.originalType.map(id => id.toString),
       dosage = this.dosage,
       originalDosage = this.originalDosage,
-      isActive = this.isActive
+      isActive = this.isActive,
+      deliveryMethod = this.deliveryMethod
     )
 
     InterventionWithArms(intervention, this.arms.map { armId =>
@@ -47,6 +49,7 @@ object ApiIntervention {
       (JsPath \ "isActive").format[Boolean] and
       (JsPath \ "arms").format[List[Long]] and
       (JsPath \ "trialId").format[String] and
+      (JsPath \ "deliveryMethod").formatNullable[String] and
       (JsPath \ "originalName").format[String] and
       (JsPath \ "originalDosage").format[String] and
       (JsPath \ "originalType").formatNullable[String]
@@ -64,6 +67,7 @@ object ApiIntervention {
       isActive = intervention.isActive,
       arms = arms.map(_.armId.id),
       trialId = intervention.trialId.id,
+      deliveryMethod = intervention.deliveryMethod,
       originalName = intervention.originalName,
       originalDosage = intervention.originalDosage,
       originalType = intervention.originalType
