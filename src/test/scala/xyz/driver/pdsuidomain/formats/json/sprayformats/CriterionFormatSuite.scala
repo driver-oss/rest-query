@@ -3,7 +3,7 @@ package xyz.driver.pdsuidomain.formats.json.sprayformats
 import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
-import xyz.driver.pdsuidomain.entities.{Arm, Criterion, CriterionLabel}
+import xyz.driver.pdsuidomain.entities.{EligibilityArm, Criterion, CriterionLabel}
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
 
 class CriterionFormatSuite extends FlatSpec with Matchers {
@@ -35,7 +35,7 @@ class CriterionFormatSuite extends FlatSpec with Matchers {
         isDefining = true
       )
     )
-    val arms = List(LongId[Arm](20), LongId[Arm](21), LongId[Arm](21))
+    val arms = List(LongId[EligibilityArm](20), LongId[EligibilityArm](21), LongId[EligibilityArm](21))
     val richCriterion = RichCriterion(
       criterion = criterion,
       armIds = arms,

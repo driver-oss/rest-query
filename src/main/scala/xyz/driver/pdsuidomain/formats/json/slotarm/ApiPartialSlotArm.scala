@@ -1,6 +1,5 @@
 package xyz.driver.pdsuidomain.formats.json.slotarm
 
-
 import xyz.driver.pdsuidomain.entities.SlotArm
 import play.api.libs.json.{Format, Json}
 

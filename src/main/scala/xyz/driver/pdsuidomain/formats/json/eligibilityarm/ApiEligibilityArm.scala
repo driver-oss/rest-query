@@ -24,7 +24,7 @@ object ApiEligibilityArm {
       (JsPath \ "name").format[String] and
       (JsPath \ "originalName").format[String] and
       (JsPath \ "trialId").format[String]
-    )(ApiEligibilityArm.apply, unlift(ApiEligibilityArm.unapply))
+  )(ApiEligibilityArm.apply, unlift(ApiEligibilityArm.unapply))
 
   def fromDomain(arm: EligibilityArm): ApiEligibilityArm = ApiEligibilityArm(
     id = arm.id.id,

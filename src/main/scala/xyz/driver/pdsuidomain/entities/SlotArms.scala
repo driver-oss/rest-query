@@ -18,4 +18,3 @@ object SlotArm {
     phi"Arm(id=$id, name=${Unsafe(x.name)}, trialId=${Unsafe(x.trialId)})"
   }
 }
-

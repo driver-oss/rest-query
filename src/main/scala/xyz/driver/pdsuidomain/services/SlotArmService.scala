@@ -118,7 +118,8 @@ trait SlotArmService {
 
   def create(draftSlotArm: SlotArm)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
 
-  def update(origSlotArm: SlotArm, draftSlotArm: SlotArm)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def update(origSlotArm: SlotArm, draftSlotArm: SlotArm)(
+          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
   def delete(id: LongId[SlotArm])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
 }

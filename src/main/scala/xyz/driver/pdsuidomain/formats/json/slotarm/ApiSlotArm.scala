@@ -24,7 +24,7 @@ object ApiSlotArm {
       (JsPath \ "name").format[String] and
       (JsPath \ "originalName").format[String] and
       (JsPath \ "trialId").format[String]
-    )(ApiSlotArm.apply, unlift(ApiSlotArm.unapply))
+  )(ApiSlotArm.apply, unlift(ApiSlotArm.unapply))
 
   def fromDomain(arm: SlotArm): ApiSlotArm = ApiSlotArm(
     id = arm.id.id,

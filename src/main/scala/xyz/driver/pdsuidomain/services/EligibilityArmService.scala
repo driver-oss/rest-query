@@ -114,11 +114,14 @@ trait EligibilityArmService {
              pagination: Option[Pagination] = None)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
-  def getById(armId: LongId[EligibilityArm])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(armId: LongId[EligibilityArm])(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
-  def create(draftEligibilityArm: EligibilityArm)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
+  def create(draftEligibilityArm: EligibilityArm)(
+          implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
 
-  def update(origEligibilityArm: EligibilityArm, draftEligibilityArm: EligibilityArm)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def update(origEligibilityArm: EligibilityArm, draftEligibilityArm: EligibilityArm)(
+          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
   def delete(id: LongId[EligibilityArm])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
 }
