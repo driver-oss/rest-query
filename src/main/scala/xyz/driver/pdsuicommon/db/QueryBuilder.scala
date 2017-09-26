@@ -57,10 +57,10 @@ sealed trait QueryBuilderParameters {
   def toSql(countQuery: Boolean, fields: Set[String], namingStrategy: NamingStrategy): (String, QueryBuilder.Binder) = {
     val escapedTableName = namingStrategy.table(tableData.tableName)
     val fieldsSql: String = if (countQuery) {
-      val suffix: String = (tableData.lastUpdateFieldName match {
+      val suffix: String = tableData.lastUpdateFieldName match {
         case Some(lastUpdateField) => s", max($escapedTableName.${namingStrategy.column(lastUpdateField)})"
         case None                  => ""
-      })
+      }
       "count(*)" + suffix
     } else {
       if (fields == QueryBuilderParameters.AllFields) {

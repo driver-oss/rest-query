@@ -93,8 +93,8 @@ object SearchFilterParser {
 
   private val binaryAtomParser: Parser[SearchFilterExpr.Atom.Binary] = P(
     dimensionParser ~ whitespaceParser ~ (
+      (numericOperatorParser.! ~/ whitespaceParser ~/ numberParser.!) |
       (commonOperatorParser.! ~/ whitespaceParser ~/ AnyChar.rep(min = 1).!)
-        | (numericOperatorParser.! ~/ whitespaceParser ~/ numberParser.!)
     ) ~ End
   ).map {
     case BinaryAtomFromTuple(atom) => atom

@@ -14,6 +14,8 @@ import xyz.driver.pdsuicommon.validation.Validators
 import xyz.driver.pdsuicommon.validation.Validators.Validator
 import xyz.driver.pdsuidomain.entities.Document.Meta
 
+import scalaz.Equal
+
 final case class ProviderType(id: LongId[ProviderType], name: String)
 
 object ProviderType {
@@ -123,6 +125,8 @@ object DocumentType {
       case _                                  => None
     }
   }
+
+  implicit def equal: Equal[DocumentType] = Equal.equal[DocumentType](_ == _)
 
   implicit def toPhiString(x: DocumentType): PhiString = {
     import x._
