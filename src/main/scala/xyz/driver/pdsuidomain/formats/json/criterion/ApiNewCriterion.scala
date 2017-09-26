@@ -23,7 +23,7 @@ final case class ApiNewCriterion(meta: Option[String],
       isCompound = isCompound.getOrElse(false),
       text = text
     ),
-    armIds = arms.getOrElse(Seq.empty).map(LongId[Arm]),
+    armIds = arms.getOrElse(Seq.empty).map(LongId[EligibilityArm]),
     labels = labels.map(_.toDomain(LongId(Long.MaxValue))) // A developer should specify right criterionId himself
   )
 }

@@ -4,7 +4,7 @@ import xyz.driver.pdsuicommon.json.Serialization.seqJsonFormat
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
-import xyz.driver.pdsuidomain.entities.{Arm, Criterion, Trial}
+import xyz.driver.pdsuidomain.entities.{EligibilityArm, Criterion, Trial}
 import xyz.driver.pdsuidomain.formats.json.label.ApiCriterionLabel
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
 
@@ -24,7 +24,7 @@ final case class ApiCriterion(id: Long,
       isCompound,
       meta.getOrElse("")
     ),
-    armIds = arms.map(LongId[Arm]),
+    armIds = arms.map(LongId[EligibilityArm]),
     labels = labels.map(_.toDomain(LongId[Criterion](id)))
   )
 }

@@ -21,7 +21,7 @@ object CriterionService {
     def userMessage: String = "Access denied"
   }
 
-  final case class RichCriterion(criterion: Criterion, armIds: Seq[LongId[Arm]], labels: Seq[CriterionLabel])
+  final case class RichCriterion(criterion: Criterion, armIds: Seq[LongId[EligibilityArm]], labels: Seq[CriterionLabel])
   object RichCriterion {
     implicit def toPhiString(x: RichCriterion): PhiString = {
       import x._

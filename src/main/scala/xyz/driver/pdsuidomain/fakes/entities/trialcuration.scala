@@ -59,7 +59,7 @@ object trialcuration {
     val criterion = nextCriterion()
     RichCriterion(
       criterion = criterion,
-      armIds = Seq(nextLongId[Arm], nextLongId[Arm]),
+      armIds = Seq(nextLongId[EligibilityArm], nextLongId[EligibilityArm]),
       labels = Seq(
         nextCriterionLabel(criterion.id),
         nextCriterionLabel(criterion.id)
