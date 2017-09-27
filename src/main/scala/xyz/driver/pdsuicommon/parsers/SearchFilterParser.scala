@@ -17,7 +17,7 @@ object SearchFilterParser {
       val (dimensionName, (strOperation, value)) = input
       val updatedValue = value match {
         case s: String => s.safeTrim
-        case a => a
+        case a         => a
       }
 
       parseOperation(strOperation.toLowerCase).map { op =>
@@ -96,12 +96,12 @@ object SearchFilterParser {
 
   private val nAryValueParser: Parser[String] = P(CharPred(_ != ',').rep(min = 1).!)
 
-  private val longParser: Parser[Long] = P(CharIn('0'to'9').rep(1).!.map(_.toLong))
+  private val longParser: Parser[Long] = P(CharIn('0' to '9').rep(1).!.map(_.toLong))
 
   private val binaryAtomParser: Parser[SearchFilterExpr.Atom.Binary] = P(
     dimensionParser ~ whitespaceParser ~ (
       (numericOperatorParser.! ~ whitespaceParser ~ (longParser | numberParser.!)) |
-      (commonOperatorParser.! ~ whitespaceParser ~ AnyChar.rep(min = 1).!)
+        (commonOperatorParser.! ~ whitespaceParser ~ AnyChar.rep(min = 1).!)
     ) ~ End
   ).map {
     case BinaryAtomFromTuple(atom) => atom
