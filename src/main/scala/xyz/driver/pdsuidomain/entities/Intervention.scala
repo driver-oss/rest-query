@@ -170,6 +170,18 @@ object InterventionType {
     Rectal
   )
 
+  val All: Map[LongId[InterventionType], InterventionType] = Map[LongId[InterventionType], InterventionType](
+    LongId[InterventionType](1) -> RadiationTherapy,
+    LongId[InterventionType](2) -> Chemotherapy,
+    LongId[InterventionType](3) -> TargetedTherapy,
+    LongId[InterventionType](4) -> Immunotherapy,
+    LongId[InterventionType](5) -> Surgery,
+    LongId[InterventionType](6) -> HormoneTherapy,
+    LongId[InterventionType](7) -> Other,
+    LongId[InterventionType](8) -> Radiation,
+    LongId[InterventionType](9) -> SurgeryProcedure
+  )
+
   implicit def toPhiString(x: InterventionType): PhiString = {
     import x._
     phi"InterventionType(id=$id, name=${Unsafe(name)})"
@@ -194,7 +206,17 @@ final case class Intervention(id: LongId[Intervention],
                               dosage: String,
                               originalDosage: String,
                               isActive: Boolean,
-                              deliveryMethod: Option[String])
+                              deliveryMethod: Option[String]) {
+  def deliveryMethodIsCorrect: Boolean = {
+    if (this.typeId.nonEmpty) {
+      this.deliveryMethod.nonEmpty &&
+      InterventionType.All
+        .getOrElse(this.typeId.get, throw new IllegalArgumentException(s"Not found Intervention type ${this.typeId}"))
+        .deliveryMethods
+        .contains(DeliveryMethod.fromString(this.deliveryMethod.get))
+    } else true
+  }
+}
 
 object Intervention {
   implicit def toPhiString(x: Intervention): PhiString = {
