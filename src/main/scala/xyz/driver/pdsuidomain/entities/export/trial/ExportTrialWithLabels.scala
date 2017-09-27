@@ -27,7 +27,7 @@ object ExportTrialWithLabels {
   def fromRaw(rawData: List[RawTrialLabel]): ExportTrialWithLabels = {
     val trials: Set[StringId[Trial]] = rawData.map(_.nctId)(breakOut)
 
-    assert(trials.size == 1, "There are more than one trials in the rawData")
+    assert(trials.size == 1, "There are more than one trial in the rawData")
     val trial = rawData.head
 
     ExportTrialWithLabels(
@@ -43,9 +43,7 @@ object ExportTrialWithLabels {
             ExportTrialArm(armId, rawTrials.head.armName)
         }(breakOut),
       criteria = rawData
-        .groupBy { x =>
-          (x.criterionId, x.labelId)
-        }
+        .groupBy(x => (x.criterionId, x.labelId))
         .map {
           case (_, rawTrialLabels) =>
             val armIds = rawTrialLabels.map(_.criterionArmId).toSet
@@ -53,5 +51,4 @@ object ExportTrialWithLabels {
         }(breakOut)
     )
   }
-
 }

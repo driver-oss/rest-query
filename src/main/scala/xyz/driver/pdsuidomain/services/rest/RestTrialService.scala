@@ -34,9 +34,9 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
     }
   }
 
-  def getTrialWithLabels(trialId: StringId[Trial], condition: String)(
+  def getTrialWithLabels(trialId: StringId[Trial], disease: String)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetTrialWithLabelsReply] = {
-    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/export/trial/$trialId"))
+    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/export/trial/$disease/$trialId"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply    <- apiResponse[ApiExportTrialWithLabels](response)
@@ -47,7 +47,7 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
 
   def getPdfSource(trialId: StringId[Trial])(
           implicit requestContext: AuthenticatedRequestContext): Future[Source[ByteString, NotUsed]] = {
-    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/trial/${trialId}/source"))
+    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/trial/$trialId/source"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply    <- apiResponse[HttpEntity](response)

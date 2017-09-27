@@ -2,6 +2,7 @@ package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import spray.json._
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
+import xyz.driver.pdsuidomain.entities.InterventionType.DeliveryMethod
 import xyz.driver.pdsuidomain.entities._
 
 object intervention {
@@ -18,6 +19,7 @@ object intervention {
         "isActive"       -> obj.intervention.isActive.toJson,
         "arms"           -> obj.arms.map(_.armId).toJson,
         "trialId"        -> obj.intervention.trialId.toJson,
+        "deliveryMethod" -> obj.intervention.deliveryMethod.toJson,
         "originalName"   -> obj.intervention.originalName.toJson,
         "originalDosage" -> obj.intervention.originalDosage.toJson,
         "originalType"   -> obj.intervention.originalType.toJson
@@ -48,6 +50,10 @@ object intervention {
           .get("isActive")
           .exists(_.convertTo[Boolean])
 
+        val deliveryMethod = fields
+          .get("deliveryMethod")
+          .map(_.convertTo[String])
+
         val arms = fields
           .get("arms")
           .map(_.convertTo[List[LongId[SlotArm]]].map(x => InterventionArm(armId = x, interventionId = LongId(0))))
@@ -63,7 +69,8 @@ object intervention {
             originalType = None,
             dosage = dosage,
             originalDosage = dosage,
-            isActive = isActive
+            isActive = isActive,
+            deliveryMethod = deliveryMethod
           ),
           arms = arms
         )
@@ -90,6 +97,10 @@ object intervention {
         .get("isActive")
         .map(_.convertTo[Boolean])
 
+      val deliveryMethod = fields
+        .get("deliveryMethod")
+        .map(_.convertTo[String])
+
       val origIntervention = orig.intervention
       val arms = fields
         .get("arms")
@@ -100,7 +111,8 @@ object intervention {
           name = name.getOrElse(origIntervention.name),
           typeId = typeId.orElse(origIntervention.typeId),
           dosage = dosage.getOrElse(origIntervention.dosage),
-          isActive = isActive.getOrElse(origIntervention.isActive)
+          isActive = isActive.getOrElse(origIntervention.isActive),
+          deliveryMethod = deliveryMethod.orElse(origIntervention.deliveryMethod)
         ),
         arms = arms.getOrElse(orig.arms)
       )
@@ -108,6 +120,25 @@ object intervention {
     case _ => deserializationError(s"Expected Json Object as partial Intervention, but got $json")
   }
 
-  implicit val interventionTypeFormat: RootJsonFormat[InterventionType] = jsonFormat2(InterventionType.apply)
+  implicit val interventionTypeFormat: JsonFormat[InterventionType] = new RootJsonFormat[InterventionType] {
+    override def read(json: JsValue) = json match {
+      case JsObject(fields) =>
+        val name = fields
+          .get("name")
+          .map(_.convertTo[String])
+          .getOrElse(deserializationError(s"Intervention type json object does not contain `name` field: $json"))
+
+        InterventionType.typeFromString(name)
+
+      case _ => deserializationError(s"Expected Json Object as Intervention type, but got $json")
+    }
+
+    override def write(obj: InterventionType) =
+      JsObject(
+        "id"              -> obj.id.toJson,
+        "name"            -> obj.name.toJson,
+        "deliveryMethods" -> obj.deliveryMethods.map(DeliveryMethod.methodToString).toJson
+      )
+  }
 
 }
