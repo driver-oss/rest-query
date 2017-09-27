@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, User, UuidId}
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
-import xyz.driver.pdsuidomain.entities.Trial.{Condition, Status}
+import xyz.driver.pdsuidomain.entities.Trial.Status
 
 final case class StudyDesign(id: LongId[StudyDesign], name: String)
 
@@ -86,7 +86,6 @@ final case class Trial(id: StringId[Trial],
                        previousAssignee: Option[StringId[User]],
                        lastActiveUserId: Option[StringId[User]],
                        lastUpdate: LocalDateTime,
-                       condition: Condition,
                        phase: String,
                        hypothesisId: Option[UuidId[Hypothesis]],
                        studyDesignId: Option[LongId[StudyDesign]],

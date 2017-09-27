@@ -41,7 +41,6 @@ object trial {
         "previousStatus"        -> obj.previousStatus.toJson,
         "previousAssignee"      -> obj.previousAssignee.toJson,
         "lastActiveUser"        -> obj.lastActiveUserId.toJson,
-        "condition"             -> obj.condition.toJson,
         "phase"                 -> obj.phase.toJson,
         "hypothesisId"          -> obj.hypothesisId.toJson,
         "studyDesignId"         -> obj.studyDesignId.toJson,

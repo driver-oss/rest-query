@@ -21,7 +21,6 @@ class PatientEligibleTrialFormatSuite extends FlatSpec with Matchers {
       previousAssignee = None,
       lastActiveUserId = None,
       lastUpdate = LocalDateTime.parse("2017-08-10T18:16:19"),
-      condition = Trial.Condition.Breast,
       phase = "",
       hypothesisId = Some(UuidId("e76e2fc4-a29c-44fb-a81b-8856d06bb1d4")),
       studyDesignId = Some(LongId(321)),

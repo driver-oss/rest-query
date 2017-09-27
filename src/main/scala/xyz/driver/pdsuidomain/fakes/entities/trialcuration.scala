@@ -18,7 +18,6 @@ object trialcuration {
     previousAssignee = Option(nextStringId[User]),
     lastActiveUserId = Option(nextStringId[User]),
     lastUpdate = nextLocalDateTime,
-    condition = nextCondition,
     phase = generators.nextString(),
     hypothesisId = Option(nextUuidId[Hypothesis]),
     studyDesignId = Option(nextLongId[StudyDesign]),

@@ -28,7 +28,6 @@ class FakeTrialService extends TrialService {
     previousAssignee = None,
     lastActiveUserId = None,
     lastUpdate = LocalDateTime.now(),
-    condition = Trial.Condition.Breast,
     phase = "",
     hypothesisId = None,
     studyDesignId = None,

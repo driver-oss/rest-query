@@ -16,7 +16,6 @@ final case class ApiTrial(id: String,
                           previousStatus: Option[String],
                           previousAssignee: Option[String],
                           lastActiveUser: Option[String],
-                          condition: String,
                           phase: String,
                           hypothesisId: Option[UUID],
                           studyDesignId: Option[Long],
@@ -37,11 +36,6 @@ final case class ApiTrial(id: String,
     previousAssignee = this.previousAssignee.map(id => StringId(id)),
     lastActiveUserId = this.lastActiveUser.map(id => StringId(id)),
     lastUpdate = this.lastUpdate.toLocalDateTime,
-    condition = Trial.Condition
-      .fromString(this.condition)
-      .getOrElse(
-        throw new NoSuchElementException(s"unknown condition ${this.condition}")
-      ),
     phase = this.phase,
     hypothesisId = this.hypothesisId.map(id => UuidId(id)),
     studyDesignId = this.studyDesignId.map(id => LongId(id)),
@@ -67,7 +61,6 @@ object ApiTrial {
       (JsPath \ "previousStatus").formatNullable[String] and
       (JsPath \ "previousAssignee").formatNullable[String] and
       (JsPath \ "lastActiveUser").formatNullable[String] and
-      (JsPath \ "condition").format[String] and
       (JsPath \ "phase").format[String] and
       (JsPath \ "hypothesisId").formatNullable[UUID] and
       (JsPath \ "studyDesignId").formatNullable[Long] and
@@ -89,7 +82,6 @@ object ApiTrial {
     previousAssignee = trial.previousAssignee.map(_.id),
     lastActiveUser = trial.lastActiveUserId.map(_.id),
     lastUpdate = ZonedDateTime.of(trial.lastUpdate, ZoneId.of("Z")),
-    condition = trial.condition.toString,
     phase = trial.phase,
     hypothesisId = trial.hypothesisId.map(_.id),
     studyDesignId = trial.studyDesignId.map(_.id),
