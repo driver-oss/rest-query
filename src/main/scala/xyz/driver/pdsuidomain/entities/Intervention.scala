@@ -8,57 +8,57 @@ import xyz.driver.pdsuidomain.entities.InterventionType.DeliveryMethod._
 sealed trait InterventionType {
   val id: LongId[InterventionType]
   val name: String
-  val deliveryMethod: Set[DeliveryMethod]
+  val deliveryMethods: Set[DeliveryMethod]
 }
 
 object InterventionType {
 
   final case object RadiationTherapy extends InterventionType {
-    val id: LongId[InterventionType]        = LongId[InterventionType](1)
-    val name: String                        = "Radiation therapy"
-    val deliveryMethod: Set[DeliveryMethod] = commonMethods
+    val id: LongId[InterventionType]         = LongId[InterventionType](1)
+    val name: String                         = "Radiation therapy"
+    val deliveryMethods: Set[DeliveryMethod] = commonMethods
   }
 
   final case object Chemotherapy extends InterventionType {
-    val id: LongId[InterventionType]        = LongId[InterventionType](2)
-    val name: String                        = "Chemotherapy"
-    val deliveryMethod: Set[DeliveryMethod] = commonMethods
+    val id: LongId[InterventionType]         = LongId[InterventionType](2)
+    val name: String                         = "Chemotherapy"
+    val deliveryMethods: Set[DeliveryMethod] = commonMethods
   }
 
   final case object TargetedTherapy extends InterventionType {
-    val id: LongId[InterventionType]        = LongId[InterventionType](3)
-    val name: String                        = "Targeted therapy"
-    val deliveryMethod: Set[DeliveryMethod] = commonMethods
+    val id: LongId[InterventionType]         = LongId[InterventionType](3)
+    val name: String                         = "Targeted therapy"
+    val deliveryMethods: Set[DeliveryMethod] = commonMethods
   }
 
   final case object Immunotherapy extends InterventionType {
-    val id: LongId[InterventionType]        = LongId[InterventionType](4)
-    val name: String                        = "Immunotherapy"
-    val deliveryMethod: Set[DeliveryMethod] = commonMethods
+    val id: LongId[InterventionType]         = LongId[InterventionType](4)
+    val name: String                         = "Immunotherapy"
+    val deliveryMethods: Set[DeliveryMethod] = commonMethods
   }
 
   final case object Surgery extends InterventionType {
-    val id: LongId[InterventionType]        = LongId[InterventionType](5)
-    val name: String                        = "Surgery"
-    val deliveryMethod: Set[DeliveryMethod] = commonMethods
+    val id: LongId[InterventionType]         = LongId[InterventionType](5)
+    val name: String                         = "Surgery"
+    val deliveryMethods: Set[DeliveryMethod] = commonMethods
   }
 
   final case object HormoneTherapy extends InterventionType {
-    val id: LongId[InterventionType]        = LongId[InterventionType](6)
-    val name: String                        = "Hormone therapy"
-    val deliveryMethod: Set[DeliveryMethod] = commonMethods
+    val id: LongId[InterventionType]         = LongId[InterventionType](6)
+    val name: String                         = "Hormone therapy"
+    val deliveryMethods: Set[DeliveryMethod] = commonMethods
   }
 
   final case object Other extends InterventionType {
-    val id: LongId[InterventionType]        = LongId[InterventionType](7)
-    val name: String                        = "Other"
-    val deliveryMethod: Set[DeliveryMethod] = commonMethods
+    val id: LongId[InterventionType]         = LongId[InterventionType](7)
+    val name: String                         = "Other"
+    val deliveryMethods: Set[DeliveryMethod] = commonMethods
   }
 
   final case object Radiation extends InterventionType {
     val id: LongId[InterventionType] = LongId[InterventionType](8)
     val name: String                 = "Radiation"
-    val deliveryMethod: Set[DeliveryMethod] = Set(
+    val deliveryMethods: Set[DeliveryMethod] = Set(
       ExternalRadiationTherapy,
       Brachytherapy,
       SystemicRadiationTherapyIV,
@@ -70,7 +70,7 @@ object InterventionType {
   final case object SurgeryProcedure extends InterventionType {
     val id: LongId[InterventionType] = LongId[InterventionType](9)
     val name: String                 = "Surgery/Procedure"
-    val deliveryMethod: Set[DeliveryMethod] = Set(
+    val deliveryMethods: Set[DeliveryMethod] = Set(
       RadioFrequencyAblationRFA,
       Cryoablation,
       TherapeuticConventionalSurgery,

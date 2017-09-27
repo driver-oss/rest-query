@@ -7,6 +7,7 @@ import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
 object trialcuration {
   import xyz.driver.core.generators
   import common._
+  import xyz.driver.pdsuidomain.entities.InterventionType._
 
   def nextTrial(): Trial = Trial(
     id = nextStringId[Trial],
@@ -130,6 +131,16 @@ object trialcuration {
     name = generators.nextString()
   )
 
-  def nextInterventionType(): InterventionType = InterventionType.typeFromString("Other")
+  def nextInterventionType(): InterventionType = generators.oneOf[InterventionType](
+    RadiationTherapy,
+    Chemotherapy,
+    TargetedTherapy,
+    Immunotherapy,
+    Surgery,
+    HormoneTherapy,
+    Other,
+    Radiation,
+    SurgeryProcedure
+  )
 
 }

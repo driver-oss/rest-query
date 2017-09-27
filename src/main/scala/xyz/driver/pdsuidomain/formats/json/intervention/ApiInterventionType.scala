@@ -21,6 +21,6 @@ object ApiInterventionType {
   def fromDomain(interventionType: InterventionType) = ApiInterventionType(
     id = interventionType.id.id,
     name = interventionType.name,
-    deliveryMethods = interventionType.deliveryMethod.map(DeliveryMethod.methodToString).toList
+    deliveryMethods = interventionType.deliveryMethods.map(DeliveryMethod.methodToString).toList
   )
 }

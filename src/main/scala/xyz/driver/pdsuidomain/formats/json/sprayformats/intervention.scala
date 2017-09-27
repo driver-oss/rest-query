@@ -137,7 +137,7 @@ object intervention {
       JsObject(
         "id"              -> obj.id.toJson,
         "name"            -> obj.name.toJson,
-        "deliveryMethods" -> obj.deliveryMethod.map(DeliveryMethod.methodToString).toJson
+        "deliveryMethods" -> obj.deliveryMethods.map(DeliveryMethod.methodToString).toJson
       )
   }
 
