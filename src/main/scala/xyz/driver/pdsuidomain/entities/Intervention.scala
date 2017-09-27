@@ -2,24 +2,83 @@ package xyz.driver.pdsuidomain.entities
 
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuicommon.logging._
+import xyz.driver.pdsuidomain.entities.InterventionType.DeliveryMethod
 import xyz.driver.pdsuidomain.entities.InterventionType.DeliveryMethod._
 
-final case class InterventionType(id: LongId[InterventionType], name: String)
+sealed trait InterventionType {
+  val id: LongId[InterventionType]
+  val name: String
+  val deliveryMethod: Set[DeliveryMethod]
+}
 
 object InterventionType {
 
-  sealed trait InterventionTypeName
-  case object RadiationTherapy extends InterventionTypeName
-  case object Chemotherapy     extends InterventionTypeName
-  case object TargetedTherapy  extends InterventionTypeName
-  case object Immunotherapy    extends InterventionTypeName
-  case object Surgery          extends InterventionTypeName
-  case object HormoneTherapy   extends InterventionTypeName
-  case object Other            extends InterventionTypeName
-  case object Radiation        extends InterventionTypeName
-  case object SurgeryProcedure extends InterventionTypeName
+  final case object RadiationTherapy extends InterventionType {
+    val id: LongId[InterventionType]        = LongId[InterventionType](1)
+    val name: String                        = "Radiation therapy"
+    val deliveryMethod: Set[DeliveryMethod] = commonMethods
+  }
 
-  def typeFromString: PartialFunction[String, InterventionTypeName] = {
+  final case object Chemotherapy extends InterventionType {
+    val id: LongId[InterventionType]        = LongId[InterventionType](2)
+    val name: String                        = "Chemotherapy"
+    val deliveryMethod: Set[DeliveryMethod] = commonMethods
+  }
+
+  final case object TargetedTherapy extends InterventionType {
+    val id: LongId[InterventionType]        = LongId[InterventionType](3)
+    val name: String                        = "Targeted therapy"
+    val deliveryMethod: Set[DeliveryMethod] = commonMethods
+  }
+
+  final case object Immunotherapy extends InterventionType {
+    val id: LongId[InterventionType]        = LongId[InterventionType](4)
+    val name: String                        = "Immunotherapy"
+    val deliveryMethod: Set[DeliveryMethod] = commonMethods
+  }
+
+  final case object Surgery extends InterventionType {
+    val id: LongId[InterventionType]        = LongId[InterventionType](5)
+    val name: String                        = "Surgery"
+    val deliveryMethod: Set[DeliveryMethod] = commonMethods
+  }
+
+  final case object HormoneTherapy extends InterventionType {
+    val id: LongId[InterventionType]        = LongId[InterventionType](6)
+    val name: String                        = "Hormone therapy"
+    val deliveryMethod: Set[DeliveryMethod] = commonMethods
+  }
+
+  final case object Other extends InterventionType {
+    val id: LongId[InterventionType]        = LongId[InterventionType](7)
+    val name: String                        = "Other"
+    val deliveryMethod: Set[DeliveryMethod] = commonMethods
+  }
+
+  final case object Radiation extends InterventionType {
+    val id: LongId[InterventionType] = LongId[InterventionType](8)
+    val name: String                 = "Radiation"
+    val deliveryMethod: Set[DeliveryMethod] = Set(
+      ExternalRadiationTherapy,
+      Brachytherapy,
+      SystemicRadiationTherapyIV,
+      SystemicRadiationTherapyOral,
+      ProtonBeamTherapy
+    )
+  }
+
+  final case object SurgeryProcedure extends InterventionType {
+    val id: LongId[InterventionType] = LongId[InterventionType](9)
+    val name: String                 = "Surgery/Procedure"
+    val deliveryMethod: Set[DeliveryMethod] = Set(
+      RadioFrequencyAblationRFA,
+      Cryoablation,
+      TherapeuticConventionalSurgery,
+      RoboticAssistedLaparoscopicSurgery
+    )
+  }
+
+  def typeFromString: PartialFunction[String, InterventionType] = {
     case "Radiation therapy" => RadiationTherapy
     case "Chemotherapy"      => Chemotherapy
     case "Targeted therapy"  => TargetedTherapy
@@ -29,18 +88,6 @@ object InterventionType {
     case "Other"             => Other
     case "Radiation"         => Radiation
     case "Surgery/Procedure" => SurgeryProcedure
-  }
-
-  def typeToString(x: InterventionTypeName): String = x match {
-    case RadiationTherapy => "Radiation therapy"
-    case Chemotherapy     => "Chemotherapy"
-    case TargetedTherapy  => "Targeted therapy"
-    case Immunotherapy    => "Immunotherapy"
-    case Surgery          => "Surgery"
-    case HormoneTherapy   => "Hormone therapy"
-    case Other            => "Other"
-    case Radiation        => "Radiation"
-    case SurgeryProcedure => "Surgery/Procedure"
   }
 
   sealed trait DeliveryMethod
@@ -121,29 +168,6 @@ object InterventionType {
     TransdermalPatch,
     Inhalation,
     Rectal
-  )
-
-  val deliveryMethodGroups: Map[LongId[InterventionType], Set[DeliveryMethod]] = Map(
-    LongId(1) -> commonMethods,
-    LongId(2) -> commonMethods,
-    LongId(3) -> commonMethods,
-    LongId(4) -> commonMethods,
-    LongId(5) -> commonMethods,
-    LongId(6) -> commonMethods,
-    LongId(7) -> commonMethods,
-    LongId(8) -> Set(
-      ExternalRadiationTherapy,
-      Brachytherapy,
-      SystemicRadiationTherapyIV,
-      SystemicRadiationTherapyOral,
-      ProtonBeamTherapy
-    ),
-    LongId(9) -> Set(
-      RadioFrequencyAblationRFA,
-      Cryoablation,
-      TherapeuticConventionalSurgery,
-      RoboticAssistedLaparoscopicSurgery
-    )
   )
 
   implicit def toPhiString(x: InterventionType): PhiString = {

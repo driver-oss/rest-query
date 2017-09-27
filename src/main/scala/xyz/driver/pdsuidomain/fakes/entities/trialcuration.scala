@@ -130,9 +130,6 @@ object trialcuration {
     name = generators.nextString()
   )
 
-  def nextInterventionType(): InterventionType = InterventionType(
-    id = nextLongId[InterventionType],
-    name = generators.nextString()
-  )
+  def nextInterventionType(): InterventionType = InterventionType.typeFromString("Other")
 
 }

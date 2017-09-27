@@ -123,33 +123,22 @@ object intervention {
   implicit val interventionTypeFormat: JsonFormat[InterventionType] = new RootJsonFormat[InterventionType] {
     override def read(json: JsValue) = json match {
       case JsObject(fields) =>
-        val id = fields
-          .get("id")
-          .map(_.convertTo[LongId[InterventionType]])
-          .getOrElse(deserializationError(s"Intervention type json object does not contain `id` field: $json"))
-
         val name = fields
           .get("name")
           .map(_.convertTo[String])
           .getOrElse(deserializationError(s"Intervention type json object does not contain `name` field: $json"))
 
-        InterventionType(id, name)
+        InterventionType.typeFromString(name)
 
       case _ => deserializationError(s"Expected Json Object as Intervention type, but got $json")
     }
 
-    override def write(obj: InterventionType) = {
-      val typeMethods = InterventionType.deliveryMethodGroups
-        .getOrElse(obj.id, Set.empty[DeliveryMethod])
-        .map(DeliveryMethod.methodToString)
-        .toList
-
+    override def write(obj: InterventionType) =
       JsObject(
         "id"              -> obj.id.toJson,
         "name"            -> obj.name.toJson,
-        "deliveryMethods" -> typeMethods.toJson
+        "deliveryMethods" -> obj.deliveryMethod.map(DeliveryMethod.methodToString).toJson
       )
-    }
   }
 
 }
