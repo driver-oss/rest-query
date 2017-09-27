@@ -13,10 +13,15 @@ import scala.util.Try
 object SearchFilterParser {
 
   private object BinaryAtomFromTuple {
-    def unapply(input: (SearchFilterExpr.Dimension, (String, String))): Option[SearchFilterExpr.Atom.Binary] = {
+    def unapply(input: (SearchFilterExpr.Dimension, (String, Any))): Option[SearchFilterExpr.Atom.Binary] = {
       val (dimensionName, (strOperation, value)) = input
+      val updatedValue = value match {
+        case s: String => s.safeTrim
+        case a => a
+      }
+
       parseOperation(strOperation.toLowerCase).map { op =>
-        SearchFilterExpr.Atom.Binary(dimensionName, op, value.safeTrim)
+        SearchFilterExpr.Atom.Binary(dimensionName, op, updatedValue.asInstanceOf[AnyRef])
       }
     }
   }
@@ -68,7 +73,7 @@ object SearchFilterParser {
   }
 
   private val numericOperatorParser: Parser[String] = {
-    P((IgnoreCase("gt") | IgnoreCase("lt")) ~ IgnoreCase("eq").?).!
+    P(IgnoreCase("eq") | ((IgnoreCase("gt") | IgnoreCase("lt")) ~ IgnoreCase("eq").?)).!
   }
 
   private val naryOperatorParser: Parser[String] = P(IgnoreCase("in")).!
@@ -91,10 +96,12 @@ object SearchFilterParser {
 
   private val nAryValueParser: Parser[String] = P(CharPred(_ != ',').rep(min = 1).!)
 
+  private val longParser: Parser[Long] = P(CharIn('0'to'9').rep(1).!.map(_.toLong))
+
   private val binaryAtomParser: Parser[SearchFilterExpr.Atom.Binary] = P(
     dimensionParser ~ whitespaceParser ~ (
-      (numericOperatorParser.! ~/ whitespaceParser ~/ numberParser.!) |
-        (commonOperatorParser.! ~/ whitespaceParser ~/ AnyChar.rep(min = 1).!)
+      (numericOperatorParser.! ~ whitespaceParser ~ (longParser | numberParser.!)) |
+      (commonOperatorParser.! ~ whitespaceParser ~ AnyChar.rep(min = 1).!)
     ) ~ End
   ).map {
     case BinaryAtomFromTuple(atom) => atom
