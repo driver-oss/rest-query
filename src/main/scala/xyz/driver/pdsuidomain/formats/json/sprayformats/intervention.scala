@@ -2,6 +2,7 @@ package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import spray.json._
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
+import xyz.driver.pdsuidomain.entities.InterventionType.DeliveryMethod
 import xyz.driver.pdsuidomain.entities._
 
 object intervention {
@@ -119,6 +120,25 @@ object intervention {
     case _ => deserializationError(s"Expected Json Object as partial Intervention, but got $json")
   }
 
-  implicit val interventionTypeFormat: RootJsonFormat[InterventionType] = jsonFormat2(InterventionType.apply)
+  implicit val interventionTypeFormat: JsonFormat[InterventionType] = new RootJsonFormat[InterventionType] {
+    override def read(json: JsValue) = json match {
+      case JsObject(fields) =>
+        val name = fields
+          .get("name")
+          .map(_.convertTo[String])
+          .getOrElse(deserializationError(s"Intervention type json object does not contain `name` field: $json"))
+
+        InterventionType.typeFromString(name)
+
+      case _ => deserializationError(s"Expected Json Object as Intervention type, but got $json")
+    }
+
+    override def write(obj: InterventionType) =
+      JsObject(
+        "id"              -> obj.id.toJson,
+        "name"            -> obj.name.toJson,
+        "deliveryMethods" -> obj.deliveryMethods.map(DeliveryMethod.methodToString).toJson
+      )
+  }
 
 }

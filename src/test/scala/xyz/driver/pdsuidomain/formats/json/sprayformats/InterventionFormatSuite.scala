@@ -59,13 +59,12 @@ class InterventionFormatSuite extends FlatSpec with Matchers {
   }
 
   "Json format for InterventionType" should "read and write correct JSON" in {
-    val interventionType = InterventionType(
-      id = LongId(10),
-      name = "type name"
-    )
+    val interventionType = InterventionType.typeFromString("Surgery/Procedure")
     val writtenJson = interventionTypeFormat.write(interventionType)
 
-    writtenJson should be("""{"id":10,"name":"type name"}""".parseJson)
+    writtenJson should be(
+      """{"id":9,"name":"Surgery/Procedure","deliveryMethods":["Radio-Frequency Ablation (RFA)",
+        "Cryoablation","Therapeutic Conventional Surgery","Robotic Assisted Laparoscopic Surgery"]}""".parseJson)
 
     val parsedInterventionType = interventionTypeFormat.read(writtenJson)
     parsedInterventionType should be(interventionType)
