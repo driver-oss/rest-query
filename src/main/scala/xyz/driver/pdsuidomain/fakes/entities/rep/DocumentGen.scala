@@ -18,43 +18,47 @@ object DocumentGen {
     }
   }
 
-  private def nextDates =
+  private def nextDates() =
     Common.genBoundedRangeOption[LocalDate](nextLocalDate, nextLocalDate)
 
-  private def nextStartAndEndPagesOption =
+  private def nextStartAndEndPagesOption() =
     Common.nextStartAndEndPages
 
-  private def nextStartAndEndPage =
+  private def nextStartAndEndPage() =
     Common.genBoundedRange(nextDouble(),nextDouble())
 
 
-  def nextDocumentStatus: Document.Status =
-    generators.oneOf[Document.Status](Document.Status.All)
+  def nextDocumentStatus(): Document.Status =
+    Document.Status.New
 
-  def nextDocumentRequiredType: Document.RequiredType =
+  def nextDocumentRequiredType(): Document.RequiredType =
     generators.oneOf[Document.RequiredType](Document.RequiredType.All)
 
-  def nextDocumentHistoryState: DocumentHistory.State =
+  def nextDocumentHistoryState(): DocumentHistory.State =
     generators.oneOf[DocumentHistory.State](DocumentHistory.State.All)
 
-  def nextDocumentHistoryAction: DocumentHistory.Action =
+  def nextDocumentHistoryAction(): DocumentHistory.Action =
     generators.oneOf[DocumentHistory.Action](DocumentHistory.Action.All)
 
-  def nextDocumentMeta: Document.Meta = {
-    val (startPage, endPage) = nextStartAndEndPage
+  def nextDocumentMeta(): Document.Meta = {
+    val (startPage, endPage) = nextStartAndEndPage()
 
     Document.Meta(
       nextOption(nextBoolean()), startPage, endPage
     )
   }
 
-  def nextDocument: Document = {
-    val dates = nextDates
+  def nextDocumentMetaJson(): TextJson[Document.Meta] = {
+    TextJson(nextDocumentMeta())
+  }
+
+  def nextDocument(): Document = {
+    val dates = nextDates()
 
     Document(
       id = nextLongId[Document],
-      status = nextDocumentStatus,
-      previousStatus = nextOption(nextDocumentStatus),
+      status = nextDocumentStatus(),
+      previousStatus = None,
       assignee = nextOption(nextStringId[User]),
       previousAssignee = nextOption(nextStringId[User]),
       lastActiveUserId = nextOption(nextStringId[User]),
@@ -63,23 +67,23 @@ object DocumentGen {
       typeId = nextOption(nextLongId[DocumentType]),
       providerName = nextOption(nextString()),
       providerTypeId = nextOption(nextLongId[ProviderType]),
-      requiredType = nextOption(nextDocumentRequiredType),
-      meta = nextOption(TextJson(nextDocumentMeta)),
+      requiredType = nextOption(nextDocumentRequiredType()),
+      meta = nextOption(nextDocumentMetaJson()),
       startDate = dates._1,
       endDate = dates._2,
       lastUpdate = nextLocalDateTime
     )
   }
 
-  def nextDocumentType: DocumentType = {
+  def nextDocumentType(): DocumentType = {
     DocumentType(
       id = nextLongId[DocumentType],
       name = nextString()
     )
   }
 
-  def nextDocumentIssue(documentId: LongId[Document]): DocumentIssue = {
-    val pages = nextStartAndEndPagesOption
+  def nextDocumentIssue(documentId: LongId[Document] = nextLongId): DocumentIssue = {
+    val pages = nextStartAndEndPagesOption()
 
     DocumentIssue(
       id = nextLongId[DocumentIssue],
@@ -95,13 +99,13 @@ object DocumentGen {
   }
 
 
-  def nextDocumentHistory(documentId: LongId[Document]): DocumentHistory = {
+  def nextDocumentHistory(documentId: LongId[Document] = nextLongId): DocumentHistory = {
     DocumentHistory(
       id = nextLongId[DocumentHistory],
       executor = nextStringId[User],
       documentId = documentId,
-      state = nextDocumentHistoryState,
-      action = nextDocumentHistoryAction,
+      state = nextDocumentHistoryState(),
+      action = nextDocumentHistoryAction(),
       created = nextLocalDateTime
     )
   }

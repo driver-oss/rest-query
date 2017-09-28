@@ -67,13 +67,23 @@ object ExtractedDataGen {
     )
   }
 
+  def nextExtractedDataMetaJson(): TextJson[Meta] = {
+    TextJson(
+      ExtractedData.Meta(
+        nextExtractedDataMetaKeyword(),
+        nextExtractedDataMetaEvidence()
+      )
+    )
+  }
+
+
   def nextExtractedData(documentId: LongId[Document]): ExtractedData = {
     ExtractedData(
       id = nextLongId[ExtractedData],
       documentId = documentId,
       keywordId = nextOption(nextLongId[xyz.driver.pdsuidomain.entities.Keyword]),
       evidenceText = nextOption(nextString()),
-      meta = nextOption(TextJson(nextExtractedDataMeta()))
+      meta = nextOption(nextExtractedDataMetaJson())
     )
   }
 
@@ -88,7 +98,7 @@ object ExtractedDataGen {
     )
   }
 
-  def nextRichExtractedData(documentId: LongId[Document]): RichExtractedData = {
+  def nextRichExtractedData(documentId: LongId[Document] = nextLongId): RichExtractedData = {
     RichExtractedData(
       extractedData = nextExtractedData(documentId),
       labels = List.fill(
