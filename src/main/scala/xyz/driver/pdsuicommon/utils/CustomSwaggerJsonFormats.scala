@@ -69,7 +69,6 @@ object CustomSwaggerJsonFormats {
     import xyz.driver.pdsuidomain.formats.json.sprayformats.bridgeuploadqueue
     import xyz.driver.pdsuidomain.formats.json.sprayformats.extracteddata
 
-
     val customRepObjectsExamples = immutable.Map[Class[_], JsValue](
       classOf[Document] ->
         document.documentFormat.write(rep.DocumentGen.nextDocument()),
@@ -81,20 +80,16 @@ object CustomSwaggerJsonFormats {
         document.requiredTypeFormat.write(rep.DocumentGen.nextDocumentRequiredType()),
       classOf[Document.Status] ->
         document.documentStatusFormat.write(rep.DocumentGen.nextDocumentStatus()),
-
       classOf[DocumentIssue] ->
         documentissue.documentIssueFormat.write(rep.DocumentGen.nextDocumentIssue()),
-
       classOf[DocumentHistory] ->
         documenthistory.documentHistoryFormat.write(rep.DocumentGen.nextDocumentHistory()),
       classOf[DocumentHistory.Action] ->
         documenthistory.documentActionFormat.write(rep.DocumentGen.nextDocumentHistoryAction()),
       classOf[DocumentHistory.State] ->
         documenthistory.documentStateFormat.write(rep.DocumentGen.nextDocumentHistoryState()),
-
       classOf[ProviderType] ->
         providertype.providerTypeFormat.write(rep.ProviderTypeGen.nextProviderType()),
-
       classOf[TextJson[List[MedicalRecord.Meta]]] ->
         record.recordMetaFormat.write(rep.MedicalRecordGen.nextMedicalRecordMetasJson()),
       classOf[MedicalRecord] ->
@@ -103,20 +98,16 @@ object CustomSwaggerJsonFormats {
         record.recordMetaTypeFormat.write(rep.MedicalRecordGen.nextMedicalRecordMeta()),
       classOf[MedicalRecord.Status] ->
         record.recordStatusFormat.write(rep.MedicalRecordGen.nextMedicalRecordStatus()),
-
       classOf[MedicalRecordIssue] ->
         recordissue.recordIssueFormat.write(rep.MedicalRecordGen.nextMedicalRecordIssue()),
-
       classOf[MedicalRecordHistory] ->
         recordhistory.recordHistoryFormat.write(rep.MedicalRecordGen.nextMedicalRecordHistory()),
       classOf[MedicalRecordHistory.Action] ->
         recordhistory.recordActionFormat.write(rep.MedicalRecordGen.nextMedicalRecordHistoryAction()),
       classOf[MedicalRecordHistory.State] ->
         recordhistory.recordStateFormat.write(rep.MedicalRecordGen.nextMedicalRecordHistoryState()),
-
       classOf[BridgeUploadQueue.Item] ->
         bridgeuploadqueue.queueUploadItemFormat.write(rep.BridgeUploadQueueGen.nextBridgeUploadQueueItem()),
-
       classOf[ExtractedData.Meta] ->
         extracteddata.extractedDataMetaFormat.write(rep.ExtractedDataGen.nextExtractedDataMeta()),
       classOf[ExtractedData.Meta.Evidence] ->
@@ -125,17 +116,13 @@ object CustomSwaggerJsonFormats {
         extracteddata.metaKeywordFormat.write(rep.ExtractedDataGen.nextExtractedDataMetaKeyword()),
       classOf[ExtractedData.Meta.TextLayerPosition] ->
         extracteddata.metaTextLayerPositionFormat.write(rep.ExtractedDataGen.nextExtractedDataMetaTextLayerPosition()),
-
       classOf[TextJson[ExtractedData.Meta]] ->
         extracteddata.fullExtractedDataMetaFormat.write(rep.ExtractedDataGen.nextExtractedDataMetaJson()),
-
       classOf[RichExtractedData] ->
         extracteddata.extractedDataFormat.write(rep.ExtractedDataGen.nextRichExtractedData()),
-
       classOf[ExtractedDataLabel] ->
         extracteddata.extractedDataLabelWriter.write(rep.ExtractedDataGen.nextExtractedDataLabel())
     )
   }
-
 
 }

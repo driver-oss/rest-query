@@ -39,7 +39,6 @@ object MedicalRecordGen {
     TextJson(documents.map(_.copy(recordId = recordId)))
   }
 
-
   def nextMedicalRecordStatus(): MedicalRecord.Status =
     MedicalRecord.Status.New
 
@@ -48,7 +47,6 @@ object MedicalRecordGen {
 
   def nextMedicalRecordHistoryAction(): MedicalRecordHistory.Action =
     generators.oneOf[MedicalRecordHistory.Action](MedicalRecordHistory.Action.All)
-
 
   def nextMedicalRecordMetaReorder(): MedicalRecord.Meta.Reorder = {
     val itemsNumber =
@@ -61,7 +59,6 @@ object MedicalRecordGen {
       items = items
     )
   }
-
 
   def nextMedicalRecordMetaDuplicate(): MedicalRecord.Meta.Duplicate = {
     val startPageGen =
@@ -80,9 +77,11 @@ object MedicalRecordGen {
 
   def nextMedicalRecordMetaRotation(): MedicalRecord.Meta.Rotation = {
     val items =
-      Array.tabulate(maxItemsInCollectionNumber)(
-        index => nextString() -> index
-      ).toMap
+      Array
+        .tabulate(maxItemsInCollectionNumber)(
+          index => nextString() -> index
+        )
+        .toMap
 
     MedicalRecord.Meta.Rotation(
       predicted = nextOption(nextBoolean()),
@@ -93,7 +92,6 @@ object MedicalRecordGen {
   def nextMedicalRecordMeta(): MedicalRecord.Meta = {
     generators.oneOf(medicalRecordMetas)()
   }
-
 
   def nextMedicalRecord(): MedicalRecord = {
     val id = nextLongId[MedicalRecord]

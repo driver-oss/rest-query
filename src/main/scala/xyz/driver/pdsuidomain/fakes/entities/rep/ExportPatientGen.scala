@@ -4,10 +4,10 @@ import xyz.driver.core.generators._
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuidomain.entities.{Document, ExtractedData, Label, RecordRequestId}
 import xyz.driver.pdsuidomain.entities.export.patient.{
-ExportPatientLabel,
-ExportPatientLabelEvidence,
-ExportPatientLabelEvidenceDocument,
-ExportPatientWithLabels
+  ExportPatientLabel,
+  ExportPatientLabelEvidence,
+  ExportPatientLabelEvidenceDocument,
+  ExportPatientWithLabels
 }
 import xyz.driver.pdsuidomain.fakes.entities.common.{nextLocalDate, nextLongId}
 

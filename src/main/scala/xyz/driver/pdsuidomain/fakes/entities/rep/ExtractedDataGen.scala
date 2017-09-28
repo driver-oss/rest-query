@@ -1,6 +1,5 @@
 package xyz.driver.pdsuidomain.fakes.entities.rep
 
-
 import xyz.driver.core.generators._
 import xyz.driver.pdsuicommon.domain.{LongId, TextJson}
 import xyz.driver.pdsuidomain.entities._
@@ -8,16 +7,15 @@ import xyz.driver.pdsuidomain.entities.ExtractedData.Meta
 import xyz.driver.pdsuidomain.fakes.entities.common._
 import xyz.driver.pdsuidomain.services.ExtractedDataService.RichExtractedData
 
-
 object ExtractedDataGen {
   private val maxItemsInCollectionNumber = 50
 
-  private val maxPageNumber  = 100
-  private val maxIndexNumber = 100
+  private val maxPageNumber   = 100
+  private val maxIndexNumber  = 100
   private val maxOffsetNumber = 10
 
   implicit private class TextLayerPositionOrdering(textLayerPosition: ExtractedData.Meta.TextLayerPosition)
-    extends Ordered[ExtractedData.Meta.TextLayerPosition] {
+      extends Ordered[ExtractedData.Meta.TextLayerPosition] {
     override def compare(that: Meta.TextLayerPosition): Int = {
       if (this.textLayerPosition.page < that.page) -1
       else if (this.textLayerPosition.page > that.page) 1
@@ -56,7 +54,7 @@ object ExtractedDataGen {
     ExtractedData.Meta.Evidence(
       pageRatio = nextDouble(),
       start = layersPosition._1,
-      end   = layersPosition._2
+      end = layersPosition._2
     )
   }
 
@@ -76,7 +74,6 @@ object ExtractedDataGen {
     )
   }
 
-
   def nextExtractedData(documentId: LongId[Document]): ExtractedData = {
     ExtractedData(
       id = nextLongId[ExtractedData],
@@ -86,7 +83,6 @@ object ExtractedDataGen {
       meta = nextOption(nextExtractedDataMetaJson())
     )
   }
-
 
   def nextExtractedDataLabel(): ExtractedDataLabel = {
     ExtractedDataLabel(

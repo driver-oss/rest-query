@@ -1,6 +1,5 @@
 package xyz.driver.pdsuidomain.fakes.entities.rep
 
-
 import java.time.LocalDate
 
 import xyz.driver.core.generators
@@ -10,8 +9,7 @@ import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.fakes.entities.common.{nextLocalDate, nextLocalDateTime, nextLongId, nextStringId}
 
 object DocumentGen {
-  implicit private class LocalDateOrdering(localData: LocalDate)
-    extends Ordered[LocalDate] {
+  implicit private class LocalDateOrdering(localData: LocalDate) extends Ordered[LocalDate] {
 
     override def compare(that: LocalDate): Int = {
       this.localData.compareTo(that)
@@ -25,8 +23,7 @@ object DocumentGen {
     Common.nextStartAndEndPages
 
   private def nextStartAndEndPage() =
-    Common.genBoundedRange(nextDouble(),nextDouble())
-
+    Common.genBoundedRange(nextDouble(), nextDouble())
 
   def nextDocumentStatus(): Document.Status =
     Document.Status.New
@@ -44,7 +41,9 @@ object DocumentGen {
     val (startPage, endPage) = nextStartAndEndPage()
 
     Document.Meta(
-      nextOption(nextBoolean()), startPage, endPage
+      nextOption(nextBoolean()),
+      startPage,
+      endPage
     )
   }
 
@@ -97,7 +96,6 @@ object DocumentGen {
       archiveRequired = nextBoolean()
     )
   }
-
 
   def nextDocumentHistory(documentId: LongId[Document] = nextLongId): DocumentHistory = {
     DocumentHistory(
