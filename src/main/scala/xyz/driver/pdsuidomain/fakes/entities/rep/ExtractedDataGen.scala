@@ -1,12 +1,17 @@
 package xyz.driver.pdsuidomain.fakes.entities.rep
 
+
 import xyz.driver.core.generators._
-import xyz.driver.pdsuidomain.entities.{Document, ExtractedData}
+import xyz.driver.pdsuicommon.domain.{LongId, TextJson}
+import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.entities.ExtractedData.Meta
 import xyz.driver.pdsuidomain.fakes.entities.common._
+import xyz.driver.pdsuidomain.services.ExtractedDataService.RichExtractedData
 
 
 object ExtractedDataGen {
+  private val maxItemsInCollectionNumber = 50
+
   private val maxPageNumber  = 100
   private val maxIndexNumber = 100
   private val maxOffsetNumber = 10
@@ -62,13 +67,33 @@ object ExtractedDataGen {
     )
   }
 
-  def nextExtractedData() = {
-    ExtractedData.apply(
+  def nextExtractedData(documentId: LongId[Document]): ExtractedData = {
+    ExtractedData(
       id = nextLongId[ExtractedData],
-      documentId = nextLongId[Document],
+      documentId = documentId,
       keywordId = nextOption(nextLongId[xyz.driver.pdsuidomain.entities.Keyword]),
       evidenceText = nextOption(nextString()),
-      ???
+      meta = nextOption(TextJson(nextExtractedDataMeta()))
+    )
+  }
+
+
+  def nextExtractedDataLabel(): ExtractedDataLabel = {
+    ExtractedDataLabel(
+      id = nextLongId[ExtractedDataLabel],
+      dataId = nextLongId[ExtractedData],
+      labelId = nextOption(nextLongId[Label]),
+      categoryId = nextOption(nextLongId[Category]),
+      value = nextOption(Common.nextFuzzyValue())
+    )
+  }
+
+  def nextRichExtractedData(documentId: LongId[Document]): RichExtractedData = {
+    RichExtractedData(
+      extractedData = nextExtractedData(documentId),
+      labels = List.fill(
+        nextInt(maxItemsInCollectionNumber, minValue = 0)
+      )(nextExtractedDataLabel())
     )
   }
 }

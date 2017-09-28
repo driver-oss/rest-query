@@ -1,8 +1,10 @@
 package xyz.driver.pdsuidomain.fakes.entities.rep
 
+import xyz.driver.core.generators
 import xyz.driver.core.generators._
+import xyz.driver.pdsuicommon.domain.FuzzyValue
 
-object Common {
+private[rep] object Common {
   def genBoundedRange[T](from: T,
                          to: T)
                         (implicit ord: Ordering[T]): (T, T) = {
@@ -28,7 +30,11 @@ object Common {
     ranges.map(_._1) -> ranges.flatMap(_._2)
   }
 
-  def genStartAndEndPages: (Option[Double], Option[Double]) = {
+  def nextFuzzyValue(): FuzzyValue = {
+    generators.oneOf[FuzzyValue](FuzzyValue.All)
+  }
+
+  def nextStartAndEndPages: (Option[Double], Option[Double]) = {
     genBoundedRangeOption[Double](nextDouble(), nextDouble())
   }
 
