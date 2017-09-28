@@ -13,8 +13,8 @@ final case class RawPatientLabel(patientId: UuidId[Patient],
                                  disease: String,
                                  documentId: LongId[Document],
                                  requestId: RecordRequestId,
-                                 documentType: String,
-                                 providerType: String,
+                                 documentType: DocumentType,
+                                 providerType: ProviderType,
                                  startDate: LocalDate,
                                  endDate: Option[LocalDate])
 

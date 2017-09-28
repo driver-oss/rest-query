@@ -12,10 +12,12 @@ import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.entities._
+import xyz.driver.pdsuidomain.entities.export.trial.ExportTrialWithLabels
 import xyz.driver.pdsuidomain.formats.json.ListResponse
-import xyz.driver.pdsuidomain.formats.json.export.ApiExportTrialWithLabels
 import xyz.driver.pdsuidomain.formats.json.trial.ApiTrial
 import xyz.driver.pdsuidomain.services.TrialService
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+import xyz.driver.pdsuidomain.formats.json.sprayformats.export._
 
 class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit protected val materializer: Materializer,
                                                                   protected val exec: ExecutionContext)
@@ -39,9 +41,9 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/export/trial/$disease/$trialId"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiExportTrialWithLabels](response)
+      reply    <- apiResponse[ExportTrialWithLabels](response)
     } yield {
-      GetTrialWithLabelsReply.Entity(reply.toDomain)
+      GetTrialWithLabelsReply.Entity(reply)
     }
   }
 
