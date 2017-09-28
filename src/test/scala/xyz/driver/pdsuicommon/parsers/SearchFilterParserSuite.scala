@@ -9,6 +9,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Gen, Prop}
 import org.scalatest.FreeSpecLike
 import org.scalatest.prop.Checkers
+import xyz.driver.pdsuicommon.db.SearchFilterBinaryOperation.Eq
 import xyz.driver.pdsuicommon.db.SearchFilterNAryOperation.In
 import xyz.driver.pdsuicommon.utils.Utils
 import xyz.driver.pdsuicommon.utils.Utils._
@@ -104,6 +105,13 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
           }
         }
 
+        "actual recordId" - {
+          "should not be parsed with text values" in {
+            val filter = SearchFilterParser.parse(Seq("filters" -> "recordId EQ 1"))
+            assert(filter === Success(SearchFilterExpr.Atom.Binary(Dimension(None, "record_id"), Eq, Long.box(1))))
+          }
+        }
+
         "all operators" - {
           "should be parsed with numeric values" in check {
             val testQueryGen = queryGen(
@@ -181,7 +189,7 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
 
   private val nonEmptyString = arbitrary[String].filter { s => !s.safeTrim.isEmpty }
 
-  private val numericBinaryAtomValuesGen: Gen[String] = arbitrary[BigInt].map(_.toString)
+  private val numericBinaryAtomValuesGen: Gen[String] = arbitrary[Long].map(_.toString)
   private val inValueGen: Gen[String] = {
     Gen.nonEmptyContainerOf[Seq, Char](inValueCharsGen).map(_.mkString).filter(_.safeTrim.nonEmpty)
   }

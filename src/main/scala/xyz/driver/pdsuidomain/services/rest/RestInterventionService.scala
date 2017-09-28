@@ -1,7 +1,6 @@
 package xyz.driver.pdsuidomain.services.rest
 
 import scala.concurrent.{ExecutionContext, Future}
-
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
@@ -58,6 +57,28 @@ class RestInterventionService(transport: ServiceTransport, baseUri: Uri)(
       reply    <- apiResponse[ApiIntervention](response)
     } yield {
       UpdateReply.Updated(reply.toDomain)
+    }
+  }
+
+  def create(draftIntervention: InterventionWithArms)(
+          implicit requestContext: AuthenticatedRequestContext): Future[CreateReply] = {
+    for {
+      entity <- Marshal(ApiIntervention.fromDomain(draftIntervention)).to[RequestEntity]
+      request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, "/v1/intervention")).withEntity(entity)
+      response <- transport.sendRequestGetResponse(requestContext)(request)
+      reply    <- apiResponse[ApiIntervention](response)
+    } yield {
+      CreateReply.Created(reply.toDomain)
+    }
+  }
+
+  def delete(id: LongId[Intervention])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply] = {
+    val request = HttpRequest(HttpMethods.DELETE, endpointUri(baseUri, s"/v1/intervention/$id"))
+    for {
+      response <- transport.sendRequestGetResponse(requestContext)(request)
+      _        <- apiResponse[HttpEntity](response)
+    } yield {
+      DeleteReply.Deleted
     }
   }
 

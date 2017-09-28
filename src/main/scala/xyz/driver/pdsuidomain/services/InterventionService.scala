@@ -61,6 +61,37 @@ object InterventionService {
     final case class CommonError(userMessage: String) extends UpdateReply with DomainError
   }
 
+  sealed trait CreateReply
+  object CreateReply {
+    final case class Created(x: InterventionWithArms) extends CreateReply
+
+    type Error = CreateReply with DomainError
+
+    case object AuthorizationError
+        extends CreateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+
+    final case class CommonError(userMessage: String) extends CreateReply with DomainError
+
+    implicit def toPhiString(reply: CreateReply): PhiString = reply match {
+      case Created(x) => phi"Created($x)"
+      case x: Error   => DomainError.toPhiString(x)
+    }
+  }
+
+  sealed trait DeleteReply
+  object DeleteReply {
+    case object Deleted extends DeleteReply
+
+    type Error = DeleteReply with DomainError
+
+    case object NotFoundError extends DeleteReply with DefaultNotFoundError with DomainError.NotFoundError
+
+    case object AuthorizationError
+        extends DeleteReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+
+    final case class CommonError(userMessage: String) extends DeleteReply with DomainError
+  }
+
 }
 
 trait InterventionService {
@@ -76,4 +107,9 @@ trait InterventionService {
 
   def update(origIntervention: InterventionWithArms, draftIntervention: InterventionWithArms)(
           implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+
+  def create(draftIntervention: InterventionWithArms)(
+          implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
+
+  def delete(id: LongId[Intervention])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
 }
