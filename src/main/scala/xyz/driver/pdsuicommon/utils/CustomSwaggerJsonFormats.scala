@@ -56,7 +56,7 @@ object CustomSwaggerJsonFormats {
       xyz.driver.pdsuidomain.fakes.entities.trialcuration.nextStudyDesign())
   )
 
-  //records-processing-service
+  // records-processing-service
   object Rep {
     import xyz.driver.pdsuidomain.fakes.entities.rep
     import xyz.driver.pdsuidomain.formats.json.sprayformats.document
