@@ -28,6 +28,8 @@ object document {
 
   implicit val documentMetaFormat: RootJsonFormat[Meta] = jsonFormat3(Meta.apply)
 
+  implicit val documentTypeFormat: RootJsonFormat[DocumentType] = jsonFormat2(DocumentType.apply)
+
   implicit val fullDocumentMetaFormat = new RootJsonFormat[TextJson[Meta]] {
     override def write(obj: TextJson[Meta]): JsValue = obj.content.toJson
     override def read(json: JsValue)                 = TextJson(documentMetaFormat.read(json))

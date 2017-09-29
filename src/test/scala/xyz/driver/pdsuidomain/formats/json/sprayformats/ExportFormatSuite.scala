@@ -6,7 +6,7 @@ import java.util.UUID
 import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
 import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, StringId, UuidId}
-import xyz.driver.pdsuidomain.entities.RecordRequestId
+import xyz.driver.pdsuidomain.entities.{DocumentType, ProviderType, RecordRequestId}
 
 class ExportFormatSuite extends FlatSpec with Matchers {
   import export._
@@ -16,10 +16,11 @@ class ExportFormatSuite extends FlatSpec with Matchers {
     val document = ExportPatientLabelEvidenceDocument(
       documentId = LongId(101),
       requestId = RecordRequestId(UUID.fromString("7b54a75d-4197-4b27-9045-b9b6cb131be9")),
-      documentType = "document type",
-      providerType = "provider type",
+      documentType = DocumentType(LongId[DocumentType](1), "document type"),
+      providerType = ProviderType(LongId[ProviderType](2), "provider type"),
       date = LocalDate.parse("2017-08-10")
     )
+
     val labels = List(
       ExportPatientLabel(
         id = LongId(1),
@@ -62,18 +63,18 @@ class ExportFormatSuite extends FlatSpec with Matchers {
       labels = labels
     )
 
-    val writtenJson = patientWithLabelsWriter.write(patientWithLabels)
+    val writtenJson = patientWithLabelsFormat.write(patientWithLabels)
     writtenJson should be(
       """{"patientId":"748b5884-3528-4cb9-904b-7a8151d6e343","labelVersion":1,"labels":[{"labelId":1,"evidence":[{"evidenceId":11,
          "labelValue":"Yes","evidenceText":"evidence text 11","document":{"documentId":101,"requestId":"7b54a75d-4197-4b27-9045-b9b6cb131be9",
-         "documentType":"document type","providerType":"provider type","date":"2017-08-10"}},{"evidenceId":12,"labelValue":"No",
-         "evidenceText":"evidence text 12","document":{"documentId":101,"requestId":"7b54a75d-4197-4b27-9045-b9b6cb131be9",
-         "documentType":"document type","providerType":"provider type","date":"2017-08-10"}}]},
+         "documentType":{"id":1,"name":"document type"},"providerType":{"id":2,"name":"provider type"},"date":"2017-08-10"}},
+        {"evidenceId":12,"labelValue":"No","evidenceText":"evidence text 12","document":{"documentId":101,"requestId":"7b54a75d-4197-4b27-9045-b9b6cb131be9",
+         "documentType":{"id":1,"name":"document type"},"providerType":{"id":2,"name":"provider type"},"date":"2017-08-10"}}]},
         {"labelId":2,"evidence":[{"evidenceId":12,"labelValue":"Yes","evidenceText":"evidence text 12","document":
-        {"documentId":101,"requestId":"7b54a75d-4197-4b27-9045-b9b6cb131be9","documentType":"document type",
-        "providerType":"provider type","date":"2017-08-10"}},{"evidenceId":13,"labelValue":"Yes","evidenceText":"evidence text 13",
-        "document":{"documentId":101,"requestId":"7b54a75d-4197-4b27-9045-b9b6cb131be9","documentType":"document type",
-        "providerType":"provider type","date":"2017-08-10"}}]}]}""".parseJson)
+        {"documentId":101,"requestId":"7b54a75d-4197-4b27-9045-b9b6cb131be9","documentType":{"id":1,"name":"document type"},
+        "providerType":{"id":2,"name":"provider type"},"date":"2017-08-10"}},{"evidenceId":13,"labelValue":"Yes","evidenceText":"evidence text 13",
+        "document":{"documentId":101,"requestId":"7b54a75d-4197-4b27-9045-b9b6cb131be9","documentType":{"id":1,"name":"document type"},
+        "providerType":{"id":2,"name":"provider type"},"date":"2017-08-10"}}]}]}""".parseJson)
   }
 
   "Json format for ApiExportTrialWithLabels" should "read and write correct JSON" in {
@@ -112,13 +113,12 @@ class ExportFormatSuite extends FlatSpec with Matchers {
       criteria = criteriaList
     )
 
-    val writtenJson = trialWithLabelsWriter.write(trialWithLabels)
+    val writtenJson = trialWithLabelsFormat.write(trialWithLabels)
     writtenJson should be(
       """{"nctId":"NCT000001","trialId":"40892a07-c638-49d2-9795-1edfefbbcc7c","disease":"Breast","lastReviewed":"2017-08-10T18:00Z",
         "labelVersion":1,"arms":[{"armId":1,"armName":"arm 1"},{"armId":2,"armName":"arm 2"}],"criteria":[
         {"value":"Yes","labelId":21,"criterionId":10,"criterionText":"criteria 10 text","armIds":[1,2],"isCompound":false,"isDefining":false},
         {"value":"Unknown","labelId":21,"criterionId":11,"criterionText":"criteria 11 text","armIds":[2],"isCompound":true,"isDefining":false}]}""".parseJson)
   }
-
 
 }

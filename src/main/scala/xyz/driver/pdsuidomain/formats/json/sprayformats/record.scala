@@ -36,6 +36,8 @@ object record {
     }
   }
 
+  implicit val providerTypeFormat = jsonFormat2(ProviderType.apply)
+
   implicit val caseIdFormat = new RootJsonFormat[CaseId] {
     override def write(caseId: CaseId): JsString = JsString(caseId.toString)
     override def read(json: JsValue): CaseId = json match {
