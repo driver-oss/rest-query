@@ -2,7 +2,7 @@ package xyz.driver.pdsuidomain.fakes.entities.rep
 
 import xyz.driver.core.generators._
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
-import xyz.driver.pdsuidomain.entities.{Document, ExtractedData, Label, RecordRequestId}
+import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.entities.export.patient.{
   ExportPatientLabel,
   ExportPatientLabelEvidence,
@@ -14,12 +14,26 @@ import xyz.driver.pdsuidomain.fakes.entities.common.{nextLocalDate, nextLongId}
 object ExportPatientGen {
   private val maxItemsInCollectionNumber = 3
 
+  def nextDocumentType(documentTypeId: LongId[DocumentType] = nextLongId): DocumentType = {
+    DocumentType(
+      documentTypeId,
+      nextString()
+    )
+  }
+
+  def nextProviderType(providerTypeId: LongId[ProviderType] = nextLongId): ProviderType = {
+    ProviderType(
+      providerTypeId,
+      nextString()
+    )
+  }
+
   def nextExportPatientLabelEvidenceDocument(documentId: LongId[Document]): ExportPatientLabelEvidenceDocument = {
     ExportPatientLabelEvidenceDocument(
       documentId = documentId,
       requestId = RecordRequestId(nextUuid()),
-      documentType = nextString(),
-      providerType = nextString(),
+      documentType = nextDocumentType(),
+      providerType = nextProviderType(),
       date = nextLocalDate
     )
   }
