@@ -4,6 +4,7 @@ import java.time.LocalDate
 
 import xyz.driver.core.generators
 import xyz.driver.core.generators.{nextBoolean, nextDouble, nextOption, nextString}
+import xyz.driver.pdsuidomain.fakes.entities.common._
 import xyz.driver.pdsuicommon.domain.{LongId, TextJson, User}
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.fakes.entities.common.{nextLocalDate, nextLocalDateTime, nextLongId, nextStringId}
@@ -17,13 +18,13 @@ object DocumentGen {
   }
 
   private def nextDates() =
-    Common.genBoundedRangeOption[LocalDate](nextLocalDate, nextLocalDate)
+    genBoundedRangeOption[LocalDate](nextLocalDate, nextLocalDate)
 
   private def nextStartAndEndPagesOption() =
-    Common.nextStartAndEndPages
+    nextStartAndEndPages
 
   private def nextStartAndEndPage() =
-    Common.genBoundedRange(nextDouble(), nextDouble())
+    genBoundedRange(nextDouble(), nextDouble())
 
   def nextDocumentStatus(): Document.Status =
     Document.Status.New

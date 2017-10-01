@@ -1,6 +1,7 @@
 package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import spray.json._
+import xyz.driver.entities.labels.{Label, LabelCategory}
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
@@ -29,7 +30,7 @@ object criterion {
 
       val categoryId = fields
         .get("categoryId")
-        .map(_.convertTo[LongId[Category]])
+        .map(_.convertTo[LongId[LabelCategory]])
 
       val value = fields
         .get("value")

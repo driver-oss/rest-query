@@ -1,6 +1,7 @@
 package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import spray.json._
+import xyz.driver.entities.labels.Label
 import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId}
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.PatientCriterionService.DraftPatientCriterion

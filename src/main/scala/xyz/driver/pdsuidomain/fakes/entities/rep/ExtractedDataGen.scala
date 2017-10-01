@@ -1,6 +1,7 @@
 package xyz.driver.pdsuidomain.fakes.entities.rep
 
 import xyz.driver.core.generators._
+import xyz.driver.entities.labels.{Label, LabelCategory}
 import xyz.driver.pdsuicommon.domain.{LongId, TextJson}
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.entities.ExtractedData.Meta
@@ -46,7 +47,7 @@ object ExtractedDataGen {
 
   def nextExtractedDataMetaEvidence(): Meta.Evidence = {
     val layersPosition =
-      Common.genBoundedRange[ExtractedData.Meta.TextLayerPosition](
+      genBoundedRange[ExtractedData.Meta.TextLayerPosition](
         nextExtractedDataMetaTextLayerPosition(),
         nextExtractedDataMetaTextLayerPosition()
       )
@@ -65,14 +66,8 @@ object ExtractedDataGen {
     )
   }
 
-  def nextExtractedDataMetaJson(): TextJson[Meta] = {
-    TextJson(
-      ExtractedData.Meta(
-        nextExtractedDataMetaKeyword(),
-        nextExtractedDataMetaEvidence()
-      )
-    )
-  }
+  def nextExtractedDataMetaJson(): TextJson[Meta] =
+    TextJson(ExtractedData.Meta(nextExtractedDataMetaKeyword(), nextExtractedDataMetaEvidence()))
 
   def nextExtractedData(documentId: LongId[Document]): ExtractedData = {
     ExtractedData(
@@ -89,8 +84,8 @@ object ExtractedDataGen {
       id = nextLongId[ExtractedDataLabel],
       dataId = nextLongId[ExtractedData],
       labelId = nextOption(nextLongId[Label]),
-      categoryId = nextOption(nextLongId[Category]),
-      value = nextOption(Common.nextFuzzyValue())
+      categoryId = nextOption(nextLongId[LabelCategory]),
+      value = nextOption(nextFuzzyValue())
     )
   }
 

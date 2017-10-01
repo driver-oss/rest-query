@@ -1,7 +1,8 @@
 package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import spray.json._
-import xyz.driver.pdsuidomain.entities.{Arm, Criterion, Label}
+import xyz.driver.entities.labels.Label
+import xyz.driver.pdsuidomain.entities.{Arm, Criterion}
 import xyz.driver.pdsuidomain.entities.export.patient._
 import xyz.driver.pdsuidomain.entities.export.trial.{ExportTrialArm, ExportTrialLabelCriterion, ExportTrialWithLabels}
 

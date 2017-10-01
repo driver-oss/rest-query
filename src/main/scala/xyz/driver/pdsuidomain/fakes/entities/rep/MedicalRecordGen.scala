@@ -4,7 +4,7 @@ import xyz.driver.pdsuidomain.entities._
 import xyz.driver.core.generators
 import xyz.driver.core.generators._
 import xyz.driver.pdsuicommon.domain.{LongId, TextJson, User}
-import xyz.driver.pdsuidomain.fakes.entities.common.{nextLocalDateTime, nextLongId, nextStringId, nextUuidId}
+import xyz.driver.pdsuidomain.fakes.entities.common._
 
 object MedicalRecordGen {
   private val maxItemsInCollectionNumber: Int = 50
@@ -126,7 +126,7 @@ object MedicalRecordGen {
   }
 
   def nextMedicalRecordIssue(): MedicalRecordIssue = {
-    val pages = Common.nextStartAndEndPages
+    val pages = nextStartAndEndPages
 
     MedicalRecordIssue(
       id = nextLongId[MedicalRecordIssue],
@@ -140,5 +140,8 @@ object MedicalRecordGen {
       archiveRequired = nextBoolean()
     )
   }
+
+  def nextProviderType(): ProviderType =
+    ProviderType(id = nextLongId[ProviderType], name = nextString())
 
 }

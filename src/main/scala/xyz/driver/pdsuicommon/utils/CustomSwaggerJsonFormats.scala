@@ -89,7 +89,7 @@ object CustomSwaggerJsonFormats {
       classOf[DocumentHistory.State] ->
         documenthistory.documentStateFormat.write(rep.DocumentGen.nextDocumentHistoryState()),
       classOf[ProviderType] ->
-        providertype.providerTypeFormat.write(rep.ProviderTypeGen.nextProviderType()),
+        providertype.providerTypeFormat.write(rep.MedicalRecordGen.nextProviderType()),
       classOf[TextJson[List[MedicalRecord.Meta]]] ->
         record.recordMetaFormat.write(rep.MedicalRecordGen.nextMedicalRecordMetasJson()),
       classOf[MedicalRecord] ->

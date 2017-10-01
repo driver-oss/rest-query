@@ -1,7 +1,6 @@
 package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import spray.json._
-import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.entities.DocumentType
 
 object documenttype {

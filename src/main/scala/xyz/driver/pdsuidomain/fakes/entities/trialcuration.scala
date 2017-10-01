@@ -1,5 +1,6 @@
 package xyz.driver.pdsuidomain.fakes.entities
 
+import xyz.driver.entities.labels.{Label, LabelCategory}
 import xyz.driver.pdsuicommon.domain.{LongId, User}
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
@@ -51,7 +52,7 @@ object trialcuration {
     id = nextLongId[CriterionLabel],
     labelId = Option(nextLongId[Label]),
     criterionId = criterionId,
-    categoryId = Option(nextLongId[Category]),
+    categoryId = Option(nextLongId[LabelCategory]),
     value = Option(generators.nextBoolean()),
     isDefining = generators.nextBoolean()
   )

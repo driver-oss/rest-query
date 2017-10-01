@@ -1,5 +1,6 @@
 package xyz.driver.pdsuidomain.entities
 
+import xyz.driver.entities.labels.Label
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.logging._
 
@@ -17,7 +18,7 @@ final case class KeywordWithLabels(keyword: Keyword, labels: List[Label])
 object KeywordWithLabels {
   implicit def toPhiString(x: KeywordWithLabels): PhiString = {
     import x._
-    phi"KeywordWithLabels(keyword=$keyword, $labels)"
+    phi"KeywordWithLabels(keyword=$keyword, ${Unsafe(labels)}"
   }
 }
 
