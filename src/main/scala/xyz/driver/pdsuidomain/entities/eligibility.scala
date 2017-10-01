@@ -46,7 +46,7 @@ object eligibility {
                             document: EvidenceDocument,
                             isPrimaryValue: Option[Boolean] = None)
 
-  final case class LabelWithEvidence(label: Label, evidence: Seq[Evidence] = Seq.empty)
+  final case class LabelEvidence(label: Label, evidence: Seq[Evidence] = Seq.empty)
 
   final case class LabelMismatchRank(label: Label,
                                      score: Int,
@@ -54,8 +54,8 @@ object eligibility {
                                      evidence: Seq[Evidence])
   final case class MismatchRankedLabels(data: Seq[LabelMismatchRank], labelVersion: Int)
 
-  final case class MatchedPatient(patientId: Id[MatchedPatient],
-                                  name: FullName[MatchedPatient],
+  final case class MatchedPatient(patientId: Id[Patient],
+                                  name: FullName[Patient],
                                   birthDate: Date,
                                   orderId: Id[TestOrder],
                                   disease: CancerType,
