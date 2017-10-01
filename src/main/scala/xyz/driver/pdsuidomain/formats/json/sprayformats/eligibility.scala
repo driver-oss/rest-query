@@ -92,7 +92,7 @@ object eligibility {
     }
   }
 
-  implicit def labelWithEvidenceJsonFormat: RootJsonFormat[LabelWithEvidence] = jsonFormat2(LabelWithEvidence)
+  implicit def labelWithEvidenceJsonFormat: RootJsonFormat[LabelEvidence] = jsonFormat2(LabelEvidence)
 
   implicit def labelRankingFormat: RootJsonFormat[LabelMismatchRank]     = jsonFormat4(LabelMismatchRank)
   implicit def labelRankingsFormat: RootJsonFormat[MismatchRankedLabels] = jsonFormat2(MismatchRankedLabels)

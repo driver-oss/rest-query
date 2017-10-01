@@ -54,8 +54,8 @@ object eligibility {
                                      evidence: Seq[Evidence])
   final case class MismatchRankedLabels(data: Seq[LabelMismatchRank], labelVersion: Int)
 
-  final case class MatchedPatient(patientId: Id[Patient],
-                                  name: FullName[Patient],
+  final case class MatchedPatient(patientId: Id[xyz.driver.entities.patient.Patient],
+                                  name: FullName[xyz.driver.entities.patient.Patient],
                                   birthDate: Date,
                                   orderId: Id[TestOrder],
                                   disease: CancerType,

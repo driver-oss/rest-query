@@ -2,7 +2,7 @@ package xyz.driver.pdsuidomain.fakes.entities
 
 import xyz.driver.core.generators
 import xyz.driver.entities.clinic.{ClinicalRecord, TestOrder}
-import xyz.driver.entities.patient.CancerType
+import xyz.driver.entities.patient.{CancerType, Patient}
 import xyz.driver.entities.report.Report
 import xyz.driver.fakes
 import xyz.driver.pdsuidomain.entities.eligibility._
@@ -46,8 +46,8 @@ object eligibility {
       isPrimaryValue = nextOption(nextBoolean())
     )
 
-  def nextLabelWithEvidence(): LabelWithEvidence =
-    LabelWithEvidence(label = fakes.entities.labels.nextLabel(), evidence = Seq.empty)
+  def nextLabelEvidence(): LabelEvidence =
+    LabelEvidence(label = fakes.entities.labels.nextLabel(), evidence = Seq.empty)
 
   def nextLabelMismatchRank(): LabelMismatchRank =
     LabelMismatchRank(
@@ -62,8 +62,8 @@ object eligibility {
 
   def nextMatchedPatient(): MatchedPatient =
     MatchedPatient(
-      patientId = nextId[MatchedPatient](),
-      name = fakes.entities.common.nextFullName[MatchedPatient](),
+      patientId = nextId[Patient](),
+      name = fakes.entities.common.nextFullName[Patient](),
       birthDate = nextDate(),
       orderId = nextId[TestOrder](),
       disease = generators.oneOf[CancerType](CancerType.Breast, CancerType.Lung, CancerType.Prostate),
