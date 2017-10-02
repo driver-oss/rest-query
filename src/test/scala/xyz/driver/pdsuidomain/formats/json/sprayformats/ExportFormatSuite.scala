@@ -16,8 +16,8 @@ class ExportFormatSuite extends FlatSpec with Matchers {
     val document = ExportPatientLabelEvidenceDocument(
       documentId = LongId(101),
       requestId = RecordRequestId(UUID.fromString("7b54a75d-4197-4b27-9045-b9b6cb131be9")),
-      documentType = DocumentType(LongId[DocumentType](1), "document type"),
-      providerType = ProviderType(LongId[ProviderType](2), "provider type"),
+      documentType = DocumentType.OutpatientPhysicianNote,
+      providerType = ProviderType.Surgery,
       date = LocalDate.parse("2017-08-10")
     )
 
@@ -67,14 +67,14 @@ class ExportFormatSuite extends FlatSpec with Matchers {
     writtenJson should be(
       """{"patientId":"748b5884-3528-4cb9-904b-7a8151d6e343","labelVersion":1,"labels":[{"labelId":1,"evidence":[{"evidenceId":11,
          "labelValue":"Yes","evidenceText":"evidence text 11","document":{"documentId":101,"requestId":"7b54a75d-4197-4b27-9045-b9b6cb131be9",
-         "documentType":{"id":1,"name":"document type"},"providerType":{"id":2,"name":"provider type"},"date":"2017-08-10"}},
+         "documentType":{"id":1,"name":"Outpatient Physician Note"},"providerType":{"id":2,"name":"Surgery"},"date":"2017-08-10"}},
         {"evidenceId":12,"labelValue":"No","evidenceText":"evidence text 12","document":{"documentId":101,"requestId":"7b54a75d-4197-4b27-9045-b9b6cb131be9",
-         "documentType":{"id":1,"name":"document type"},"providerType":{"id":2,"name":"provider type"},"date":"2017-08-10"}}]},
+         "documentType":{"id":1,"name":"Outpatient Physician Note"},"providerType":{"id":2,"name":"Surgery"},"date":"2017-08-10"}}]},
         {"labelId":2,"evidence":[{"evidenceId":12,"labelValue":"Yes","evidenceText":"evidence text 12","document":
-        {"documentId":101,"requestId":"7b54a75d-4197-4b27-9045-b9b6cb131be9","documentType":{"id":1,"name":"document type"},
-        "providerType":{"id":2,"name":"provider type"},"date":"2017-08-10"}},{"evidenceId":13,"labelValue":"Yes","evidenceText":"evidence text 13",
-        "document":{"documentId":101,"requestId":"7b54a75d-4197-4b27-9045-b9b6cb131be9","documentType":{"id":1,"name":"document type"},
-        "providerType":{"id":2,"name":"provider type"},"date":"2017-08-10"}}]}]}""".parseJson)
+        {"documentId":101,"requestId":"7b54a75d-4197-4b27-9045-b9b6cb131be9","documentType":{"id":1,"name":"Outpatient Physician Note"},
+        "providerType":{"id":2,"name":"Surgery"},"date":"2017-08-10"}},{"evidenceId":13,"labelValue":"Yes","evidenceText":"evidence text 13",
+        "document":{"documentId":101,"requestId":"7b54a75d-4197-4b27-9045-b9b6cb131be9","documentType":{"id":1,"name":"Outpatient Physician Note"},
+        "providerType":{"id":2,"name":"Surgery"},"date":"2017-08-10"}}]}]}""".parseJson)
   }
 
   "Json format for ApiExportTrialWithLabels" should "read and write correct JSON" in {

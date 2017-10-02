@@ -36,7 +36,24 @@ object record {
     }
   }
 
-  implicit val providerTypeFormat = jsonFormat2(ProviderType.apply)
+  implicit val providerTypeFormat: RootJsonFormat[ProviderType] = new RootJsonFormat[ProviderType] {
+    override def read(json: JsValue): ProviderType = json match {
+      case JsObject(fields) =>
+        val name = fields
+          .get("name")
+          .map(_.convertTo[String])
+          .getOrElse(deserializationError(s"Intervention type json object does not contain `name` field: $json"))
+
+        ProviderType
+          .fromString(name)
+          .getOrElse(deserializationError(s"Unknown provider type: $name"))
+
+      case _ => deserializationError(s"Expected Json Object as Intervention type, but got $json")
+    }
+
+    override def write(obj: ProviderType) =
+      JsObject("id" -> obj.id.toJson, "name" -> obj.name.toJson)
+  }
 
   implicit val caseIdFormat = new RootJsonFormat[CaseId] {
     override def write(caseId: CaseId): JsString = JsString(caseId.toString)

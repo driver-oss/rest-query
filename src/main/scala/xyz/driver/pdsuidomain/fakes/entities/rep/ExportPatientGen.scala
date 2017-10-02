@@ -7,23 +7,11 @@ import xyz.driver.pdsuidomain.fakes.entities.common._
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.entities.export.patient._
 import xyz.driver.pdsuidomain.fakes.entities.common.{nextLocalDate, nextLongId}
+import xyz.driver.pdsuidomain.fakes.entities.rep.DocumentGen._
+import xyz.driver.pdsuidomain.fakes.entities.rep.MedicalRecordGen._
 
 object ExportPatientGen {
   private val maxItemsInCollectionNumber = 3
-
-  def nextDocumentType(documentTypeId: LongId[DocumentType] = nextLongId): DocumentType = {
-    DocumentType(
-      documentTypeId,
-      nextString()
-    )
-  }
-
-  def nextProviderType(providerTypeId: LongId[ProviderType] = nextLongId): ProviderType = {
-    ProviderType(
-      providerTypeId,
-      nextString()
-    )
-  }
 
   def nextExportPatientLabelEvidenceDocument(documentId: LongId[Document]): ExportPatientLabelEvidenceDocument = {
     ExportPatientLabelEvidenceDocument(

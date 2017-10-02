@@ -75,12 +75,8 @@ object DocumentGen {
     )
   }
 
-  def nextDocumentType(): DocumentType = {
-    DocumentType(
-      id = nextLongId[DocumentType],
-      name = nextString()
-    )
-  }
+  def nextDocumentType(): DocumentType =
+    generators.oneOf(DocumentType.All: _*)
 
   def nextDocumentIssue(documentId: LongId[Document] = nextLongId): DocumentIssue = {
     val pages = nextStartAndEndPagesOption()

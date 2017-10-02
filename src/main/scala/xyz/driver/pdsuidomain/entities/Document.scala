@@ -15,74 +15,195 @@ import xyz.driver.pdsuicommon.validation.Validators.Validator
 import xyz.driver.pdsuidomain.entities.Document.Meta
 
 import scalaz.Equal
+import scalaz.syntax.equal._
+import scalaz.Scalaz.stringInstance
 
-final case class ProviderType(id: LongId[ProviderType], name: String)
+sealed trait ProviderType {
+  val id: LongId[ProviderType]
+  val name: String
+}
 
 object ProviderType {
-  sealed trait ProviderTypeName
-  case object MedicalOncology         extends ProviderTypeName
-  case object Surgery                 extends ProviderTypeName
-  case object Pathology               extends ProviderTypeName
-  case object MolecularPathology      extends ProviderTypeName
-  case object LaboratoryMedicine      extends ProviderTypeName
-  case object Radiology               extends ProviderTypeName
-  case object InterventionalRadiology extends ProviderTypeName
-  case object RadiationOncology       extends ProviderTypeName
-  case object PrimaryCare             extends ProviderTypeName
-  case object Cardiology              extends ProviderTypeName
-  case object Dermatology             extends ProviderTypeName
-  case object Ophthalmology           extends ProviderTypeName
-  case object Gastroenterology        extends ProviderTypeName
-  case object Neurology               extends ProviderTypeName
-  case object Psychiatry              extends ProviderTypeName
-  case object Gynecology              extends ProviderTypeName
-  case object InfectiousDisease       extends ProviderTypeName
-  case object Immunology              extends ProviderTypeName
-  case object Nephrology              extends ProviderTypeName
-  case object Rheumatology            extends ProviderTypeName
-  case object Cytology                extends ProviderTypeName
-  case object Otolaryngology          extends ProviderTypeName
-  case object Anesthesiology          extends ProviderTypeName
-  case object Urology                 extends ProviderTypeName
-  case object PalliativeCare          extends ProviderTypeName
-  case object EmergencyMedicine       extends ProviderTypeName
-  case object SocialWork              extends ProviderTypeName
-  case object NA                      extends ProviderTypeName
-  case object Other                   extends ProviderTypeName
 
-  def fromString(txt: String): Option[ProviderTypeName] = {
-    txt match {
-      case "Medical Oncology"         => Some(MedicalOncology)
-      case "Surgery"                  => Some(Surgery)
-      case "Pathology"                => Some(Pathology)
-      case "Molecular Pathology"      => Some(MolecularPathology)
-      case "LaboratoryMedicine"       => Some(LaboratoryMedicine)
-      case "Radiology"                => Some(Radiology)
-      case "Interventional Radiology" => Some(InterventionalRadiology)
-      case "Radiation Oncology"       => Some(RadiationOncology)
-      case "Primary Care"             => Some(PrimaryCare)
-      case "Cardiology"               => Some(Cardiology)
-      case "Dermatology"              => Some(Dermatology)
-      case "Ophthalmology"            => Some(Ophthalmology)
-      case "Gastroenterology"         => Some(Gastroenterology)
-      case "Neurology"                => Some(Neurology)
-      case "Psychiatry"               => Some(Psychiatry)
-      case "Gynecology"               => Some(Gynecology)
-      case "Infectious Disease"       => Some(InfectiousDisease)
-      case "Immunology"               => Some(Immunology)
-      case "Nephrology"               => Some(Nephrology)
-      case "Rheumatology"             => Some(Rheumatology)
-      case "Cytology"                 => Some(Cytology)
-      case "Otolaryngology"           => Some(Otolaryngology)
-      case "Anesthesiology"           => Some(Anesthesiology)
-      case "Urology"                  => Some(Urology)
-      case "Palliative Care"          => Some(PalliativeCare)
-      case "Emergency Medicine"       => Some(EmergencyMedicine)
-      case "Social Work"              => Some(SocialWork)
-      case "N/A"                      => Some(NA)
-      case "Other"                    => Some(Other)
-      case _                          => None
-    }
+  case object MedicalOncology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](1)
+    val name: String             = "Medical Oncology"
+  }
+
+  case object Surgery extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](2)
+    val name: String             = "Surgery"
+  }
+
+  case object Pathology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](3)
+    val name: String             = "Pathology"
+  }
+
+  case object MolecularPathology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](4)
+    val name: String             = "Molecular Pathology"
+  }
+
+  case object LaboratoryMedicine extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](5)
+    val name: String             = "Laboratory Medicine"
+  }
+
+  case object Radiology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](6)
+    val name: String             = "Radiology"
+  }
+
+  case object InterventionalRadiology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](7)
+    val name: String             = "Interventional Radiology"
+  }
+
+  case object RadiationOncology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](8)
+    val name: String             = "Radiation Oncology"
+  }
+
+  case object PrimaryCare extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](9)
+    val name: String             = "Primary Care"
+  }
+
+  case object Cardiology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](10)
+    val name: String             = "Cardiology"
+  }
+
+  case object Dermatology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](11)
+    val name: String             = "Dermatology"
+  }
+
+  case object Ophthalmology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](12)
+    val name: String             = "Ophthalmology"
+  }
+
+  case object Gastroenterology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](13)
+    val name: String             = "Gastroenterology"
+  }
+
+  case object Neurology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](14)
+    val name: String             = "Neurology"
+  }
+
+  case object Psychiatry extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](15)
+    val name: String             = "Psychiatry"
+  }
+
+  case object Gynecology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](16)
+    val name: String             = "Gynecology"
+  }
+
+  case object InfectiousDisease extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](17)
+    val name: String             = "Infectious Disease"
+  }
+
+  case object Immunology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](18)
+    val name: String             = "Immunology"
+  }
+
+  case object Nephrology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](19)
+    val name: String             = "Nephrology"
+  }
+
+  case object Rheumatology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](20)
+    val name: String             = "Rheumatology"
+  }
+
+  case object Cytology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](21)
+    val name: String             = "Cytology"
+  }
+
+  case object Otolaryngology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](22)
+    val name: String             = "Otolaryngology"
+  }
+
+  case object Anesthesiology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](23)
+    val name: String             = "Anesthesiology"
+  }
+
+  case object Urology extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](24)
+    val name: String             = "Urology"
+  }
+
+  case object PalliativeCare extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](25)
+    val name: String             = "Palliative Care"
+  }
+
+  case object EmergencyMedicine extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](26)
+    val name: String             = "Emergency Medicine"
+  }
+
+  case object SocialWork extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](27)
+    val name: String             = "Social Work"
+  }
+
+  case object NA extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](28)
+    val name: String             = "N/A"
+  }
+
+  case object Other extends ProviderType {
+    val id: LongId[ProviderType] = LongId[ProviderType](29)
+    val name: String             = "Other"
+  }
+
+  val All = Seq[ProviderType](
+    MedicalOncology,
+    Surgery,
+    Pathology,
+    MolecularPathology,
+    LaboratoryMedicine,
+    Radiology,
+    InterventionalRadiology,
+    RadiationOncology,
+    PrimaryCare,
+    Cardiology,
+    Dermatology,
+    Ophthalmology,
+    Gastroenterology,
+    Neurology,
+    Psychiatry,
+    Gynecology,
+    InfectiousDisease,
+    Immunology,
+    Nephrology,
+    Rheumatology,
+    Cytology,
+    Otolaryngology,
+    Anesthesiology,
+    Urology,
+    PalliativeCare,
+    EmergencyMedicine,
+    SocialWork,
+    NA,
+    Other
+  )
+
+  def fromString(txt: String): Option[ProviderType] = {
+    All.find(_.name === txt)
   }
 
   implicit def toPhiString(x: ProviderType): PhiString = {
@@ -91,39 +212,90 @@ object ProviderType {
   }
 }
 
-final case class DocumentType(id: LongId[DocumentType], name: String)
+sealed trait DocumentType {
+  val id: LongId[DocumentType]
+  val name: String
+}
 
 object DocumentType {
-  sealed trait DocumentTypeName
-  case object OutpatientPhysicianNote      extends DocumentTypeName
-  case object DischargeNote                extends DocumentTypeName
-  case object LaboratoryReport             extends DocumentTypeName
-  case object MedicationList               extends DocumentTypeName
-  case object HospitalizationNote          extends DocumentTypeName
-  case object PathologyReport              extends DocumentTypeName
-  case object RadiologyReport              extends DocumentTypeName
-  case object OperativeProcedureReport     extends DocumentTypeName
-  case object MedicationAdministration     extends DocumentTypeName
-  case object SocialWorkCaseManagementNote extends DocumentTypeName
-  case object NonPhysicianProviderNote     extends DocumentTypeName
-  case object Administrative               extends DocumentTypeName
 
-  def fromString(txt: String): Option[DocumentTypeName] = {
-    txt match {
-      case "Outpatient Physician Note"        => Some(OutpatientPhysicianNote)
-      case "Discharge Note"                   => Some(DischargeNote)
-      case "Laboratory Report"                => Some(LaboratoryReport)
-      case "Medication List"                  => Some(MedicationList)
-      case "Hospitalization Note"             => Some(HospitalizationNote)
-      case "Pathology Report"                 => Some(PathologyReport)
-      case "Radiology Report"                 => Some(RadiologyReport)
-      case "Operative/Procedure Report"       => Some(OperativeProcedureReport)
-      case "Medication Administration"        => Some(MedicationAdministration)
-      case "Social Work/Case Management Note" => Some(SocialWorkCaseManagementNote)
-      case "Non-physician Provider Note"      => Some(NonPhysicianProviderNote)
-      case "Administrative"                   => Some(Administrative)
-      case _                                  => None
-    }
+  case object OutpatientPhysicianNote extends DocumentType {
+    val id: LongId[DocumentType] = LongId[DocumentType](1)
+    val name: String             = "Outpatient Physician Note"
+  }
+
+  case object DischargeNote extends DocumentType {
+    val id: LongId[DocumentType] = LongId[DocumentType](2)
+    val name: String             = "Discharge Note"
+  }
+
+  case object LaboratoryReport extends DocumentType {
+    val id: LongId[DocumentType] = LongId[DocumentType](3)
+    val name: String             = "Laboratory Report"
+  }
+
+  case object MedicationList extends DocumentType {
+    val id: LongId[DocumentType] = LongId[DocumentType](4)
+    val name: String             = "Medication List"
+  }
+
+  case object HospitalizationNote extends DocumentType {
+    val id: LongId[DocumentType] = LongId[DocumentType](5)
+    val name: String             = "Hospitalization Note"
+  }
+
+  case object PathologyReport extends DocumentType {
+    val id: LongId[DocumentType] = LongId[DocumentType](6)
+    val name: String             = "Pathology Report"
+  }
+
+  case object RadiologyReport extends DocumentType {
+    val id: LongId[DocumentType] = LongId[DocumentType](7)
+    val name: String             = "Radiology Report"
+  }
+
+  case object OperativeProcedureReport extends DocumentType {
+    val id: LongId[DocumentType] = LongId[DocumentType](8)
+    val name: String             = "Operative/Procedure Report"
+  }
+
+  case object MedicationAdministration extends DocumentType {
+    val id: LongId[DocumentType] = LongId[DocumentType](9)
+    val name: String             = "Medication Administration"
+  }
+
+  case object SocialWorkCaseManagementNote extends DocumentType {
+    val id: LongId[DocumentType] = LongId[DocumentType](10)
+    val name: String             = "Social Work/Case Management Note"
+  }
+
+  case object NonPhysicianProviderNote extends DocumentType {
+    val id: LongId[DocumentType] = LongId[DocumentType](11)
+    val name: String             = "Non-physician Provider Note"
+  }
+
+  case object Administrative extends DocumentType {
+    val id: LongId[DocumentType] = LongId[DocumentType](12)
+    val name: String             = "Administrative"
+  }
+
+  val All = Seq[DocumentType](
+    OutpatientPhysicianNote,
+    DischargeNote,
+    LaboratoryReport,
+    MedicationList,
+    HospitalizationNote,
+    PathologyReport,
+    RadiologyReport,
+    OperativeProcedureReport,
+    MedicationAdministration,
+    SocialWorkCaseManagementNote,
+    NonPhysicianProviderNote,
+    Administrative
+  )
+
+  def fromString(txt: String): Option[DocumentType] = {
+    All.find(_.name === txt)
   }
 
   implicit def equal: Equal[DocumentType] = Equal.equal[DocumentType](_ == _)

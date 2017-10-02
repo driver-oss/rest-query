@@ -142,6 +142,6 @@ object MedicalRecordGen {
   }
 
   def nextProviderType(): ProviderType =
-    ProviderType(id = nextLongId[ProviderType], name = nextString())
+    generators.oneOf(ProviderType.All: _*)
 
 }

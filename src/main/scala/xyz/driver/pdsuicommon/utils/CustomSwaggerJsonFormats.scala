@@ -62,7 +62,6 @@ object CustomSwaggerJsonFormats {
     import xyz.driver.pdsuidomain.formats.json.sprayformats.document
     import xyz.driver.pdsuidomain.formats.json.sprayformats.documentissue
     import xyz.driver.pdsuidomain.formats.json.sprayformats.documenthistory
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.providertype
     import xyz.driver.pdsuidomain.formats.json.sprayformats.record
     import xyz.driver.pdsuidomain.formats.json.sprayformats.recordissue
     import xyz.driver.pdsuidomain.formats.json.sprayformats.recordhistory
@@ -89,7 +88,7 @@ object CustomSwaggerJsonFormats {
       classOf[DocumentHistory.State] ->
         documenthistory.documentStateFormat.write(rep.DocumentGen.nextDocumentHistoryState()),
       classOf[ProviderType] ->
-        providertype.providerTypeFormat.write(rep.MedicalRecordGen.nextProviderType()),
+        record.providerTypeFormat.write(rep.MedicalRecordGen.nextProviderType()),
       classOf[TextJson[List[MedicalRecord.Meta]]] ->
         record.recordMetaFormat.write(rep.MedicalRecordGen.nextMedicalRecordMetasJson()),
       classOf[MedicalRecord] ->
