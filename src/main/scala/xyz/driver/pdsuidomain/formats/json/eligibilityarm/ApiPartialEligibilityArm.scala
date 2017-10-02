@@ -1,7 +1,7 @@
 package xyz.driver.pdsuidomain.formats.json.eligibilityarm
 
-import xyz.driver.pdsuidomain.entities.{EligibilityArm, EligibilityArmDisease, EligibilityArmWithDiseases, Trial}
 import play.api.libs.json.{Format, Json}
+import xyz.driver.pdsuidomain.entities.{EligibilityArmDisease, EligibilityArmWithDiseases, Trial}
 
 final case class ApiPartialEligibilityArm(name: String, diseases: Seq[String]) {
 
