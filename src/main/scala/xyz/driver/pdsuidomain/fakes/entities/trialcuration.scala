@@ -1,5 +1,6 @@
 package xyz.driver.pdsuidomain.fakes.entities
 
+import xyz.driver.entities.labels.{Label, LabelCategory}
 import xyz.driver.pdsuicommon.domain.{LongId, User}
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
@@ -44,14 +45,15 @@ object trialcuration {
     trialId = nextStringId[Trial],
     text = Option(generators.nextString()),
     isCompound = generators.nextBoolean(),
-    meta = generators.nextString()
+    meta = generators.nextString(),
+    inclusion = Option(generators.nextBoolean())
   )
 
   def nextCriterionLabel(criterionId: LongId[Criterion]): CriterionLabel = CriterionLabel(
     id = nextLongId[CriterionLabel],
     labelId = Option(nextLongId[Label]),
     criterionId = criterionId,
-    categoryId = Option(nextLongId[Category]),
+    categoryId = Option(nextLongId[LabelCategory]),
     value = Option(generators.nextBoolean()),
     isDefining = generators.nextBoolean()
   )

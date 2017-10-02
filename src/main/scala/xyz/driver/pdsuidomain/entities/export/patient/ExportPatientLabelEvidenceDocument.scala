@@ -4,12 +4,12 @@ import java.time.LocalDate
 
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.logging._
-import xyz.driver.pdsuidomain.entities.{Document, RawPatientLabel, RecordRequestId}
+import xyz.driver.pdsuidomain.entities._
 
 final case class ExportPatientLabelEvidenceDocument(documentId: LongId[Document],
                                                     requestId: RecordRequestId,
-                                                    documentType: String,
-                                                    providerType: String,
+                                                    documentType: DocumentType,
+                                                    providerType: ProviderType,
                                                     date: LocalDate)
 
 object ExportPatientLabelEvidenceDocument extends PhiLogging {

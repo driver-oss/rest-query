@@ -2,6 +2,7 @@ package xyz.driver.pdsuidomain.services
 
 import java.time.LocalDateTime
 
+import xyz.driver.entities.labels.Label
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._

@@ -2,8 +2,7 @@ package xyz.driver.pdsuicommon.db
 
 import java.time.{LocalDateTime, ZoneOffset}
 
-import slick.driver.JdbcProfile
-import slick.jdbc.GetResult
+import slick.jdbc.{JdbcProfile, GetResult}
 import xyz.driver.core.database.SlickDal
 import xyz.driver.pdsuicommon.logging._
 
