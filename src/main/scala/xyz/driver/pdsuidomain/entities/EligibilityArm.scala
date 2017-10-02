@@ -28,4 +28,13 @@ object EligibilityArmDisease {
   implicit def toPhiString(x: EligibilityArmDisease): PhiString = {
     phi"EligibilityArmDisease(eligibilityArmId=${Unsafe(x.eligibilityArmId)}, disease=${Unsafe(x.disease)})"
   }
+
+final case class EligibilityArmWithDiseases(eligibilityArm: EligibilityArm, eligibilityArmDiseases: Seq[EligibilityArmDisease])
+
+object EligibilityArmWithDiseases {
+  implicit def toPhiString(x: EligibilityArmWithDiseases): PhiString = {
+    import x._
+    phi"EligibilityArmWithDiseases(eligibilityArm=$eligibilityArm, eligibilityArmDiseases=$eligibilityArmDiseases)"
+  }
+}
 }
