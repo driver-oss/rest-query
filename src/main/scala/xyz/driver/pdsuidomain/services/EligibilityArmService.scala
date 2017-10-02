@@ -5,7 +5,7 @@ import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.error.DomainError
 import xyz.driver.pdsuicommon.logging._
-import xyz.driver.pdsuidomain.entities.EligibilityArm
+import xyz.driver.pdsuidomain.entities.{EligibilityArm, EligibilityArmWithDiseases}
 
 import scala.concurrent.Future
 
@@ -22,7 +22,7 @@ object EligibilityArmService {
   sealed trait GetByIdReply
   object GetByIdReply {
 
-    final case class Entity(x: EligibilityArm) extends GetByIdReply
+    final case class Entity(x: EligibilityArmWithDiseases) extends GetByIdReply
 
     type Error = GetByIdReply with DomainError
 
@@ -39,7 +39,7 @@ object EligibilityArmService {
   object GetListReply {
     type Error = GetListReply with DomainError
 
-    final case class EntityList(xs: Seq[EligibilityArm], totalFound: Int) extends GetListReply
+    final case class EntityList(xs: Seq[EligibilityArmWithDiseases], totalFound: Int) extends GetListReply
 
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -48,7 +48,7 @@ object EligibilityArmService {
   sealed trait UpdateReply
   object UpdateReply {
 
-    final case class Updated(updated: EligibilityArm) extends UpdateReply
+    final case class Updated(updated: EligibilityArmWithDiseases) extends UpdateReply
 
     type Error = UpdateReply with DomainError
 
@@ -59,7 +59,7 @@ object EligibilityArmService {
 
     final case class CommonError(userMessage: String) extends UpdateReply with DomainError
 
-    final case class AlreadyExistsError(x: EligibilityArm) extends UpdateReply with DomainError {
+    final case class AlreadyExistsError(x: EligibilityArmWithDiseases) extends UpdateReply with DomainError {
       val userMessage = s"The arm with such name of trial already exists."
     }
 
@@ -71,7 +71,7 @@ object EligibilityArmService {
 
   sealed trait CreateReply
   object CreateReply {
-    final case class Created(x: EligibilityArm) extends CreateReply
+    final case class Created(x: EligibilityArmWithDiseases) extends CreateReply
 
     type Error = CreateReply with DomainError
 
@@ -80,7 +80,7 @@ object EligibilityArmService {
 
     final case class CommonError(userMessage: String) extends CreateReply with DomainError
 
-    final case class AlreadyExistsError(x: EligibilityArm) extends CreateReply with DomainError {
+    final case class AlreadyExistsError(x: EligibilityArmWithDiseases) extends CreateReply with DomainError {
       val userMessage = s"The arm with this name of trial already exists."
     }
 
@@ -117,10 +117,10 @@ trait EligibilityArmService {
   def getById(armId: LongId[EligibilityArm])(
           implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
-  def create(draftEligibilityArm: EligibilityArm)(
+  def create(draftEligibilityArm: EligibilityArmWithDiseases)(
           implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
 
-  def update(origEligibilityArm: EligibilityArm, draftEligibilityArm: EligibilityArm)(
+  def update(origEligibilityArm: EligibilityArmWithDiseases, draftEligibilityArm: EligibilityArmWithDiseases)(
           implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
   def delete(id: LongId[EligibilityArm])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
