@@ -14,7 +14,8 @@ final case class ApiCriterion(id: Long,
                               text: Option[String],
                               isCompound: Boolean,
                               labels: Seq[ApiCriterionLabel],
-                              trialId: String) {
+                              trialId: String,
+                              inclusion: Option[Boolean]) {
 
   def toDomain = RichCriterion(
     criterion = Criterion(
@@ -22,7 +23,8 @@ final case class ApiCriterion(id: Long,
       trialId = StringId[Trial](trialId),
       text,
       isCompound,
-      meta.getOrElse("")
+      meta.getOrElse(""),
+      inclusion
     ),
     armIds = arms.map(LongId[Arm]),
     labels = labels.map(_.toDomain(LongId[Criterion](id)))
@@ -40,7 +42,8 @@ object ApiCriterion {
       (JsPath \ "text").formatNullable[String] and
       (JsPath \ "isCompound").format[Boolean] and
       (JsPath \ "labels").format(seqJsonFormat[ApiCriterionLabel]) and
-      (JsPath \ "trialId").format[String]
+      (JsPath \ "trialId").format[String] and
+      (JsPath \ "inclusion").formatNullable[Boolean]
   )(ApiCriterion.apply, unlift(ApiCriterion.unapply))
 
   def fromDomain(richCriterion: RichCriterion) = ApiCriterion(
@@ -50,6 +53,7 @@ object ApiCriterion {
     text = richCriterion.criterion.text,
     isCompound = richCriterion.criterion.isCompound,
     labels = richCriterion.labels.map(ApiCriterionLabel.fromDomain),
-    trialId = richCriterion.criterion.trialId.id
+    trialId = richCriterion.criterion.trialId.id,
+    inclusion = richCriterion.criterion.inclusion
   )
 }

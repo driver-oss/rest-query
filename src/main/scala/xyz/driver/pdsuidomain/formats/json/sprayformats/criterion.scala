@@ -73,6 +73,11 @@ object criterion {
         .map(_.convertTo[Option[String]].getOrElse("{}"))
         .getOrElse(orig.criterion.meta)
 
+      val inclusion = fields
+        .get("inclusion")
+        .map(_.convertTo[Option[Boolean]])
+        .getOrElse(orig.criterion.inclusion)
+
       val arms = fields
         .get("arms")
         .map(_.convertTo[Option[List[LongId[Arm]]]].getOrElse(List.empty[LongId[Arm]]))
@@ -88,7 +93,8 @@ object criterion {
         criterion = orig.criterion.copy(
           meta = meta,
           text = text,
-          isCompound = isCompound
+          isCompound = isCompound,
+          inclusion = inclusion
         ),
         armIds = arms,
         labels = labels
@@ -106,7 +112,8 @@ object criterion {
         "text"       -> obj.criterion.text.toJson,
         "isCompound" -> obj.criterion.isCompound.toJson,
         "labels"     -> obj.labels.map(_.toJson).toJson,
-        "trialId"    -> obj.criterion.trialId.toJson
+        "trialId"    -> obj.criterion.trialId.toJson,
+        "inclusion"  -> obj.criterion.inclusion.toJson
       )
 
     override def read(json: JsValue): RichCriterion = json match {
@@ -129,6 +136,11 @@ object criterion {
           .map(_.convertTo[String])
           .getOrElse("")
 
+        val inclusion = fields
+          .get("inclusion")
+          .map(_.convertTo[Option[Boolean]])
+          .getOrElse(None)
+
         val arms = fields
           .get("arms")
           .map(_.convertTo[List[LongId[Arm]]])
@@ -146,7 +158,8 @@ object criterion {
             trialId = trialId,
             text = text,
             isCompound = isCompound,
-            meta = meta
+            meta = meta,
+            inclusion = inclusion
           ),
           armIds = arms,
           labels = labels

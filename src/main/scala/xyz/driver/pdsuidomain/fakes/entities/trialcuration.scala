@@ -45,7 +45,8 @@ object trialcuration {
     trialId = nextStringId[Trial],
     text = Option(generators.nextString()),
     isCompound = generators.nextBoolean(),
-    meta = generators.nextString()
+    meta = generators.nextString(),
+    inclusion = Option(generators.nextBoolean())
   )
 
   def nextCriterionLabel(criterionId: LongId[Criterion]): CriterionLabel = CriterionLabel(
