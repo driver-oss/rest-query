@@ -9,7 +9,8 @@ final case class Criterion(id: LongId[Criterion],
                            trialId: StringId[Trial],
                            text: Option[String],
                            isCompound: Boolean,
-                           meta: String) {
+                           meta: String,
+                           inclusion: Option[Boolean]) {
 
   def isValid: Boolean = text.nonEmpty && Option(meta).isDefined
 }

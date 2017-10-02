@@ -14,6 +14,7 @@ final case class ApiUpdateCriterion(meta: Tristate[String],
                                     arms: Tristate[Seq[Long]],
                                     text: Option[String],
                                     isCompound: Option[Boolean],
+                                    inclusion: Tristate[Boolean],
                                     labels: Tristate[Seq[ApiCriterionLabel]]) {
 
   def applyTo(orig: RichCriterion): RichCriterion = RichCriterion(
@@ -27,7 +28,8 @@ final case class ApiUpdateCriterion(meta: Tristate[String],
     meta = meta.cata(identity, "{}", orig.meta),
     text = text.orElse(orig.text),
     isCompound = isCompound.getOrElse(orig.isCompound),
-    trialId = orig.trialId
+    trialId = orig.trialId,
+    inclusion = inclusion.cata(x => Some(x), None, orig.inclusion)
   )
 }
 
@@ -45,6 +47,7 @@ object ApiUpdateCriterion {
       (JsPath \ "arms").readTristate(seqJsonFormat[Long]) and
       (JsPath \ "text").readNullable[String] and
       (JsPath \ "isCompound").readNullable[Boolean] and
+      (JsPath \ "inclusion").readTristate[Boolean] and
       (JsPath \ "labels").readTristate(seqJsonFormat[ApiCriterionLabel])
   )(ApiUpdateCriterion.apply _)
 
@@ -53,6 +56,7 @@ object ApiUpdateCriterion {
       (JsPath \ "arms").writeTristate(seqJsonFormat[Long]) and
       (JsPath \ "text").writeNullable[String] and
       (JsPath \ "isCompound").writeNullable[Boolean] and
+      (JsPath \ "inclusion").writeTristate[Boolean] and
       (JsPath \ "labels").writeTristate(seqJsonFormat[ApiCriterionLabel])
   )(unlift(ApiUpdateCriterion.unapply))
 
