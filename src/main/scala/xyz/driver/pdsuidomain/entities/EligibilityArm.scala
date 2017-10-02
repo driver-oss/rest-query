@@ -20,7 +20,7 @@ object EligibilityArm {
   }
 }
 
-final case class EligibilityArmDisease(eligibilityArmId: LongId[EligibilityArmDisease],
+final case class EligibilityArmDisease(eligibilityArmId: LongId[EligibilityArm],
                                        disease: Condition)
 
 object EligibilityArmDisease {
