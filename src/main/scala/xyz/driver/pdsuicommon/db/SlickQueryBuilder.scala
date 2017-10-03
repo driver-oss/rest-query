@@ -3,8 +3,7 @@ package xyz.driver.pdsuicommon.db
 import java.sql.PreparedStatement
 import java.time.LocalDateTime
 
-import slick.driver.JdbcProfile
-import slick.jdbc.{PositionedParameters, SQLActionBuilder, SetParameter}
+import slick.jdbc.{JdbcProfile, PositionedParameters, SQLActionBuilder, SetParameter}
 import xyz.driver.pdsuicommon.db.Sorting.{Dimension, Sequential}
 import xyz.driver.pdsuicommon.db.SortingOrder.{Ascending, Descending}
 

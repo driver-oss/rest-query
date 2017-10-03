@@ -28,6 +28,25 @@ object document {
 
   implicit val documentMetaFormat: RootJsonFormat[Meta] = jsonFormat3(Meta.apply)
 
+  implicit val documentTypeFormat: RootJsonFormat[DocumentType] = new RootJsonFormat[DocumentType] {
+    override def read(json: JsValue): DocumentType = json match {
+      case JsObject(fields) =>
+        val name = fields
+          .get("name")
+          .map(_.convertTo[String])
+          .getOrElse(deserializationError(s"Intervention type json object does not contain `name` field: $json"))
+
+        DocumentType
+          .fromString(name)
+          .getOrElse(deserializationError(s"Unknown document type: $name"))
+
+      case _ => deserializationError(s"Expected Json Object as Intervention type, but got $json")
+    }
+
+    override def write(obj: DocumentType) =
+      JsObject("id" -> obj.id.toJson, "name" -> obj.name.toJson)
+  }
+
   implicit val fullDocumentMetaFormat = new RootJsonFormat[TextJson[Meta]] {
     override def write(obj: TextJson[Meta]): JsValue = obj.content.toJson
     override def read(json: JsValue)                 = TextJson(documentMetaFormat.read(json))

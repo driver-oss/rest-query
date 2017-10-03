@@ -14,7 +14,7 @@ import xyz.driver.pdsuicommon.db.SearchFilterNAryOperation.In
 import xyz.driver.pdsuicommon.utils.Utils
 import xyz.driver.pdsuicommon.utils.Utils._
 
-import scala.util.Success
+import scala.util._
 
 object SearchFilterParserSuite {
 
@@ -133,6 +133,17 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
       }
 
       "n-ary" - {
+        "actual record Ids" - {
+          "should not be parsed with text values" in {
+            val filter = SearchFilterParser.parse(Seq("filters" -> "id IN 1,5"))
+            filter match {
+              case Success(_) => ()
+              case Failure(t) => t.printStackTrace()
+            }
+            assert(filter === Success(SearchFilterExpr.Atom.NAry(Dimension(None, "id"), In, Seq(Long.box(1), Long.box(5)))))
+          }
+        }
+
         "in" in check {
           val testQueryGen = queryGen(
             dimensionGen = Gen.identifier,

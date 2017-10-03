@@ -13,7 +13,8 @@ final case class ApiNewCriterion(meta: Option[String],
                                  text: Option[String],
                                  isCompound: Option[Boolean],
                                  labels: Seq[ApiCriterionLabel],
-                                 trialId: String) {
+                                 trialId: String,
+                                 inclusion: Option[Boolean]) {
 
   def toDomain = RichCriterion(
     criterion = Criterion(
@@ -21,7 +22,8 @@ final case class ApiNewCriterion(meta: Option[String],
       meta = meta.getOrElse(""),
       trialId = StringId(trialId),
       isCompound = isCompound.getOrElse(false),
-      text = text
+      text = text,
+      inclusion = inclusion
     ),
     armIds = arms.getOrElse(Seq.empty).map(LongId[EligibilityArm]),
     labels = labels.map(_.toDomain(LongId(Long.MaxValue))) // A developer should specify right criterionId himself
@@ -38,6 +40,7 @@ object ApiNewCriterion {
       (JsPath \ "text").formatNullable[String] and
       (JsPath \ "isCompound").formatNullable[Boolean] and
       (JsPath \ "labels").format(seqJsonFormat[ApiCriterionLabel]) and
-      (JsPath \ "trialId").format[String]
+      (JsPath \ "trialId").format[String] and
+      (JsPath \ "inclusion").formatNullable[Boolean]
   )(ApiNewCriterion.apply, unlift(ApiNewCriterion.unapply))
 }

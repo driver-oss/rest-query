@@ -2,6 +2,7 @@ package xyz.driver.pdsuidomain.entities
 
 import java.time.LocalDateTime
 
+import xyz.driver.entities.labels.Label
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuicommon.logging._
 

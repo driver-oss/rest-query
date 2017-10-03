@@ -6,10 +6,11 @@ import akka.NotUsed
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import xyz.driver.core.generators
+import xyz.driver.entities.labels.Label
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
-import xyz.driver.pdsuidomain.entities.{Arm, Criterion, Label, Trial}
+import xyz.driver.pdsuidomain.entities.{Arm, Criterion, Trial}
 import xyz.driver.pdsuidomain.entities.export.trial.{ExportTrialArm, ExportTrialLabelCriterion, ExportTrialWithLabels}
 import xyz.driver.pdsuidomain.services.TrialService
 

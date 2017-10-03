@@ -1,10 +1,11 @@
 package xyz.driver.pdsuidomain.formats.json.label
 
 import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId}
-import xyz.driver.pdsuidomain.entities.{Category, ExtractedData, ExtractedDataLabel, Label}
+import xyz.driver.pdsuidomain.entities.{ExtractedData, ExtractedDataLabel}
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import xyz.driver.entities.labels.{Label, LabelCategory}
 
 final case class ApiExtractedDataLabel(id: Option[Long], categoryId: Option[Long], value: Option[String]) {
 
@@ -12,7 +13,7 @@ final case class ApiExtractedDataLabel(id: Option[Long], categoryId: Option[Long
     id = LongId(0),
     dataId = dataId,
     labelId = id.map(LongId[Label]),
-    categoryId = categoryId.map(LongId[Category]),
+    categoryId = categoryId.map(LongId[LabelCategory]),
     value = value.map(FuzzyValue.fromString)
   )
 }

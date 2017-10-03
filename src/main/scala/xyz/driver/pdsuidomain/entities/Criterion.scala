@@ -1,5 +1,6 @@
 package xyz.driver.pdsuidomain.entities
 
+import xyz.driver.entities.labels.{Label, LabelCategory}
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuidomain.entities.Criterion.Meta.Evidence
@@ -8,9 +9,10 @@ final case class Criterion(id: LongId[Criterion],
                            trialId: StringId[Trial],
                            text: Option[String],
                            isCompound: Boolean,
-                           meta: String) {
+                           meta: String,
+                           inclusion: Option[Boolean]) {
 
-  def isValid(): Boolean = text.nonEmpty && Option(meta).isDefined
+  def isValid: Boolean = text.nonEmpty && Option(meta).isDefined
 }
 
 object Criterion {
@@ -41,7 +43,7 @@ object CriterionArm {
 final case class CriterionLabel(id: LongId[CriterionLabel],
                                 labelId: Option[LongId[Label]],
                                 criterionId: LongId[Criterion],
-                                categoryId: Option[LongId[Category]],
+                                categoryId: Option[LongId[LabelCategory]],
                                 value: Option[Boolean],
                                 isDefining: Boolean)
 

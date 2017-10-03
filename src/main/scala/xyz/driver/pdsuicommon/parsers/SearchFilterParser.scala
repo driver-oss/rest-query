@@ -15,10 +15,7 @@ object SearchFilterParser {
   private object BinaryAtomFromTuple {
     def unapply(input: (SearchFilterExpr.Dimension, (String, Any))): Option[SearchFilterExpr.Atom.Binary] = {
       val (dimensionName, (strOperation, value)) = input
-      val updatedValue = value match {
-        case s: String => s.safeTrim
-        case a         => a
-      }
+      val updatedValue                           = trimIfString(value)
 
       parseOperation(strOperation.toLowerCase).map { op =>
         SearchFilterExpr.Atom.Binary(dimensionName, op, updatedValue.asInstanceOf[AnyRef])
@@ -30,14 +27,23 @@ object SearchFilterParser {
     // Compiler warning: unchecked since it is eliminated by erasure, if we user Seq[String]
     def unapply(input: (SearchFilterExpr.Dimension, (String, Seq[_]))): Option[SearchFilterExpr.Atom.NAry] = {
       val (dimensionName, (strOperation, xs)) = input
+      val updatedValues                       = xs.map(trimIfString)
+
       if (strOperation.toLowerCase == "in") {
-        val values = xs.asInstanceOf[Seq[String]].map(_.safeTrim)
-        Some(SearchFilterExpr.Atom.NAry(dimensionName, SearchFilterNAryOperation.In, values))
+        Some(
+          SearchFilterExpr.Atom
+            .NAry(dimensionName, SearchFilterNAryOperation.In, updatedValues.map(_.asInstanceOf[AnyRef])))
       } else {
         None
       }
     }
   }
+
+  private def trimIfString(value: Any) =
+    value match {
+      case s: String => s.safeTrim
+      case a         => a
+    }
 
   private val operationsMapping = {
     import xyz.driver.pdsuicommon.db.SearchFilterBinaryOperation._
@@ -96,7 +102,7 @@ object SearchFilterParser {
 
   private val nAryValueParser: Parser[String] = P(CharPred(_ != ',').rep(min = 1).!)
 
-  private val longParser: Parser[Long] = P(CharIn('0' to '9').rep(1).!.map(_.toLong))
+  private val longParser: Parser[Long] = P(CharIn('0' to '9').rep(min = 1).!.map(_.toLong))
 
   private val binaryAtomParser: Parser[SearchFilterExpr.Atom.Binary] = P(
     dimensionParser ~ whitespaceParser ~ (
@@ -109,7 +115,8 @@ object SearchFilterParser {
 
   private val nAryAtomParser: Parser[SearchFilterExpr.Atom.NAry] = P(
     dimensionParser ~ whitespaceParser ~ (
-      naryOperatorParser ~/ whitespaceParser ~/ nAryValueParser.!.rep(min = 1, sep = ",")
+      naryOperatorParser ~ whitespaceParser ~
+        (longParser.rep(min = 1, sep = ",") | nAryValueParser.!.rep(min = 1, sep = ","))
     ) ~ End
   ).map {
     case NAryAtomFromTuple(atom) => atom
