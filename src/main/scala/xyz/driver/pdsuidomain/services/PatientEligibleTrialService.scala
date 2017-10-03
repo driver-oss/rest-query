@@ -1,5 +1,6 @@
 package xyz.driver.pdsuidomain.services
 
+import xyz.driver.entities.labels.Label
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterExpr, Sorting}
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}

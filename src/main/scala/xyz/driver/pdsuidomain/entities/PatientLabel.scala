@@ -1,5 +1,6 @@
 package xyz.driver.pdsuidomain.entities
 
+import xyz.driver.entities.labels.Label
 import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, UuidId}
 import xyz.driver.pdsuicommon.logging._
 

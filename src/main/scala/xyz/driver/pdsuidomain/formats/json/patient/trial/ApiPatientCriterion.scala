@@ -3,10 +3,11 @@ package xyz.driver.pdsuidomain.formats.json.patient.trial
 import java.time.{ZoneId, ZonedDateTime}
 
 import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId}
-import xyz.driver.pdsuidomain.entities.{Label, PatientCriterion, PatientCriterionArm}
+import xyz.driver.pdsuidomain.entities.{PatientCriterion, PatientCriterionArm}
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Format, JsPath, Reads, Writes}
+import xyz.driver.entities.labels.Label
 
 final case class ApiPatientCriterion(id: Long,
                                      labelId: Long,

@@ -1,5 +1,6 @@
 package xyz.driver.pdsuidomain.entities
 
+import xyz.driver.entities.labels.{Label, LabelCategory}
 import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, TextJson}
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuidomain.entities.ExtractedData.Meta
@@ -43,5 +44,5 @@ object ExtractedDataLabel {
 final case class ExtractedDataLabel(id: LongId[ExtractedDataLabel],
                                     dataId: LongId[ExtractedData],
                                     labelId: Option[LongId[Label]],
-                                    categoryId: Option[LongId[Category]],
+                                    categoryId: Option[LongId[LabelCategory]],
                                     value: Option[FuzzyValue])

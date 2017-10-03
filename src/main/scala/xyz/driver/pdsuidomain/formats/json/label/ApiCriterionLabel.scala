@@ -1,10 +1,11 @@
 package xyz.driver.pdsuidomain.formats.json.label
 
 import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId}
-import xyz.driver.pdsuidomain.entities.{Category, Criterion, CriterionLabel, Label}
+import xyz.driver.pdsuidomain.entities.{Criterion, CriterionLabel}
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import xyz.driver.entities.labels.{Label, LabelCategory}
 
 /**
   * @param value Yes|No
@@ -18,7 +19,7 @@ final case class ApiCriterionLabel(labelId: Option[Long],
     id = LongId(0L),
     labelId = labelId.map(LongId[Label]),
     criterionId = criterionId,
-    categoryId = categoryId.map(LongId[Category]),
+    categoryId = categoryId.map(LongId[LabelCategory]),
     value = value.map {
       case "Yes" => true
       case "No"  => false

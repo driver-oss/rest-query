@@ -1,8 +1,9 @@
 package xyz.driver.pdsuidomain.entities.export.patient
 
+import xyz.driver.entities.labels.Label
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.logging._
-import xyz.driver.pdsuidomain.entities.{Label, RawPatientLabel}
+import xyz.driver.pdsuidomain.entities.RawPatientLabel
 
 final case class ExportPatientLabel(id: LongId[Label], evidences: List[ExportPatientLabelEvidence])
 
