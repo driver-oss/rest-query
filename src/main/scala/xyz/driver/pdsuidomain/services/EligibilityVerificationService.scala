@@ -2,10 +2,10 @@ package xyz.driver.pdsuidomain.services
 
 import xyz.driver.core.Id
 import xyz.driver.core.rest.AuthorizedServiceRequestContext
-import xyz.driver.entities.patient.CancerType
+import xyz.driver.entities.patient.{CancerType, Patient}
 import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuidomain.entities.eligibility.{MatchedPatient, MismatchRankedLabels}
-import xyz.driver.pdsuidomain.entities.{Arm, Patient}
+import xyz.driver.pdsuidomain.entities.Arm
 
 import scala.concurrent.Future
 import scalaz.ListT

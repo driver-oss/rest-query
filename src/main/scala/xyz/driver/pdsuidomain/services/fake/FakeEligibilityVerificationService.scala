@@ -3,9 +3,10 @@ package xyz.driver.pdsuidomain.services.fake
 import xyz.driver.core.rest.AuthorizedServiceRequestContext
 import xyz.driver.core.{Id, generators}
 import xyz.driver.entities.patient
+import xyz.driver.entities.patient.Patient
 import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuidomain.entities.eligibility.MismatchRankedLabels
-import xyz.driver.pdsuidomain.entities.{Arm, Patient, eligibility}
+import xyz.driver.pdsuidomain.entities.{Arm, eligibility}
 import xyz.driver.pdsuidomain.services.EligibilityVerificationService
 
 import scala.concurrent.Future

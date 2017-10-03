@@ -6,9 +6,10 @@ import spray.json.DefaultJsonProtocol
 import xyz.driver.core.Id
 import xyz.driver.core.rest.{AuthorizedServiceRequestContext, RestService, ServiceTransport}
 import xyz.driver.entities.patient
+import xyz.driver.entities.patient.Patient
 import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuidomain.entities.eligibility.{MatchedPatient, MismatchRankedLabels}
-import xyz.driver.pdsuidomain.entities.{Arm, Patient, eligibility}
+import xyz.driver.pdsuidomain.entities.{Arm, eligibility}
 import xyz.driver.pdsuidomain.services.EligibilityVerificationService
 
 import scala.concurrent.{ExecutionContext, Future}
