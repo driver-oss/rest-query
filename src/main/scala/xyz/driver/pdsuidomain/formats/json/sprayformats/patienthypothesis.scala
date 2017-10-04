@@ -37,11 +37,11 @@ object patienthypothesis {
     new RootJsonWriter[PatientHypothesis] {
       override def write(obj: PatientHypothesis): JsValue = {
         JsObject(
-          "id"                  -> obj.id.toJson,
-          "patientId"           -> obj.patientId.toJson,
-          "hypothesisId"        -> obj.hypothesisId.toJson,
-          "matchedTrials"       -> obj.matchedTrials.toJson,
-          "rationale"           -> obj.rationale.toJson
+          "id"            -> obj.id.toJson,
+          "patientId"     -> obj.patientId.toJson,
+          "hypothesisId"  -> obj.hypothesisId.toJson,
+          "matchedTrials" -> obj.matchedTrials.toJson,
+          "rationale"     -> obj.rationale.toJson
         )
       }
     }

@@ -34,26 +34,6 @@ class PatientLabelFormatSuite extends FlatSpec with Matchers {
     parsedUpdatePatientLabel should be(expectedUpdatedPatientLabel)
   }
 
-  "Json format for PatientLabel" should "read and write correct JSON" in {
-    import patientlabel._
-    val orig = PatientLabel(
-      id = LongId(1),
-      patientId = UuidId("748b5884-3528-4cb9-904b-7a8151d6e343"),
-      labelId = LongId(20),
-      primaryValue = Some(FuzzyValue.Yes),
-      verifiedPrimaryValue = None,
-      isVisible = true,
-      score = 1,
-      isImplicitMatch = false
-    )
-    val writtenJson = patientLabelWriter.write(orig)
-
-    writtenJson should be (
-      """{"id":1,"labelId":20,"primaryValue":"Yes","verifiedPrimaryValue":null,"isVisible":true,
-        "score":1,"isImplicitMatch":false}""".parseJson)
-  }
-
-
   "Json format for PatientLabelEvidence" should "read and write correct JSON" in {
     import patientlabel._
     val orig = PatientLabelEvidenceView(

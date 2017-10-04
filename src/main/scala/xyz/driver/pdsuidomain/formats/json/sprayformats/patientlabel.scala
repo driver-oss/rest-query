@@ -44,20 +44,6 @@ object patientlabel {
     }
   }
 
-  implicit val patientLabelWriter: RootJsonWriter[PatientLabel] = new RootJsonWriter[PatientLabel] {
-    override def write(obj: PatientLabel): JsValue = {
-      JsObject(
-        "id"                   -> obj.id.toJson,
-        "labelId"              -> obj.labelId.toJson,
-        "primaryValue"         -> obj.primaryValue.toJson,
-        "verifiedPrimaryValue" -> obj.verifiedPrimaryValue.toJson,
-        "score"                -> obj.score.toJson,
-        "isImplicitMatch"      -> obj.isImplicitMatch.toJson,
-        "isVisible"            -> obj.isVisible.toJson
-      )
-    }
-  }
-
   implicit val patientLabelEvidenceWriter: RootJsonWriter[PatientLabelEvidenceView] =
     new RootJsonWriter[PatientLabelEvidenceView] {
       override def write(evidence: PatientLabelEvidenceView): JsValue =
