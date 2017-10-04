@@ -19,8 +19,8 @@ object patienthypothesis {
     case _ => deserializationError(s"Expected Json Object as partial PatientHypothesis, but got $json")
   }
 
-  implicit val patientHypothesisWriter: JsonWriter[RichPatientHypothesis] =
-    new JsonWriter[RichPatientHypothesis] {
+  implicit val patientHypothesisWriter: RootJsonWriter[RichPatientHypothesis] =
+    new RootJsonWriter[RichPatientHypothesis] {
       override def write(obj: RichPatientHypothesis): JsValue = {
         JsObject(
           "id"                  -> obj.patientHypothesis.id.toJson,

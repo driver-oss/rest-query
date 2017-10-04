@@ -37,8 +37,8 @@ object patientcriterion {
     override def read(json: JsValue) = json.convertTo[List[JsValue]].map(_.convertTo[DraftPatientCriterion])
   }
 
-  implicit val patientCriterionWriter: JsonWriter[RichPatientCriterion] =
-    new JsonWriter[RichPatientCriterion] {
+  implicit val patientCriterionWriter: RootJsonWriter[RichPatientCriterion] =
+    new RootJsonWriter[RichPatientCriterion] {
       override def write(obj: RichPatientCriterion): JsValue = {
         JsObject(
           "id"            -> obj.patientCriterion.id.toJson,
