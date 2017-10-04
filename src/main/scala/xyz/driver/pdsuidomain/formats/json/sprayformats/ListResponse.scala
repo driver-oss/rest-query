@@ -32,7 +32,7 @@ object ListResponse extends DefaultJsonProtocol {
       override def write(listResponse: ListResponse[T]): JsValue = {
         JsObject(
           itemsField -> JsArray(listResponse.items.map(_.toJson).toVector),
-          metaField -> listResponse.meta.toJson
+          metaField  -> listResponse.meta.toJson
         )
       }
     }
