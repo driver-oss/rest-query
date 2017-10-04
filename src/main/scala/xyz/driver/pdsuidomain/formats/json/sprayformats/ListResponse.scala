@@ -2,7 +2,7 @@ package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import java.time.LocalDateTime
 
-import spray.json.{JsArray, RootJsonFormat, _}
+import spray.json.{RootJsonFormat, _}
 import xyz.driver.pdsuicommon.db.Pagination
 import xyz.driver.pdsuidomain.formats.json.sprayformats.common._
 
@@ -27,11 +27,11 @@ object ListResponse extends DefaultJsonProtocol {
 
   implicit val listResponseMetaFormat: RootJsonFormat[Meta] = jsonFormat4(Meta.apply)
 
-  implicit def listResponseMetaWriter[T: RootJsonWriter]: RootJsonWriter[ListResponse[T]] =
-    new RootJsonWriter[ListResponse[T]] {
+  implicit def listResponseMetaWriter[T: JsonWriter]: JsonWriter[ListResponse[T]] =
+    new JsonWriter[ListResponse[T]] {
       override def write(listResponse: ListResponse[T]): JsValue = {
         JsObject(
-          itemsField -> JsArray(listResponse.items.map(_.toJson).toVector),
+          itemsField -> listResponse.items.map(_.toJson).toJson,
           metaField  -> listResponse.meta.toJson
         )
       }
