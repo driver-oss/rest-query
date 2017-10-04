@@ -26,7 +26,7 @@ object patient {
     }
   }
 
-  implicit val patientWriter: JsonWriter[Patient] = new RootJsonWriter[Patient] {
+  implicit val patientWriter: RootJsonWriter[Patient] = new RootJsonWriter[Patient] {
     override def write(patient: Patient): JsValue =
       JsObject(
         "id"               -> patient.id.toJson,
