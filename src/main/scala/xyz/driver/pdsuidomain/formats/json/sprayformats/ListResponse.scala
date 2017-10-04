@@ -27,8 +27,8 @@ object ListResponse extends DefaultJsonProtocol {
 
   implicit val listResponseMetaFormat: RootJsonFormat[Meta] = jsonFormat4(Meta.apply)
 
-  implicit def listResponseMetaWriter[T: JsonWriter]: JsonWriter[ListResponse[T]] =
-    new JsonWriter[ListResponse[T]] {
+  implicit def listResponseMetaWriter[T: JsonWriter]: RootJsonWriter[ListResponse[T]] =
+    new RootJsonWriter[ListResponse[T]] {
       override def write(listResponse: ListResponse[T]): JsValue = {
         JsObject(
           itemsField -> listResponse.items.map(_.toJson).toJson,
