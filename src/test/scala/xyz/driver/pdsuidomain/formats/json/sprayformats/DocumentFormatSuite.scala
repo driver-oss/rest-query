@@ -24,6 +24,7 @@ class DocumentFormatSuite extends FlatSpec with Matchers {
       typeId = Some(LongId(10)),
       providerName = Some("provider 21"),
       providerTypeId = Some(LongId(21)),
+      institutionName = Some("institution name"),
       requiredType = Some(Document.RequiredType.OPN),
       meta = None,
       startDate = None,
@@ -33,7 +34,7 @@ class DocumentFormatSuite extends FlatSpec with Matchers {
 
     writtenJson should be (
       """{"id":1,"recordId":101,"physician":"physician","typeId":10,"provider":"provider 21","providerTypeId":21,
-         "requiredType":"OPN","startDate":null,"endDate":null,"status":"New","assignee":null,"previousStatus":null,
+         "requiredType":"OPN","institutionName":"institution name","startDate":null,"endDate":null,"status":"New","assignee":null,"previousStatus":null,
          "previousAssignee":null,"lastActiveUser":null,"lastUpdate":"2017-08-10T18:00Z","meta":null}""".parseJson)
 
     val createDocumentJson =
@@ -41,7 +42,8 @@ class DocumentFormatSuite extends FlatSpec with Matchers {
     val expectedCreatedDocument = orig.copy(
       id = LongId(0),
       lastUpdate = LocalDateTime.MIN,
-      requiredType = None
+      requiredType = None,
+      institutionName = None
     )
     val parsedCreatedDocument = documentFormat.read(createDocumentJson)
     parsedCreatedDocument should be(expectedCreatedDocument)

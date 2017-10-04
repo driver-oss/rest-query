@@ -78,6 +78,7 @@ class DocumentSuite extends BaseSuite {
       providerName = Some("etst"),
       providerTypeId = Some(LongId(123)),
       requiredType = None,
+      institutionName = Some("institution name"),
       startDate = Some(lastUpdate.toLocalDate.minusDays(2)),
       endDate = None,
       lastUpdate = lastUpdate,
