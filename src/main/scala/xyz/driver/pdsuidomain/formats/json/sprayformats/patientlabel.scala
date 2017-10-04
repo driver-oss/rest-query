@@ -29,7 +29,7 @@ object patientlabel {
     case _ => deserializationError(s"Expected Json Object as PatientLabel, but got $json")
   }
 
-  implicit val patientLabelWriter: RootJsonWriter[RichPatientLabel] = new RootJsonWriter[RichPatientLabel] {
+  implicit val richPatientLabelWriter: RootJsonWriter[RichPatientLabel] = new RootJsonWriter[RichPatientLabel] {
     override def write(obj: RichPatientLabel): JsValue = {
       JsObject(
         "id"                   -> obj.patientLabel.id.toJson,
@@ -40,6 +40,20 @@ object patientlabel {
         "isImplicitMatch"      -> obj.patientLabel.isImplicitMatch.toJson,
         "isVisible"            -> obj.patientLabel.isVisible.toJson,
         "isVerified"           -> obj.isVerified.toJson
+      )
+    }
+  }
+
+  implicit val patientLabelWriter: RootJsonWriter[PatientLabel] = new RootJsonWriter[PatientLabel] {
+    override def write(obj: PatientLabel): JsValue = {
+      JsObject(
+        "id"                   -> obj.id.toJson,
+        "labelId"              -> obj.labelId.toJson,
+        "primaryValue"         -> obj.primaryValue.toJson,
+        "verifiedPrimaryValue" -> obj.verifiedPrimaryValue.toJson,
+        "score"                -> obj.score.toJson,
+        "isImplicitMatch"      -> obj.isImplicitMatch.toJson,
+        "isVisible"            -> obj.isVisible.toJson
       )
     }
   }
