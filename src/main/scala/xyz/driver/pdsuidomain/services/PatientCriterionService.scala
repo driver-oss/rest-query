@@ -90,8 +90,7 @@ object PatientCriterionService {
   object UpdateReply {
     type Error = UpdateReply with DomainError
 
-    final case class Updated(x: PatientCriterion, labelId: LongId[Label], armList: List[PatientCriterionArm])
-        extends UpdateReply
+    final case class Updated(x: RichPatientCriterion) extends UpdateReply
 
     case object UpdatedList extends UpdateReply
 
