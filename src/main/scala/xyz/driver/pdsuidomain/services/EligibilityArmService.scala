@@ -118,7 +118,7 @@ trait EligibilityArmService {
           implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
   def getBySlotId(armId: LongId[EligibilityArm])(
-    implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+    implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
   def create(slotArmId: LongId[SlotArm], draftEligibilityArm: EligibilityArmWithDiseases)(
           implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
