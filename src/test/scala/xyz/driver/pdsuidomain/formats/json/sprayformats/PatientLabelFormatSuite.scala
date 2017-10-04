@@ -6,6 +6,7 @@ import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
 import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, UuidId}
 import xyz.driver.pdsuidomain.entities.{PatientLabel, PatientLabelEvidenceView}
+import xyz.driver.pdsuidomain.services.PatientLabelService.RichPatientLabel
 
 class PatientLabelFormatSuite extends FlatSpec with Matchers {
 
@@ -21,7 +22,7 @@ class PatientLabelFormatSuite extends FlatSpec with Matchers {
       score = 1,
       isImplicitMatch = false
     )
-    val writtenJson = patientLabelWriter.write((orig, true))
+    val writtenJson = patientLabelWriter.write(RichPatientLabel(orig, true))
 
     writtenJson should be (
       """{"id":1,"labelId":20,"primaryValue":"Yes","verifiedPrimaryValue":null,"isVisible":true,"isVerified":true,

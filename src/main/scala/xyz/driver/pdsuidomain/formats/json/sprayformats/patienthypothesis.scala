@@ -2,6 +2,7 @@ package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import spray.json._
 import xyz.driver.pdsuidomain.entities._
+import xyz.driver.pdsuidomain.services.PatientHypothesisService.RichPatientHypothesis
 
 object patienthypothesis {
   import DefaultJsonProtocol._
@@ -18,18 +19,16 @@ object patienthypothesis {
     case _ => deserializationError(s"Expected Json Object as partial PatientHypothesis, but got $json")
   }
 
-  implicit val patientHypothesisWriter: JsonWriter[(PatientHypothesis, Boolean)] =
-    new JsonWriter[(PatientHypothesis, Boolean)] {
-      override def write(obj: (PatientHypothesis, Boolean)): JsValue = {
-        val patientHypothesis   = obj._1
-        val isRationaleRequired = obj._2
+  implicit val patientHypothesisWriter: JsonWriter[RichPatientHypothesis] =
+    new JsonWriter[RichPatientHypothesis] {
+      override def write(obj: RichPatientHypothesis): JsValue = {
         JsObject(
-          "id"                  -> patientHypothesis.id.toJson,
-          "patientId"           -> patientHypothesis.patientId.toJson,
-          "hypothesisId"        -> patientHypothesis.hypothesisId.toJson,
-          "matchedTrials"       -> patientHypothesis.matchedTrials.toJson,
-          "rationale"           -> patientHypothesis.rationale.toJson,
-          "isRationaleRequired" -> isRationaleRequired.toJson
+          "id"                  -> obj.patientHypothesis.id.toJson,
+          "patientId"           -> obj.patientHypothesis.patientId.toJson,
+          "hypothesisId"        -> obj.patientHypothesis.hypothesisId.toJson,
+          "matchedTrials"       -> obj.patientHypothesis.matchedTrials.toJson,
+          "rationale"           -> obj.patientHypothesis.rationale.toJson,
+          "isRationaleRequired" -> obj.isRequired.toJson
         )
       }
     }

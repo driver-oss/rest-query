@@ -4,6 +4,7 @@ import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
 import xyz.driver.pdsuicommon.domain.UuidId
 import xyz.driver.pdsuidomain.entities.PatientHypothesis
+import xyz.driver.pdsuidomain.services.PatientHypothesisService.RichPatientHypothesis
 
 class PatientHypothesisFormatSuite extends FlatSpec with Matchers {
   import patienthypothesis._
@@ -16,7 +17,7 @@ class PatientHypothesisFormatSuite extends FlatSpec with Matchers {
       rationale = None,
       matchedTrials = 1
     )
-    val writtenJson = patientHypothesisWriter.write((orig, true))
+    val writtenJson = patientHypothesisWriter.write(RichPatientHypothesis(orig, true))
 
     writtenJson should be (
       """{"id":"815d9715-1089-4775-b120-3afb983b9a97","patientId":"748b5884-3528-4cb9-904b-7a8151d6e343",
