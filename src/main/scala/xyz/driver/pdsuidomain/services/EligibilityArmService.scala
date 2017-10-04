@@ -5,7 +5,7 @@ import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.error.DomainError
 import xyz.driver.pdsuicommon.logging._
-import xyz.driver.pdsuidomain.entities.{EligibilityArm, EligibilityArmWithDiseases}
+import xyz.driver.pdsuidomain.entities.{EligibilityArm, EligibilityArmWithDiseases, SlotArm}
 
 import scala.concurrent.Future
 
@@ -114,10 +114,13 @@ trait EligibilityArmService {
              pagination: Option[Pagination] = None)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
-  def getById(armId: LongId[EligibilityArm])(
+  def getByEligibilityId(armId: LongId[EligibilityArm])(
           implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
-  def create(draftEligibilityArm: EligibilityArmWithDiseases)(
+  def getBysSlotId(armId: LongId[EligibilityArm])(
+    implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+
+  def create(slotArmId: LongId[SlotArm], draftEligibilityArm: EligibilityArmWithDiseases)(
           implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
 
   def update(origEligibilityArm: EligibilityArmWithDiseases, draftEligibilityArm: EligibilityArmWithDiseases)(
