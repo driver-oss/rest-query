@@ -19,6 +19,10 @@ object EligibilityArmService {
     def userMessage: String = "EligibilityArm not found"
   }
 
+  trait SlotArmNotFoundError {
+    def userMessage: String = "SlotArm not found"
+  }
+
   sealed trait GetByIdReply
   object GetByIdReply {
 
@@ -77,6 +81,8 @@ object EligibilityArmService {
 
     case object AuthorizationError
         extends CreateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+
+    case object NotFoundError extends CreateReply with SlotArmNotFoundError with DomainError.NotFoundError
 
     final case class CommonError(userMessage: String) extends CreateReply with DomainError
 
