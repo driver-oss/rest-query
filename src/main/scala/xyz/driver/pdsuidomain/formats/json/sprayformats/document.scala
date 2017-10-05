@@ -40,7 +40,7 @@ object document {
           .fromString(name)
           .getOrElse(deserializationError(s"Unknown document type: $name"))
 
-      case _ => deserializationError(s"Expected Json Object as Intervention type, but got $json")
+      case _ => deserializationError(s"Expected Json Object as Document type, but got $json")
     }
 
     override def write(obj: DocumentType) =

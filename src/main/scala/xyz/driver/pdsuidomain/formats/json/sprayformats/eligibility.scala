@@ -21,7 +21,7 @@ object eligibility {
   implicit val clinicalDocumentFormat: RootJsonFormat[ClinicalEvidenceDocument] = jsonFormat7(ClinicalEvidenceDocument)
 
   implicit val evidenceDocumentFormat: RootJsonFormat[EvidenceDocument] =
-    GadtJsonFormat.create[EvidenceDocument]("documentType") {
+    GadtJsonFormat.create[EvidenceDocument]("evidenceDocumentType") {
       case _: MolecularEvidenceDocument => "Molecular"
       case _: ClinicalEvidenceDocument  => "Clinical"
     } {
