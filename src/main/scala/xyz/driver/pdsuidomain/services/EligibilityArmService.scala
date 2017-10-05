@@ -117,7 +117,10 @@ trait EligibilityArmService {
   def getByEligibilityId(armId: LongId[EligibilityArm])(
           implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
-  def getBySlotId(armId: LongId[SlotArm])(
+  def getBySlotId(armId: LongId[SlotArm],
+                  filter: SearchFilterExpr = SearchFilterExpr.Empty,
+                  sorting: Option[Sorting] = None,
+                  pagination: Option[Pagination] = None)(
     implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
   def create(slotArmId: LongId[SlotArm], draftEligibilityArm: EligibilityArmWithDiseases)(
