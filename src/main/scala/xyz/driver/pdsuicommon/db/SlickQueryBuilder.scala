@@ -44,14 +44,6 @@ object SlickQueryBuilder {
       pp.setObject(v, JDBCType.BINARY.getVendorTypeNumber)
     }
   }
-
-  implicit object SetListQueryParameter extends SetParameter[Seq[AnyRef]] {
-    def apply(vList: Seq[AnyRef], pp: PositionedParameters) = {
-      vList.foreach { v =>
-        pp.setObject(v, JDBCType.BINARY.getVendorTypeNumber)
-      }
-    }
-  }
 }
 
 final case class SlickTableLink(keyColumnName: String, foreignTableName: String, foreignKeyColumnName: String)
@@ -189,6 +181,16 @@ sealed trait SlickQueryBuilderParameters {
       } else sql
     }
 
+    def concatenateParameters(sql: SQLActionBuilder, first: Boolean, tail: Seq[AnyRef]): SQLActionBuilder = {
+      if (tail.nonEmpty) {
+        if (!first) {
+          concatenateParameters(sql concat sql""",${tail.head}""", false, tail.tail)
+        } else {
+          concatenateParameters(sql"""(${tail.head}""", false, tail.tail)
+        }
+      } else sql concat sql")"
+    }
+
     filter match {
       case x if isEmpty(x) =>
         sql""
@@ -231,8 +233,7 @@ sealed trait SlickQueryBuilderParameters {
         }
 
         val formattedValues = if (values.nonEmpty) {
-          val condition = s"(${values})"
-          sql"#${condition}"
+          concatenateParameters(sql"", true, values)
         } else sql"NULL"
         sql"#${escapeDimension(dimension)}" concat sqlOp concat formattedValues
 
