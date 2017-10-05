@@ -1,6 +1,6 @@
 package xyz.driver.pdsuicommon.db
 
-import java.sql.PreparedStatement
+import java.sql.{JDBCType, PreparedStatement}
 import java.time.LocalDateTime
 
 import slick.jdbc.{JdbcProfile, PositionedParameters, SQLActionBuilder, SetParameter}
@@ -36,6 +36,20 @@ object SlickQueryBuilder {
           b.unitPConv.apply(p, pp)
         }
       })
+    }
+  }
+
+  implicit object SetQueryParameter extends SetParameter[AnyRef] {
+    def apply(v: AnyRef, pp: PositionedParameters) = {
+      pp.setObject(v, JDBCType.BINARY.getVendorTypeNumber)
+    }
+  }
+
+  implicit object SetListQueryParameter extends SetParameter[Seq[AnyRef]] {
+    def apply(vList: Seq[AnyRef], pp: PositionedParameters) = {
+      vList.foreach { v =>
+        pp.setObject(v, JDBCType.BINARY.getVendorTypeNumber)
+      }
     }
   }
 }
@@ -196,7 +210,7 @@ sealed trait SlickQueryBuilderParameters {
         // So, to handle NotEq for nullable fields we need to use more complex SQL expression.
         // http://dev.mysql.com/doc/refman/5.7/en/working-with-null.html
         val escapedColumn = escapeDimension(dimension)
-        sql"(#${escapedColumn} is null or #${escapedColumn} != ${value.toString})"
+        sql"(#${escapedColumn} is null or #${escapedColumn} != $value)"
 
       case Atom.Binary(dimension, op, value) =>
         val operator = op match {
@@ -208,7 +222,7 @@ sealed trait SlickQueryBuilderParameters {
           case Lt    => sql"<"
           case LtEq  => sql"<="
         }
-        sql"#${escapeDimension(dimension)}" concat operator concat sql"""${value.toString}"""
+        sql"#${escapeDimension(dimension)}" concat operator concat sql"""$value"""
 
       case Atom.NAry(dimension, op, values) =>
         val sqlOp = op match {
@@ -217,7 +231,7 @@ sealed trait SlickQueryBuilderParameters {
         }
 
         val formattedValues = if (values.nonEmpty) {
-          val condition = s"(${values.map(v => "'" + v.toString + "'").mkString(",")})"
+          val condition = s"(${values})"
           sql"#${condition}"
         } else sql"NULL"
         sql"#${escapeDimension(dimension)}" concat sqlOp concat formattedValues
