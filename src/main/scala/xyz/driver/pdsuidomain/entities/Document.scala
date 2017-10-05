@@ -419,6 +419,8 @@ object Document {
 
       providerTypeId <- Validators.nonEmpty("providerTypeId")(input.providerTypeId)
 
+      institutionName <- Validators.nonEmpty("institutionName")(input.institutionName)
+
       meta <- Validators.nonEmpty("meta")(input.meta)
 
       startDate <- Validators.nonEmpty("startDate")(input.startDate)
@@ -456,6 +458,7 @@ final case class Document(id: LongId[Document] = LongId(0L),
                           providerName: Option[String], // not null
                           providerTypeId: Option[LongId[ProviderType]], // not null
                           requiredType: Option[Document.RequiredType],
+                          institutionName: Option[String],
                           meta: Option[TextJson[Meta]], // not null
                           startDate: Option[LocalDate], // not null
                           endDate: Option[LocalDate],

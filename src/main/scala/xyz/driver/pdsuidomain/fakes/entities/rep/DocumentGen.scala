@@ -68,6 +68,7 @@ object DocumentGen {
       providerName = nextOption(nextString()),
       providerTypeId = nextOption(nextLongId[ProviderType]),
       requiredType = nextOption(nextDocumentRequiredType()),
+      institutionName = nextOption(nextString()),
       meta = nextOption(nextDocumentMetaJson()),
       startDate = dates._1,
       endDate = dates._2,
