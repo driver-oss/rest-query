@@ -1,10 +1,9 @@
 package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import spray.json._
-import xyz.driver.entities.labels.Label
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId}
+import xyz.driver.pdsuicommon.domain.FuzzyValue
 import xyz.driver.pdsuidomain.entities._
-import xyz.driver.pdsuidomain.services.PatientCriterionService.DraftPatientCriterion
+import xyz.driver.pdsuidomain.services.PatientCriterionService.{DraftPatientCriterion, RichPatientCriterion}
 
 object patientcriterion {
   import DefaultJsonProtocol._
@@ -38,30 +37,27 @@ object patientcriterion {
     override def read(json: JsValue) = json.convertTo[List[JsValue]].map(_.convertTo[DraftPatientCriterion])
   }
 
-  implicit val patientCriterionWriter: JsonWriter[(PatientCriterion, LongId[Label], List[PatientCriterionArm])] =
-    new JsonWriter[(PatientCriterion, LongId[Label], List[PatientCriterionArm])] {
-      override def write(obj: (PatientCriterion, LongId[Label], List[PatientCriterionArm])): JsValue = {
-        val criterion = obj._1
-        val labelId   = obj._2
-        val arms      = obj._3
+  implicit val patientCriterionWriter: RootJsonWriter[RichPatientCriterion] =
+    new RootJsonWriter[RichPatientCriterion] {
+      override def write(obj: RichPatientCriterion): JsValue = {
         JsObject(
-          "id"            -> criterion.id.toJson,
-          "labelId"       -> labelId.toJson,
-          "nctId"         -> criterion.nctId.toJson,
-          "criterionId"   -> criterion.criterionId.toJson,
-          "criterionText" -> criterion.criterionText.toJson,
-          "criterionValue" -> criterion.criterionValue.map {
+          "id"            -> obj.patientCriterion.id.toJson,
+          "labelId"       -> obj.labelId.toJson,
+          "nctId"         -> obj.patientCriterion.nctId.toJson,
+          "criterionId"   -> obj.patientCriterion.criterionId.toJson,
+          "criterionText" -> obj.patientCriterion.criterionText.toJson,
+          "criterionValue" -> obj.patientCriterion.criterionValue.map {
             case true  => "Yes"
             case false => "No"
           }.toJson,
-          "criterionIsDefining"       -> criterion.criterionIsDefining.toJson,
-          "criterionIsCompound"       -> criterion.criterionValue.isEmpty.toJson,
-          "arms"                      -> arms.map(_.armName).toJson,
-          "eligibilityStatus"         -> criterion.eligibilityStatus.toJson,
-          "verifiedEligibilityStatus" -> criterion.verifiedEligibilityStatus.toJson,
-          "isVerified"                -> criterion.isVerified.toJson,
-          "isVisible"                 -> criterion.isVisible.toJson,
-          "lastUpdate"                -> criterion.lastUpdate.toJson
+          "criterionIsDefining"       -> obj.patientCriterion.criterionIsDefining.toJson,
+          "criterionIsCompound"       -> obj.patientCriterion.criterionValue.isEmpty.toJson,
+          "arms"                      -> obj.armList.map(_.armName).toJson,
+          "eligibilityStatus"         -> obj.patientCriterion.eligibilityStatus.toJson,
+          "verifiedEligibilityStatus" -> obj.patientCriterion.verifiedEligibilityStatus.toJson,
+          "isVerified"                -> obj.patientCriterion.isVerified.toJson,
+          "isVisible"                 -> obj.patientCriterion.isVisible.toJson,
+          "lastUpdate"                -> obj.patientCriterion.lastUpdate.toJson
         )
       }
     }
