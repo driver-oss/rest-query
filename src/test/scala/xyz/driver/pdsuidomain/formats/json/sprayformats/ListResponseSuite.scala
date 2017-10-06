@@ -80,8 +80,6 @@ class ListResponseSuite extends FlatSpec with Matchers {
       lastUpdate = LocalDateTime.parse("2017-08-10T18:00:00"),
       physician = Some("physician"),
       meta = None,
-      predictedMeta = None,
-      predictedDocuments = None,
       disease = "Breast",
       requestId = RecordRequestId(UUID.fromString("7b54a75d-4197-4b27-9045-b9b6cb131be9")),
       caseId = None,

@@ -49,28 +49,24 @@ class DocumentFormatSuite extends FlatSpec with Matchers {
     parsedCreatedDocument should be(expectedCreatedDocument)
 
     val updateDocumentJson =
-      """{"startDate":"2017-08-10","endDate":"2018-08-10","meta":{"predicted":true,"startPage":1.0,"endPage":2.0}}""".parseJson
+      """{"startDate":"2017-08-10","endDate":"2018-08-10","meta":{"startPage":1.0,"endPage":2.0}}""".parseJson
     val expectedUpdatedDocument = orig.copy(
       startDate = Some(LocalDate.parse("2017-08-10")),
       endDate = Some(LocalDate.parse("2018-08-10")),
-      meta = Some(TextJson(Document.Meta(predicted = Some(true), startPage = 1.0, endPage = 2.0)))
+      meta = Some(TextJson(Document.Meta(startPage = 1.0, endPage = 2.0)))
     )
     val parsedUpdatedDocument = applyUpdateToDocument(updateDocumentJson, orig)
     parsedUpdatedDocument should be(expectedUpdatedDocument)
   }
 
   "Json format for Document.Meta" should "read and write correct JSON" in {
-    val meta = Document.Meta(predicted = None, startPage = 1.0, endPage = 2.0)
+    val meta = Document.Meta(startPage = 1.0, endPage = 2.0)
     val writtenJson = documentMetaFormat.write(meta)
     writtenJson should be ("""{"startPage":1.0,"endPage":2.0}""".parseJson)
 
-    val metaJsonWithoutPredicted = """{"startPage":1.0,"endPage":2.0}""".parseJson
-    val parsedMetaWithoutPredicted = documentMetaFormat.read(metaJsonWithoutPredicted)
-    parsedMetaWithoutPredicted should be(meta)
-
-    val metaJsonWithPredicted = """{"predicted":true,"startPage":1.0,"endPage":2.0}""".parseJson
-    val parsedMetaWithPredicted = documentMetaFormat.read(metaJsonWithPredicted)
-    parsedMetaWithPredicted should be(meta.copy(predicted = Some(true)))
+    val metaJson = """{"startPage":1.0,"endPage":2.0}""".parseJson
+    val parsedMeta = documentMetaFormat.read(metaJson)
+    parsedMeta should be(meta)
   }
 
 }

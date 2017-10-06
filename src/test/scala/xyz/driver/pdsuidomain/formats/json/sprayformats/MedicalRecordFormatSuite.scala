@@ -23,8 +23,6 @@ class MedicalRecordFormatSuite extends FlatSpec with Matchers {
       lastUpdate = LocalDateTime.parse("2017-08-10T18:00:00"),
       physician = Some("physician"),
       meta = None,
-      predictedMeta = None,
-      predictedDocuments = None,
       disease = "Breast",
       requestId = RecordRequestId(UUID.fromString("7b54a75d-4197-4b27-9045-b9b6cb131be9")),
       caseId = None,
@@ -52,22 +50,20 @@ class MedicalRecordFormatSuite extends FlatSpec with Matchers {
       caseId = None,
       physician = None,
       meta = None,
-      predictedMeta = None,
-      predictedDocuments = None,
       lastUpdate = LocalDateTime.now()
     )
     val parsedCreatedRecord = recordFormat.read(createRecordJson).copy(lastUpdate = expectedCreatedRecord.lastUpdate)
     parsedCreatedRecord should be(expectedCreatedRecord)
 
     val updateRecordJson =
-      """{"meta":[{"type":"duplicate","predicted":true,"startPage":1.0,"endPage":2.0,"startOriginalPage":1.0},
+      """{"meta":[{"type":"duplicate","startPage":1.0,"endPage":2.0,"startOriginalPage":1.0},
         {"type":"reorder","items":[1,2]},
         {"type":"rotation","items":{"item1":1,"item2":2}}]}""".parseJson
     val expectedUpdatedRecord = orig.copy(
       meta = Some(TextJson(List(
-        Meta.Duplicate(predicted = Some(true), startPage = 1.0, endPage = 2.0, startOriginalPage = 1.0, endOriginalPage = None),
-        Meta.Reorder(predicted = None, items = Seq(1, 2)),
-        Meta.Rotation(predicted = None, items = Map("item1" -> 1, "item2" -> 2))
+        Meta.Duplicate(startPage = 1.0, endPage = 2.0, startOriginalPage = 1.0, endOriginalPage = None),
+        Meta.Reorder(Seq(1, 2)),
+        Meta.Rotation(Map("item1" -> 1, "item2" -> 2))
       )))
     )
     val parsedUpdatedRecord = applyUpdateToMedicalRecord(updateRecordJson, orig)

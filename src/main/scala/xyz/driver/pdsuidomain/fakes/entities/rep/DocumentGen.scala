@@ -40,12 +40,7 @@ object DocumentGen {
 
   def nextDocumentMeta(): Document.Meta = {
     val (startPage, endPage) = nextStartAndEndPage()
-
-    Document.Meta(
-      nextOption(nextBoolean()),
-      startPage,
-      endPage
-    )
+    Document.Meta(startPage, endPage)
   }
 
   def nextDocumentMetaJson(): TextJson[Document.Meta] = {
