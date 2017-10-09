@@ -5,6 +5,7 @@ import xyz.driver.entities.labels.Label
 import xyz.driver.pdsuidomain.entities.{Arm, Criterion}
 import xyz.driver.pdsuidomain.entities.export.patient._
 import xyz.driver.pdsuidomain.entities.export.trial.{ExportTrialArm, ExportTrialLabelCriterion, ExportTrialWithLabels}
+import xyz.driver.formats.json.labels._
 
 object export {
   import DefaultJsonProtocol._

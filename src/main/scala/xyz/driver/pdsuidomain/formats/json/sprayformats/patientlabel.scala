@@ -1,9 +1,10 @@
 package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import spray.json._
-import xyz.driver.pdsuicommon.domain.FuzzyValue
+import xyz.driver.entities.labels.LabelValue
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.PatientLabelService.RichPatientLabel
+import xyz.driver.formats.json.labels._
 
 object patientlabel {
   import DefaultJsonProtocol._
@@ -13,12 +14,12 @@ object patientlabel {
     case JsObject(fields) =>
       val primaryValue = fields
         .get("primaryValue")
-        .map(_.convertTo[Option[FuzzyValue]])
+        .map(_.convertTo[Option[LabelValue]])
         .getOrElse(orig.primaryValue)
 
       val verifiedPrimaryValue = fields
         .get("verifiedPrimaryValue")
-        .map(_.convertTo[Option[FuzzyValue]])
+        .map(_.convertTo[Option[LabelValue]])
         .getOrElse(orig.verifiedPrimaryValue)
 
       orig.copy(

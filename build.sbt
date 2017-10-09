@@ -19,7 +19,7 @@ lazy val core = (project in file("."))
     "org.davidbild"                     %% "tristate-core"          % "0.2.0",
     "org.davidbild"                     %% "tristate-play"          % "0.2.0" exclude ("com.typesafe.play", "play-json"),
     "xyz.driver"                        %% "core"                   % "1.2.1",
-    "xyz.driver"                        %% "domain-model"           % "0.17.5",
+    "xyz.driver"                        %% "domain-model"           % "0.17.8",
     "ch.qos.logback"                    % "logback-classic"         % "1.1.7",
     "com.fasterxml.jackson.datatype"    % "jackson-datatype-jsr310" % "2.8.4",
     "com.github.spullara.mustache.java" % "scala-extensions-2.11"   % "0.9.4",

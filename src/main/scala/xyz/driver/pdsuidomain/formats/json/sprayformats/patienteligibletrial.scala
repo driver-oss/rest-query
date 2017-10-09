@@ -3,6 +3,7 @@ package xyz.driver.pdsuidomain.formats.json.sprayformats
 import spray.json._
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.PatientEligibleTrialService.RichPatientEligibleTrial
+import xyz.driver.formats.json.labels._
 
 object patienteligibletrial {
   import DefaultJsonProtocol._

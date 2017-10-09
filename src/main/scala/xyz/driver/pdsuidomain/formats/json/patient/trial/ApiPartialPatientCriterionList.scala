@@ -1,10 +1,11 @@
 package xyz.driver.pdsuidomain.formats.json.patient.trial
 
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId}
+import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuidomain.entities.PatientCriterion
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Format, JsPath, Reads, Writes}
+import xyz.driver.entities.labels.LabelValue
 import xyz.driver.pdsuidomain.services.PatientCriterionService.DraftPatientCriterion
 
 final case class ApiPartialPatientCriterionList(id: Long,
@@ -13,7 +14,7 @@ final case class ApiPartialPatientCriterionList(id: Long,
 
   def toDomain: DraftPatientCriterion = DraftPatientCriterion(
     id = LongId[PatientCriterion](id),
-    eligibilityStatus = eligibilityStatus.map(FuzzyValue.fromString),
+    eligibilityStatus = eligibilityStatus.flatMap(LabelValue.fromString),
     isVerified = isVerified
   )
 }
@@ -26,8 +27,8 @@ object ApiPartialPatientCriterionList {
         Reads
           .of[String]
           .filter(ValidationError("unknown eligibility status"))({
-            case x if FuzzyValue.fromString.isDefinedAt(x) => true
-            case _                                         => false
+            case x if LabelValue.fromString(x).isDefined => true
+            case _                                       => false
           }),
         Writes.of[String]
       )) and

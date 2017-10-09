@@ -3,7 +3,7 @@ package xyz.driver.pdsuidomain.fakes.entities
 import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 import xyz.driver.core.generators.{nextDouble, nextOption}
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, StringId, UuidId}
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuidomain.entities.{Trial, TrialHistory}
 
 import scala.util.Random
@@ -51,9 +51,6 @@ object common {
 
     ranges.map(_._1) -> ranges.flatMap(_._2)
   }
-
-  def nextFuzzyValue(): FuzzyValue =
-    generators.oneOf[FuzzyValue](FuzzyValue.All)
 
   def nextStartAndEndPages: (Option[Double], Option[Double]) =
     genBoundedRangeOption[Double](nextDouble(), nextDouble())

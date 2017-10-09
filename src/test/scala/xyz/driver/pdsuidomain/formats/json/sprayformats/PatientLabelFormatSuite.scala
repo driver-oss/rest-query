@@ -4,7 +4,8 @@ import java.time.LocalDate
 
 import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, UuidId}
+import xyz.driver.entities.labels.LabelValue
+import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuidomain.entities.{PatientLabel, PatientLabelEvidenceView}
 import xyz.driver.pdsuidomain.services.PatientLabelService.RichPatientLabel
 
@@ -16,7 +17,7 @@ class PatientLabelFormatSuite extends FlatSpec with Matchers {
       id = LongId(1),
       patientId = UuidId("748b5884-3528-4cb9-904b-7a8151d6e343"),
       labelId = LongId(20),
-      primaryValue = Some(FuzzyValue.Yes),
+      primaryValue = Some(LabelValue.Yes),
       verifiedPrimaryValue = None,
       isVisible = true,
       score = 1,
@@ -29,7 +30,7 @@ class PatientLabelFormatSuite extends FlatSpec with Matchers {
         "score":1,"isImplicitMatch":false}""".parseJson)
 
     val updatePatientLabelJson = """{"verifiedPrimaryValue":"No"}""".parseJson
-    val expectedUpdatedPatientLabel = orig.copy(verifiedPrimaryValue = Some(FuzzyValue.No))
+    val expectedUpdatedPatientLabel = orig.copy(verifiedPrimaryValue = Some(LabelValue.No))
     val parsedUpdatePatientLabel = applyUpdateToPatientLabel(updatePatientLabelJson, orig)
     parsedUpdatePatientLabel should be(expectedUpdatedPatientLabel)
   }
@@ -38,7 +39,7 @@ class PatientLabelFormatSuite extends FlatSpec with Matchers {
     import patientlabel._
     val orig = PatientLabelEvidenceView(
       id = LongId(1),
-      value = FuzzyValue.Maybe,
+      value = LabelValue.Maybe,
       evidenceText = "evidence text",
       documentId = Some(LongId(21)),
       evidenceId = Some(LongId(10)),
@@ -63,8 +64,8 @@ class PatientLabelFormatSuite extends FlatSpec with Matchers {
       id = LongId(1),
       patientId = UuidId("748b5884-3528-4cb9-904b-7a8151d6e343"),
       labelId = LongId(20),
-      primaryValue = Some(FuzzyValue.Yes),
-      verifiedPrimaryValue = Some(FuzzyValue.Yes),
+      primaryValue = Some(LabelValue.Yes),
+      verifiedPrimaryValue = Some(LabelValue.Yes),
       isVisible = true,
       score = 1,
       isImplicitMatch = false

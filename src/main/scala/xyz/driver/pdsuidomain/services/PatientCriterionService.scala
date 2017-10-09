@@ -2,7 +2,7 @@ package xyz.driver.pdsuidomain.services
 
 import java.time.LocalDateTime
 
-import xyz.driver.entities.labels.Label
+import xyz.driver.entities.labels.{Label, LabelValue}
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
@@ -15,7 +15,7 @@ import scala.concurrent.Future
 object PatientCriterionService {
 
   final case class DraftPatientCriterion(id: LongId[PatientCriterion],
-                                         eligibilityStatus: Option[FuzzyValue],
+                                         eligibilityStatus: Option[LabelValue],
                                          isVerified: Option[Boolean]) {
     def applyTo(orig: PatientCriterion) = {
       orig.copy(
