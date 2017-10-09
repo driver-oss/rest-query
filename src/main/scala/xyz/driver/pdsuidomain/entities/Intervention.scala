@@ -208,8 +208,7 @@ final case class Intervention(id: LongId[Intervention],
                               isActive: Boolean,
                               deliveryMethod: Option[String]) {
   def deliveryMethodIsCorrect: Boolean = {
-    if (this.typeId.nonEmpty) {
-      this.deliveryMethod.nonEmpty &&
+    if (this.typeId.nonEmpty && this.deliveryMethod.nonEmpty) {
       InterventionType.All
         .getOrElse(this.typeId.get, throw new IllegalArgumentException(s"Not found Intervention type ${this.typeId}"))
         .deliveryMethods
