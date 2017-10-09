@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 import akka.NotUsed
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
+import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.StringId
@@ -108,10 +109,10 @@ trait TrialService {
 
   def getById(id: StringId[Trial])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
-  def getTrialWithLabels(trialId: StringId[Trial], condition: String)(
+  def getTrialWithLabels(trialId: StringId[Trial], cancerType: CancerType)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetTrialWithLabelsReply]
 
-  def getTrialsWithLabels(condition: String)(
+  def getTrialsWithLabels(cancerType: CancerType)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetTrialsWithLabelsReply]
 
   def getPdfSource(trialId: StringId[Trial])(

@@ -107,7 +107,7 @@ class ExportFormatSuite extends FlatSpec with Matchers {
     val trialWithLabels = ExportTrialWithLabels(
       nctId = StringId("NCT000001"),
       trialId = UuidId("40892a07-c638-49d2-9795-1edfefbbcc7c"),
-      condition = "Breast",
+      disease = "Breast",
       lastReviewed = LocalDateTime.parse("2017-08-10T18:00:00"),
       labelVersion = 1L,
       arms = arms,

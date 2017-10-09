@@ -40,7 +40,7 @@ object patient {
         "previousAssignee" -> patient.previousAssignee.toJson,
         "lastActiveUser"   -> patient.lastActiveUserId.toJson,
         "lastUpdate"       -> patient.lastUpdate.toJson,
-        "condition"        -> patient.cancerType.toJson,
+        "disease"          -> patient.disease.toJson,
         "orderId"          -> patient.orderId.toJson
       )
   }

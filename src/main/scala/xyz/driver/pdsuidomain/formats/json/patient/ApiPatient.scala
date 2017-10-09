@@ -19,7 +19,7 @@ final case class ApiPatient(id: String,
                             previousAssignee: Option[String],
                             lastActiveUser: Option[String],
                             lastUpdate: ZonedDateTime,
-                            condition: String,
+                            disease: String,
                             orderId: UUID) {
 
   private def extractStatus(status: String): Patient.Status =
@@ -45,9 +45,9 @@ final case class ApiPatient(id: String,
     previousAssignee = this.previousAssignee.map(StringId(_)),
     lastActiveUserId = this.lastActiveUser.map(StringId(_)),
     isUpdateRequired = false,
-    cancerType = patient.CancerType
-      .fromString(this.condition)
-      .getOrElse(throw new IllegalArgumentException(s"Unknown cancer type ${this.condition}")),
+    disease = patient.CancerType
+      .fromString(this.disease)
+      .getOrElse(throw new IllegalArgumentException(s"Unknown cancer type ${this.disease}")),
     orderId = PatientOrderId(this.orderId),
     lastUpdate = this.lastUpdate.toLocalDateTime
   )
@@ -66,7 +66,7 @@ object ApiPatient {
       (JsPath \ "previousAssignee").formatNullable[String] and
       (JsPath \ "lastActiveUser").formatNullable[String] and
       (JsPath \ "lastUpdate").format[ZonedDateTime] and
-      (JsPath \ "condition").format[String] and
+      (JsPath \ "disease").format[String] and
       (JsPath \ "orderId").format[UUID]
   )(ApiPatient.apply, unlift(ApiPatient.unapply))
 
@@ -80,7 +80,7 @@ object ApiPatient {
     previousAssignee = patient.previousAssignee.map(_.id),
     lastActiveUser = patient.lastActiveUserId.map(_.id),
     lastUpdate = ZonedDateTime.of(patient.lastUpdate, ZoneId.of("Z")),
-    condition = patient.cancerType.toString,
+    disease = patient.disease.toString,
     orderId = patient.orderId.id
   )
 }

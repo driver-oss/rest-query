@@ -61,7 +61,7 @@ final case class Patient(id: UuidId[Patient],
                          previousAssignee: Option[StringId[User]],
                          lastActiveUserId: Option[StringId[User]],
                          isUpdateRequired: Boolean,
-                         cancerType: CancerType,
+                         disease: CancerType,
                          orderId: PatientOrderId,
                          lastUpdate: LocalDateTime) {
 

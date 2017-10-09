@@ -1,6 +1,7 @@
 package xyz.driver.pdsuidomain.fakes.entities
 
 import xyz.driver.entities.labels.{Label, LabelCategory}
+import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.domain.{LongId, User}
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
@@ -19,7 +20,7 @@ object trialcuration {
     previousAssignee = Option(nextStringId[User]),
     lastActiveUserId = Option(nextStringId[User]),
     lastUpdate = nextLocalDateTime,
-    condition = nextCondition,
+    disease = generators.oneOf[CancerType](CancerType.Breast, CancerType.Lung, CancerType.Prostate),
     phase = generators.nextString(),
     hypothesisId = Option(nextUuidId[Hypothesis]),
     studyDesignId = Option(nextLongId[StudyDesign]),

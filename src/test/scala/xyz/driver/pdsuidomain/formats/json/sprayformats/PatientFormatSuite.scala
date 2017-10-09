@@ -23,7 +23,7 @@ class PatientFormatSuite extends FlatSpec with Matchers {
       previousAssignee = None,
       lastActiveUserId = None,
       isUpdateRequired = false,
-      cancerType = CancerType.Breast,
+      disease = CancerType.Breast,
       orderId = PatientOrderId("7b54a75d-4197-4b27-9045-b9b6cb131be9"),
       lastUpdate = LocalDateTime.parse("2017-08-10T18:00:00")
     )
@@ -33,7 +33,7 @@ class PatientFormatSuite extends FlatSpec with Matchers {
       """{"id":"748b5884-3528-4cb9-904b-7a8151d6e343","dob":"1980-06-30",
          "name":{"firstName":"John","middleName":"","lastName":"Doe"},"status":"New","assignee":null,
          "previousStatus":null,"previousAssignee":null,"lastActiveUser":null,"lastUpdate":"2017-08-10T18:00Z",
-         "orderId":"7b54a75d-4197-4b27-9045-b9b6cb131be9","condition":"Breast"}""".parseJson)
+         "orderId":"7b54a75d-4197-4b27-9045-b9b6cb131be9","disease":"Breast"}""".parseJson)
   }
 
 }

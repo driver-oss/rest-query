@@ -29,8 +29,6 @@ object common {
     1 + Random.nextInt(28) // all months have at least 28 days
   )
 
-  def nextCondition = generators.oneOf[Trial.Condition](Trial.Condition.All)
-
   def nextTrialAction = generators.oneOf[TrialHistory.Action](TrialHistory.Action.All)
 
   def nextTrialState = generators.oneOf[TrialHistory.State](TrialHistory.State.All)

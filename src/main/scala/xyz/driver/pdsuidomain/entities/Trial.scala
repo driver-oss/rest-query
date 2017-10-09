@@ -2,10 +2,11 @@ package xyz.driver.pdsuidomain.entities
 
 import java.time.LocalDateTime
 
+import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, User, UuidId}
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
-import xyz.driver.pdsuidomain.entities.Trial.{Condition, Status}
+import xyz.driver.pdsuidomain.entities.Trial.Status
 
 final case class StudyDesign(id: LongId[StudyDesign], name: String)
 
@@ -58,24 +59,6 @@ object Trial {
   }
 
   final case class Locations(locations: List[String])
-
-  sealed trait Condition
-
-  object Condition {
-
-    case object Breast   extends Condition
-    case object Lung     extends Condition
-    case object Prostate extends Condition
-
-    def fromString(condition: String): Option[Condition] = condition match {
-      case "Breast"   => Some(Breast)
-      case "Lung"     => Some(Lung)
-      case "Prostate" => Some(Prostate)
-      case _          => None
-    }
-
-    val All: Set[Condition] = Set(Breast, Lung, Prostate)
-  }
 }
 
 final case class Trial(id: StringId[Trial],
@@ -86,7 +69,7 @@ final case class Trial(id: StringId[Trial],
                        previousAssignee: Option[StringId[User]],
                        lastActiveUserId: Option[StringId[User]],
                        lastUpdate: LocalDateTime,
-                       condition: Condition,
+                       disease: CancerType,
                        phase: String,
                        hypothesisId: Option[UuidId[Hypothesis]],
                        studyDesignId: Option[LongId[StudyDesign]],
