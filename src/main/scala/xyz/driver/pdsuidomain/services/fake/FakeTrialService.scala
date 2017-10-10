@@ -57,19 +57,27 @@ class FakeTrialService extends TrialService {
     Future.successful(GetListReply.EntityList(Seq(trial), 1, None))
 
   override def getTrialWithLabels(trialId: StringId[Trial], condition: String)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetTrialWithLabelsReply] = {
-    Future.successful(
-      GetTrialWithLabelsReply.Entity(ExportTrialWithLabels(
-        StringId[Trial]("NCT" + generators.nextInt(999999).toString),
-        UuidId[Trial](generators.nextUuid()),
-        generators.oneOf("adenocarcinoma", "breast", "prostate"),
-        LocalDateTime.now(),
-        labelVersion = 1L,
-        generators.listOf(new ExportTrialArm(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetTrialWithLabelsReply] =
+    Future.successful(GetTrialWithLabelsReply.Entity(nextExportTrialWithLabels()))
+
+  override def getTrialsWithLabels(condition: String)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetTrialsWithLabelsReply] =
+    Future.successful(GetTrialsWithLabelsReply.EntityList(generators.seqOf(nextExportTrialWithLabels())))
+
+  private def nextExportTrialWithLabels() =
+    ExportTrialWithLabels(
+      StringId[Trial]("NCT" + generators.nextInt(999999).toString),
+      UuidId[Trial](generators.nextUuid()),
+      generators.oneOf("adenocarcinoma", "breast", "prostate"),
+      LocalDateTime.now(),
+      labelVersion = 1L,
+      generators.listOf(
+        new ExportTrialArm(
           LongId[Arm](generators.nextInt(999999).toLong),
           generators.nextName().value
         )),
-        generators.listOf(new ExportTrialLabelCriterion(
+      generators.listOf(
+        new ExportTrialLabelCriterion(
           LongId[Criterion](generators.nextInt(999999).toLong),
           generators.nextOption(generators.nextBoolean()),
           LongId[Label](generators.nextInt(999999).toLong),
@@ -78,8 +86,7 @@ class FakeTrialService extends TrialService {
           generators.nextBoolean(),
           generators.nextBoolean()
         ))
-      )))
-  }
+    )
 
   def update(origTrial: Trial, draftTrial: Trial)(
           implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =

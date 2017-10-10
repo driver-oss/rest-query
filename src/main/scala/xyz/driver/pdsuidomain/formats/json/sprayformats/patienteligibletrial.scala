@@ -21,8 +21,8 @@ object patienteligibletrial {
       case _ => deserializationError(s"Expected Json Object as partial PatientTrialArmGroupView, but got $json")
     }
 
-  implicit val patientEligibleTrialWriter: JsonWriter[RichPatientEligibleTrial] =
-    new JsonWriter[RichPatientEligibleTrial] {
+  implicit val patientEligibleTrialWriter: RootJsonWriter[RichPatientEligibleTrial] =
+    new RootJsonWriter[RichPatientEligibleTrial] {
       override def write(obj: RichPatientEligibleTrial) =
         JsObject(
           "id"                        -> obj.group.id.toJson,

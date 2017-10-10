@@ -16,6 +16,7 @@ import xyz.driver.pdsuidomain.entities.export.trial.ExportTrialWithLabels
 import xyz.driver.pdsuidomain.formats.json.ListResponse
 import xyz.driver.pdsuidomain.formats.json.trial.ApiTrial
 import xyz.driver.pdsuidomain.services.TrialService
+import spray.json.DefaultJsonProtocol._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import xyz.driver.pdsuidomain.formats.json.sprayformats.export._
 
@@ -44,6 +45,17 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
       reply    <- apiResponse[ExportTrialWithLabels](response)
     } yield {
       GetTrialWithLabelsReply.Entity(reply)
+    }
+  }
+
+  def getTrialsWithLabels(disease: String)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetTrialsWithLabelsReply] = {
+    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/export/trial/$disease"))
+    for {
+      response <- transport.sendRequestGetResponse(requestContext)(request)
+      reply    <- apiResponse[Seq[ExportTrialWithLabels]](response)
+    } yield {
+      GetTrialsWithLabelsReply.EntityList(reply)
     }
   }
 

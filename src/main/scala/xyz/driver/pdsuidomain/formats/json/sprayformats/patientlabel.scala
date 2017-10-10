@@ -3,6 +3,7 @@ package xyz.driver.pdsuidomain.formats.json.sprayformats
 import spray.json._
 import xyz.driver.pdsuicommon.domain.FuzzyValue
 import xyz.driver.pdsuidomain.entities._
+import xyz.driver.pdsuidomain.services.PatientLabelService.RichPatientLabel
 
 object patientlabel {
   import DefaultJsonProtocol._
@@ -28,25 +29,23 @@ object patientlabel {
     case _ => deserializationError(s"Expected Json Object as PatientLabel, but got $json")
   }
 
-  implicit val patientLabelWriter: JsonWriter[(PatientLabel, Boolean)] = new JsonWriter[(PatientLabel, Boolean)] {
-    override def write(obj: (PatientLabel, Boolean)): JsValue = {
-      val patientLabel = obj._1
-      val isVerified   = obj._2
+  implicit val richPatientLabelWriter: RootJsonWriter[RichPatientLabel] = new RootJsonWriter[RichPatientLabel] {
+    override def write(obj: RichPatientLabel): JsValue = {
       JsObject(
-        "id"                   -> patientLabel.id.toJson,
-        "labelId"              -> patientLabel.labelId.toJson,
-        "primaryValue"         -> patientLabel.primaryValue.toJson,
-        "verifiedPrimaryValue" -> patientLabel.verifiedPrimaryValue.toJson,
-        "score"                -> patientLabel.score.toJson,
-        "isImplicitMatch"      -> patientLabel.isImplicitMatch.toJson,
-        "isVisible"            -> patientLabel.isVisible.toJson,
-        "isVerified"           -> isVerified.toJson
+        "id"                   -> obj.patientLabel.id.toJson,
+        "labelId"              -> obj.patientLabel.labelId.toJson,
+        "primaryValue"         -> obj.patientLabel.primaryValue.toJson,
+        "verifiedPrimaryValue" -> obj.patientLabel.verifiedPrimaryValue.toJson,
+        "score"                -> obj.patientLabel.score.toJson,
+        "isImplicitMatch"      -> obj.patientLabel.isImplicitMatch.toJson,
+        "isVisible"            -> obj.patientLabel.isVisible.toJson,
+        "isVerified"           -> obj.isVerified.toJson
       )
     }
   }
 
-  implicit val patientLabelEvidenceWriter: JsonWriter[PatientLabelEvidenceView] =
-    new JsonWriter[PatientLabelEvidenceView] {
+  implicit val patientLabelEvidenceWriter: RootJsonWriter[PatientLabelEvidenceView] =
+    new RootJsonWriter[PatientLabelEvidenceView] {
       override def write(evidence: PatientLabelEvidenceView): JsValue =
         JsObject(
           "id"           -> evidence.id.toJson,

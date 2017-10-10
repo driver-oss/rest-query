@@ -6,7 +6,7 @@ import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
 import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, StringId}
 import xyz.driver.pdsuidomain.entities.{PatientCriterion, PatientCriterionArm}
-import xyz.driver.pdsuidomain.services.PatientCriterionService.DraftPatientCriterion
+import xyz.driver.pdsuidomain.services.PatientCriterionService.{DraftPatientCriterion, RichPatientCriterion}
 
 class PatientCriterionFormatSuite extends FlatSpec with Matchers {
   import patientcriterion._
@@ -31,7 +31,8 @@ class PatientCriterionFormatSuite extends FlatSpec with Matchers {
       PatientCriterionArm(patientCriterionId = LongId(1), armId = LongId(31), armName = "arm 31"),
       PatientCriterionArm(patientCriterionId = LongId(1), armId = LongId(32), armName = "arm 32")
     )
-    val writtenJson = patientCriterionWriter.write((orig, LongId(21), arms))
+    val richPatientCriterion = RichPatientCriterion(orig, LongId(21), arms)
+    val writtenJson = patientCriterionWriter.write(richPatientCriterion)
 
     writtenJson should be (
       """{"id":1,"labelId":21,"nctId":"NCT00001","criterionId":101,"criterionText":"criterion text","criterionValue":"Yes",

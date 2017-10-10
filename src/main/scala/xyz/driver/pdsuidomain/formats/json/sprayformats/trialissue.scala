@@ -44,7 +44,7 @@ object trialissue {
 
   }
 
-  implicit val trialIssueWriter = new JsonWriter[TrialIssue] {
+  implicit val trialIssueWriter = new RootJsonWriter[TrialIssue] {
     override def write(obj: TrialIssue) = JsObject(
       "id"              -> obj.id.toJson,
       "text"            -> obj.text.toJson,

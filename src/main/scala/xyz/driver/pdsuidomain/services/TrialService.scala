@@ -68,6 +68,20 @@ object TrialService {
         extends GetTrialWithLabelsReply with DomainError.AuthorizationError with DefaultAccessDeniedError
   }
 
+  sealed trait GetTrialsWithLabelsReply
+  object GetTrialsWithLabelsReply {
+    type Error = GetTrialsWithLabelsReply with DomainError
+
+    final case class EntityList(xs: Seq[ExportTrialWithLabels]) extends GetTrialsWithLabelsReply
+
+    case object NotFoundError extends GetTrialsWithLabelsReply with DomainError.NotFoundError {
+      def userMessage: String = "Trials for disease are not found"
+    }
+
+    case object AuthorizationError
+        extends GetTrialsWithLabelsReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+  }
+
   sealed trait UpdateReply
   object UpdateReply {
     type Error = UpdateReply with DomainError
@@ -96,6 +110,9 @@ trait TrialService {
 
   def getTrialWithLabels(trialId: StringId[Trial], condition: String)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetTrialWithLabelsReply]
+
+  def getTrialsWithLabels(condition: String)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetTrialsWithLabelsReply]
 
   def getPdfSource(trialId: StringId[Trial])(
           implicit requestContext: AuthenticatedRequestContext): Future[Source[ByteString, NotUsed]]

@@ -37,13 +37,21 @@ object PatientCriterionService {
     def userMessage: String = "Access denied"
   }
 
+  final case class RichPatientCriterion(patientCriterion: PatientCriterion,
+                                        labelId: LongId[Label],
+                                        armList: List[PatientCriterionArm])
+
+  object RichPatientCriterion {
+    implicit def toPhiString(x: RichPatientCriterion): PhiString = {
+      phi"RichPatientCriterion(patientCriterion=${x.patientCriterion}, labelId=${x.labelId}, arms=${x.armList})"
+    }
+  }
+
   sealed trait GetListReply
   object GetListReply {
     type Error = GetListReply with DomainError
 
-    final case class EntityList(xs: Seq[(PatientCriterion, LongId[Label], List[PatientCriterionArm])],
-                                totalFound: Int,
-                                lastUpdate: Option[LocalDateTime])
+    final case class EntityList(xs: Seq[RichPatientCriterion], totalFound: Int, lastUpdate: Option[LocalDateTime])
         extends GetListReply
 
     case object AuthorizationError
@@ -60,8 +68,7 @@ object PatientCriterionService {
   object GetByIdReply {
     type Error = GetByIdReply with DomainError
 
-    final case class Entity(x: PatientCriterion, labelId: LongId[Label], armList: List[PatientCriterionArm])
-        extends GetByIdReply
+    final case class Entity(x: RichPatientCriterion) extends GetByIdReply
 
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -74,8 +81,8 @@ object PatientCriterionService {
     final case class CommonError(userMessage: String) extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
-      case x: DomainError              => phi"GetByIdReply.Error($x)"
-      case Entity(x, labelId, armList) => phi"GetByIdReply.Entity(entity=$x, labelId=$labelId, armList=$armList)"
+      case x: DomainError => phi"GetByIdReply.Error($x)"
+      case Entity(x)      => phi"GetByIdReply.Entity($x)"
     }
   }
 
@@ -83,8 +90,7 @@ object PatientCriterionService {
   object UpdateReply {
     type Error = UpdateReply with DomainError
 
-    final case class Updated(x: PatientCriterion, labelId: LongId[Label], armList: List[PatientCriterionArm])
-        extends UpdateReply
+    final case class Updated(x: RichPatientCriterion) extends UpdateReply
 
     case object UpdatedList extends UpdateReply
 
