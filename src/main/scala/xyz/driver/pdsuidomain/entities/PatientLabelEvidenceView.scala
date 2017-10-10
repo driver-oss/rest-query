@@ -21,9 +21,9 @@ final case class PatientLabelEvidenceView(id: LongId[PatientLabelEvidence],
                                           documentId: Option[LongId[Document]],
                                           evidenceId: Option[LongId[ExtractedData]],
                                           reportId: Option[UuidId[DirectReport]],
-                                          documentType: String,
+                                          documentType: DocumentType,
                                           date: Option[LocalDate], // Document.startDate is optional
-                                          providerType: String,
+                                          providerType: ProviderType,
                                           patientId: UuidId[Patient],
                                           labelId: LongId[Label],
                                           isImplicitMatch: Boolean)

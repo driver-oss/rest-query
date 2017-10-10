@@ -26,8 +26,8 @@ object ApiPatientLabelEvidence {
     documentId = x.documentId.map(_.id),
     evidenceId = x.evidenceId.map(_.id),
     reportId = x.reportId.map(_.toString),
-    documentType = x.documentType,
+    documentType = x.documentType.name,
     date = x.date.get,
-    providerType = x.providerType
+    providerType = x.providerType.name
   )
 }

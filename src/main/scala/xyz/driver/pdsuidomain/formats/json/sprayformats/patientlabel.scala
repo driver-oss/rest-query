@@ -5,6 +5,8 @@ import xyz.driver.entities.labels.LabelValue
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.PatientLabelService.RichPatientLabel
 import xyz.driver.formats.json.labels._
+import xyz.driver.pdsuidomain.formats.json.sprayformats.record._
+import xyz.driver.pdsuidomain.formats.json.sprayformats.document._
 
 object patientlabel {
   import DefaultJsonProtocol._

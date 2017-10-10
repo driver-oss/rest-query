@@ -6,7 +6,7 @@ import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
 import xyz.driver.entities.labels.LabelValue
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
-import xyz.driver.pdsuidomain.entities.{PatientLabel, PatientLabelEvidenceView}
+import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.PatientLabelService.RichPatientLabel
 
 class PatientLabelFormatSuite extends FlatSpec with Matchers {
@@ -44,9 +44,9 @@ class PatientLabelFormatSuite extends FlatSpec with Matchers {
       documentId = Some(LongId(21)),
       evidenceId = Some(LongId(10)),
       reportId = None,
-      documentType = "document type",
+      documentType = DocumentType.LaboratoryReport,
       date = Some(LocalDate.parse("2017-08-10")),
-      providerType = "provider type",
+      providerType = ProviderType.EmergencyMedicine,
       patientId = UuidId("748b5884-3528-4cb9-904b-7a8151d6e343"),
       labelId = LongId(20),
       isImplicitMatch = false
@@ -55,7 +55,8 @@ class PatientLabelFormatSuite extends FlatSpec with Matchers {
 
     writtenJson should be (
       """{"id":1,"value":"Maybe","evidenceText":"evidence text","documentId":21,"evidenceId":10,"reportId":null,
-        "documentType":"document type","date":"2017-08-10","providerType":"provider type"}""".parseJson)
+        "documentType":{"id":3,"name":"Laboratory Report"},"date":"2017-08-10",
+        "providerType":{"id":26,"name":"Emergency Medicine"}}""".parseJson)
   }
 
   "Json format for PatientLabelDefiningCriteria" should "read and write correct JSON" in {
