@@ -10,7 +10,7 @@ final case class ListResponse[+T](items: Seq[T], meta: ListResponse.Meta)
 
 object ListResponse extends DefaultJsonProtocol {
   private val itemsField = "items"
-  private val metaField = "meta"
+  private val metaField  = "meta"
 
   final case class Meta(itemsCount: Int, pageNumber: Int, pageSize: Int, lastUpdate: Option[LocalDateTime])
 
@@ -30,7 +30,7 @@ object ListResponse extends DefaultJsonProtocol {
   private def listResponseJsonWriter[T: JsonWriter](listResponse: ListResponse[T]) = {
     JsObject(
       itemsField -> listResponse.items.map(_.toJson).toJson,
-      metaField -> listResponse.meta.toJson
+      metaField  -> listResponse.meta.toJson
     )
   }
 

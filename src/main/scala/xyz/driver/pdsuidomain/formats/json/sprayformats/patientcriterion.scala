@@ -22,7 +22,6 @@ object patientcriterion {
         .map(_.convertTo[Option[LabelValue]])
         .getOrElse(orig.verifiedEligibilityStatus)
 
-
       orig.copy(
         eligibilityStatus = eligibilityStatus,
         verifiedEligibilityStatus = verifiedEligibilityStatus
