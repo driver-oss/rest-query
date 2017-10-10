@@ -2,7 +2,8 @@ package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, TextJson}
+import xyz.driver.entities.labels.LabelValue
+import xyz.driver.pdsuicommon.domain.{LongId, TextJson}
 import xyz.driver.pdsuidomain.entities.ExtractedData.Meta
 import xyz.driver.pdsuidomain.entities.{ExtractedData, ExtractedDataLabel}
 import xyz.driver.pdsuidomain.services.ExtractedDataService.RichExtractedData
@@ -24,14 +25,14 @@ class ExtractedDataFormatSuite extends FlatSpec with Matchers {
         dataId = extractedData.id,
         labelId = None,
         categoryId = None,
-        value = Some(FuzzyValue.Yes)
+        value = Some(LabelValue.Yes)
       ),
       ExtractedDataLabel(
         id = LongId(2),
         dataId = extractedData.id,
         labelId = Some(LongId(12)),
         categoryId = Some(LongId(1)),
-        value = Some(FuzzyValue.No)
+        value = Some(LabelValue.No)
       )
     )
     val origRichExtractedData = RichExtractedData(
@@ -40,7 +41,7 @@ class ExtractedDataFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = extractedDataFormat.write(origRichExtractedData)
 
-    writtenJson should be (
+    writtenJson should be(
       """{"id":1,"documentId":101,"keywordId":201,"evidence":"evidence text","meta":null,
         "labels":[{"id":null,"categoryId":null,"value":"Yes"},{"id":12,"categoryId":1,"value":"No"}]}""".parseJson)
 
@@ -64,27 +65,28 @@ class ExtractedDataFormatSuite extends FlatSpec with Matchers {
         dataId = extractedData.id,
         labelId = Some(LongId(20)),
         categoryId = Some(LongId(1)),
-        value = Some(FuzzyValue.Yes)
+        value = Some(LabelValue.Yes)
       ),
       ExtractedDataLabel(
         id = LongId(0),
         dataId = extractedData.id,
         labelId = Some(LongId(12)),
         categoryId = Some(LongId(1)),
-        value = Some(FuzzyValue.No)
+        value = Some(LabelValue.No)
       )
     )
     val expectedUpdatedExtractedData = origRichExtractedData.copy(
       extractedData = extractedData.copy(
         evidenceText = Some("new evidence text"),
-        meta = Some(TextJson(Meta(
-          keyword = Meta.Keyword(page = 1, pageRatio = None, index = 2, sortIndex = "ASC"),
-          evidence = Meta.Evidence(
-            pageRatio = 1.0,
-            start = Meta.TextLayerPosition(page = 1, index = 3, offset = 2),
-            end = Meta.TextLayerPosition(page = 2, index = 3, offset = 10)
-          )
-        )))
+        meta = Some(
+          TextJson(Meta(
+            keyword = Meta.Keyword(page = 1, pageRatio = None, index = 2, sortIndex = "ASC"),
+            evidence = Meta.Evidence(
+              pageRatio = 1.0,
+              start = Meta.TextLayerPosition(page = 1, index = 3, offset = 2),
+              end = Meta.TextLayerPosition(page = 2, index = 3, offset = 10)
+            )
+          )))
       ),
       labels = updatedExtractedDataLabels
     )

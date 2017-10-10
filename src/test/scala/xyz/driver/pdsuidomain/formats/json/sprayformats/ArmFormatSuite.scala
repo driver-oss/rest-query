@@ -17,19 +17,20 @@ class ArmFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = armFormat.write(arm)
 
-    writtenJson should be("""{"id":10,"trialId":"NCT000001","name":"arm name","originalName":"orig arm name"}""".parseJson)
+    writtenJson should be(
+      """{"id":10,"trialId":"NCT000001","name":"arm name","originalName":"orig arm name"}""".parseJson)
 
     val createArmJson = """{"trialId":"NCT000001","name":"arm name"}""".parseJson
-    val parsedArm = armFormat.read(createArmJson)
+    val parsedArm     = armFormat.read(createArmJson)
     val expectedCreatedArm = arm.copy(
       id = LongId(0),
       originalName = "arm name"
     )
     parsedArm should be(expectedCreatedArm)
 
-    val updateArmJson = """{"name":"new arm name"}""".parseJson
+    val updateArmJson      = """{"name":"new arm name"}""".parseJson
     val expectedUpdatedArm = arm.copy(name = "new arm name")
-    val parsedUpdateArm = applyUpdateToArm(updateArmJson, arm)
+    val parsedUpdateArm    = applyUpdateToArm(updateArmJson, arm)
     parsedUpdateArm should be(expectedUpdatedArm)
   }
 

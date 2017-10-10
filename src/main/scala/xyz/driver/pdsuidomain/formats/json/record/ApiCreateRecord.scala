@@ -22,8 +22,6 @@ final case class ApiCreateRecord(disease: String, patientId: String, requestId: 
     caseId = None,
     physician = None,
     meta = None,
-    predictedMeta = None,
-    predictedDocuments = None,
     lastUpdate = LocalDateTime.now()
   )
 }

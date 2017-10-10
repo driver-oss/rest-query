@@ -16,7 +16,9 @@ import xyz.driver.pdsuidomain.entities.export.trial.ExportTrialWithLabels
 import xyz.driver.pdsuidomain.formats.json.ListResponse
 import xyz.driver.pdsuidomain.formats.json.trial.ApiTrial
 import xyz.driver.pdsuidomain.services.TrialService
+import spray.json.DefaultJsonProtocol._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuidomain.formats.json.sprayformats.export._
 
 class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit protected val materializer: Materializer,
@@ -36,14 +38,25 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
     }
   }
 
-  def getTrialWithLabels(trialId: StringId[Trial], disease: String)(
+  def getTrialWithLabels(trialId: StringId[Trial], cancerType: CancerType)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetTrialWithLabelsReply] = {
-    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/export/trial/$disease/$trialId"))
+    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/export/trial/$cancerType/$trialId"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply    <- apiResponse[ExportTrialWithLabels](response)
     } yield {
       GetTrialWithLabelsReply.Entity(reply)
+    }
+  }
+
+  def getTrialsWithLabels(cancerType: CancerType)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetTrialsWithLabelsReply] = {
+    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/export/trial/$cancerType"))
+    for {
+      response <- transport.sendRequestGetResponse(requestContext)(request)
+      reply    <- apiResponse[Seq[ExportTrialWithLabels]](response)
+    } yield {
+      GetTrialsWithLabelsReply.EntityList(reply)
     }
   }
 

@@ -5,7 +5,7 @@ import java.util.UUID
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import xyz.driver.pdsuicommon.domain.FuzzyValue
+import xyz.driver.entities.labels.LabelValue
 import xyz.driver.pdsuidomain.services.PatientEligibleTrialService.RichPatientEligibleTrial
 
 final case class ApiPatientEligibleTrial(id: Long,
@@ -30,8 +30,8 @@ object ApiPatientEligibleTrial {
         Reads
           .of[String]
           .filter(ValidationError("unknown eligibility status"))({
-            case x if FuzzyValue.fromString.isDefinedAt(x) => true
-            case _                                         => false
+            case x if LabelValue.fromString(x).isDefined => true
+            case _                                       => false
           }),
         Writes.of[String]
       )) and
@@ -45,7 +45,7 @@ object ApiPatientEligibleTrial {
     trialTitle = eligibleTrialWithTrial.trial.title,
     arms = eligibleTrialWithTrial.arms.map(_.armName),
     hypothesisId = eligibleTrialWithTrial.group.hypothesisId.id,
-    eligibleTrialWithTrial.group.verifiedEligibilityStatus.map(FuzzyValue.valueToString),
+    eligibleTrialWithTrial.group.verifiedEligibilityStatus.map(_.toString),
     eligibleTrialWithTrial.group.isVerified
   )
 }

@@ -1,11 +1,11 @@
 package xyz.driver.pdsuidomain.formats.json.label
 
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId}
+import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuidomain.entities.{ExtractedData, ExtractedDataLabel}
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import xyz.driver.entities.labels.{Label, LabelCategory}
+import xyz.driver.entities.labels.{Label, LabelCategory, LabelValue}
 
 final case class ApiExtractedDataLabel(id: Option[Long], categoryId: Option[Long], value: Option[String]) {
 
@@ -14,7 +14,7 @@ final case class ApiExtractedDataLabel(id: Option[Long], categoryId: Option[Long
     dataId = dataId,
     labelId = id.map(LongId[Label]),
     categoryId = categoryId.map(LongId[LabelCategory]),
-    value = value.map(FuzzyValue.fromString)
+    value = value.flatMap(LabelValue.fromString)
   )
 }
 
@@ -27,8 +27,8 @@ object ApiExtractedDataLabel {
         Format(Reads
                  .of[String]
                  .filter(ValidationError("unknown value"))({
-                   case x if FuzzyValue.fromString.isDefinedAt(x) => true
-                   case _                                         => false
+                   case x if LabelValue.fromString(x).isDefined => true
+                   case _                                       => false
                  }),
                Writes.of[String]))
   )(ApiExtractedDataLabel.apply, unlift(ApiExtractedDataLabel.unapply))
@@ -36,6 +36,6 @@ object ApiExtractedDataLabel {
   def fromDomain(dataLabel: ExtractedDataLabel) = ApiExtractedDataLabel(
     id = dataLabel.labelId.map(_.id),
     categoryId = dataLabel.categoryId.map(_.id),
-    value = dataLabel.value.map(FuzzyValue.valueToString)
+    value = dataLabel.value.map(_.toString)
   )
 }

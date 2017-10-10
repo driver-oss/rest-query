@@ -1,7 +1,7 @@
 package xyz.driver.pdsuidomain.entities
 
-import xyz.driver.entities.labels.Label
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, UuidId}
+import xyz.driver.entities.labels.{Label, LabelValue}
+import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuicommon.logging._
 
 object PatientLabel {
@@ -17,8 +17,8 @@ final case class PatientLabel(id: LongId[PatientLabel],
                               patientId: UuidId[Patient],
                               labelId: LongId[Label],
                               score: Int,
-                              primaryValue: Option[FuzzyValue],
-                              verifiedPrimaryValue: Option[FuzzyValue],
+                              primaryValue: Option[LabelValue],
+                              verifiedPrimaryValue: Option[LabelValue],
                               isImplicitMatch: Boolean,
                               isVisible: Boolean)
 
@@ -32,7 +32,7 @@ object PatientLabelEvidence {
 
 final case class PatientLabelEvidence(id: LongId[PatientLabelEvidence],
                                       patientLabelId: LongId[PatientLabel],
-                                      value: FuzzyValue,
+                                      value: LabelValue,
                                       evidenceText: String,
                                       reportId: Option[UuidId[DirectReport]],
                                       documentId: Option[LongId[Document]],

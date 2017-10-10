@@ -2,6 +2,7 @@ package xyz.driver.pdsuidomain.entities
 
 import java.time.LocalDateTime
 
+import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuicommon.logging._
 
@@ -16,5 +17,26 @@ object EligibilityArm {
   implicit def toPhiString(x: EligibilityArm): PhiString = {
     import x._
     phi"Arm(id=$id, name=${Unsafe(x.name)}, trialId=${Unsafe(x.trialId)})"
+  }
+}
+
+final case class EligibilityArmDisease(eligibilityArmId: LongId[EligibilityArm], disease: CancerType)
+
+object EligibilityArmDisease {
+
+  implicit def toPhiString(x: EligibilityArmDisease): PhiString = {
+    phi"EligibilityArmDisease(eligibilityArmId=${Unsafe(x.eligibilityArmId)}, disease=${Unsafe(x.disease)})"
+  }
+
+}
+
+final case class EligibilityArmWithDiseases(eligibilityArm: EligibilityArm,
+                                            eligibilityArmDiseases: Seq[EligibilityArmDisease])
+
+object EligibilityArmWithDiseases {
+
+  implicit def toPhiString(x: EligibilityArmWithDiseases): PhiString = {
+    import x._
+    phi"EligibilityArmWithDiseases(eligibilityArm=$eligibilityArm, eligibilityArmDiseases=$eligibilityArmDiseases)"
   }
 }

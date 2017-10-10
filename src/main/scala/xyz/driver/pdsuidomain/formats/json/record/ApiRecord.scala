@@ -101,8 +101,6 @@ final case class ApiRecord(id: Long,
         Some(TextJson(JsonSerializer.deserialize[List[MedicalRecord.Meta]](this.meta)))
       }
     },
-    predictedMeta = None,
-    predictedDocuments = None,
     lastUpdate = this.lastUpdate.toLocalDateTime()
   )
 }

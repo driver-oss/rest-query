@@ -67,7 +67,6 @@ object record {
     override def write(obj: Duplicate) =
       JsObject(
         "type"              -> "duplicate".toJson,
-        "predicted"         -> obj.predicted.toJson,
         "startPage"         -> obj.startPage.toJson,
         "endPage"           -> obj.endPage.toJson,
         "startOriginalPage" -> obj.startOriginalPage.toJson,
@@ -76,10 +75,6 @@ object record {
 
     override def read(json: JsValue): Duplicate = json match {
       case JsObject(fields) =>
-        val predicted = fields
-          .get("predicted")
-          .map(_.convertTo[Boolean])
-
         val startPage = fields
           .get("startPage")
           .map(_.convertTo[Double])
@@ -101,7 +96,6 @@ object record {
           .map(_.convertTo[Double])
 
         Duplicate(
-          predicted = predicted,
           startPage = startPage,
           endPage = endPage,
           startOriginalPage = startOriginalPage,
@@ -114,27 +108,16 @@ object record {
 
   implicit val reorderMetaFormat: RootJsonFormat[Reorder] = new RootJsonFormat[Reorder] {
     override def write(obj: Reorder) =
-      JsObject(
-        "type"      -> "reorder".toJson,
-        "predicted" -> obj.predicted.toJson,
-        "items"     -> obj.items.toJson
-      )
+      JsObject("type" -> "reorder".toJson, "items" -> obj.items.toJson)
 
     override def read(json: JsValue): Reorder = json match {
       case JsObject(fields) =>
-        val predicted = fields
-          .get("predicted")
-          .map(_.convertTo[Boolean])
-
         val items = fields
           .get("items")
           .map(_.convertTo[Seq[Int]])
           .getOrElse(deserializationError(s"Reorder meta json object does not contain `items` field: $json"))
 
-        Reorder(
-          predicted = predicted,
-          items = items
-        )
+        Reorder(items)
 
       case _ => deserializationError(s"Expected JsObject as Reorder meta of medical record, but got $json")
     }
@@ -142,27 +125,16 @@ object record {
 
   implicit val rotateMetaFormat: RootJsonFormat[Rotation] = new RootJsonFormat[Rotation] {
     override def write(obj: Rotation) =
-      JsObject(
-        "type"      -> "rotation".toJson,
-        "predicted" -> obj.predicted.toJson,
-        "items"     -> obj.items.toJson
-      )
+      JsObject("type" -> "rotation".toJson, "items" -> obj.items.toJson)
 
     override def read(json: JsValue): Rotation = json match {
       case JsObject(fields) =>
-        val predicted = fields
-          .get("predicted")
-          .map(_.convertTo[Boolean])
-
         val items = fields
           .get("items")
           .map(_.convertTo[Map[String, Int]])
           .getOrElse(deserializationError(s"Rotation meta json object does not contain `items` field: $json"))
 
-        Rotation(
-          predicted = predicted,
-          items = items
-        )
+        Rotation(items = items)
 
       case _ => deserializationError(s"Expected JsObject as Rotation meta of medical record, but got $json")
     }
@@ -233,8 +205,6 @@ object record {
             caseId = None,
             physician = None,
             meta = None,
-            predictedMeta = None,
-            predictedDocuments = None,
             lastUpdate = LocalDateTime.now()
           )
 

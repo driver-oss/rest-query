@@ -24,13 +24,13 @@ class TrialIssueFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = trialIssueWriter.write(trialIssue)
 
-    writtenJson should be(
-      """{"id":10,"userId":"userId-001","lastUpdate":"2017-08-10T18:00Z","isDraft":false,
+    writtenJson should be("""{"id":10,"userId":"userId-001","lastUpdate":"2017-08-10T18:00Z","isDraft":false,
         "text":"message text","evidence":"evidence","archiveRequired":false,"meta":"{}"}""".parseJson)
 
-    val createTrialIssueJson = """{"text":"message text","evidence":"evidence","meta":"{}"}""".parseJson
+    val createTrialIssueJson      = """{"text":"message text","evidence":"evidence","meta":"{}"}""".parseJson
     val expectedCreatedTrialIssue = trialIssue.copy(id = LongId(0), lastUpdate = LocalDateTime.MIN, isDraft = true)
-    val parsedCreateTrialIssue = jsValueToTrialIssue(createTrialIssueJson, StringId("NCT000001"), StringId("userId-001"))
+    val parsedCreateTrialIssue =
+      jsValueToTrialIssue(createTrialIssueJson, StringId("NCT000001"), StringId("userId-001"))
     parsedCreateTrialIssue should be(expectedCreatedTrialIssue)
 
     val updateTrialIssueJson =

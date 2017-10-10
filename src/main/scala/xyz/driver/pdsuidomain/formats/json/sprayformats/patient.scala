@@ -3,6 +3,8 @@ package xyz.driver.pdsuidomain.formats.json.sprayformats
 import spray.json._
 import xyz.driver.core.json.EnumJsonFormat
 import xyz.driver.pdsuidomain.entities._
+import xyz.driver.formats.json.common._
+import xyz.driver.formats.json.patient._
 
 object patient {
   import DefaultJsonProtocol._
@@ -26,7 +28,7 @@ object patient {
     }
   }
 
-  implicit val patientWriter: JsonWriter[Patient] = new JsonWriter[Patient] {
+  implicit val patientWriter: RootJsonWriter[Patient] = new RootJsonWriter[Patient] {
     override def write(patient: Patient): JsValue =
       JsObject(
         "id"               -> patient.id.toJson,
@@ -38,7 +40,7 @@ object patient {
         "previousAssignee" -> patient.previousAssignee.toJson,
         "lastActiveUser"   -> patient.lastActiveUserId.toJson,
         "lastUpdate"       -> patient.lastUpdate.toJson,
-        "condition"        -> patient.condition.toJson,
+        "disease"          -> patient.disease.toJson,
         "orderId"          -> patient.orderId.toJson
       )
   }

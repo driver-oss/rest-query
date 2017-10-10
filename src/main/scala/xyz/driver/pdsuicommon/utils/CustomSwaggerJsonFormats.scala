@@ -15,6 +15,7 @@ import xyz.driver.pdsuidomain.formats.json.sprayformats.trial._
 import xyz.driver.pdsuidomain.formats.json.sprayformats.trialhistory._
 import xyz.driver.pdsuidomain.formats.json.sprayformats.trialissue._
 import xyz.driver.core.swagger.CustomSwaggerJsonConverter._
+import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.concurrent.BridgeUploadQueue
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
 import xyz.driver.pdsuidomain.services.ExtractedDataService.RichExtractedData
@@ -32,7 +33,7 @@ object CustomSwaggerJsonFormats {
   )
   val customTrialCurationProperties = immutable.Map[Class[_], Property](
     classOf[Trial.Status]        -> stringProperty(),
-    classOf[Trial.Condition]     -> stringProperty(),
+    classOf[CancerType]          -> stringProperty(),
     classOf[TrialHistory.Action] -> stringProperty(),
     classOf[TrialHistory.State]  -> stringProperty()
   ) ++ customCommonProperties

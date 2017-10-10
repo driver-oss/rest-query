@@ -2,7 +2,8 @@ package xyz.driver.pdsuidomain.entities
 
 import java.time.LocalDateTime
 
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, StringId}
+import xyz.driver.entities.labels.LabelValue
+import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuicommon.logging._
 
 object PatientCriterion {
@@ -18,15 +19,15 @@ object PatientCriterion {
   /**
     * @see https://driverinc.atlassian.net/wiki/display/MTCH/EV+Business+Process
     */
-  def getEligibilityStatus(criterionValue: Option[Boolean], primaryValue: Option[FuzzyValue]): Option[FuzzyValue] = {
+  def getEligibilityStatus(criterionValue: Option[Boolean], primaryValue: Option[LabelValue]): Option[LabelValue] = {
     primaryValue match {
       case None                              => None
-      case Some(FuzzyValue.Maybe)            => Some(FuzzyValue.Maybe)
-      case Some(_) if criterionValue.isEmpty => Some(FuzzyValue.Maybe)
+      case Some(LabelValue.Maybe)            => Some(LabelValue.Maybe)
+      case Some(_) if criterionValue.isEmpty => Some(LabelValue.Maybe)
       case Some(status) =>
         Some(
-          FuzzyValue.fromBoolean(
-            FuzzyValue.fromBoolean(
+          LabelValue.fromBoolean(
+            LabelValue.fromBoolean(
               criterionValue.getOrElse(throw new IllegalArgumentException("Criterion should not be empty"))) == status
           ))
     }
@@ -47,12 +48,12 @@ final case class PatientCriterion(id: LongId[PatientCriterion],
                                   criterionText: String,
                                   criterionValue: Option[Boolean],
                                   criterionIsDefining: Boolean,
-                                  eligibilityStatus: Option[FuzzyValue],
-                                  verifiedEligibilityStatus: Option[FuzzyValue],
+                                  eligibilityStatus: Option[LabelValue],
+                                  verifiedEligibilityStatus: Option[LabelValue],
                                   isVerified: Boolean,
                                   isVisible: Boolean,
                                   lastUpdate: LocalDateTime) {
-  def isIneligibleForEv: Boolean = eligibilityStatus.contains(FuzzyValue.No) && isVerified
+  def isIneligibleForEv: Boolean = eligibilityStatus.contains(LabelValue.No) && isVerified
 }
 
 object PatientCriterionArm {

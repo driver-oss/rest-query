@@ -23,6 +23,7 @@ final case class ApiPartialDocument(recordId: Option[Long],
                                     endDate: Tristate[LocalDate],
                                     provider: Tristate[String],
                                     providerTypeId: Tristate[Long],
+                                    institutionName: Tristate[String],
                                     status: Option[String],
                                     assignee: Tristate[String],
                                     meta: Tristate[String]) {
@@ -42,6 +43,7 @@ final case class ApiPartialDocument(recordId: Option[Long],
     providerName = provider.cata(Some(_), None, orig.providerName),
     providerTypeId = providerTypeId.map(LongId[ProviderType]).cata(Some(_), None, orig.providerTypeId),
     requiredType = orig.requiredType,
+    institutionName = institutionName.cata(Some(_), None, orig.institutionName),
     meta = meta.cata(x => Some(TextJson(JsonSerializer.deserialize[Meta](x))), None, orig.meta),
     startDate = startDate.cata(Some(_), None, orig.startDate),
     endDate = endDate.cata(Some(_), None, orig.endDate),
@@ -67,6 +69,7 @@ final case class ApiPartialDocument(recordId: Option[Long],
         providerName = provider.toOption,
         providerTypeId = providerTypeId.map(LongId[ProviderType]).toOption,
         requiredType = None,
+        institutionName = institutionName.toOption,
         meta = meta.map(x => TextJson(JsonSerializer.deserialize[Meta](x))).toOption,
         previousStatus = None,
         assignee = None,
@@ -90,6 +93,7 @@ object ApiPartialDocument {
       (JsPath \ "endDate").readTristate[LocalDate] and
       (JsPath \ "provider").readTristate[String] and
       (JsPath \ "providerTypeId").readTristate[Long] and
+      (JsPath \ "institutionName").readTristate[String] and
       (JsPath \ "status").readNullable[String](
         Reads
           .of[String]
@@ -115,6 +119,7 @@ object ApiPartialDocument {
       (JsPath \ "endDate").writeTristate[LocalDate] and
       (JsPath \ "provider").writeTristate[String] and
       (JsPath \ "providerTypeId").writeTristate[Long] and
+      (JsPath \ "institutionName").writeTristate[String] and
       (JsPath \ "status").writeNullable[String] and
       (JsPath \ "assignee").writeTristate[String] and
       (JsPath \ "meta").writeTristate(Writes[String](Json.parse))

@@ -30,16 +30,20 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
     "should convert column names to snake case" in {
       import SearchFilterBinaryOperation._
 
-      val filter = SearchFilterParser.parse(Seq(
-        "filters" -> "status IN Summarized,ReviewCriteria,Flagged,Done",
-        "filters" -> "previousStatus NOTEQ New",
-        "filters" -> "previousStatus NOTEQ ReviewSummary"
-      ))
+      val filter = SearchFilterParser.parse(
+        Seq(
+          "filters" -> "status IN Summarized,ReviewCriteria,Flagged,Done",
+          "filters" -> "previousStatus NOTEQ New",
+          "filters" -> "previousStatus NOTEQ ReviewSummary"
+        ))
 
-      assert(filter === Success(SearchFilterExpr.Intersection(List(
-        SearchFilterExpr.Atom.NAry(Dimension(None, "status"), In, Seq("Summarized", "ReviewCriteria", "Flagged", "Done")),
-        SearchFilterExpr.Atom.Binary(Dimension(None, "previous_status"), NotEq, "New"),
-        SearchFilterExpr.Atom.Binary(Dimension(None, "previous_status"), NotEq, "ReviewSummary")))))
+      assert(
+        filter === Success(SearchFilterExpr.Intersection(List(
+          SearchFilterExpr.Atom
+            .NAry(Dimension(None, "status"), In, Seq("Summarized", "ReviewCriteria", "Flagged", "Done")),
+          SearchFilterExpr.Atom.Binary(Dimension(None, "previous_status"), NotEq, "New"),
+          SearchFilterExpr.Atom.Binary(Dimension(None, "previous_status"), NotEq, "ReviewSummary")
+        ))))
     }
     "dimensions" - {
       "with table name" in check {
@@ -50,11 +54,11 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
         Prop.forAllNoShrink(dimensionGen) {
           case (left, right) =>
             val raw = s"$left.$right"
-            val l = toSnakeCase(left)
-            val r = toSnakeCase(right)
-              SearchFilterParser.dimensionParser.parse(raw) match {
+            val l   = toSnakeCase(left)
+            val r   = toSnakeCase(right)
+            SearchFilterParser.dimensionParser.parse(raw) match {
               case Parsed.Success(Dimension(Some(`l`), `r`), _) => true
-              case _ => false
+              case _                                            => false
             }
         }
       }
@@ -63,7 +67,7 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
           val databaseS = Utils.toSnakeCase(s)
           SearchFilterParser.dimensionParser.parse(s) match {
             case Parsed.Success(Dimension(None, `databaseS`), _) => true
-            case _ => false
+            case _                                               => false
           }
         }
       }
@@ -81,10 +85,11 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
             )
 
             Prop.forAllNoShrink(testQueryGen) { query =>
-              SearchFilterParser.parse(Seq("filters" -> query))
+              SearchFilterParser
+                .parse(Seq("filters" -> query))
                 .map {
                   case SearchFilterExpr.Atom.Binary(_, Eq | NotEq | Like, _) => true
-                  case x => throw new UnexpectedSearchFilterExprException(x)
+                  case x                                                     => throw new UnexpectedSearchFilterExprException(x)
                 }
                 .successProp
             }
@@ -96,7 +101,9 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
             val testQueryGen = queryGen(
               dimensionGen = Gen.identifier,
               opGen = numericBinaryOpsGen,
-              valueGen = nonEmptyString.filter { s => !s.matches("^\\d+$") }
+              valueGen = nonEmptyString.filter { s =>
+                !s.matches("^\\d+$")
+              }
             )
 
             Prop.forAllNoShrink(testQueryGen) { query =>
@@ -121,10 +128,11 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
             )
 
             Prop.forAllNoShrink(testQueryGen) { query =>
-              SearchFilterParser.parse(Seq("filters" -> query))
+              SearchFilterParser
+                .parse(Seq("filters" -> query))
                 .map {
                   case _: SearchFilterExpr.Atom.Binary => true
-                  case x => throw new UnexpectedSearchFilterExprException(x)
+                  case x                               => throw new UnexpectedSearchFilterExprException(x)
                 }
                 .successProp
             }
@@ -140,7 +148,8 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
               case Success(_) => ()
               case Failure(t) => t.printStackTrace()
             }
-            assert(filter === Success(SearchFilterExpr.Atom.NAry(Dimension(None, "id"), In, Seq(Long.box(1), Long.box(5)))))
+            assert(
+              filter === Success(SearchFilterExpr.Atom.NAry(Dimension(None, "id"), In, Seq(Long.box(1), Long.box(5)))))
           }
         }
 
@@ -152,10 +161,11 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
           )
 
           Prop.forAllNoShrink(testQueryGen) { query =>
-            SearchFilterParser.parse(Seq("filters" -> query))
+            SearchFilterParser
+              .parse(Seq("filters" -> query))
               .map {
                 case SearchFilterExpr.Atom.NAry(_, SearchFilterNAryOperation.In, _) => true
-                case x => throw new UnexpectedSearchFilterExprException(x)
+                case x                                                              => throw new UnexpectedSearchFilterExprException(x)
               }
               .successProp
           }
@@ -189,16 +199,19 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
     }
   }
 
-  private val CommonBinaryOps = Seq("eq", "noteq", "like")
+  private val CommonBinaryOps  = Seq("eq", "noteq", "like")
   private val NumericBinaryOps = Seq("gt", "gteq", "lt", "lteq")
 
-  private val allBinaryOpsGen: Gen[String] = Gen.oneOf(CommonBinaryOps ++ NumericBinaryOps).flatMap(randomCapitalization)
-  private val commonBinaryOpsGen: Gen[String] = Gen.oneOf(CommonBinaryOps).flatMap(randomCapitalization)
+  private val allBinaryOpsGen: Gen[String] =
+    Gen.oneOf(CommonBinaryOps ++ NumericBinaryOps).flatMap(randomCapitalization)
+  private val commonBinaryOpsGen: Gen[String]  = Gen.oneOf(CommonBinaryOps).flatMap(randomCapitalization)
   private val numericBinaryOpsGen: Gen[String] = Gen.oneOf(NumericBinaryOps).flatMap(randomCapitalization)
 
   private val inValueCharsGen: Gen[Char] = arbitrary[Char].filter(_ != ',')
 
-  private val nonEmptyString = arbitrary[String].filter { s => !s.safeTrim.isEmpty }
+  private val nonEmptyString = arbitrary[String].filter { s =>
+    !s.safeTrim.isEmpty
+  }
 
   private val numericBinaryAtomValuesGen: Gen[String] = arbitrary[Long].map(_.toString)
   private val inValueGen: Gen[String] = {
@@ -208,18 +221,22 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
     Gen.containerOfN[Seq, String](size, inValueGen).map(_.mkString(","))
   }
 
-  private def queryGen(dimensionGen: Gen[String], opGen: Gen[String], valueGen: Gen[String]): Gen[String] = for {
-    dimension <- dimensionGen
-    op <- opGen
-    value <- valueGen
-  } yield s"$dimension $op $value"
+  private def queryGen(dimensionGen: Gen[String], opGen: Gen[String], valueGen: Gen[String]): Gen[String] =
+    for {
+      dimension <- dimensionGen
+      op        <- opGen
+      value     <- valueGen
+    } yield s"$dimension $op $value"
 
   private def randomCapitalization(input: String): Gen[String] = {
     Gen.containerOfN[Seq, Boolean](input.length, arbitrary[Boolean]).map { capitalize =>
-      input.view.zip(capitalize).map {
-        case (currChar, true) => currChar.toUpper
-        case (currChar, false) => currChar
-      }.mkString
+      input.view
+        .zip(capitalize)
+        .map {
+          case (currChar, true)  => currChar.toUpper
+          case (currChar, false) => currChar
+        }
+        .mkString
     }
   }
 

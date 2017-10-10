@@ -49,15 +49,10 @@ object MedicalRecordGen {
     generators.oneOf[MedicalRecordHistory.Action](MedicalRecordHistory.Action.All)
 
   def nextMedicalRecordMetaReorder(): MedicalRecord.Meta.Reorder = {
-    val itemsNumber =
-      maxItemsInCollectionNumber
-    val items = scala.util.Random
-      .shuffle(Seq.tabulate(itemsNumber)(identity))
+    val itemsNumber = maxItemsInCollectionNumber
+    val items       = scala.util.Random.shuffle(Seq.tabulate(itemsNumber)(identity))
 
-    MedicalRecord.Meta.Reorder(
-      predicted = nextOption(nextBoolean),
-      items = items
-    )
+    MedicalRecord.Meta.Reorder(items)
   }
 
   def nextMedicalRecordMetaDuplicate(): MedicalRecord.Meta.Duplicate = {
@@ -67,7 +62,6 @@ object MedicalRecordGen {
       nextInt(pageMaxNumber, startPageGen)
 
     MedicalRecord.Meta.Duplicate(
-      predicted = nextOption(nextBoolean),
       startPage = startPageGen.toDouble,
       endPage = endPageGen.toDouble,
       startOriginalPage = startPageGen.toDouble,
@@ -76,17 +70,9 @@ object MedicalRecordGen {
   }
 
   def nextMedicalRecordMetaRotation(): MedicalRecord.Meta.Rotation = {
-    val items =
-      Array
-        .tabulate(maxItemsInCollectionNumber)(
-          index => nextString() -> index
-        )
-        .toMap
+    val items = Array.tabulate(maxItemsInCollectionNumber)(index => nextString() -> index).toMap
 
-    MedicalRecord.Meta.Rotation(
-      predicted = nextOption(nextBoolean()),
-      items = items
-    )
+    MedicalRecord.Meta.Rotation(items = items)
   }
 
   def nextMedicalRecordMeta(): MedicalRecord.Meta = {
@@ -94,7 +80,6 @@ object MedicalRecordGen {
   }
 
   def nextMedicalRecord(): MedicalRecord = {
-    val id = nextLongId[MedicalRecord]
     MedicalRecord(
       id = nextLongId[MedicalRecord],
       status = nextMedicalRecordStatus(),
@@ -108,8 +93,6 @@ object MedicalRecordGen {
       caseId = nextOption(CaseId(generators.nextString())),
       physician = nextOption(generators.nextString()),
       meta = nextOption(nextMedicalRecordMetasJson()),
-      predictedMeta = nextOption(nextMedicalRecordMetasJson()),
-      predictedDocuments = nextOption(nextDocuments(id)),
       lastUpdate = nextLocalDateTime
     )
   }
