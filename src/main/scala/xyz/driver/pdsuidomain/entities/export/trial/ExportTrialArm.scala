@@ -4,7 +4,7 @@ import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuidomain.entities.Arm
 
-final case class ExportTrialArm(armId: LongId[Arm], armName: String)
+final case class ExportTrialArm(armId: LongId[Arm], armName: String, diseaseList: Seq[String])
 
 object ExportTrialArm {
 

@@ -69,13 +69,13 @@ class FakeTrialService extends TrialService {
     ExportTrialWithLabels(
       StringId[Trial]("NCT" + generators.nextInt(999999).toString),
       UuidId[Trial](generators.nextUuid()),
-      generators.oneOf("adenocarcinoma", "breast", "prostate"),
       LocalDateTime.now(),
       labelVersion = 1L,
       generators.listOf(
         new ExportTrialArm(
           LongId[Arm](generators.nextInt(999999).toLong),
-          generators.nextName().value
+          generators.nextName().value,
+          generators.listOf(generators.oneOf("adenocarcinoma", "breast", "prostate"))
         )),
       generators.listOf(
         new ExportTrialLabelCriterion(

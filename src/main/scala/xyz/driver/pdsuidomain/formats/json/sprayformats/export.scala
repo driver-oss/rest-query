@@ -2,16 +2,16 @@ package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import spray.json._
 import xyz.driver.entities.labels.Label
-import xyz.driver.pdsuidomain.entities.{Arm, Criterion}
+import xyz.driver.formats.json.labels._
 import xyz.driver.pdsuidomain.entities.export.patient._
 import xyz.driver.pdsuidomain.entities.export.trial.{ExportTrialArm, ExportTrialLabelCriterion, ExportTrialWithLabels}
-import xyz.driver.formats.json.labels._
+import xyz.driver.pdsuidomain.entities.{Arm, Criterion}
 
 object export {
   import DefaultJsonProtocol._
   import common._
-  import record._
   import document._
+  import record._
 
   implicit val patientLabelEvidenceDocumentFormat: RootJsonFormat[ExportPatientLabelEvidenceDocument] =
     jsonFormat5(ExportPatientLabelEvidenceDocument.apply)
@@ -25,7 +25,7 @@ object export {
   implicit val patientWithLabelsFormat: RootJsonFormat[ExportPatientWithLabels] =
     jsonFormat(ExportPatientWithLabels.apply, "patientId", "labelVersion", "labels")
 
-  implicit val trialArmFormat: RootJsonFormat[ExportTrialArm] = jsonFormat2(ExportTrialArm.apply)
+  implicit val trialArmFormat: RootJsonFormat[ExportTrialArm] = jsonFormat3(ExportTrialArm.apply)
 
   implicit val trialLabelCriterionFormat: RootJsonFormat[ExportTrialLabelCriterion] =
     new RootJsonFormat[ExportTrialLabelCriterion] {
@@ -82,12 +82,5 @@ object export {
     }
 
   implicit val trialWithLabelsFormat: RootJsonFormat[ExportTrialWithLabels] =
-    jsonFormat(ExportTrialWithLabels.apply,
-               "nctId",
-               "trialId",
-               "disease",
-               "lastReviewed",
-               "labelVersion",
-               "arms",
-               "criteria")
+    jsonFormat(ExportTrialWithLabels.apply, "nctId", "trialId", "lastReviewed", "labelVersion", "arms", "criteria")
 }
