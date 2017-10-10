@@ -81,8 +81,8 @@ class ExportFormatSuite extends FlatSpec with Matchers {
   "Json format for ApiExportTrialWithLabels" should "read and write correct JSON" in {
     import xyz.driver.pdsuidomain.entities.export.trial._
     val arms = List(
-      ExportTrialArm(armId = LongId(1), armName = "arm 1", diseaseList = Seq("Breast")),
-      ExportTrialArm(armId = LongId(2), armName = "arm 2",  diseaseList = Seq("Breast"))
+      ExportTrialArm(armId = LongId(1), armName = "arm 1"),
+      ExportTrialArm(armId = LongId(2), armName = "arm 2")
     )
     val criteriaList = List(
       ExportTrialLabelCriterion(
@@ -116,7 +116,7 @@ class ExportFormatSuite extends FlatSpec with Matchers {
     val writtenJson = trialWithLabelsFormat.write(trialWithLabels)
     writtenJson should be(
       """{"nctId":"NCT000001","trialId":"40892a07-c638-49d2-9795-1edfefbbcc7c","lastReviewed":"2017-08-10T18:00Z",
-        "labelVersion":1,"arms":[{"armId":1,"armName":"arm 1", "diseaseList":["Breast"]},{"armId":2,"armName":"arm 2", "diseaseList":["Breast"]}],"criteria":[
+        "labelVersion":1,"arms":[{"armId":1,"armName":"arm 1"},{"armId":2,"armName":"arm 2"}],"criteria":[
         {"value":"Yes","labelId":21,"criterionId":10,"criterionText":"criteria 10 text","armIds":[1,2],"isCompound":false,"isDefining":false},
         {"value":"Unknown","labelId":21,"criterionId":11,"criterionText":"criteria 11 text","armIds":[2],"isCompound":true,"isDefining":false}]}""".parseJson)
   }

@@ -12,7 +12,7 @@ import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuidomain.entities.export.trial.{ExportTrialArm, ExportTrialLabelCriterion, ExportTrialWithLabels}
-import xyz.driver.pdsuidomain.entities.{Arm, Criterion, EligibilityArm, Trial}
+import xyz.driver.pdsuidomain.entities.{Criterion, EligibilityArm, Trial}
 import xyz.driver.pdsuidomain.services.TrialService
 
 import scala.concurrent.Future
@@ -81,7 +81,7 @@ class FakeTrialService extends TrialService {
           LongId[Criterion](generators.nextInt(999999).toLong),
           generators.nextOption(generators.nextBoolean()),
           LongId[Label](generators.nextInt(999999).toLong),
-          generators.setOf(LongId[Arm](generators.nextInt(999999).toLong)),
+          generators.setOf(LongId[EligibilityArm](generators.nextInt(999999).toLong)),
           generators.nextName().value,
           generators.nextBoolean(),
           generators.nextBoolean()

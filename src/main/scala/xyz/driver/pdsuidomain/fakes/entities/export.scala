@@ -2,7 +2,7 @@ package xyz.driver.pdsuidomain.fakes.entities
 
 import xyz.driver.entities.labels.Label
 import xyz.driver.pdsuidomain.entities.export.trial._
-import xyz.driver.pdsuidomain.entities.{Arm, Criterion, EligibilityArm, Trial}
+import xyz.driver.pdsuidomain.entities.{Criterion, EligibilityArm, Trial}
 
 object export {
   import common._
@@ -16,7 +16,7 @@ object export {
       criterionId = nextLongId[Criterion],
       value = nextOption[Boolean](nextBoolean()),
       labelId = nextLongId[Label],
-      armIds = setOf(nextLongId[Arm]),
+      armIds = setOf(nextLongId[EligibilityArm]),
       criteria = nextString(100),
       isCompound = nextBoolean(),
       isDefining = nextBoolean()

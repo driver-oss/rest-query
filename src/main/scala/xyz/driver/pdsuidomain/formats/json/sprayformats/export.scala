@@ -5,7 +5,7 @@ import xyz.driver.entities.labels.Label
 import xyz.driver.formats.json.labels._
 import xyz.driver.pdsuidomain.entities.export.patient._
 import xyz.driver.pdsuidomain.entities.export.trial.{ExportTrialArm, ExportTrialLabelCriterion, ExportTrialWithLabels}
-import xyz.driver.pdsuidomain.entities.{Arm, Criterion}
+import xyz.driver.pdsuidomain.entities.{Criterion, EligibilityArm}
 
 object export {
   import DefaultJsonProtocol._
@@ -68,7 +68,7 @@ object export {
               longIdFormat[Criterion].read(criterionId),
               value,
               longIdFormat[Label].read(labelId),
-              armIdsVector.map(longIdFormat[Arm].read).toSet,
+              armIdsVector.map(longIdFormat[EligibilityArm].read).toSet,
               criterionText,
               isCompound,
               isDefining
