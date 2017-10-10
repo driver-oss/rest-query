@@ -1,11 +1,11 @@
 package xyz.driver.pdsuidomain.formats.json.label
 
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId}
+import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuidomain.entities.{Criterion, CriterionLabel}
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import xyz.driver.entities.labels.{Label, LabelCategory}
+import xyz.driver.entities.labels.{Label, LabelCategory, LabelValue}
 
 /**
   * @param value Yes|No
@@ -34,7 +34,7 @@ object ApiCriterionLabel {
     labelId = x.labelId.map(_.id),
     categoryId = x.categoryId.map(_.id),
     value = x.value.map { x =>
-      FuzzyValue.valueToString(FuzzyValue.fromBoolean(x))
+      LabelValue.fromBoolean(x).toString
     },
     isDefining = x.isDefining
   )

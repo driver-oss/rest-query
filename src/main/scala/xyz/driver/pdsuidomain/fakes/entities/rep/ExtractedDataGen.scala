@@ -1,7 +1,8 @@
 package xyz.driver.pdsuidomain.fakes.entities.rep
 
+import xyz.driver.core.generators
 import xyz.driver.core.generators._
-import xyz.driver.entities.labels.{Label, LabelCategory}
+import xyz.driver.entities.labels.{Label, LabelCategory, LabelValue}
 import xyz.driver.pdsuicommon.domain.{LongId, TextJson}
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.entities.ExtractedData.Meta
@@ -85,7 +86,7 @@ object ExtractedDataGen {
       dataId = nextLongId[ExtractedData],
       labelId = nextOption(nextLongId[Label]),
       categoryId = nextOption(nextLongId[LabelCategory]),
-      value = nextOption(nextFuzzyValue())
+      value = nextOption(generators.oneOf[LabelValue](LabelValue.Yes, LabelValue.No, LabelValue.Maybe))
     )
   }
 

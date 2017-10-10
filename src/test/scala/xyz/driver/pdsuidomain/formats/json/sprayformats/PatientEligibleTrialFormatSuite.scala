@@ -4,7 +4,9 @@ import java.time.LocalDateTime
 
 import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, StringId, UuidId}
+import xyz.driver.entities.labels.LabelValue
+import xyz.driver.entities.patient.CancerType
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuidomain.entities.{PatientCriterionArm, PatientTrialArmGroupView, Trial}
 import xyz.driver.pdsuidomain.services.PatientEligibleTrialService.RichPatientEligibleTrial
 
@@ -21,7 +23,7 @@ class PatientEligibleTrialFormatSuite extends FlatSpec with Matchers {
       previousAssignee = None,
       lastActiveUserId = None,
       lastUpdate = LocalDateTime.parse("2017-08-10T18:16:19"),
-      condition = Trial.Condition.Breast,
+      disease = CancerType.Breast,
       phase = "",
       hypothesisId = Some(UuidId("e76e2fc4-a29c-44fb-a81b-8856d06bb1d4")),
       studyDesignId = Some(LongId(321)),
@@ -38,8 +40,8 @@ class PatientEligibleTrialFormatSuite extends FlatSpec with Matchers {
       patientId = UuidId("748b5884-3528-4cb9-904b-7a8151d6e343"),
       trialId = StringId("NCT000001"),
       hypothesisId = UuidId("e76e2fc4-a29c-44fb-a81b-8856d06bb1d4"),
-      eligibilityStatus = Some(FuzzyValue.Yes),
-      verifiedEligibilityStatus = Some(FuzzyValue.Yes),
+      eligibilityStatus = Some(LabelValue.Yes),
+      verifiedEligibilityStatus = Some(LabelValue.Yes),
       isVerified = false
     )
     val arms = List(

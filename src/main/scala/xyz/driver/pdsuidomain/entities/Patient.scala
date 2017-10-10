@@ -2,6 +2,8 @@ package xyz.driver.pdsuidomain.entities
 
 import java.time.{LocalDate, LocalDateTime}
 
+import xyz.driver.entities.common.FullName
+import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
@@ -52,14 +54,14 @@ object Patient {
 
 final case class Patient(id: UuidId[Patient],
                          status: Patient.Status,
-                         name: String,
+                         name: FullName[Patient],
                          dob: LocalDate,
                          assignee: Option[StringId[User]],
                          previousStatus: Option[Patient.Status],
                          previousAssignee: Option[StringId[User]],
                          lastActiveUserId: Option[StringId[User]],
                          isUpdateRequired: Boolean,
-                         condition: String,
+                         disease: CancerType,
                          orderId: PatientOrderId,
                          lastUpdate: LocalDateTime) {
 

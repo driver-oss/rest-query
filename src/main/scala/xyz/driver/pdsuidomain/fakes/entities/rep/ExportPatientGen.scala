@@ -1,9 +1,9 @@
 package xyz.driver.pdsuidomain.fakes.entities.rep
 
+import xyz.driver.core.generators
 import xyz.driver.core.generators._
-import xyz.driver.entities.labels.Label
+import xyz.driver.entities.labels.{Label, LabelValue}
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
-import xyz.driver.pdsuidomain.fakes.entities.common._
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.entities.export.patient._
 import xyz.driver.pdsuidomain.fakes.entities.common.{nextLocalDate, nextLongId}
@@ -26,7 +26,7 @@ object ExportPatientGen {
   def nextExportPatientLabelEvidence(documentId: LongId[Document]): ExportPatientLabelEvidence = {
     ExportPatientLabelEvidence(
       id = nextLongId[ExtractedData],
-      value = nextFuzzyValue(),
+      value = generators.oneOf[LabelValue](LabelValue.Yes, LabelValue.No, LabelValue.Maybe),
       evidenceText = nextString(),
       document = nextExportPatientLabelEvidenceDocument(documentId)
     )

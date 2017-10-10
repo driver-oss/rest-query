@@ -26,7 +26,7 @@ object export {
     ExportTrialWithLabels(
       nctId = nextStringId[Trial],
       trialId = nextUuidId[Trial],
-      condition = nextString(100),
+      disease = nextString(100),
       lastReviewed = nextLocalDateTime,
       labelVersion = nextInt(100).toLong,
       arms = listOf(nextExportTrialArm()),

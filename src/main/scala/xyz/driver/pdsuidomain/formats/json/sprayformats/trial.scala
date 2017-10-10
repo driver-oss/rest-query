@@ -6,6 +6,7 @@ import spray.json._
 import xyz.driver.core.json.EnumJsonFormat
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuidomain.entities._
+import xyz.driver.formats.json.patient._
 
 object trial {
   import DefaultJsonProtocol._
@@ -24,12 +25,6 @@ object trial {
     "Archived"       -> Status.Archived
   )
 
-  implicit val conditionFormat = new EnumJsonFormat[Condition](
-    "Breast"   -> Condition.Breast,
-    "Lung"     -> Condition.Lung,
-    "Prostate" -> Condition.Prostate
-  )
-
   implicit val trialWriter: RootJsonWriter[Trial] = new RootJsonWriter[Trial] {
     override def write(obj: Trial) =
       JsObject(
@@ -41,7 +36,7 @@ object trial {
         "previousStatus"        -> obj.previousStatus.toJson,
         "previousAssignee"      -> obj.previousAssignee.toJson,
         "lastActiveUser"        -> obj.lastActiveUserId.toJson,
-        "condition"             -> obj.condition.toJson,
+        "disease"               -> obj.disease.toJson,
         "phase"                 -> obj.phase.toJson,
         "hypothesisId"          -> obj.hypothesisId.toJson,
         "studyDesignId"         -> obj.studyDesignId.toJson,

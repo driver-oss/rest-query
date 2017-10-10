@@ -1,9 +1,10 @@
 package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import spray.json._
-import xyz.driver.pdsuicommon.domain.FuzzyValue
+import xyz.driver.entities.labels.LabelValue
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.PatientCriterionService.{DraftPatientCriterion, RichPatientCriterion}
+import xyz.driver.formats.json.labels._
 
 object patientcriterion {
   import DefaultJsonProtocol._
@@ -13,13 +14,14 @@ object patientcriterion {
     case JsObject(fields) =>
       val eligibilityStatus = fields
         .get("eligibilityStatus")
-        .map(_.convertTo[Option[FuzzyValue]])
+        .map(_.convertTo[Option[LabelValue]])
         .getOrElse(orig.eligibilityStatus)
 
       val verifiedEligibilityStatus = fields
         .get("verifiedEligibilityStatus")
-        .map(_.convertTo[Option[FuzzyValue]])
+        .map(_.convertTo[Option[LabelValue]])
         .getOrElse(orig.verifiedEligibilityStatus)
+
 
       orig.copy(
         eligibilityStatus = eligibilityStatus,

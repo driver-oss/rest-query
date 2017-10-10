@@ -4,7 +4,8 @@ import java.time.LocalDateTime
 
 import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, StringId}
+import xyz.driver.entities.labels.LabelValue
+import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuidomain.entities.{PatientCriterion, PatientCriterionArm}
 import xyz.driver.pdsuidomain.services.PatientCriterionService.{DraftPatientCriterion, RichPatientCriterion}
 
@@ -21,7 +22,7 @@ class PatientCriterionFormatSuite extends FlatSpec with Matchers {
       criterionText = "criterion text",
       criterionValue = Some(true),
       criterionIsDefining = false,
-      eligibilityStatus = Some(FuzzyValue.Yes),
+      eligibilityStatus = Some(LabelValue.Yes),
       verifiedEligibilityStatus = None,
       isVisible = true,
       isVerified = true,
@@ -39,14 +40,14 @@ class PatientCriterionFormatSuite extends FlatSpec with Matchers {
          "criterionIsDefining":false,"criterionIsCompound":false,"eligibilityStatus":"Yes","verifiedEligibilityStatus":null,
          "isVisible":true,"isVerified":true,"lastUpdate":"2017-08-10T18:00Z","arms":["arm 31","arm 32"]}""".parseJson)
 
-    val updatePatientCriterionJson = """{"verifiedEligibilityStatus":"No","eligibilityStatus":null}""".parseJson
-    val expectedUpdatedPatientCriterion = orig.copy(verifiedEligibilityStatus = Some(FuzzyValue.No),eligibilityStatus = None)
+    val updatePatientCriterionJson = """{"verifiedEligibilityStatus":"No"}""".parseJson
+    val expectedUpdatedPatientCriterion = orig.copy(verifiedEligibilityStatus = Some(LabelValue.No))
     val parsedUpdatePatientCriterion = applyUpdateToPatientCriterion(updatePatientCriterionJson, orig)
     parsedUpdatePatientCriterion should be(expectedUpdatedPatientCriterion)
 
     val updateBulkPatientCriterionJson = """[{"id":1,"eligibilityStatus":"No"},{"id":2,"isVerified":false}]""".parseJson
     val expectedDraftPatientCriterionList = List(
-      DraftPatientCriterion(id = LongId(1), eligibilityStatus = Some(FuzzyValue.No), isVerified = None),
+      DraftPatientCriterion(id = LongId(1), eligibilityStatus = Some(LabelValue.No), isVerified = None),
       DraftPatientCriterion(id = LongId(2), eligibilityStatus = None, isVerified = Some(false))
     )
     val parsedDraftPatientCriterionList = draftPatientCriterionListReader.read(updateBulkPatientCriterionJson)
