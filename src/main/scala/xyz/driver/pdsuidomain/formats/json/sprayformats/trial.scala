@@ -9,8 +9,8 @@ import xyz.driver.pdsuidomain.entities._
 
 object trial {
   import DefaultJsonProtocol._
-  import common._
   import Trial._
+  import common._
 
   implicit val trialStatusFormat = new EnumJsonFormat[Status](
     "New"            -> Status.New,
@@ -22,12 +22,6 @@ object trial {
     "Done"           -> Status.Done,
     "Flagged"        -> Status.Flagged,
     "Archived"       -> Status.Archived
-  )
-
-  implicit val conditionFormat = new EnumJsonFormat[Condition](
-    "Breast"   -> Condition.Breast,
-    "Lung"     -> Condition.Lung,
-    "Prostate" -> Condition.Prostate
   )
 
   implicit val trialWriter: RootJsonWriter[Trial] = new RootJsonWriter[Trial] {

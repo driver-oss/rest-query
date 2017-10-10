@@ -2,9 +2,9 @@ package xyz.driver.pdsuidomain.entities
 
 import java.time.LocalDateTime
 
+import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuicommon.logging._
-import xyz.driver.pdsuidomain.entities.Trial.Condition
 
 final case class EligibilityArm(id: LongId[EligibilityArm],
                                 name: String,
@@ -20,7 +20,7 @@ object EligibilityArm {
   }
 }
 
-final case class EligibilityArmDisease(eligibilityArmId: LongId[EligibilityArm], disease: Condition)
+final case class EligibilityArmDisease(eligibilityArmId: LongId[EligibilityArm], disease: CancerType)
 
 object EligibilityArmDisease {
 

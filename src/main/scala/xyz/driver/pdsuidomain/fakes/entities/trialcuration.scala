@@ -6,8 +6,8 @@ import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
 
 object trialcuration {
-  import xyz.driver.core.generators
   import common._
+  import xyz.driver.core.generators
   import xyz.driver.pdsuidomain.entities.InterventionType._
 
   def nextTrial(): Trial = Trial(

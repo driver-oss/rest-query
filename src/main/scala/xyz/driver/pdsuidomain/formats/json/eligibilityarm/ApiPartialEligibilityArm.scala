@@ -1,7 +1,8 @@
 package xyz.driver.pdsuidomain.formats.json.eligibilityarm
 
 import play.api.libs.json.{Format, Json}
-import xyz.driver.pdsuidomain.entities.{EligibilityArmDisease, EligibilityArmWithDiseases, Trial}
+import xyz.driver.entities.patient.CancerType
+import xyz.driver.pdsuidomain.entities.{EligibilityArmDisease, EligibilityArmWithDiseases}
 
 final case class ApiPartialEligibilityArm(name: String, diseases: Seq[String]) {
 
@@ -10,9 +11,9 @@ final case class ApiPartialEligibilityArm(name: String, diseases: Seq[String]) {
     val armDiseases = diseases.map { disease =>
       EligibilityArmDisease(
         armWithDisease.eligibilityArm.id,
-        Trial.Condition.fromString(disease).getOrElse(throw new NoSuchElementException(s"unknown condition $disease")))
+        CancerType.fromString(disease).getOrElse(throw new NoSuchElementException(s"unknown condition $disease")))
     }
-    EligibilityArmWithDiseases(arm ,armDiseases)
+    EligibilityArmWithDiseases(arm, armDiseases)
   }
 }
 

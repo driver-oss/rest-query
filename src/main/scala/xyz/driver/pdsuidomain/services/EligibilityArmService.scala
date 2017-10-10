@@ -127,7 +127,7 @@ trait EligibilityArmService {
                   filter: SearchFilterExpr = SearchFilterExpr.Empty,
                   sorting: Option[Sorting] = None,
                   pagination: Option[Pagination] = None)(
-    implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
   def create(slotArmId: LongId[SlotArm], draftEligibilityArm: EligibilityArmWithDiseases)(
           implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]

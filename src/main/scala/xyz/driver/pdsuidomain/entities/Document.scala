@@ -308,13 +308,7 @@ object DocumentType {
 
 object Document {
 
-  final case class Meta(predicted: Option[Boolean], startPage: Double, endPage: Double) {
-
-    /**
-      * Return a regular meta: this meta is considered as not predicted
-      */
-    def confirmed: Meta = copy(predicted = predicted.map(_ => false))
-  }
+  final case class Meta(startPage: Double, endPage: Double)
 
   class DocumentStatusSerializer extends JsonSerializer[Status] {
     def serialize(value: Status, gen: JsonGenerator, serializers: SerializerProvider): Unit = {

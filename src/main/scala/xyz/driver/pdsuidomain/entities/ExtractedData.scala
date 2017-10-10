@@ -1,7 +1,7 @@
 package xyz.driver.pdsuidomain.entities
 
-import xyz.driver.entities.labels.{Label, LabelCategory}
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, TextJson}
+import xyz.driver.entities.labels.{Label, LabelCategory, LabelValue}
+import xyz.driver.pdsuicommon.domain.{LongId, TextJson}
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuidomain.entities.ExtractedData.Meta
 
@@ -37,7 +37,7 @@ object ExtractedDataLabel {
 
   implicit def toPhiString(x: ExtractedDataLabel): PhiString = {
     import x._
-    phi"ExtractedDataLabel(id=$id, dataId=$dataId, labelId=$labelId, categoryId=$categoryId, value=$value)"
+    phi"ExtractedDataLabel(id=$id, dataId=$dataId, labelId=$labelId, categoryId=$categoryId, value=${Unsafe(value)})"
   }
 }
 
@@ -45,4 +45,4 @@ final case class ExtractedDataLabel(id: LongId[ExtractedDataLabel],
                                     dataId: LongId[ExtractedData],
                                     labelId: Option[LongId[Label]],
                                     categoryId: Option[LongId[LabelCategory]],
-                                    value: Option[FuzzyValue])
+                                    value: Option[LabelValue])

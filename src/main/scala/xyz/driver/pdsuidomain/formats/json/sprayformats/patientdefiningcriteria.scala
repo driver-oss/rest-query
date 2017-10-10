@@ -2,6 +2,7 @@ package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import spray.json._
 import xyz.driver.pdsuidomain.entities.PatientLabel
+import xyz.driver.formats.json.labels._
 
 object patientdefiningcriteria {
   import DefaultJsonProtocol._

@@ -21,8 +21,7 @@ class MedicalRecordHistoryFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = recordHistoryFormat.write(recordHistory)
 
-    writtenJson should be(
-      """{"id":10,"executor":"userId-001","recordId":1,"state":"Clean",
+    writtenJson should be("""{"id":10,"executor":"userId-001","recordId":1,"state":"Clean",
         "action":"Start","created":"2017-08-10T18:00Z"}""".parseJson)
 
     val parsedRecordHistory = recordHistoryFormat.read(writtenJson)

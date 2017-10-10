@@ -5,7 +5,8 @@ import java.util.UUID
 
 import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, StringId, UuidId}
+import xyz.driver.entities.labels.LabelValue
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuidomain.entities.{DocumentType, ProviderType, RecordRequestId}
 
 class ExportFormatSuite extends FlatSpec with Matchers {
@@ -27,13 +28,13 @@ class ExportFormatSuite extends FlatSpec with Matchers {
         evidences = List(
           ExportPatientLabelEvidence(
             id = LongId(11),
-            value = FuzzyValue.Yes,
+            value = LabelValue.Yes,
             evidenceText = "evidence text 11",
             document = document
           ),
           ExportPatientLabelEvidence(
             id = LongId(12),
-            value = FuzzyValue.No,
+            value = LabelValue.No,
             evidenceText = "evidence text 12",
             document = document
           )
@@ -44,13 +45,13 @@ class ExportFormatSuite extends FlatSpec with Matchers {
         evidences = List(
           ExportPatientLabelEvidence(
             id = LongId(12),
-            value = FuzzyValue.Yes,
+            value = LabelValue.Yes,
             evidenceText = "evidence text 12",
             document = document
           ),
           ExportPatientLabelEvidence(
             id = LongId(13),
-            value = FuzzyValue.Yes,
+            value = LabelValue.Yes,
             evidenceText = "evidence text 13",
             document = document
           )
@@ -106,7 +107,7 @@ class ExportFormatSuite extends FlatSpec with Matchers {
     val trialWithLabels = ExportTrialWithLabels(
       nctId = StringId("NCT000001"),
       trialId = UuidId("40892a07-c638-49d2-9795-1edfefbbcc7c"),
-      condition = "Breast",
+      disease = "Breast",
       lastReviewed = LocalDateTime.parse("2017-08-10T18:00:00"),
       labelVersion = 1L,
       arms = arms,

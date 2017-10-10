@@ -26,7 +26,7 @@ object document {
     "PN"  -> RequiredType.PN
   )
 
-  implicit val documentMetaFormat: RootJsonFormat[Meta] = jsonFormat3(Meta.apply)
+  implicit val documentMetaFormat: RootJsonFormat[Meta] = jsonFormat2(Meta.apply)
 
   implicit val documentTypeFormat: RootJsonFormat[DocumentType] = new RootJsonFormat[DocumentType] {
     override def read(json: JsValue): DocumentType = json match {

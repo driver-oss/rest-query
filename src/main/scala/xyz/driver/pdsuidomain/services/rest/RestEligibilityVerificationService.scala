@@ -8,6 +8,7 @@ import xyz.driver.core.rest.{AuthorizedServiceRequestContext, RestService, Servi
 import xyz.driver.entities.patient
 import xyz.driver.entities.patient.Patient
 import xyz.driver.entities.users.AuthUserInfo
+import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuidomain.entities.eligibility.{MatchedPatient, MismatchRankedLabels}
 import xyz.driver.pdsuidomain.entities.{Arm, eligibility}
 import xyz.driver.pdsuidomain.services.EligibilityVerificationService
@@ -33,11 +34,11 @@ class RestEligibilityVerificationService(transport: ServiceTransport, baseUri: U
 
   override def getMismatchRankedLabels(patientId: Id[Patient],
                                        cancerType: patient.CancerType,
-                                       excludedArms: Seq[Id[Arm]])(
+                                       excludedArms: Seq[LongId[Arm]])(
           implicit ctx: AuthorizedServiceRequestContext[AuthUserInfo]): Future[eligibility.MismatchRankedLabels] = {
 
     val query =
-      Seq("disease" -> cancerType.toString.toUpperCase, "ineligible_arms" -> excludedArms.map(_.value).mkString(","))
+      Seq("disease" -> cancerType.toString.toUpperCase, "ineligible_arms" -> excludedArms.map(_.id).mkString(","))
 
     val request = get(baseUri, s"/v1/patients/$patientId/labels", query)
     optionalResponse[MismatchRankedLabels](transport.sendRequest(ctx)(request))

@@ -2,10 +2,15 @@ package xyz.driver.pdsuidomain.formats.json.eligibilityarm
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
-import xyz.driver.pdsuidomain.entities.{EligibilityArm, EligibilityArmDisease, EligibilityArmWithDiseases, Trial}
+import xyz.driver.pdsuidomain.entities.{EligibilityArm, EligibilityArmDisease, EligibilityArmWithDiseases}
 
-final case class ApiEligibilityArm(id: Long, name: String, originalName: String, trialId: String, diseases: Seq[String]) {
+final case class ApiEligibilityArm(id: Long,
+                                   name: String,
+                                   originalName: String,
+                                   trialId: String,
+                                   diseases: Seq[String]) {
 
   def toDomain: EligibilityArmWithDiseases = {
     val eligibilityArm = EligibilityArm(
@@ -16,11 +21,15 @@ final case class ApiEligibilityArm(id: Long, name: String, originalName: String,
       deleted = None // if we have an ApiEligibilityArm object, the EligibilityArm itself has not been deleted
     )
 
-    EligibilityArmWithDiseases(eligibilityArm, this.diseases.map { disease =>
-      val condition = Trial.Condition.fromString(disease)
-        .getOrElse(throw new NoSuchElementException(s"unknown condition $disease"))
-      EligibilityArmDisease(eligibilityArm.id, condition)
-    })
+    EligibilityArmWithDiseases(
+      eligibilityArm,
+      this.diseases.map { disease =>
+        val condition = CancerType
+          .fromString(disease)
+          .getOrElse(throw new NoSuchElementException(s"unknown condition $disease"))
+        EligibilityArmDisease(eligibilityArm.id, condition)
+      }
+    )
   }
 }
 

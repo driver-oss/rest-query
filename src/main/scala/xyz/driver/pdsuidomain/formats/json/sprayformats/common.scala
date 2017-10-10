@@ -3,7 +3,7 @@ package xyz.driver.pdsuidomain.formats.json.sprayformats
 import java.time.{LocalDate, LocalDateTime, ZoneId, ZonedDateTime}
 
 import spray.json._
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, StringId, UuidId}
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 
 object common {
 
@@ -52,14 +52,6 @@ object common {
     override def read(json: JsValue): LocalDate = json match {
       case JsString(value) => LocalDate.parse(value)
       case _               => deserializationError(s"Expected date as LocalDate, but got $json")
-    }
-  }
-
-  implicit def fuzzyValueFormat: RootJsonFormat[FuzzyValue] = new RootJsonFormat[FuzzyValue] {
-    override def write(value: FuzzyValue): JsString = JsString(FuzzyValue.valueToString(value))
-    override def read(json: JsValue): FuzzyValue = json match {
-      case JsString(value) => FuzzyValue.fromString(value)
-      case _               => deserializationError(s"Expected value as FuzzyValue, but got $json")
     }
   }
 

@@ -22,13 +22,14 @@ class PatientIssueFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = patientIssueWriter.write(patientIssue)
 
-    writtenJson should be(
-      """{"id":10,"userId":"userId-001","lastUpdate":"2017-08-10T18:00Z","isDraft":false,
+    writtenJson should be("""{"id":10,"userId":"userId-001","lastUpdate":"2017-08-10T18:00Z","isDraft":false,
         "text":"message text","archiveRequired":false}""".parseJson)
 
-    val createPatientIssueJson = """{"text":"message text"}""".parseJson
+    val createPatientIssueJson      = """{"text":"message text"}""".parseJson
     val expectedCreatedPatientIssue = patientIssue.copy(id = LongId(0), lastUpdate = LocalDateTime.MIN, isDraft = true)
-    val parsedCreatePatientIssue = jsValueToPatientIssue(createPatientIssueJson, UuidId("40892a07-c638-49d2-9795-1edfefbbcc7c"), StringId("userId-001"))
+    val parsedCreatePatientIssue = jsValueToPatientIssue(createPatientIssueJson,
+                                                         UuidId("40892a07-c638-49d2-9795-1edfefbbcc7c"),
+                                                         StringId("userId-001"))
     parsedCreatePatientIssue should be(expectedCreatedPatientIssue)
 
     val updatePatientIssueJson =

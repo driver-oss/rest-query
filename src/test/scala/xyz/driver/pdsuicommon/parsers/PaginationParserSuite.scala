@@ -11,36 +11,40 @@ class PaginationParserSuite extends FreeSpecLike with MustMatchers {
   "parse" - {
     "pageSize" - {
       "should parse positive value" in {
-        val pagination = PaginationParser.parse(Seq(
-          "pageSize" -> "10",
-          "pageNumber" -> "1"
-        ))
+        val pagination = PaginationParser.parse(
+          Seq(
+            "pageSize"   -> "10",
+            "pageNumber" -> "1"
+          ))
         pagination must success
         pagination.get.pageSize mustBe 10
       }
 
       "should return a default value if there is no one" in {
-        val pagination = PaginationParser.parse(Seq(
-          "pageNumber" -> "1"
-        ))
+        val pagination = PaginationParser.parse(
+          Seq(
+            "pageNumber" -> "1"
+          ))
         pagination must success
         pagination.get.pageSize mustBe 100
       }
 
       "should return a error for zero value" in {
-        val pagination = PaginationParser.parse(Seq(
-          "pageSize" -> "0",
-          "pageNumber" -> "1"
-        ))
+        val pagination = PaginationParser.parse(
+          Seq(
+            "pageSize"   -> "0",
+            "pageNumber" -> "1"
+          ))
 
         checkFailedValidationOnlyOn(pagination, "pageSize")
       }
 
       "should return a error for negative value" in {
-        val pagination = PaginationParser.parse(Seq(
-          "pageSize" -> "-10",
-          "pageNumber" -> "1"
-        ))
+        val pagination = PaginationParser.parse(
+          Seq(
+            "pageSize"   -> "-10",
+            "pageNumber" -> "1"
+          ))
 
         checkFailedValidationOnlyOn(pagination, "pageSize")
       }
@@ -48,36 +52,40 @@ class PaginationParserSuite extends FreeSpecLike with MustMatchers {
 
     "pageNumber" - {
       "should parse positive value" in {
-        val pagination = PaginationParser.parse(Seq(
-          "pageSize" -> "1",
-          "pageNumber" -> "1"
-        ))
+        val pagination = PaginationParser.parse(
+          Seq(
+            "pageSize"   -> "1",
+            "pageNumber" -> "1"
+          ))
         pagination must success
         pagination.get.pageSize mustBe 1
       }
 
       "should return a default value if there is no one" in {
-        val pagination = PaginationParser.parse(Seq(
-          "pageSize" -> "1"
-        ))
+        val pagination = PaginationParser.parse(
+          Seq(
+            "pageSize" -> "1"
+          ))
         pagination must success
         pagination.get.pageNumber mustBe 1
       }
 
       "should return a error for zero value" in {
-        val pagination = PaginationParser.parse(Seq(
-          "pageSize" -> "1",
-          "pageNumber" -> "0"
-        ))
+        val pagination = PaginationParser.parse(
+          Seq(
+            "pageSize"   -> "1",
+            "pageNumber" -> "0"
+          ))
 
         checkFailedValidationOnlyOn(pagination, "pageNumber")
       }
 
       "should return a error for negative value" in {
-        val pagination = PaginationParser.parse(Seq(
-          "pageSize" -> "1",
-          "pageNumber" -> "-1"
-        ))
+        val pagination = PaginationParser.parse(
+          Seq(
+            "pageSize"   -> "1",
+            "pageNumber" -> "-1"
+          ))
 
         checkFailedValidationOnlyOn(pagination, "pageNumber")
       }

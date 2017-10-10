@@ -7,11 +7,12 @@ import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import xyz.driver.core.generators
 import xyz.driver.entities.labels.Label
+import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
-import xyz.driver.pdsuidomain.entities.{Arm, Criterion, Trial}
 import xyz.driver.pdsuidomain.entities.export.trial.{ExportTrialArm, ExportTrialLabelCriterion, ExportTrialWithLabels}
+import xyz.driver.pdsuidomain.entities.{Arm, Criterion, Trial}
 import xyz.driver.pdsuidomain.services.TrialService
 
 import scala.concurrent.Future
@@ -56,11 +57,11 @@ class FakeTrialService extends TrialService {
           implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] =
     Future.successful(GetListReply.EntityList(Seq(trial), 1, None))
 
-  override def getTrialWithLabels(trialId: StringId[Trial], condition: String)(
+  override def getTrialWithLabels(trialId: StringId[Trial], cancerType: CancerType)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetTrialWithLabelsReply] =
     Future.successful(GetTrialWithLabelsReply.Entity(nextExportTrialWithLabels()))
 
-  override def getTrialsWithLabels(condition: String)(
+  override def getTrialsWithLabels(cancerType: CancerType)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetTrialsWithLabelsReply] =
     Future.successful(GetTrialsWithLabelsReply.EntityList(generators.seqOf(nextExportTrialWithLabels())))
 
