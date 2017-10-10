@@ -56,7 +56,11 @@ object MedicalRecordService {
 
   sealed trait CreateReply
   object CreateReply {
+    type Error = CreateReply with DomainError
+
     final case class Created(x: MedicalRecord) extends CreateReply
+
+    final case class CommonError(userMessage: String) extends CreateReply with DomainError
   }
 
   sealed trait UpdateReply
