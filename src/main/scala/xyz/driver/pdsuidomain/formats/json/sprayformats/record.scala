@@ -172,7 +172,8 @@ object record {
           "requestId"        -> record.requestId.toJson,
           "meta"             -> record.meta.getOrElse(TextJson[List[Meta]](List.empty)).toJson,
           "lastActiveUser"   -> record.lastActiveUserId.toJson,
-          "lastUpdate"       -> record.lastUpdate.toJson
+          "lastUpdate"       -> record.lastUpdate.toJson,
+          "totalPages"       -> record.totalPages.toJson
         )
 
       override def read(json: JsValue): MedicalRecord = json match {
@@ -205,7 +206,8 @@ object record {
             caseId = None,
             physician = None,
             meta = None,
-            lastUpdate = LocalDateTime.now()
+            lastUpdate = LocalDateTime.now(),
+            totalPages = 0
           )
 
         case _ => deserializationError(s"Expected Json Object as MedicalRecord, but got $json")

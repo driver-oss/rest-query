@@ -41,7 +41,8 @@ object ApiRecord {
       (JsPath \ "requestId").format[UUID] and
       (JsPath \ "meta").format(Format(Reads { x =>
         JsSuccess(Json.stringify(x))
-      }, Writes[String](Json.parse)))
+      }, Writes[String](Json.parse))) and
+      (JsPath \ "totalPages").format[Int]
   )(ApiRecord.apply, unlift(ApiRecord.unapply))
 
   def fromDomain(record: MedicalRecord) = ApiRecord(
@@ -57,7 +58,8 @@ object ApiRecord {
     previousAssignee = record.previousAssignee.map(_.id),
     lastActiveUser = record.lastActiveUserId.map(_.id),
     requestId = record.requestId.id,
-    meta = record.meta.map(x => JsonSerializer.serialize(x.content)).getOrElse(emptyMeta)
+    meta = record.meta.map(x => JsonSerializer.serialize(x.content)).getOrElse(emptyMeta),
+    totalPages = record.totalPages
   )
 }
 
@@ -73,7 +75,8 @@ final case class ApiRecord(id: Long,
                            previousAssignee: Option[String],
                            lastActiveUser: Option[String],
                            requestId: UUID,
-                           meta: String) {
+                           meta: String,
+                           totalPages: Int) {
 
   private def extractStatus(status: String): Status =
     Status
@@ -101,6 +104,7 @@ final case class ApiRecord(id: Long,
         Some(TextJson(JsonSerializer.deserialize[List[MedicalRecord.Meta]](this.meta)))
       }
     },
-    lastUpdate = this.lastUpdate.toLocalDateTime()
+    lastUpdate = this.lastUpdate.toLocalDateTime,
+    totalPages = 0
   )
 }

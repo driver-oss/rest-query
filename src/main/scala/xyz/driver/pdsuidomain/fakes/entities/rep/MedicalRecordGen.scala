@@ -93,7 +93,8 @@ object MedicalRecordGen {
       caseId = nextOption(CaseId(generators.nextString())),
       physician = nextOption(generators.nextString()),
       meta = nextOption(nextMedicalRecordMetasJson()),
-      lastUpdate = nextLocalDateTime
+      lastUpdate = nextLocalDateTime,
+      totalPages = nextInt(1, 10)
     )
   }
 
