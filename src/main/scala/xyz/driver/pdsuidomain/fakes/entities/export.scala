@@ -2,14 +2,14 @@ package xyz.driver.pdsuidomain.fakes.entities
 
 import xyz.driver.entities.labels.Label
 import xyz.driver.pdsuidomain.entities.export.trial._
-import xyz.driver.pdsuidomain.entities.{Arm, Criterion, Trial}
+import xyz.driver.pdsuidomain.entities.{Arm, Criterion, EligibilityArm, Trial}
 
 object export {
   import common._
   import xyz.driver.core.generators._
 
   def nextExportTrialArm(): ExportTrialArm =
-    ExportTrialArm(armId = nextLongId[Arm], armName = nextString(100), diseaseList = listOf(nextString(100)))
+    ExportTrialArm(armId = nextLongId[EligibilityArm], armName = nextString(100))
 
   def nextExportTrialLabelCriterion(): ExportTrialLabelCriterion =
     ExportTrialLabelCriterion(

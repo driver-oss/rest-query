@@ -12,7 +12,7 @@ import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuidomain.entities.export.trial.{ExportTrialArm, ExportTrialLabelCriterion, ExportTrialWithLabels}
-import xyz.driver.pdsuidomain.entities.{Arm, Criterion, Trial}
+import xyz.driver.pdsuidomain.entities.{Arm, Criterion, EligibilityArm, Trial}
 import xyz.driver.pdsuidomain.services.TrialService
 
 import scala.concurrent.Future
@@ -73,9 +73,8 @@ class FakeTrialService extends TrialService {
       labelVersion = 1L,
       generators.listOf(
         new ExportTrialArm(
-          LongId[Arm](generators.nextInt(999999).toLong),
-          generators.nextName().value,
-          generators.listOf(generators.oneOf("adenocarcinoma", "breast", "prostate"))
+          LongId[EligibilityArm](generators.nextInt(999999).toLong),
+          generators.nextName().value
         )),
       generators.listOf(
         new ExportTrialLabelCriterion(
