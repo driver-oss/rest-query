@@ -39,8 +39,8 @@ class PatientCriterionFormatSuite extends FlatSpec with Matchers {
          "criterionIsDefining":false,"criterionIsCompound":false,"eligibilityStatus":"Yes","verifiedEligibilityStatus":null,
          "isVisible":true,"isVerified":true,"lastUpdate":"2017-08-10T18:00Z","arms":["arm 31","arm 32"]}""".parseJson)
 
-    val updatePatientCriterionJson = """{"verifiedEligibilityStatus":"No"}""".parseJson
-    val expectedUpdatedPatientCriterion = orig.copy(verifiedEligibilityStatus = Some(FuzzyValue.No))
+    val updatePatientCriterionJson = """{"verifiedEligibilityStatus":"No","eligibilityStatus":null}""".parseJson
+    val expectedUpdatedPatientCriterion = orig.copy(verifiedEligibilityStatus = Some(FuzzyValue.No),eligibilityStatus = None)
     val parsedUpdatePatientCriterion = applyUpdateToPatientCriterion(updatePatientCriterionJson, orig)
     parsedUpdatePatientCriterion should be(expectedUpdatedPatientCriterion)
 
