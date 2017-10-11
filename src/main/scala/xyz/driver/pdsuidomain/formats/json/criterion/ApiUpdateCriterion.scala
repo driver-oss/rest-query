@@ -2,7 +2,7 @@ package xyz.driver.pdsuidomain.formats.json.criterion
 
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.json.Serialization.seqJsonFormat
-import xyz.driver.pdsuidomain.entities.{Arm, Criterion}
+import xyz.driver.pdsuidomain.entities.{EligibilityArm, Criterion}
 import org.davidbild.tristate._
 import org.davidbild.tristate.contrib.play.ToJsPathOpsFromJsPath
 import play.api.libs.functional.syntax._
@@ -19,7 +19,7 @@ final case class ApiUpdateCriterion(meta: Tristate[String],
 
   def applyTo(orig: RichCriterion): RichCriterion = RichCriterion(
     criterion = applyTo(orig.criterion),
-    armIds = arms.cata(_.map(LongId[Arm]), Seq.empty, orig.armIds),
+    armIds = arms.cata(_.map(LongId[EligibilityArm]), Seq.empty, orig.armIds),
     labels = labels.cata(_.map(_.toDomain(orig.criterion.id)), Seq.empty, orig.labels)
   )
 

@@ -17,8 +17,7 @@ class HypothesisFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = hypothesisFormat.write(hypothesis)
 
-    writtenJson should be(
-      """{"id":"3b80b2e2-5372-4cf5-a342-6e4ebe10fafd","name":"hypothesis name",
+    writtenJson should be("""{"id":"3b80b2e2-5372-4cf5-a342-6e4ebe10fafd","name":"hypothesis name",
         "treatmentType":"treatment type","description":"descr"}""".parseJson)
 
     val parsedHypothesis = hypothesisFormat.read(writtenJson)

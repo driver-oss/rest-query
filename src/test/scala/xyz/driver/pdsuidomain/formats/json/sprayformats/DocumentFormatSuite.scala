@@ -32,7 +32,7 @@ class DocumentFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = documentFormat.write(orig)
 
-    writtenJson should be (
+    writtenJson should be(
       """{"id":1,"recordId":101,"physician":"physician","typeId":10,"provider":"provider 21","providerTypeId":21,
          "requiredType":"OPN","institutionName":"institution name","startDate":null,"endDate":null,"status":"New","assignee":null,"previousStatus":null,
          "previousAssignee":null,"lastActiveUser":null,"lastUpdate":"2017-08-10T18:00Z","meta":null}""".parseJson)
@@ -60,11 +60,11 @@ class DocumentFormatSuite extends FlatSpec with Matchers {
   }
 
   "Json format for Document.Meta" should "read and write correct JSON" in {
-    val meta = Document.Meta(startPage = 1.0, endPage = 2.0)
+    val meta        = Document.Meta(startPage = 1.0, endPage = 2.0)
     val writtenJson = documentMetaFormat.write(meta)
-    writtenJson should be ("""{"startPage":1.0,"endPage":2.0}""".parseJson)
+    writtenJson should be("""{"startPage":1.0,"endPage":2.0}""".parseJson)
 
-    val metaJson = """{"startPage":1.0,"endPage":2.0}""".parseJson
+    val metaJson   = """{"startPage":1.0,"endPage":2.0}""".parseJson
     val parsedMeta = documentMetaFormat.read(metaJson)
     parsedMeta should be(meta)
   }

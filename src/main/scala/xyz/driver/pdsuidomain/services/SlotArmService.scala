@@ -1,51 +1,28 @@
 package xyz.driver.pdsuidomain.services
 
-import java.time.LocalDateTime
-
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.error.DomainError
 import xyz.driver.pdsuicommon.logging._
-import xyz.driver.pdsuidomain.entities._
+import xyz.driver.pdsuidomain.entities.SlotArm
 
 import scala.concurrent.Future
 
-object CriterionService {
-
-  trait DefaultNotFoundError {
-    def userMessage: String = "Criterion not found"
-  }
+object SlotArmService {
 
   trait DefaultAccessDeniedError {
     def userMessage: String = "Access denied"
   }
 
-  final case class RichCriterion(criterion: Criterion,
-                                 armIds: Seq[LongId[EligibilityArm]],
-                                 labels: Seq[CriterionLabel])
-  object RichCriterion {
-    implicit def toPhiString(x: RichCriterion): PhiString = {
-      import x._
-      phi"RichCriterion(criterion=$criterion, armIds=$armIds, labels=$labels)"
-    }
-  }
-
-  sealed trait CreateReply
-  object CreateReply {
-    type Error = CreateReply with DomainError
-
-    final case class Created(x: RichCriterion) extends CreateReply
-
-    case object AuthorizationError
-        extends CreateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
-
-    final case class CommonError(userMessage: String) extends CreateReply with DomainError
+  trait DefaultNotFoundError {
+    def userMessage: String = "SlotArm not found"
   }
 
   sealed trait GetByIdReply
   object GetByIdReply {
-    final case class Entity(x: RichCriterion) extends GetByIdReply
+
+    final case class Entity(x: SlotArm) extends GetByIdReply
 
     type Error = GetByIdReply with DomainError
 
@@ -56,17 +33,13 @@ object CriterionService {
 
     final case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
         extends GetByIdReply with DomainError
-
-    implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
-      case x: DomainError => phi"GetByIdReply.Error($x)"
-      case Entity(x)      => phi"GetByIdReply.Entity($x)"
-    }
   }
 
   sealed trait GetListReply
   object GetListReply {
-    final case class EntityList(xs: Seq[RichCriterion], totalFound: Int, lastUpdate: Option[LocalDateTime])
-        extends GetListReply
+    type Error = GetListReply with DomainError
+
+    final case class EntityList(xs: Seq[SlotArm], totalFound: Int) extends GetListReply
 
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -74,9 +47,10 @@ object CriterionService {
 
   sealed trait UpdateReply
   object UpdateReply {
-    type Error = UpdateReply with DomainError
 
-    final case class Updated(updated: RichCriterion) extends UpdateReply
+    final case class Updated(updated: SlotArm) extends UpdateReply
+
+    type Error = UpdateReply with DomainError
 
     case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
@@ -84,6 +58,36 @@ object CriterionService {
         extends UpdateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
     final case class CommonError(userMessage: String) extends UpdateReply with DomainError
+
+    final case class AlreadyExistsError(x: SlotArm) extends UpdateReply with DomainError {
+      val userMessage = s"The arm with such name of trial already exists."
+    }
+
+    implicit def toPhiString(reply: UpdateReply): PhiString = reply match {
+      case Updated(x) => phi"Updated($x)"
+      case x: Error   => DomainError.toPhiString(x)
+    }
+  }
+
+  sealed trait CreateReply
+  object CreateReply {
+    final case class Created(x: SlotArm) extends CreateReply
+
+    type Error = CreateReply with DomainError
+
+    case object AuthorizationError
+        extends CreateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
+
+    final case class CommonError(userMessage: String) extends CreateReply with DomainError
+
+    final case class AlreadyExistsError(x: SlotArm) extends CreateReply with DomainError {
+      val userMessage = s"The arm with this name of trial already exists."
+    }
+
+    implicit def toPhiString(reply: CreateReply): PhiString = reply match {
+      case Created(x) => phi"Created($x)"
+      case x: Error   => DomainError.toPhiString(x)
+    }
   }
 
   sealed trait DeleteReply
@@ -101,22 +105,21 @@ object CriterionService {
   }
 }
 
-trait CriterionService {
+trait SlotArmService {
 
-  import CriterionService._
-
-  def create(draftRichCriterion: RichCriterion)(
-          implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
-
-  def getById(id: LongId[Criterion])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  import SlotArmService._
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
-  def update(origRichCriterion: RichCriterion, draftRichCriterion: RichCriterion)(
+  def getById(armId: LongId[SlotArm])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+
+  def create(draftSlotArm: SlotArm)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
+
+  def update(origSlotArm: SlotArm, draftSlotArm: SlotArm)(
           implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
-  def delete(id: LongId[Criterion])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
+  def delete(id: LongId[SlotArm])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
 }

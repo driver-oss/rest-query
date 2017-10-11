@@ -22,8 +22,9 @@ object TestUtils {
         left.isFailure && left.failed.get.getClass == ct.runtimeClass,
         left match {
           case Success(x) => s"$left did not fail"
-          case Failure(e) => s"$left did fail with ${Utils.getClassSimpleName(e.getClass)}, " +
-            s"not ${Utils.getClassSimpleName(ct.runtimeClass)}"
+          case Failure(e) =>
+            s"$left did fail with ${Utils.getClassSimpleName(e.getClass)}, " +
+              s"not ${Utils.getClassSimpleName(ct.runtimeClass)}"
         },
         left match {
           case Success(_) => s"$left failed with ${Utils.getClassSimpleName(ct.runtimeClass)}"
@@ -33,7 +34,7 @@ object TestUtils {
     }
   }
 
-  def failWith[ThrowableT <:Throwable](implicit ct: ClassTag[ThrowableT]) = new FailWith[ThrowableT]
+  def failWith[ThrowableT <: Throwable](implicit ct: ClassTag[ThrowableT]) = new FailWith[ThrowableT]
 
   final implicit class TryPropOps(val self: Try[Any]) extends AnyVal {
 

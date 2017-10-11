@@ -21,8 +21,7 @@ class DocumentHistoryFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = documentHistoryFormat.write(documentHistory)
 
-    writtenJson should be(
-      """{"id":10,"executor":"userId-001","documentId":1,"state":"Extract",
+    writtenJson should be("""{"id":10,"executor":"userId-001","documentId":1,"state":"Extract",
         "action":"Start","created":"2017-08-10T18:00Z"}""".parseJson)
 
     val parsedDocumentHistory = documentHistoryFormat.read(writtenJson)

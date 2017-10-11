@@ -41,7 +41,7 @@ class ExtractedDataFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = extractedDataFormat.write(origRichExtractedData)
 
-    writtenJson should be (
+    writtenJson should be(
       """{"id":1,"documentId":101,"keywordId":201,"evidence":"evidence text","meta":null,
         "labels":[{"id":null,"categoryId":null,"value":"Yes"},{"id":12,"categoryId":1,"value":"No"}]}""".parseJson)
 
@@ -78,14 +78,15 @@ class ExtractedDataFormatSuite extends FlatSpec with Matchers {
     val expectedUpdatedExtractedData = origRichExtractedData.copy(
       extractedData = extractedData.copy(
         evidenceText = Some("new evidence text"),
-        meta = Some(TextJson(Meta(
-          keyword = Meta.Keyword(page = 1, pageRatio = None, index = 2, sortIndex = "ASC"),
-          evidence = Meta.Evidence(
-            pageRatio = 1.0,
-            start = Meta.TextLayerPosition(page = 1, index = 3, offset = 2),
-            end = Meta.TextLayerPosition(page = 2, index = 3, offset = 10)
-          )
-        )))
+        meta = Some(
+          TextJson(Meta(
+            keyword = Meta.Keyword(page = 1, pageRatio = None, index = 2, sortIndex = "ASC"),
+            evidence = Meta.Evidence(
+              pageRatio = 1.0,
+              start = Meta.TextLayerPosition(page = 1, index = 3, offset = 2),
+              end = Meta.TextLayerPosition(page = 2, index = 3, offset = 10)
+            )
+          )))
       ),
       labels = updatedExtractedDataLabels
     )

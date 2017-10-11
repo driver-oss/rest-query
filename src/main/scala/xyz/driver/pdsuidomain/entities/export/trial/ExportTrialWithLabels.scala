@@ -8,7 +8,6 @@ import xyz.driver.pdsuidomain.entities.Trial
 
 final case class ExportTrialWithLabels(nctId: StringId[Trial],
                                        trialId: UuidId[Trial],
-                                       disease: String,
                                        lastReviewed: LocalDateTime,
                                        labelVersion: Long,
                                        arms: List[ExportTrialArm],
@@ -18,7 +17,7 @@ object ExportTrialWithLabels {
 
   implicit def toPhiString(x: ExportTrialWithLabels): PhiString = {
     import x._
-    phi"TrialWithLabels(nctId=$nctId, trialId=$trialId, disease=${Unsafe(disease)}, " +
+    phi"TrialWithLabels(nctId=$nctId, trialId=$trialId}, " +
       phi"lastReviewed=$lastReviewed, labelVersion=${Unsafe(labelVersion)}, arms=$arms, criteria=$criteria)"
   }
 }

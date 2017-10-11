@@ -188,7 +188,7 @@ object InterventionType {
   }
 }
 
-final case class InterventionArm(armId: LongId[Arm], interventionId: LongId[Intervention])
+final case class InterventionArm(armId: LongId[SlotArm], interventionId: LongId[Intervention])
 
 object InterventionArm {
   implicit def toPhiString(x: InterventionArm): PhiString = {

@@ -21,8 +21,7 @@ class TrialHistoryFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = trialHistoryFormat.write(trialHistory)
 
-    writtenJson should be(
-      """{"id":10,"executor":"userId-001","trialId":"NCT000001","state":"Summarize",
+    writtenJson should be("""{"id":10,"executor":"userId-001","trialId":"NCT000001","state":"Summarize",
         "action":"Start","created":"2017-08-10T18:00Z"}""".parseJson)
 
     val parsedTrialHistory = trialHistoryFormat.read(writtenJson)

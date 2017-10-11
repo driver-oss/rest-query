@@ -1,14 +1,13 @@
 package xyz.driver.pdsuidomain.fakes.entities
 
 import xyz.driver.entities.labels.{Label, LabelCategory}
-import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.domain.{LongId, User}
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
 
 object trialcuration {
-  import xyz.driver.core.generators
   import common._
+  import xyz.driver.core.generators
   import xyz.driver.pdsuidomain.entities.InterventionType._
 
   def nextTrial(): Trial = Trial(
@@ -20,7 +19,6 @@ object trialcuration {
     previousAssignee = Option(nextStringId[User]),
     lastActiveUserId = Option(nextStringId[User]),
     lastUpdate = nextLocalDateTime,
-    disease = generators.oneOf[CancerType](CancerType.Breast, CancerType.Lung, CancerType.Prostate),
     phase = generators.nextString(),
     hypothesisId = Option(nextUuidId[Hypothesis]),
     studyDesignId = Option(nextLongId[StudyDesign]),
@@ -63,7 +61,7 @@ object trialcuration {
     val criterion = nextCriterion()
     RichCriterion(
       criterion = criterion,
-      armIds = Seq(nextLongId[Arm], nextLongId[Arm]),
+      armIds = Seq(nextLongId[EligibilityArm], nextLongId[EligibilityArm]),
       labels = Seq(
         nextCriterionLabel(criterion.id),
         nextCriterionLabel(criterion.id)
@@ -86,7 +84,7 @@ object trialcuration {
 
   def nextInterventionArm(interventionId: LongId[Intervention]): InterventionArm = InterventionArm(
     interventionId = interventionId,
-    armId = nextLongId[Arm]
+    armId = nextLongId[SlotArm]
   )
 
   def nextInterventionWithArms(): InterventionWithArms = {

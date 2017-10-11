@@ -25,7 +25,7 @@ final case class ApiNewCriterion(meta: Option[String],
       text = text,
       inclusion = inclusion
     ),
-    armIds = arms.getOrElse(Seq.empty).map(LongId[Arm]),
+    armIds = arms.getOrElse(Seq.empty).map(LongId[EligibilityArm]),
     labels = labels.map(_.toDomain(LongId(Long.MaxValue))) // A developer should specify right criterionId himself
   )
 }

@@ -2,7 +2,6 @@ package xyz.driver.pdsuidomain.entities
 
 import java.time.LocalDateTime
 
-import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, User, UuidId}
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
@@ -69,7 +68,6 @@ final case class Trial(id: StringId[Trial],
                        previousAssignee: Option[StringId[User]],
                        lastActiveUserId: Option[StringId[User]],
                        lastUpdate: LocalDateTime,
-                       disease: CancerType,
                        phase: String,
                        hypothesisId: Option[UuidId[Hypothesis]],
                        studyDesignId: Option[LongId[StudyDesign]],

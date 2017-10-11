@@ -25,13 +25,13 @@ class PatientLabelFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = richPatientLabelWriter.write(RichPatientLabel(orig, isVerified = true))
 
-    writtenJson should be (
+    writtenJson should be(
       """{"id":1,"labelId":20,"primaryValue":"Yes","verifiedPrimaryValue":null,"isVisible":true,"isVerified":true,
         "score":1,"isImplicitMatch":false}""".parseJson)
 
-    val updatePatientLabelJson = """{"verifiedPrimaryValue":"No"}""".parseJson
+    val updatePatientLabelJson      = """{"verifiedPrimaryValue":"No"}""".parseJson
     val expectedUpdatedPatientLabel = orig.copy(verifiedPrimaryValue = Some(LabelValue.No))
-    val parsedUpdatePatientLabel = applyUpdateToPatientLabel(updatePatientLabelJson, orig)
+    val parsedUpdatePatientLabel    = applyUpdateToPatientLabel(updatePatientLabelJson, orig)
     parsedUpdatePatientLabel should be(expectedUpdatedPatientLabel)
   }
 
@@ -53,7 +53,7 @@ class PatientLabelFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = patientLabelEvidenceWriter.write(orig)
 
-    writtenJson should be (
+    writtenJson should be(
       """{"id":1,"value":"Maybe","evidenceText":"evidence text","documentId":21,"evidenceId":10,"reportId":null,
         "documentType":{"id":3,"name":"Laboratory Report"},"date":"2017-08-10",
         "providerType":{"id":26,"name":"Emergency Medicine"}}""".parseJson)
@@ -73,7 +73,7 @@ class PatientLabelFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = patientLabelDefiningCriteriaWriter.write(orig)
 
-    writtenJson should be ("""{"id":1,"value":"Yes"}""".parseJson)
+    writtenJson should be("""{"id":1,"value":"Yes"}""".parseJson)
   }
 
 }
