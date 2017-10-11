@@ -25,7 +25,8 @@ final case class ApiDocument(id: Long,
                              assignee: Option[String],
                              previousAssignee: Option[String],
                              lastActiveUser: Option[String],
-                             meta: Option[String]) {
+                             meta: Option[String],
+                             labelVersion: Int) {
 
   private def extractStatus(status: String): Document.Status =
     Document.Status.fromString(status).getOrElse(throw new NoSuchElementException(s"Status $status unknown"))
@@ -50,7 +51,8 @@ final case class ApiDocument(id: Long,
     meta = this.meta.map(x => TextJson(JsonSerializer.deserialize[Document.Meta](x))),
     startDate = this.startDate,
     endDate = this.endDate,
-    lastUpdate = this.lastUpdate.toLocalDateTime()
+    lastUpdate = this.lastUpdate.toLocalDateTime(),
+    labelVersion = this.labelVersion
   )
 
 }
@@ -83,7 +85,8 @@ object ApiDocument {
       (JsPath \ "lastActiveUser").formatNullable[String] and
       (JsPath \ "meta").formatNullable(Format(Reads { x =>
         JsSuccess(Json.stringify(x))
-      }, Writes[String](Json.parse)))
+      }, Writes[String](Json.parse))) and
+      (JsPath \ "labelVersion").format[Int]
   )(ApiDocument.apply, unlift(ApiDocument.unapply))
 
   def fromDomain(document: Document): ApiDocument = {
@@ -104,7 +107,8 @@ object ApiDocument {
       assignee = document.assignee.map(_.id),
       previousAssignee = document.previousAssignee.map(_.id),
       lastActiveUser = document.lastActiveUserId.map(_.id),
-      meta = document.meta.map(meta => JsonSerializer.serialize(meta.content))
+      meta = document.meta.map(meta => JsonSerializer.serialize(meta.content)),
+      labelVersion = document.labelVersion
     )
   }
 }
