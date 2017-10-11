@@ -9,7 +9,9 @@ object export {
   import xyz.driver.core.generators._
 
   def nextExportTrialArm(): ExportTrialArm =
-    ExportTrialArm(armId = nextLongId[EligibilityArm], armName = nextString(100))
+    ExportTrialArm(armId = nextLongId[EligibilityArm],
+                   armName = nextString(100),
+                   diseaseList = listOf(nextString(100)))
 
   def nextExportTrialLabelCriterion(): ExportTrialLabelCriterion =
     ExportTrialLabelCriterion(

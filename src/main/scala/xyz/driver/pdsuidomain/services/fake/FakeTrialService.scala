@@ -74,7 +74,8 @@ class FakeTrialService extends TrialService {
       generators.listOf(
         new ExportTrialArm(
           LongId[EligibilityArm](generators.nextInt(999999).toLong),
-          generators.nextName().value
+          generators.nextName().value,
+          generators.listOf(generators.oneOf("adenocarcinoma", "breast", "prostate"))
         )),
       generators.listOf(
         new ExportTrialLabelCriterion(

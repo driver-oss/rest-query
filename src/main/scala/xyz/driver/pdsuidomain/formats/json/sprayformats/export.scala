@@ -25,7 +25,7 @@ object export {
   implicit val patientWithLabelsFormat: RootJsonFormat[ExportPatientWithLabels] =
     jsonFormat(ExportPatientWithLabels.apply, "patientId", "labelVersion", "labels")
 
-  implicit val trialArmFormat: RootJsonFormat[ExportTrialArm] = jsonFormat2(ExportTrialArm.apply)
+  implicit val trialArmFormat: RootJsonFormat[ExportTrialArm] = jsonFormat3(ExportTrialArm.apply)
 
   implicit val trialLabelCriterionFormat: RootJsonFormat[ExportTrialLabelCriterion] =
     new RootJsonFormat[ExportTrialLabelCriterion] {
