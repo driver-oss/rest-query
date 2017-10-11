@@ -83,13 +83,14 @@ class ListResponseSuite extends FlatSpec with Matchers {
       disease = "Breast",
       requestId = RecordRequestId(UUID.fromString("7b54a75d-4197-4b27-9045-b9b6cb131be9")),
       caseId = None,
-      patientId = UuidId("748b5884-3528-4cb9-904b-7a8151d6e343")
+      patientId = UuidId("748b5884-3528-4cb9-904b-7a8151d6e343"),
+      totalPages = 10
     )
 
     val recordJsonAsString =
       """{"id":1,"status":"New","assignee":null,"previousStatus":null,"previousAssignee":null,"lastActiveUser":null,
         "lastUpdate":"2017-08-10T18:00Z","meta":[],"patientId":"748b5884-3528-4cb9-904b-7a8151d6e343","caseId":null,
-        "requestId":"7b54a75d-4197-4b27-9045-b9b6cb131be9","disease":"Breast","physician":"physician"}"""
+        "requestId":"7b54a75d-4197-4b27-9045-b9b6cb131be9","disease":"Breast","physician":"physician","totalPages":10}"""
 
     val meta =
       ListResponse.Meta(

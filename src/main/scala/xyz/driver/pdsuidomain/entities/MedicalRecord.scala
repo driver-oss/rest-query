@@ -156,7 +156,8 @@ final case class MedicalRecord(id: LongId[MedicalRecord],
                                caseId: Option[CaseId],
                                physician: Option[String],
                                meta: Option[TextJson[List[Meta]]],
-                               lastUpdate: LocalDateTime) {
+                               lastUpdate: LocalDateTime,
+                               totalPages: Int) {
 
   import MedicalRecord.Status._
 
