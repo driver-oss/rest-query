@@ -33,17 +33,18 @@ class PatientCriterionFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = patientCriterionWriter.write((orig, LongId(21), arms))
 
-    writtenJson should be (
+    writtenJson should be(
       """{"id":1,"labelId":21,"nctId":"NCT00001","criterionId":101,"criterionText":"criterion text","criterionValue":"Yes",
          "criterionIsDefining":false,"criterionIsCompound":false,"eligibilityStatus":"Yes","verifiedEligibilityStatus":null,
          "isVisible":true,"isVerified":true,"lastUpdate":"2017-08-10T18:00Z","arms":["arm 31","arm 32"]}""".parseJson)
 
-    val updatePatientCriterionJson = """{"verifiedEligibilityStatus":"No"}""".parseJson
+    val updatePatientCriterionJson      = """{"verifiedEligibilityStatus":"No"}""".parseJson
     val expectedUpdatedPatientCriterion = orig.copy(verifiedEligibilityStatus = Some(FuzzyValue.No))
-    val parsedUpdatePatientCriterion = applyUpdateToPatientCriterion(updatePatientCriterionJson, orig)
+    val parsedUpdatePatientCriterion    = applyUpdateToPatientCriterion(updatePatientCriterionJson, orig)
     parsedUpdatePatientCriterion should be(expectedUpdatedPatientCriterion)
 
-    val updateBulkPatientCriterionJson = """[{"id":1,"eligibilityStatus":"No"},{"id":2,"isVerified":false}]""".parseJson
+    val updateBulkPatientCriterionJson =
+      """[{"id":1,"eligibilityStatus":"No"},{"id":2,"isVerified":false}]""".parseJson
     val expectedDraftPatientCriterionList = List(
       DraftPatientCriterion(id = LongId(1), eligibilityStatus = Some(FuzzyValue.No), isVerified = None),
       DraftPatientCriterion(id = LongId(2), eligibilityStatus = None, isVerified = Some(false))

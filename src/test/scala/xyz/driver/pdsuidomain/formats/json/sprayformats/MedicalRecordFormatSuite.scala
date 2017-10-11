@@ -32,7 +32,7 @@ class MedicalRecordFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = recordFormat.write(orig)
 
-    writtenJson should be (
+    writtenJson should be(
       """{"id":1,"status":"New","assignee":null,"previousStatus":null,"previousAssignee":null,"lastActiveUser":null,
         "lastUpdate":"2017-08-10T18:00Z","meta":[],"patientId":"748b5884-3528-4cb9-904b-7a8151d6e343","caseId":null,
         "requestId":"7b54a75d-4197-4b27-9045-b9b6cb131be9","disease":"Breast","physician":"physician"}""".parseJson)
@@ -64,11 +64,16 @@ class MedicalRecordFormatSuite extends FlatSpec with Matchers {
         {"type":"reorder","items":[1,2]},
         {"type":"rotation","items":{"item1":1,"item2":2}}]}""".parseJson
     val expectedUpdatedRecord = orig.copy(
-      meta = Some(TextJson(List(
-        Meta.Duplicate(predicted = Some(true), startPage = 1.0, endPage = 2.0, startOriginalPage = 1.0, endOriginalPage = None),
-        Meta.Reorder(predicted = None, items = Seq(1, 2)),
-        Meta.Rotation(predicted = None, items = Map("item1" -> 1, "item2" -> 2))
-      )))
+      meta = Some(
+        TextJson(List(
+          Meta.Duplicate(predicted = Some(true),
+                         startPage = 1.0,
+                         endPage = 2.0,
+                         startOriginalPage = 1.0,
+                         endOriginalPage = None),
+          Meta.Reorder(predicted = None, items = Seq(1, 2)),
+          Meta.Rotation(predicted = None, items = Map("item1" -> 1, "item2" -> 2))
+        )))
     )
     val parsedUpdatedRecord = applyUpdateToMedicalRecord(updateRecordJson, orig)
     parsedUpdatedRecord should be(expectedUpdatedRecord)

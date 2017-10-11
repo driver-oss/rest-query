@@ -18,13 +18,13 @@ class PatientHypothesisFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = patientHypothesisWriter.write((orig, true))
 
-    writtenJson should be (
+    writtenJson should be(
       """{"id":"815d9715-1089-4775-b120-3afb983b9a97","patientId":"748b5884-3528-4cb9-904b-7a8151d6e343",
          "hypothesisId":"e76e2fc4-a29c-44fb-a81b-8856d06bb1d4","rationale":null,"matchedTrials":1,"isRationaleRequired":true}""".parseJson)
 
-    val updatePatientHypothesisJson = """{"rationale":"rationale"}""".parseJson
+    val updatePatientHypothesisJson      = """{"rationale":"rationale"}""".parseJson
     val expectedUpdatedPatientHypothesis = orig.copy(rationale = Some("rationale"))
-    val parsedUpdatePatientHypothesis = applyUpdateToPatientHypothesis(updatePatientHypothesisJson, orig)
+    val parsedUpdatePatientHypothesis    = applyUpdateToPatientHypothesis(updatePatientHypothesisJson, orig)
     parsedUpdatePatientHypothesis should be(expectedUpdatedPatientHypothesis)
   }
 
