@@ -22,55 +22,45 @@ object MedicalRecord {
     ))
   trait Meta {
     @JsonProperty("type") def metaType: String
-    def predicted: Option[Boolean]
-
-    /**
-      * Return a regular meta: this meta is considered as not predicted
-      */
-    def confirmed: Meta
   }
 
   object Meta {
 
-    final case class Duplicate(predicted: Option[Boolean],
-                               startPage: Double,
+    final case class Duplicate(startPage: Double,
                                endPage: Double,
                                startOriginalPage: Double,
                                endOriginalPage: Option[Double])
         extends Meta {
-      override val metaType             = "duplicate"
-      override def confirmed: Duplicate = copy(predicted = predicted.map(_ => false))
+      override val metaType = "duplicate"
     }
 
     object Duplicate {
       implicit def toPhiString(x: Duplicate): PhiString = {
         import x._
-        phi"Duplicate(predicted=${x.predicted}, startPage=${Unsafe(startPage)}, endPage=${Unsafe(endPage)}, " +
+        phi"Duplicate(startPage=${Unsafe(startPage)}, endPage=${Unsafe(endPage)}, " +
           phi"startOriginalPage=${Unsafe(startOriginalPage)}, endOriginalPage=${Unsafe(endOriginalPage)}"
       }
     }
 
-    final case class Reorder(predicted: Option[Boolean], items: Seq[Int]) extends Meta {
-      override val metaType           = "reorder"
-      override def confirmed: Reorder = copy(predicted = predicted.map(_ => false))
+    final case class Reorder(items: Seq[Int]) extends Meta {
+      override val metaType = "reorder"
     }
 
     object Reorder {
       implicit def toPhiString(x: Reorder): PhiString = {
         import x._
-        phi"Reorder(predicted=${x.predicted}, items=${Unsafe(items.toString)})"
+        phi"Reorder(items=${Unsafe(items.toString)})"
       }
     }
 
-    final case class Rotation(predicted: Option[Boolean], items: Map[String, Int]) extends Meta {
-      override val metaType            = "rotation"
-      override def confirmed: Rotation = copy(predicted = predicted.map(_ => false))
+    final case class Rotation(items: Map[String, Int]) extends Meta {
+      override val metaType = "rotation"
     }
 
     object Rotation {
       implicit def toPhiString(x: Rotation): PhiString = {
         import x._
-        phi"Rotation(predicted=${x.predicted}, items=${Unsafe(items.toString)})"
+        phi"Rotation(items=${Unsafe(items.toString)})"
       }
     }
 
@@ -166,8 +156,6 @@ final case class MedicalRecord(id: LongId[MedicalRecord],
                                caseId: Option[CaseId],
                                physician: Option[String],
                                meta: Option[TextJson[List[Meta]]],
-                               predictedMeta: Option[TextJson[List[Meta]]],
-                               predictedDocuments: Option[TextJson[List[Document]]],
                                lastUpdate: LocalDateTime) {
 
   import MedicalRecord.Status._

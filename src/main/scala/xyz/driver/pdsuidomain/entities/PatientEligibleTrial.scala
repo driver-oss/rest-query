@@ -1,6 +1,7 @@
 package xyz.driver.pdsuidomain.entities
 
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, StringId, UuidId}
+import xyz.driver.entities.labels.LabelValue
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuicommon.logging._
 
 object PatientTrialArm {
@@ -37,22 +38,22 @@ object PatientTrialArmGroup {
   /**
     * @see https://driverinc.atlassian.net/wiki/display/DMPD/EV+Business+Process
     */
-  def getEligibilityStatusForRc(criterionList: TraversableOnce[PatientCriterion]): Option[FuzzyValue] = {
-    def isEligible: Boolean   = criterionList.forall(_.verifiedEligibilityStatus.contains(FuzzyValue.Yes))
-    def isIneligible: Boolean = criterionList.exists(_.verifiedEligibilityStatus.contains(FuzzyValue.No))
+  def getEligibilityStatusForRc(criterionList: TraversableOnce[PatientCriterion]): Option[LabelValue] = {
+    def isEligible: Boolean   = criterionList.forall(_.verifiedEligibilityStatus.contains(LabelValue.Yes))
+    def isIneligible: Boolean = criterionList.exists(_.verifiedEligibilityStatus.contains(LabelValue.No))
     def isUnknown: Boolean    = criterionList.forall(_.verifiedEligibilityStatus.isEmpty)
 
-    if (isEligible) Some(FuzzyValue.Yes)
-    else if (isIneligible) Some(FuzzyValue.No)
+    if (isEligible) Some(LabelValue.Yes)
+    else if (isIneligible) Some(LabelValue.No)
     else if (isUnknown) None
-    else Some(FuzzyValue.Maybe)
+    else Some(LabelValue.Maybe)
   }
 }
 
 final case class PatientTrialArmGroup(id: LongId[PatientTrialArmGroup],
                                       eligibleTrialId: UuidId[PatientEligibleTrial],
-                                      eligibilityStatus: Option[FuzzyValue],
-                                      verifiedEligibilityStatus: Option[FuzzyValue],
+                                      eligibilityStatus: Option[LabelValue],
+                                      verifiedEligibilityStatus: Option[LabelValue],
                                       isVerified: Boolean)
 
 object PatientTrialArmGroupView {
@@ -69,8 +70,8 @@ final case class PatientTrialArmGroupView(id: LongId[PatientTrialArmGroup],
                                           patientId: UuidId[Patient],
                                           trialId: StringId[Trial],
                                           hypothesisId: UuidId[Hypothesis],
-                                          eligibilityStatus: Option[FuzzyValue],
-                                          verifiedEligibilityStatus: Option[FuzzyValue],
+                                          eligibilityStatus: Option[LabelValue],
+                                          verifiedEligibilityStatus: Option[LabelValue],
                                           isVerified: Boolean) {
 
   def applyTo(trialArmGroup: PatientTrialArmGroup) = {

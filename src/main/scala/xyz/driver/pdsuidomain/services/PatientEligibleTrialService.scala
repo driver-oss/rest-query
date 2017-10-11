@@ -1,12 +1,12 @@
 package xyz.driver.pdsuidomain.services
 
-import xyz.driver.entities.labels.Label
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterExpr, Sorting}
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuicommon.error.DomainError
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuidomain.entities.{Trial, _}
+import xyz.driver.pdsuidomain.services.PatientCriterionService.RichPatientCriterion
 
 import scala.concurrent.Future
 
@@ -71,8 +71,7 @@ object PatientEligibleTrialService {
 
   sealed trait GetCriterionListOfGroupReply
   object GetCriterionListOfGroupReply {
-    final case class EntityList(xs: Seq[(PatientCriterion, LongId[Label], List[PatientCriterionArm])], totalFound: Int)
-        extends GetCriterionListOfGroupReply
+    final case class EntityList(xs: Seq[RichPatientCriterion], totalFound: Int) extends GetCriterionListOfGroupReply
 
     type Error = GetCriterionListOfGroupReply with DomainError
 

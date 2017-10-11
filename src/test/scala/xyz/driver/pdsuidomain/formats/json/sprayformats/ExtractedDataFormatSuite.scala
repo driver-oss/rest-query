@@ -2,7 +2,8 @@ package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, TextJson}
+import xyz.driver.entities.labels.LabelValue
+import xyz.driver.pdsuicommon.domain.{LongId, TextJson}
 import xyz.driver.pdsuidomain.entities.ExtractedData.Meta
 import xyz.driver.pdsuidomain.entities.{ExtractedData, ExtractedDataLabel}
 import xyz.driver.pdsuidomain.services.ExtractedDataService.RichExtractedData
@@ -24,14 +25,14 @@ class ExtractedDataFormatSuite extends FlatSpec with Matchers {
         dataId = extractedData.id,
         labelId = None,
         categoryId = None,
-        value = Some(FuzzyValue.Yes)
+        value = Some(LabelValue.Yes)
       ),
       ExtractedDataLabel(
         id = LongId(2),
         dataId = extractedData.id,
         labelId = Some(LongId(12)),
         categoryId = Some(LongId(1)),
-        value = Some(FuzzyValue.No)
+        value = Some(LabelValue.No)
       )
     )
     val origRichExtractedData = RichExtractedData(
@@ -64,14 +65,14 @@ class ExtractedDataFormatSuite extends FlatSpec with Matchers {
         dataId = extractedData.id,
         labelId = Some(LongId(20)),
         categoryId = Some(LongId(1)),
-        value = Some(FuzzyValue.Yes)
+        value = Some(LabelValue.Yes)
       ),
       ExtractedDataLabel(
         id = LongId(0),
         dataId = extractedData.id,
         labelId = Some(LongId(12)),
         categoryId = Some(LongId(1)),
-        value = Some(FuzzyValue.No)
+        value = Some(LabelValue.No)
       )
     )
     val expectedUpdatedExtractedData = origRichExtractedData.copy(

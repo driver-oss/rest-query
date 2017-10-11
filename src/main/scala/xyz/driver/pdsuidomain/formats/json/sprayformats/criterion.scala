@@ -10,7 +10,7 @@ object criterion {
   import DefaultJsonProtocol._
   import common._
 
-  implicit val criterionLabelWriter = new JsonWriter[CriterionLabel] {
+  implicit val criterionLabelWriter = new RootJsonWriter[CriterionLabel] {
     override def write(obj: CriterionLabel) = JsObject(
       "labelId"    -> obj.labelId.toJson,
       "categoryId" -> obj.categoryId.toJson,

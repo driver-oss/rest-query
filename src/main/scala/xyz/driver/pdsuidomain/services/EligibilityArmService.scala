@@ -5,7 +5,7 @@ import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.error.DomainError
 import xyz.driver.pdsuicommon.logging._
-import xyz.driver.pdsuidomain.entities.EligibilityArm
+import xyz.driver.pdsuidomain.entities.{EligibilityArm, EligibilityArmWithDiseases, SlotArm}
 
 import scala.concurrent.Future
 
@@ -19,10 +19,14 @@ object EligibilityArmService {
     def userMessage: String = "EligibilityArm not found"
   }
 
+  trait SlotArmNotFoundError {
+    def userMessage: String = "SlotArm not found"
+  }
+
   sealed trait GetByIdReply
   object GetByIdReply {
 
-    final case class Entity(x: EligibilityArm) extends GetByIdReply
+    final case class Entity(x: EligibilityArmWithDiseases) extends GetByIdReply
 
     type Error = GetByIdReply with DomainError
 
@@ -39,7 +43,7 @@ object EligibilityArmService {
   object GetListReply {
     type Error = GetListReply with DomainError
 
-    final case class EntityList(xs: Seq[EligibilityArm], totalFound: Int) extends GetListReply
+    final case class EntityList(xs: Seq[EligibilityArmWithDiseases], totalFound: Int) extends GetListReply
 
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -48,7 +52,7 @@ object EligibilityArmService {
   sealed trait UpdateReply
   object UpdateReply {
 
-    final case class Updated(updated: EligibilityArm) extends UpdateReply
+    final case class Updated(updated: EligibilityArmWithDiseases) extends UpdateReply
 
     type Error = UpdateReply with DomainError
 
@@ -59,7 +63,7 @@ object EligibilityArmService {
 
     final case class CommonError(userMessage: String) extends UpdateReply with DomainError
 
-    final case class AlreadyExistsError(x: EligibilityArm) extends UpdateReply with DomainError {
+    final case class AlreadyExistsError(x: EligibilityArmWithDiseases) extends UpdateReply with DomainError {
       val userMessage = s"The arm with such name of trial already exists."
     }
 
@@ -71,16 +75,18 @@ object EligibilityArmService {
 
   sealed trait CreateReply
   object CreateReply {
-    final case class Created(x: EligibilityArm) extends CreateReply
+    final case class Created(x: EligibilityArmWithDiseases) extends CreateReply
 
     type Error = CreateReply with DomainError
 
     case object AuthorizationError
         extends CreateReply with DefaultAccessDeniedError with DomainError.AuthorizationError
 
+    case object NotFoundError extends CreateReply with SlotArmNotFoundError with DomainError.NotFoundError
+
     final case class CommonError(userMessage: String) extends CreateReply with DomainError
 
-    final case class AlreadyExistsError(x: EligibilityArm) extends CreateReply with DomainError {
+    final case class AlreadyExistsError(x: EligibilityArmWithDiseases) extends CreateReply with DomainError {
       val userMessage = s"The arm with this name of trial already exists."
     }
 
@@ -114,13 +120,19 @@ trait EligibilityArmService {
              pagination: Option[Pagination] = None)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
 
-  def getById(armId: LongId[EligibilityArm])(
+  def getByEligibilityId(armId: LongId[EligibilityArm])(
           implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
-  def create(draftEligibilityArm: EligibilityArm)(
+  def getBySlotId(armId: LongId[SlotArm],
+                  filter: SearchFilterExpr = SearchFilterExpr.Empty,
+                  sorting: Option[Sorting] = None,
+                  pagination: Option[Pagination] = None)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+
+  def create(slotArmId: LongId[SlotArm], draftEligibilityArm: EligibilityArmWithDiseases)(
           implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
 
-  def update(origEligibilityArm: EligibilityArm, draftEligibilityArm: EligibilityArm)(
+  def update(origEligibilityArm: EligibilityArmWithDiseases, draftEligibilityArm: EligibilityArmWithDiseases)(
           implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
 
   def delete(id: LongId[EligibilityArm])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]

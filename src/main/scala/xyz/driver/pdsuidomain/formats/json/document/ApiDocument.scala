@@ -2,7 +2,6 @@ package xyz.driver.pdsuidomain.formats.json.document
 
 import java.time.{LocalDate, ZoneId, ZonedDateTime}
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, TextJson}
-import xyz.driver.pdsuicommon.json.JsonSerializer
 
 import xyz.driver.pdsuidomain.entities._
 import play.api.data.validation.ValidationError
@@ -20,6 +19,7 @@ final case class ApiDocument(id: Long,
                              provider: Option[String],
                              providerTypeId: Option[Long],
                              requiredType: Option[String],
+                             institutionName: Option[String],
                              status: Option[String],
                              previousStatus: Option[String],
                              assignee: Option[String],
@@ -46,6 +46,7 @@ final case class ApiDocument(id: Long,
     providerName = this.provider,
     providerTypeId = this.providerTypeId.map(LongId(_)),
     requiredType = this.requiredType.map(extractRequiredType),
+    institutionName = this.institutionName,
     meta = this.meta.map(x => TextJson(JsonSerializer.deserialize[Document.Meta](x))),
     startDate = this.startDate,
     endDate = this.endDate,
@@ -74,6 +75,7 @@ object ApiDocument {
       (JsPath \ "provider").formatNullable[String] and
       (JsPath \ "providerTypeId").formatNullable[Long] and
       (JsPath \ "requiredType").formatNullable[String] and
+      (JsPath \ "institutionName").formatNullable[String] and
       (JsPath \ "status").formatNullable(statusFormat) and
       (JsPath \ "previousStatus").formatNullable(statusFormat) and
       (JsPath \ "assignee").formatNullable[String] and
@@ -96,6 +98,7 @@ object ApiDocument {
       provider = document.providerName,
       providerTypeId = document.providerTypeId.map(_.id),
       requiredType = document.requiredType.map(Document.RequiredType.requiredTypeToString),
+      institutionName = document.institutionName,
       status = Option(Document.Status.statusToString(document.status)),
       previousStatus = document.previousStatus.map(Document.Status.statusToString),
       assignee = document.assignee.map(_.id),

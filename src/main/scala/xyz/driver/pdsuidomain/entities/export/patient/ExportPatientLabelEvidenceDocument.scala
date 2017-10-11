@@ -19,12 +19,4 @@ object ExportPatientLabelEvidenceDocument extends PhiLogging {
     phi"ExportPatientLabelEvidenceDocument(documentId=$documentId, requestId=$requestId, " +
       phi"documentType=${Unsafe(documentType)}, providerType=${Unsafe(providerType)}, date=$date)"
   }
-
-  def fromRaw(x: RawPatientLabel) = ExportPatientLabelEvidenceDocument(
-    documentId = x.documentId,
-    requestId = x.requestId,
-    documentType = x.documentType,
-    providerType = x.providerType,
-    date = x.startDate
-  )
 }

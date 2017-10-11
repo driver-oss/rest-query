@@ -1,20 +1,36 @@
 package xyz.driver.pdsuidomain.formats.json.eligibilityarm
 
-import xyz.driver.pdsuicommon.domain.{LongId, StringId}
-import xyz.driver.pdsuidomain.entities.EligibilityArm
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import xyz.driver.entities.patient.CancerType
+import xyz.driver.pdsuicommon.domain.{LongId, StringId}
+import xyz.driver.pdsuidomain.entities.{EligibilityArm, EligibilityArmDisease, EligibilityArmWithDiseases}
 
-final case class ApiEligibilityArm(id: Long, name: String, originalName: String, trialId: String) {
+final case class ApiEligibilityArm(id: Long,
+                                   name: String,
+                                   originalName: String,
+                                   trialId: String,
+                                   diseases: Seq[String]) {
 
-  def toDomain: EligibilityArm = EligibilityArm(
-    id = LongId(this.id),
-    name = this.name,
-    originalName = this.originalName,
-    trialId = StringId(this.trialId),
-    deleted = None // if we have an ApiEligibilityArm object, the EligibilityArm itself has not been deleted
-  )
+  def toDomain: EligibilityArmWithDiseases = {
+    val eligibilityArm = EligibilityArm(
+      id = LongId(this.id),
+      name = this.name,
+      originalName = this.originalName,
+      trialId = StringId(this.trialId),
+      deleted = None // if we have an ApiEligibilityArm object, the EligibilityArm itself has not been deleted
+    )
 
+    EligibilityArmWithDiseases(
+      eligibilityArm,
+      this.diseases.map { disease =>
+        val condition = CancerType
+          .fromString(disease)
+          .getOrElse(throw new NoSuchElementException(s"unknown condition $disease"))
+        EligibilityArmDisease(eligibilityArm.id, condition)
+      }
+    )
+  }
 }
 
 object ApiEligibilityArm {
@@ -23,13 +39,19 @@ object ApiEligibilityArm {
     (JsPath \ "id").format[Long] and
       (JsPath \ "name").format[String] and
       (JsPath \ "originalName").format[String] and
-      (JsPath \ "trialId").format[String]
+      (JsPath \ "trialId").format[String] and
+      (JsPath \ "diseases").format[Seq[String]]
   )(ApiEligibilityArm.apply, unlift(ApiEligibilityArm.unapply))
 
-  def fromDomain(arm: EligibilityArm): ApiEligibilityArm = ApiEligibilityArm(
-    id = arm.id.id,
-    name = arm.name,
-    originalName = arm.originalName,
-    trialId = arm.trialId.id
-  )
+  def fromDomain(eligibilityArmWithDiseases: EligibilityArmWithDiseases): ApiEligibilityArm = {
+    import eligibilityArmWithDiseases.{eligibilityArm, eligibilityArmDiseases}
+
+    ApiEligibilityArm(
+      id = eligibilityArm.id.id,
+      name = eligibilityArm.name,
+      originalName = eligibilityArm.originalName,
+      trialId = eligibilityArm.trialId.id,
+      diseases = eligibilityArmDiseases.map(_.disease.toString)
+    )
+  }
 }

@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 import akka.NotUsed
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
+import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.StringId
@@ -68,6 +69,20 @@ object TrialService {
         extends GetTrialWithLabelsReply with DomainError.AuthorizationError with DefaultAccessDeniedError
   }
 
+  sealed trait GetTrialsWithLabelsReply
+  object GetTrialsWithLabelsReply {
+    type Error = GetTrialsWithLabelsReply with DomainError
+
+    final case class EntityList(xs: Seq[ExportTrialWithLabels]) extends GetTrialsWithLabelsReply
+
+    case object NotFoundError extends GetTrialsWithLabelsReply with DomainError.NotFoundError {
+      def userMessage: String = "Trials for disease are not found"
+    }
+
+    case object AuthorizationError
+        extends GetTrialsWithLabelsReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+  }
+
   sealed trait UpdateReply
   object UpdateReply {
     type Error = UpdateReply with DomainError
@@ -94,8 +109,11 @@ trait TrialService {
 
   def getById(id: StringId[Trial])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
 
-  def getTrialWithLabels(trialId: StringId[Trial], condition: String)(
+  def getTrialWithLabels(trialId: StringId[Trial], cancerType: CancerType)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetTrialWithLabelsReply]
+
+  def getTrialsWithLabels(cancerType: CancerType)(
+          implicit requestContext: AuthenticatedRequestContext): Future[GetTrialsWithLabelsReply]
 
   def getPdfSource(trialId: StringId[Trial])(
           implicit requestContext: AuthenticatedRequestContext): Future[Source[ByteString, NotUsed]]

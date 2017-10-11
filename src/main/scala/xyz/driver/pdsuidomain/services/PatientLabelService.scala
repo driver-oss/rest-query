@@ -24,9 +24,17 @@ object PatientLabelService {
     def userMessage: String = "Access denied"
   }
 
+  final case class RichPatientLabel(patientLabel: PatientLabel, isVerified: Boolean)
+
+  object RichPatientLabel {
+    implicit def toPhiString(x: RichPatientLabel): PhiString = {
+      phi"RichPatientLabel(patientLabel=${x.patientLabel}, isVerified=${x.isVerified})"
+    }
+  }
+
   sealed trait GetListReply
   object GetListReply {
-    final case class EntityList(xs: Seq[(PatientLabel, Boolean)], totalFound: Int) extends GetListReply
+    final case class EntityList(xs: Seq[RichPatientLabel], totalFound: Int) extends GetListReply
 
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -52,7 +60,7 @@ object PatientLabelService {
 
   sealed trait GetByLabelIdReply
   object GetByLabelIdReply {
-    final case class Entity(x: PatientLabel, isVerified: Boolean) extends GetByLabelIdReply
+    final case class Entity(x: RichPatientLabel) extends GetByLabelIdReply
 
     type Error = GetByLabelIdReply with DomainError
 
@@ -68,7 +76,7 @@ object PatientLabelService {
 
     implicit def toPhiString(reply: GetByLabelIdReply): PhiString = reply match {
       case x: DomainError => phi"GetByIdReply.Error($x)"
-      case Entity(x, y)   => phi"GetByIdReply.Entity($x, $y)"
+      case Entity(x)      => phi"GetByIdReply.Entity($x)"
     }
   }
 
@@ -76,7 +84,7 @@ object PatientLabelService {
   object UpdateReply {
     type Error = UpdateReply with DomainError
 
-    final case class Updated(updated: PatientLabel, isVerified: Boolean) extends UpdateReply
+    final case class Updated(updated: RichPatientLabel) extends UpdateReply
 
     case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
@@ -89,8 +97,8 @@ object PatientLabelService {
     final case class CommonError(userMessage: String) extends UpdateReply with DomainError
 
     implicit def toPhiString(reply: UpdateReply): PhiString = reply match {
-      case Updated(x, y) => phi"Updated($x, $y)"
-      case x: Error      => DomainError.toPhiString(x)
+      case Updated(x) => phi"Updated($x)"
+      case x: Error   => DomainError.toPhiString(x)
     }
   }
 }

@@ -2,12 +2,12 @@ package xyz.driver.pdsuidomain.formats.json.patient.trial
 
 import java.time.{ZoneId, ZonedDateTime}
 
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId}
+import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuidomain.entities.{PatientCriterion, PatientCriterionArm}
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Format, JsPath, Reads, Writes}
-import xyz.driver.entities.labels.Label
+import xyz.driver.entities.labels.{Label, LabelValue}
 
 final case class ApiPatientCriterion(id: Long,
                                      labelId: Long,
@@ -39,13 +39,13 @@ object ApiPatientCriterion {
       (JsPath \ "criterionIsCompound").format[Boolean] and
       (JsPath \ "arms").format[List[String]] and
       (JsPath \ "eligibilityStatus").formatNullable[String](Format(Reads.of[String].filter(ValidationError("unknown status"))({
-        case x if FuzzyValue.fromString.isDefinedAt(x) => true
-        case _ => false
+        case x if LabelValue.fromString(x).isDefined => true
+        case _                                       => false
       }), Writes.of[String])) and
       (JsPath \ "verifiedEligibilityStatus").formatNullable[String](Format(
         Reads.of[String].filter(ValidationError("unknown status"))({
-          case x if FuzzyValue.fromString.isDefinedAt(x) => true
-          case _ => false
+          case x if LabelValue.fromString(x).isDefined => true
+          case _                                       => false
         }), Writes.of[String])) and
       (JsPath \ "isVerified").format[Boolean] and
       (JsPath \ "isVisible").format[Boolean] and
@@ -61,13 +61,13 @@ object ApiPatientCriterion {
     criterionId = patientCriterion.criterionId.id,
     criterionText = patientCriterion.criterionText,
     criterionValue = patientCriterion.criterionValue.map { x =>
-      FuzzyValue.valueToString(FuzzyValue.fromBoolean(x))
+      LabelValue.fromBoolean(x).toString
     },
     criterionIsDefining = patientCriterion.criterionIsDefining,
     criterionIsCompound = patientCriterion.criterionValue.isEmpty,
     arms = arms.map(_.armName),
-    eligibilityStatus = patientCriterion.eligibilityStatus.map(FuzzyValue.valueToString),
-    verifiedEligibilityStatus = patientCriterion.verifiedEligibilityStatus.map(FuzzyValue.valueToString),
+    eligibilityStatus = patientCriterion.eligibilityStatus.map(_.toString),
+    verifiedEligibilityStatus = patientCriterion.verifiedEligibilityStatus.map(_.toString),
     isVerified = patientCriterion.isVerified,
     isVisible = patientCriterion.isVisible,
     lastUpdate = ZonedDateTime.of(patientCriterion.lastUpdate, ZoneId.of("Z"))

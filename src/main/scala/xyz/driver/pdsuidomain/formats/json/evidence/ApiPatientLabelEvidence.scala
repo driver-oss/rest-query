@@ -3,7 +3,6 @@ package xyz.driver.pdsuidomain.formats.json.evidence
 import java.time.LocalDate
 
 import play.api.libs.json._
-import xyz.driver.pdsuicommon.domain.FuzzyValue
 import xyz.driver.pdsuidomain.entities.PatientLabelEvidenceView
 
 final case class ApiPatientLabelEvidence(id: Long,
@@ -22,13 +21,13 @@ object ApiPatientLabelEvidence {
 
   def fromDomain(x: PatientLabelEvidenceView) = ApiPatientLabelEvidence(
     id = x.id.id,
-    value = FuzzyValue.valueToString(x.value),
+    value = x.value.toString,
     evidenceText = x.evidenceText,
     documentId = x.documentId.map(_.id),
     evidenceId = x.evidenceId.map(_.id),
     reportId = x.reportId.map(_.toString),
-    documentType = x.documentType,
+    documentType = x.documentType.name,
     date = x.date.get,
-    providerType = x.providerType
+    providerType = x.providerType.name
   )
 }

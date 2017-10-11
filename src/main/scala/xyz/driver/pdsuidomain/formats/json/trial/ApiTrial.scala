@@ -2,11 +2,11 @@ package xyz.driver.pdsuidomain.formats.json.trial
 
 import java.time.{ZoneId, ZonedDateTime}
 import java.util.UUID
-import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 
-import xyz.driver.pdsuidomain.entities.Trial
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
+import xyz.driver.pdsuidomain.entities.Trial
 
 final case class ApiTrial(id: String,
                           externalId: UUID,

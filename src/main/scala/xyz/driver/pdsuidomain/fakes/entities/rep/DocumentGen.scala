@@ -40,12 +40,7 @@ object DocumentGen {
 
   def nextDocumentMeta(): Document.Meta = {
     val (startPage, endPage) = nextStartAndEndPage()
-
-    Document.Meta(
-      nextOption(nextBoolean()),
-      startPage,
-      endPage
-    )
+    Document.Meta(startPage, endPage)
   }
 
   def nextDocumentMetaJson(): TextJson[Document.Meta] = {
@@ -68,6 +63,7 @@ object DocumentGen {
       providerName = nextOption(nextString()),
       providerTypeId = nextOption(nextLongId[ProviderType]),
       requiredType = nextOption(nextDocumentRequiredType()),
+      institutionName = nextOption(nextString()),
       meta = nextOption(nextDocumentMetaJson()),
       startDate = dates._1,
       endDate = dates._2,

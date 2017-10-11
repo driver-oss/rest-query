@@ -1,10 +1,11 @@
 package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import spray.json._
-import xyz.driver.entities.labels.{Label, LabelCategory}
-import xyz.driver.pdsuicommon.domain.{FuzzyValue, LongId, TextJson}
+import xyz.driver.entities.labels.{Label, LabelCategory, LabelValue}
+import xyz.driver.pdsuicommon.domain.{LongId, TextJson}
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.ExtractedDataService.RichExtractedData
+import xyz.driver.formats.json.labels._
 
 object extracteddata {
   import DefaultJsonProtocol._
@@ -44,7 +45,7 @@ object extracteddata {
 
       val value = fields
         .get("value")
-        .map(_.convertTo[FuzzyValue])
+        .map(_.convertTo[LabelValue])
 
       ExtractedDataLabel(
         id = LongId(0),

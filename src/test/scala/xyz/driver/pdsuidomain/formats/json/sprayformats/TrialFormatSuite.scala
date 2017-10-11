@@ -2,8 +2,8 @@ package xyz.driver.pdsuidomain.formats.json.sprayformats
 
 import java.time.LocalDateTime
 
-import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
+import spray.json._
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuidomain.entities.Trial
 

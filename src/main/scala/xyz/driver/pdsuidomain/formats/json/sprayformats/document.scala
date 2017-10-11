@@ -26,7 +26,7 @@ object document {
     "PN"  -> RequiredType.PN
   )
 
-  implicit val documentMetaFormat: RootJsonFormat[Meta] = jsonFormat3(Meta.apply)
+  implicit val documentMetaFormat: RootJsonFormat[Meta] = jsonFormat2(Meta.apply)
 
   implicit val documentTypeFormat: RootJsonFormat[DocumentType] = new RootJsonFormat[DocumentType] {
     override def read(json: JsValue): DocumentType = json match {
@@ -40,7 +40,7 @@ object document {
           .fromString(name)
           .getOrElse(deserializationError(s"Unknown document type: $name"))
 
-      case _ => deserializationError(s"Expected Json Object as Intervention type, but got $json")
+      case _ => deserializationError(s"Expected Json Object as Document type, but got $json")
     }
 
     override def write(obj: DocumentType) =
@@ -73,6 +73,11 @@ object document {
         .map(_.convertTo[Option[LongId[ProviderType]]])
         .getOrElse(orig.providerTypeId)
 
+      val institutionName = fields
+        .get("institutionName")
+        .map(_.convertTo[Option[String]])
+        .getOrElse(orig.institutionName)
+
       val meta = fields
         .get("meta")
         .map(_.convertTo[Option[TextJson[Meta]]])
@@ -93,6 +98,7 @@ object document {
         typeId = typeId,
         providerName = provider,
         providerTypeId = providerTypeId,
+        institutionName = institutionName,
         meta = meta,
         startDate = startDate,
         endDate = endDate
@@ -111,6 +117,7 @@ object document {
         "provider"         -> document.providerName.toJson,
         "providerTypeId"   -> document.providerTypeId.toJson,
         "requiredType"     -> document.requiredType.toJson,
+        "institutionName"  -> document.institutionName.toJson,
         "startDate"        -> document.startDate.toJson,
         "endDate"          -> document.endDate.toJson,
         "status"           -> document.status.toJson,
@@ -145,6 +152,10 @@ object document {
           .get("providerTypeId")
           .map(_.convertTo[LongId[ProviderType]])
 
+        val institutionName = fields
+          .get("institutionName")
+          .map(_.convertTo[String])
+
         val meta = fields
           .get("meta")
           .map(_.convertTo[TextJson[Meta]])
@@ -168,6 +179,7 @@ object document {
           providerName = provider,
           providerTypeId = providerTypeId,
           requiredType = None,
+          institutionName = institutionName,
           meta = meta,
           previousStatus = None,
           assignee = None,
