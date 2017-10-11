@@ -104,9 +104,12 @@ object SearchFilterParser {
 
   private val longParser: Parser[Long] = P(CharIn('0' to '9').rep(min = 1).!.map(_.toLong))
 
+  private val booleanParser: Parser[Boolean] =
+    P((IgnoreCase("true") | IgnoreCase("false")).!.map(_.toBoolean))
+
   private val binaryAtomParser: Parser[SearchFilterExpr.Atom.Binary] = P(
     dimensionParser ~ whitespaceParser ~ (
-      (numericOperatorParser.! ~ whitespaceParser ~ (longParser | numberParser.!)) |
+      (numericOperatorParser.! ~ whitespaceParser ~ (longParser | booleanParser | numberParser.!)) |
         (commonOperatorParser.! ~ whitespaceParser ~ AnyChar.rep(min = 1).!)
     ) ~ End
   ).map {
@@ -116,7 +119,7 @@ object SearchFilterParser {
   private val nAryAtomParser: Parser[SearchFilterExpr.Atom.NAry] = P(
     dimensionParser ~ whitespaceParser ~ (
       naryOperatorParser ~ whitespaceParser ~
-        (longParser.rep(min = 1, sep = ",") | nAryValueParser.!.rep(min = 1, sep = ","))
+        (longParser.rep(min = 1, sep = ",") | booleanParser.rep(min = 1, sep = ",") | nAryValueParser.!.rep(min = 1, sep = ","))
     ) ~ End
   ).map {
     case NAryAtomFromTuple(atom) => atom

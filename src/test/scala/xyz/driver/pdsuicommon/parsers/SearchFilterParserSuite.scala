@@ -113,9 +113,16 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
         }
 
         "actual recordId" - {
-          "should not be parsed with text values" in {
+          "should not be parsed with numeric values" in {
             val filter = SearchFilterParser.parse(Seq("filters" -> "recordId EQ 1"))
             assert(filter === Success(SearchFilterExpr.Atom.Binary(Dimension(None, "record_id"), Eq, Long.box(1))))
+          }
+        }
+
+        "actual isVisible boolean" - {
+          "should not be parsed with boolean values" in {
+            val filter = SearchFilterParser.parse(Seq("filters" -> "isVisible EQ true"))
+            assert(filter === Success(SearchFilterExpr.Atom.Binary(Dimension(None, "is_visible"), Eq, Boolean.box(true))))
           }
         }
 
