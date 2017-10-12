@@ -7,12 +7,11 @@ import spray.json.DefaultJsonProtocol._
 import xyz.driver.pdsuicommon.db.Pagination
 import xyz.driver.pdsuidomain.formats.json.sprayformats.common._
 
-
 final case class ListResponse[+T](items: Seq[T], meta: ListResponse.Meta)
 
 object ListResponse {
   private val itemsField = "items"
-  private val metaField = "meta"
+  private val metaField  = "meta"
 
   final case class Meta(itemsCount: Int, pageNumber: Int, pageSize: Int, lastUpdate: Option[LocalDateTime])
 
@@ -34,11 +33,10 @@ object ListResponse {
       override def write(listResponse: ListResponse[T]): JsValue = {
         JsObject(
           itemsField -> listResponse.items.map(_.toJson).toJson,
-          metaField -> listResponse.meta.toJson
+          metaField  -> listResponse.meta.toJson
         )
       }
     }
-
 
   implicit def listResponseReader[T: JsonReader]: RootJsonReader[ListResponse[T]] =
     new RootJsonReader[ListResponse[T]] {
@@ -46,9 +44,9 @@ object ListResponse {
         case JsObject(fields) =>
           val items = fields
             .get(itemsField)
-            .map{
+            .map {
               case JsArray(elements) => elements.map(_.convertTo[T])(collection.breakOut)
-              case x => deserializationError(s"Expected Array as JsArray, but got $x")
+              case x                 => deserializationError(s"Expected Array as JsArray, but got $x")
             }
             .getOrElse(deserializationError(s"ListResponse json object does not contain `$itemsField` field: $json"))
 
