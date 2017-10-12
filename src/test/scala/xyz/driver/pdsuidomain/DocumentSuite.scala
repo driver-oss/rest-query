@@ -82,7 +82,8 @@ class DocumentSuite extends BaseSuite {
       startDate = Some(lastUpdate.toLocalDate.minusDays(2)),
       endDate = None,
       lastUpdate = lastUpdate,
-      meta = Some(TextJson(Document.Meta(1.1, 2.2)))
+      meta = Some(TextJson(Document.Meta(1.1, 2.2))),
+      labelVersion = 1
     )
   }
 }
