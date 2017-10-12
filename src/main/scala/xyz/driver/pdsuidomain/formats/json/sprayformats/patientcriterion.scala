@@ -12,17 +12,15 @@ object patientcriterion {
 
   def applyUpdateToPatientCriterion(json: JsValue, orig: PatientCriterion): PatientCriterion = json match {
     case JsObject(fields) =>
-      val eligibilityStatus = if (fields.contains("eligibilityStatus")) {
-        fields
-          .get("eligibilityStatus")
-          .map(_.convertTo[LabelValue])
-      } else orig.eligibilityStatus
+      val eligibilityStatus = fields
+        .get("eligibilityStatus")
+        .map(_.convertTo[Option[LabelValue]])
+        .getOrElse(orig.eligibilityStatus)
 
-      val verifiedEligibilityStatus = if (fields.contains("verifiedEligibilityStatus")) {
-        fields
-          .get("verifiedEligibilityStatus")
-          .map(_.convertTo[LabelValue])
-      } else orig.verifiedEligibilityStatus
+      val verifiedEligibilityStatus = fields
+        .get("verifiedEligibilityStatus")
+        .map(_.convertTo[Option[LabelValue]])
+        .getOrElse(orig.verifiedEligibilityStatus)
 
       orig.copy(
         eligibilityStatus = eligibilityStatus,

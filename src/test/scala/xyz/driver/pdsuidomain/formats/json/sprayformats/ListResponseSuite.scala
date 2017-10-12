@@ -96,7 +96,8 @@ class ListResponseSuite extends FlatSpec with Matchers {
 
     val listResponse = ListResponse(Seq(orig), meta)
 
-    val writtenJson  = ListResponse.listResponseMetaWriter.write(listResponse)
+
+    val writtenJson = ListResponse.listResponseWriter.write(listResponse)
     val expectedJson = s"""{"items":[$recordJsonAsString],"meta":${metaJsonObjectAsString(meta)}}"""
 
     writtenJson should be(expectedJson.parseJson)
