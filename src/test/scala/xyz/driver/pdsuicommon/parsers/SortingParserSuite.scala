@@ -12,7 +12,7 @@ class SortingParserSuite extends FreeSpecLike with MustMatchers with Checkers {
     "single dimension" - commonTests(singleSortingQueryGen)
     "multiple dimensions in one query" - commonTests(multipleSortingQueryGen)
     "multiple queries" in {
-      val r = SortingParser.parse(Set("foo", "bar"), Seq("sort" -> "foo", "sort" ->"bar"))
+      val r = SortingParser.parse(Set("foo", "bar"), Seq("sort" -> "foo", "sort" -> "bar"))
       r must failWith[ParseQueryArgException]
     }
   }
@@ -21,7 +21,7 @@ class SortingParserSuite extends FreeSpecLike with MustMatchers with Checkers {
     "valid" in check {
       val inputGen: Gen[(Set[String], String)] = for {
         validDimensions <- dimensionsGen
-        sorting <- queryGen(validDimensions)
+        sorting         <- queryGen(validDimensions)
       } yield (validDimensions, sorting)
 
       Prop.forAllNoShrink(inputGen) {
@@ -33,7 +33,9 @@ class SortingParserSuite extends FreeSpecLike with MustMatchers with Checkers {
     "invalid" in check {
       val inputGen: Gen[(Set[String], String)] = for {
         validDimensions <- dimensionsGen
-        invalidDimensions <- dimensionsGen.filter { xs => xs.intersect(validDimensions).isEmpty }
+        invalidDimensions <- dimensionsGen.filter { xs =>
+                              xs.intersect(validDimensions).isEmpty
+                            }
         sorting <- queryGen(invalidDimensions)
       } yield (validDimensions, sorting)
 
@@ -46,12 +48,12 @@ class SortingParserSuite extends FreeSpecLike with MustMatchers with Checkers {
 
   private val dimensionsGen: Gen[Set[String]] = for {
     unPrefixedSize <- Gen.choose(0, 3)
-    prefixedSize <- Gen.choose(0, 3)
+    prefixedSize   <- Gen.choose(0, 3)
     if (unPrefixedSize + prefixedSize) > 0
 
     unPrefixedDimensions <- Gen.containerOfN[Set, String](unPrefixedSize, Gen.identifier)
 
-    prefixes <- Gen.containerOfN[Set, String](prefixedSize, Gen.identifier)
+    prefixes   <- Gen.containerOfN[Set, String](prefixedSize, Gen.identifier)
     dimensions <- Gen.containerOfN[Set, String](prefixedSize, Gen.identifier)
   } yield {
     val prefixedDimensions = prefixes.zip(dimensions).map {
@@ -62,30 +64,33 @@ class SortingParserSuite extends FreeSpecLike with MustMatchers with Checkers {
 
   private def multipleSortingQueryGen(validDimensions: Set[String]): Gen[String] = {
     val validDimensionsSeq = validDimensions.toSeq
-    val indexGen = Gen.oneOf(validDimensionsSeq.indices)
+    val indexGen           = Gen.oneOf(validDimensionsSeq.indices)
     val multipleDimensionsGen = Gen.nonEmptyContainerOf[Set, Int](indexGen).filter(_.size >= 2).map { indices =>
       indices.map(validDimensionsSeq.apply)
     }
 
     for {
-      dimensions <- multipleDimensionsGen
+      dimensions  <- multipleDimensionsGen
       isAscending <- Gen.containerOfN[Seq, Boolean](dimensions.size, arbitrary[Boolean])
     } yield {
-      isAscending.zip(dimensions)
+      isAscending
+        .zip(dimensions)
         .map {
-          case (true, dimension) => dimension
+          case (true, dimension)  => dimension
           case (false, dimension) => "-" + dimension
         }
         .mkString(",")
     }
   }
 
-  private def singleSortingQueryGen(validDimensions: Set[String]): Gen[String] = for {
-    isAscending <- arbitrary[Boolean]
-    dimensions <- Gen.oneOf(validDimensions.toSeq)
-  } yield isAscending match {
-    case true => dimensions
-    case false => "-" + dimensions
-  }
+  private def singleSortingQueryGen(validDimensions: Set[String]): Gen[String] =
+    for {
+      isAscending <- arbitrary[Boolean]
+      dimensions  <- Gen.oneOf(validDimensions.toSeq)
+    } yield
+      isAscending match {
+        case true  => dimensions
+        case false => "-" + dimensions
+      }
 
 }

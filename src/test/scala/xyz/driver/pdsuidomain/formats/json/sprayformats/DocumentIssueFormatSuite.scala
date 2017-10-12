@@ -29,7 +29,8 @@ class DocumentIssueFormatSuite extends FlatSpec with Matchers {
         "text":"message text","archiveRequired":false,"startPage":1.0,"endPage":2.0}""".parseJson)
 
     val createDocumentIssueJson = """{"text":"message text","startPage":1.0,"endPage":2.0}""".parseJson
-    val expectedCreatedDocumentIssue = documentIssue.copy(id = LongId(0), lastUpdate = LocalDateTime.MIN, isDraft = true)
+    val expectedCreatedDocumentIssue =
+      documentIssue.copy(id = LongId(0), lastUpdate = LocalDateTime.MIN, isDraft = true)
     val parsedCreateDocumentIssue = jsValueToDocumentIssue(createDocumentIssueJson, LongId(1), StringId("userId-001"))
     parsedCreateDocumentIssue should be(expectedCreatedDocumentIssue)
 

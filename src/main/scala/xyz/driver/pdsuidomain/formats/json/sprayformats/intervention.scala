@@ -56,7 +56,7 @@ object intervention {
 
         val arms = fields
           .get("arms")
-          .map(_.convertTo[List[LongId[Arm]]].map(x => InterventionArm(armId = x, interventionId = LongId(0))))
+          .map(_.convertTo[List[LongId[SlotArm]]].map(x => InterventionArm(armId = x, interventionId = LongId(0))))
           .getOrElse(List.empty[InterventionArm])
 
         InterventionWithArms(
@@ -104,7 +104,7 @@ object intervention {
       val origIntervention = orig.intervention
       val arms = fields
         .get("arms")
-        .map(_.convertTo[List[LongId[Arm]]].map(x => InterventionArm(x, orig.intervention.id)))
+        .map(_.convertTo[List[LongId[SlotArm]]].map(x => InterventionArm(x, orig.intervention.id)))
 
       orig.copy(
         intervention = origIntervention.copy(

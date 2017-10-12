@@ -29,7 +29,7 @@ class PatientFormatSuite extends FlatSpec with Matchers {
     )
     val writtenJson = patientWriter.write(orig)
 
-    writtenJson should be (
+    writtenJson should be(
       """{"id":"748b5884-3528-4cb9-904b-7a8151d6e343","dob":"1980-06-30",
          "name":{"firstName":"John","middleName":"","lastName":"Doe"},"status":"New","assignee":null,
          "previousStatus":null,"previousAssignee":null,"lastActiveUser":null,"lastUpdate":"2017-08-10T18:00Z",

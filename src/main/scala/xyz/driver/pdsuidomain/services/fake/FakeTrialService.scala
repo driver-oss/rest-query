@@ -11,8 +11,8 @@ import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
-import xyz.driver.pdsuidomain.entities.{Arm, Criterion, Trial}
 import xyz.driver.pdsuidomain.entities.export.trial.{ExportTrialArm, ExportTrialLabelCriterion, ExportTrialWithLabels}
+import xyz.driver.pdsuidomain.entities.{Criterion, EligibilityArm, Trial}
 import xyz.driver.pdsuidomain.services.TrialService
 
 import scala.concurrent.Future
@@ -30,7 +30,6 @@ class FakeTrialService extends TrialService {
     previousAssignee = None,
     lastActiveUserId = None,
     lastUpdate = LocalDateTime.now(),
-    disease = CancerType.Breast,
     phase = "",
     hypothesisId = None,
     studyDesignId = None,
@@ -70,20 +69,20 @@ class FakeTrialService extends TrialService {
     ExportTrialWithLabels(
       StringId[Trial]("NCT" + generators.nextInt(999999).toString),
       UuidId[Trial](generators.nextUuid()),
-      generators.oneOf("adenocarcinoma", "breast", "prostate"),
       LocalDateTime.now(),
       labelVersion = 1L,
       generators.listOf(
         new ExportTrialArm(
-          LongId[Arm](generators.nextInt(999999).toLong),
-          generators.nextName().value
+          LongId[EligibilityArm](generators.nextInt(999999).toLong),
+          generators.nextName().value,
+          generators.listOf(generators.oneOf("adenocarcinoma", "breast", "prostate"))
         )),
       generators.listOf(
         new ExportTrialLabelCriterion(
           LongId[Criterion](generators.nextInt(999999).toLong),
           generators.nextOption(generators.nextBoolean()),
           LongId[Label](generators.nextInt(999999).toLong),
-          generators.setOf(LongId[Arm](generators.nextInt(999999).toLong)),
+          generators.setOf(LongId[EligibilityArm](generators.nextInt(999999).toLong)),
           generators.nextName().value,
           generators.nextBoolean(),
           generators.nextBoolean()

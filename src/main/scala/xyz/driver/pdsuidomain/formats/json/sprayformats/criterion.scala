@@ -80,7 +80,7 @@ object criterion {
 
       val arms = fields
         .get("arms")
-        .map(_.convertTo[Option[List[LongId[Arm]]]].getOrElse(List.empty[LongId[Arm]]))
+        .map(_.convertTo[Option[List[LongId[EligibilityArm]]]].getOrElse(List.empty[LongId[EligibilityArm]]))
         .getOrElse(orig.armIds)
 
       val labels = fields
@@ -143,8 +143,8 @@ object criterion {
 
         val arms = fields
           .get("arms")
-          .map(_.convertTo[List[LongId[Arm]]])
-          .getOrElse(List.empty[LongId[Arm]])
+          .map(_.convertTo[List[LongId[EligibilityArm]]])
+          .getOrElse(List.empty[LongId[EligibilityArm]])
 
         val labels = fields
           .get("labels")

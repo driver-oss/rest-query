@@ -3,25 +3,25 @@ package xyz.driver.pdsuidomain.formats.json.sprayformats
 import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
-import xyz.driver.pdsuidomain.entities.Arm
+import xyz.driver.pdsuidomain.entities.SlotArm
 
-class ArmFormatSuite extends FlatSpec with Matchers {
-  import arm._
+class SlotArmFormatSuite extends FlatSpec with Matchers {
+  import slotarm._
 
-  "Json format for Arm" should "read and write correct JSON" in {
-    val arm = Arm(
+  "Json format for SlotArm" should "read and write correct JSON" in {
+    val arm = SlotArm(
       id = LongId(10),
       trialId = StringId("NCT000001"),
       name = "arm name",
       originalName = "orig arm name"
     )
-    val writtenJson = armFormat.write(arm)
+    val writtenJson = slotArmFormat.write(arm)
 
     writtenJson should be(
       """{"id":10,"trialId":"NCT000001","name":"arm name","originalName":"orig arm name"}""".parseJson)
 
     val createArmJson = """{"trialId":"NCT000001","name":"arm name"}""".parseJson
-    val parsedArm     = armFormat.read(createArmJson)
+    val parsedArm     = slotArmFormat.read(createArmJson)
     val expectedCreatedArm = arm.copy(
       id = LongId(0),
       originalName = "arm name"
@@ -33,5 +33,4 @@ class ArmFormatSuite extends FlatSpec with Matchers {
     val parsedUpdateArm    = applyUpdateToArm(updateArmJson, arm)
     parsedUpdateArm should be(expectedUpdatedArm)
   }
-
 }

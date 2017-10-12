@@ -7,7 +7,7 @@ import xyz.driver.entities.patient.Patient
 import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuidomain.entities.eligibility.MismatchRankedLabels
-import xyz.driver.pdsuidomain.entities.{Arm, eligibility}
+import xyz.driver.pdsuidomain.entities.{EligibilityArm, eligibility}
 import xyz.driver.pdsuidomain.services.EligibilityVerificationService
 
 import scala.concurrent.Future
@@ -22,7 +22,7 @@ class FakeEligibilityVerificationService extends EligibilityVerificationService 
 
   override def getMismatchRankedLabels(patientId: Id[Patient],
                                        cancerType: patient.CancerType,
-                                       excludedArms: Seq[LongId[Arm]])(
+                                       excludedArms: Seq[LongId[EligibilityArm]])(
           implicit ctx: AuthorizedServiceRequestContext[AuthUserInfo]): Future[eligibility.MismatchRankedLabels] =
     Future.successful(
       MismatchRankedLabels(

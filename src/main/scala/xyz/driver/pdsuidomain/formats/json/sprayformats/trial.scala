@@ -6,12 +6,11 @@ import spray.json._
 import xyz.driver.core.json.EnumJsonFormat
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuidomain.entities._
-import xyz.driver.formats.json.patient._
 
 object trial {
   import DefaultJsonProtocol._
-  import common._
   import Trial._
+  import common._
 
   implicit val trialStatusFormat = new EnumJsonFormat[Status](
     "New"            -> Status.New,
@@ -36,7 +35,6 @@ object trial {
         "previousStatus"        -> obj.previousStatus.toJson,
         "previousAssignee"      -> obj.previousAssignee.toJson,
         "lastActiveUser"        -> obj.lastActiveUserId.toJson,
-        "disease"               -> obj.disease.toJson,
         "phase"                 -> obj.phase.toJson,
         "hypothesisId"          -> obj.hypothesisId.toJson,
         "studyDesignId"         -> obj.studyDesignId.toJson,
