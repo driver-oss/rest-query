@@ -67,8 +67,7 @@ object DocumentGen {
       meta = nextOption(nextDocumentMetaJson()),
       startDate = dates._1,
       endDate = dates._2,
-      lastUpdate = nextLocalDateTime,
-      labelVersion = generators.nextInt(1, 10)
+      lastUpdate = nextLocalDateTime
     )
   }
 

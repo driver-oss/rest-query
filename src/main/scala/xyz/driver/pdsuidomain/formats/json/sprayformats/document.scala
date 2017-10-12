@@ -126,8 +126,7 @@ object document {
         "previousAssignee" -> document.previousAssignee.toJson,
         "meta"             -> document.meta.toJson,
         "lastActiveUser"   -> document.lastActiveUserId.toJson,
-        "lastUpdate"       -> document.lastUpdate.toJson,
-        "labelVersion"     -> document.labelVersion.toJson
+        "lastUpdate"       -> document.lastUpdate.toJson
       )
 
     override def read(json: JsValue): Document = json match {
@@ -186,8 +185,7 @@ object document {
           assignee = None,
           previousAssignee = None,
           lastActiveUserId = None,
-          lastUpdate = LocalDateTime.MIN,
-          labelVersion = 0
+          lastUpdate = LocalDateTime.MIN
         )
 
       case _ => deserializationError(s"Expected Json Object as Document, but got $json")

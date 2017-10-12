@@ -28,15 +28,14 @@ class DocumentFormatSuite extends FlatSpec with Matchers {
       requiredType = Some(Document.RequiredType.OPN),
       meta = None,
       startDate = None,
-      endDate = None,
-      labelVersion = 0
+      endDate = None
     )
     val writtenJson = documentFormat.write(orig)
 
     writtenJson should be(
       """{"id":1,"recordId":101,"physician":"physician","typeId":10,"provider":"provider 21","providerTypeId":21,
          "requiredType":"OPN","institutionName":"institution name","startDate":null,"endDate":null,"status":"New","assignee":null,"previousStatus":null,
-         "previousAssignee":null,"lastActiveUser":null,"lastUpdate":"2017-08-10T18:00Z","meta":null,"labelVersion":0}""".parseJson)
+         "previousAssignee":null,"lastActiveUser":null,"lastUpdate":"2017-08-10T18:00Z","meta":null}""".parseJson)
 
     val createDocumentJson =
       """{"recordId":101,"physician":"physician","typeId":10,"provider":"provider 21","providerTypeId":21}""".parseJson

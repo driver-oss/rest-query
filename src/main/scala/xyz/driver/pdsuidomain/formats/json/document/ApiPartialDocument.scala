@@ -47,8 +47,7 @@ final case class ApiPartialDocument(recordId: Option[Long],
     meta = meta.cata(x => Some(TextJson(JsonSerializer.deserialize[Meta](x))), None, orig.meta),
     startDate = startDate.cata(Some(_), None, orig.startDate),
     endDate = endDate.cata(Some(_), None, orig.endDate),
-    lastUpdate = LocalDateTime.MIN, // Should update internally in a business logic module,
-    labelVersion = orig.labelVersion
+    lastUpdate = LocalDateTime.MIN // Should update internally in a business logic module
   )
 
   def toDomain: Try[Document] = Try {
@@ -76,8 +75,7 @@ final case class ApiPartialDocument(recordId: Option[Long],
         assignee = None,
         previousAssignee = None,
         lastActiveUserId = None,
-        lastUpdate = LocalDateTime.MIN,
-        labelVersion = 0
+        lastUpdate = LocalDateTime.MIN
       )
     } else {
       throw new JsonValidationException(validationErrors)
