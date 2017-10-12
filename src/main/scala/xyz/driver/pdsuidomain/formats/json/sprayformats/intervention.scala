@@ -9,7 +9,7 @@ object intervention {
   import DefaultJsonProtocol._
   import common._
 
-  implicit val interventionFormat: JsonFormat[InterventionWithArms] = new RootJsonFormat[InterventionWithArms] {
+  implicit def interventionFormat: RootJsonFormat[InterventionWithArms] = new RootJsonFormat[InterventionWithArms] {
     override def write(obj: InterventionWithArms) =
       JsObject(
         "id"             -> obj.intervention.id.toJson,
@@ -120,8 +120,8 @@ object intervention {
     case _ => deserializationError(s"Expected Json Object as partial Intervention, but got $json")
   }
 
-  implicit val interventionTypeFormat: JsonFormat[InterventionType] = new RootJsonFormat[InterventionType] {
-    override def read(json: JsValue) = json match {
+  implicit def interventionTypeFormat: JsonFormat[InterventionType] = new RootJsonFormat[InterventionType] {
+    override def read(json: JsValue): InterventionType = json match {
       case JsObject(fields) =>
         val name = fields
           .get("name")

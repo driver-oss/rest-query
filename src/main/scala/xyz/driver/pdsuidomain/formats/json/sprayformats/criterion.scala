@@ -10,7 +10,7 @@ object criterion {
   import DefaultJsonProtocol._
   import common._
 
-  implicit val criterionLabelWriter = new RootJsonWriter[CriterionLabel] {
+  implicit def criterionLabelWriter: RootJsonWriter[CriterionLabel] = new RootJsonWriter[CriterionLabel] {
     override def write(obj: CriterionLabel) = JsObject(
       "labelId"    -> obj.labelId.toJson,
       "categoryId" -> obj.categoryId.toJson,
@@ -103,7 +103,7 @@ object criterion {
     case _ => deserializationError(s"Expected Json Object as partial Criterion, but got $json")
   }
 
-  val richCriterionFormat = new RootJsonFormat[RichCriterion] {
+  implicit def richCriterionFormat: RootJsonFormat[RichCriterion] = new RootJsonFormat[RichCriterion] {
     override def write(obj: RichCriterion): JsValue =
       JsObject(
         "id"         -> obj.criterion.id.toJson,
