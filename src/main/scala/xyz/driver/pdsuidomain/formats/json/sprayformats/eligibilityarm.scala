@@ -19,20 +19,18 @@ object eligibilityarm {
     deserializationError(s"Expected Json Object as $className, but got $json")
   }
 
-
   implicit def eligibilityArmWithDiseasesWriter: RootJsonWriter[EligibilityArmWithDiseases] =
     new RootJsonWriter[EligibilityArmWithDiseases] {
       override def write(obj: EligibilityArmWithDiseases): JsValue = {
         JsObject(
-          "id" -> obj.eligibilityArm.id.toJson,
-          "name" -> obj.eligibilityArm.name.toJson,
+          "id"           -> obj.eligibilityArm.id.toJson,
+          "name"         -> obj.eligibilityArm.name.toJson,
           "originalName" -> obj.eligibilityArm.originalName.toJson,
-          "trialId" -> obj.eligibilityArm.trialId.toJson,
-          "diseases" -> obj.eligibilityArmDiseases.map(_.disease.toJson).toJson
+          "trialId"      -> obj.eligibilityArm.trialId.toJson,
+          "diseases"     -> obj.eligibilityArmDiseases.map(_.disease.toJson).toJson
         )
       }
     }
-
 
   implicit def eligibilityArmWithDiseasesReader: RootJsonReader[EligibilityArmWithDiseases] = {
     new RootJsonReader[EligibilityArmWithDiseases] {
@@ -56,8 +54,6 @@ object eligibilityarm {
               .map(_.convertTo[Seq[String]])
               .getOrElse(deserializationErrorFieldMessage("diseases", json))
 
-
-
             val eligibilityArm = EligibilityArm(
               id = LongId(0),
               name = name,
@@ -80,7 +76,8 @@ object eligibilityarm {
     }
   }
 
-  def applyUpdateToEligibilityArmWithDiseases(json: JsValue, orig: EligibilityArmWithDiseases): EligibilityArmWithDiseases = {
+  def applyUpdateToEligibilityArmWithDiseases(json: JsValue,
+                                              orig: EligibilityArmWithDiseases): EligibilityArmWithDiseases = {
     implicit val className: String = "update EligibilityArmWithDiseases"
     json match {
       case JsObject(fields) =>
@@ -95,18 +92,14 @@ object eligibilityarm {
           .getOrElse(orig.eligibilityArmDiseases.map(_.disease))
 
         orig.copy(
-          eligibilityArm =
-            orig
-              .eligibilityArm
-              .copy(name = name),
-          eligibilityArmDiseases =
-            orig
-              .eligibilityArmDiseases
-              .zip(diseases)
-              .map {
-                case (eligibilityArmDisease, disease) =>
-                  eligibilityArmDisease.copy(disease = disease)
-              }
+          eligibilityArm = orig.eligibilityArm
+            .copy(name = name),
+          eligibilityArmDiseases = orig.eligibilityArmDiseases
+            .zip(diseases)
+            .map {
+              case (eligibilityArmDisease, disease) =>
+                eligibilityArmDisease.copy(disease = disease)
+            }
         )
 
       case _ => deserializationErrorEntityMessage(json)
