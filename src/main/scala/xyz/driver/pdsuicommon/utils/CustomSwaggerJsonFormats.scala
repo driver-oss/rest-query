@@ -7,6 +7,8 @@ import spray.json.JsValue
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, TextJson, UuidId}
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.formats.json.sprayformats.arm._
+import xyz.driver.pdsuidomain.formats.json.sprayformats.slotarm._
+import xyz.driver.pdsuidomain.formats.json.sprayformats.eligibilityarm._
 import xyz.driver.pdsuidomain.formats.json.sprayformats.criterion._
 import xyz.driver.pdsuidomain.formats.json.sprayformats.intervention._
 import xyz.driver.pdsuidomain.formats.json.sprayformats.hypothesis._
@@ -54,7 +56,10 @@ object CustomSwaggerJsonFormats {
     classOf[Hypothesis] -> hypothesisFormat.write(
       xyz.driver.pdsuidomain.fakes.entities.trialcuration.nextHypothesis()),
     classOf[StudyDesign] -> studyDesignFormat.write(
-      xyz.driver.pdsuidomain.fakes.entities.trialcuration.nextStudyDesign())
+      xyz.driver.pdsuidomain.fakes.entities.trialcuration.nextStudyDesign()),
+    classOf[EligibilityArmWithDiseases] -> eligibilityArmWithDiseasesWriter.write(
+      xyz.driver.pdsuidomain.fakes.entities.trialcuration.nextEligibilityArmWithDiseases()),
+    classOf[SlotArm] -> slotArmFormat.write(xyz.driver.pdsuidomain.fakes.entities.trialcuration.nextSlotArm())
   )
 
   // records-processing-service

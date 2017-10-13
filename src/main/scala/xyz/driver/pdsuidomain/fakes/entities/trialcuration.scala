@@ -1,14 +1,19 @@
 package xyz.driver.pdsuidomain.fakes.entities
 
+import xyz.driver.core.generators._
 import xyz.driver.entities.labels.{Label, LabelCategory}
+import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.domain.{LongId, User}
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
 
 object trialcuration {
+
   import common._
   import xyz.driver.core.generators
   import xyz.driver.pdsuidomain.entities.InterventionType._
+
+  private val maxItemsInCollectionNumber: Int = 5
 
   def nextTrial(): Trial = Trial(
     id = nextStringId[Trial],
@@ -144,4 +149,46 @@ object trialcuration {
     SurgeryProcedure
   )
 
+  EligibilityArmDisease
+
+  def nextEligibilityArm(): EligibilityArm = EligibilityArm(
+    id = nextLongId,
+    name = nextString(),
+    originalName = nextString(),
+    trialId = nextStringId
+  )
+
+  def nextPatientCancerType(): CancerType = generators.oneOf[CancerType](
+    CancerType.Lung,
+    CancerType.Breast,
+    CancerType.Prostate
+  )
+
+  def nextEligibilityArmDisease(): EligibilityArmDisease = EligibilityArmDisease(
+    eligibilityArmId = nextLongId,
+    disease = nextPatientCancerType()
+  )
+
+  private def nextEligibilityArmDiseaseCollection(count: Int): Seq[EligibilityArmDisease] =
+    Seq.fill(count)(nextEligibilityArmDisease())
+
+  def nextEligibilityArmWithDiseases(): EligibilityArmWithDiseases = {
+    val entity = nextEligibilityArm()
+    val id     = entity.id
+    val collection = nextEligibilityArmDiseaseCollection(
+      nextInt(maxItemsInCollectionNumber, minValue = 0)
+    ).map(_.copy(eligibilityArmId = id))
+
+    EligibilityArmWithDiseases(
+      entity,
+      collection
+    )
+  }
+
+  def nextSlotArm(): SlotArm = SlotArm(
+    id = nextLongId,
+    name = nextString(),
+    originalName = nextString(),
+    trialId = nextStringId
+  )
 }

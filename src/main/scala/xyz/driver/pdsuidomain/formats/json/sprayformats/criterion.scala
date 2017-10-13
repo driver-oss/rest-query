@@ -37,7 +37,7 @@ object criterion {
         .flatMap(_.convertTo[Option[String]])
         .map {
           case "Yes" => true
-          case "No" => false
+          case "No"  => false
           case other =>
             deserializationError(s"Unknown `value` of CriterionLabel object: expected `yes` or `no`, but got $other")
         }
