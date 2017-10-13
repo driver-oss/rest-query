@@ -34,7 +34,7 @@ object intervention {
 
         val typeId = fields
           .get("typeId")
-          .map(_.convertTo[LongId[InterventionType]])
+          .flatMap(_.convertTo[Option[LongId[InterventionType]]])
 
         val name = fields
           .get("name")
@@ -44,7 +44,6 @@ object intervention {
         val dosage = fields
           .get("dosage")
           .map(_.convertTo[String])
-          .getOrElse("")
 
         val isActive = fields
           .get("isActive")
@@ -52,23 +51,24 @@ object intervention {
 
         val deliveryMethod = fields
           .get("deliveryMethod")
-          .map(_.convertTo[String])
+          .flatMap(_.convertTo[Option[String]])
 
         val arms = fields
           .get("arms")
-          .map(_.convertTo[List[LongId[SlotArm]]].map(x => InterventionArm(armId = x, interventionId = LongId(0))))
+          .map(_.convertTo[List[LongId[SlotArm]]])
+          .map(_ map(x  => InterventionArm(armId = x, interventionId = LongId(0L))))
           .getOrElse(List.empty[InterventionArm])
 
         InterventionWithArms(
           intervention = Intervention(
-            id = LongId(0),
+            id = LongId(0L),
             trialId = trialId,
             name = name,
             originalName = name,
             typeId = typeId,
             originalType = None,
-            dosage = dosage,
-            originalDosage = dosage,
+            dosage = dosage.getOrElse(""),
+            originalDosage = dosage.getOrElse(""),
             isActive = isActive,
             deliveryMethod = deliveryMethod
           ),
