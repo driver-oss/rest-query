@@ -160,7 +160,7 @@ object record {
     new RootJsonFormat[MedicalRecord] {
       override def write(record: MedicalRecord): JsValue =
         JsObject(
-          "id"               -> record.id.id.toJson,
+          "id"               -> record.id.toJson,
           "patientId"        -> record.patientId.toJson,
           "caseId"           -> record.caseId.toJson,
           "disease"          -> record.disease.toJson,
