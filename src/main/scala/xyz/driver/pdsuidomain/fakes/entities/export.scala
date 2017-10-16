@@ -1,8 +1,15 @@
 package xyz.driver.pdsuidomain.fakes.entities
 
 import xyz.driver.entities.labels.Label
+import xyz.driver.fakes
+import xyz.driver.pdsuidomain.entities.export.patient.{
+  ExportPatientLabel,
+  ExportPatientLabelEvidence,
+  ExportPatientLabelEvidenceDocument,
+  ExportPatientWithLabels
+}
 import xyz.driver.pdsuidomain.entities.export.trial._
-import xyz.driver.pdsuidomain.entities.{Criterion, EligibilityArm, Trial}
+import xyz.driver.pdsuidomain.entities._
 
 object export {
   import common._
@@ -33,4 +40,39 @@ object export {
       arms = listOf(nextExportTrialArm()),
       criteria = listOf(nextExportTrialLabelCriterion())
     )
+
+  def nextExportPatientLabelEvidenceDocument(): ExportPatientLabelEvidenceDocument = {
+    ExportPatientLabelEvidenceDocument(
+      documentId = nextLongId[Document],
+      requestId = recordprocessing.nextRecordRequestId(),
+      documentType = nextDocumentType(),
+      providerType = nextProviderType(),
+      date = nextLocalDate
+    )
+  }
+
+  def nextExportPatientLabelEvidence(): ExportPatientLabelEvidence = {
+    ExportPatientLabelEvidence(
+      id = nextLongId[ExtractedData],
+      value = fakes.entities.labels.nextLabelValue(),
+      evidenceText = nextString(),
+      document = nextExportPatientLabelEvidenceDocument()
+    )
+  }
+
+  def nextExportPatientLabel(): ExportPatientLabel = {
+    ExportPatientLabel(
+      id = nextLongId[Label],
+      evidences = List.fill(nextInt(10))(nextExportPatientLabelEvidence())
+    )
+  }
+
+  def nextExportPatientWithLabels(): ExportPatientWithLabels = {
+    ExportPatientWithLabels(
+      patientId = nextUuidId[Patient],
+      labelVersion = nextInt(Int.MaxValue).toLong,
+      labels = List.fill(nextInt(10))(nextExportPatientLabel())
+    )
+  }
+
 }
