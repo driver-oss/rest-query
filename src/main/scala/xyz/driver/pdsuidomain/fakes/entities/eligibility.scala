@@ -12,8 +12,8 @@ object eligibility {
 
   def nextMolecularEvidenceDocument(): MolecularEvidenceDocument =
     MolecularEvidenceDocument(
-      documentType = xyz.driver.pdsuidomain.fakes.entities.rep.DocumentGen.nextDocumentType(),
-      providerType = xyz.driver.pdsuidomain.fakes.entities.rep.MedicalRecordGen.nextProviderType(),
+      documentType = xyz.driver.pdsuidomain.fakes.entities.common.nextDocumentType(),
+      providerType = xyz.driver.pdsuidomain.fakes.entities.common.nextProviderType(),
       providerName = nextOption(nextString(100)),
       date = nextOption(nextDate()),
       reportId = nextId[Report](),
@@ -23,8 +23,8 @@ object eligibility {
 
   def nextClinicalEvidenceDocument(): ClinicalEvidenceDocument =
     ClinicalEvidenceDocument(
-      documentType = xyz.driver.pdsuidomain.fakes.entities.rep.DocumentGen.nextDocumentType(),
-      providerType = xyz.driver.pdsuidomain.fakes.entities.rep.MedicalRecordGen.nextProviderType(),
+      documentType = xyz.driver.pdsuidomain.fakes.entities.common.nextDocumentType(),
+      providerType = xyz.driver.pdsuidomain.fakes.entities.common.nextProviderType(),
       providerName = nextOption(nextString(100)),
       date = nextOption(nextDate()),
       documentId = nextId[ClinicalEvidenceDocument](),

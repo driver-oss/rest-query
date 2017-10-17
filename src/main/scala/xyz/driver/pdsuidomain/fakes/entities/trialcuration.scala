@@ -149,8 +149,6 @@ object trialcuration {
     SurgeryProcedure
   )
 
-  EligibilityArmDisease
-
   def nextEligibilityArm(): EligibilityArm = EligibilityArm(
     id = nextLongId,
     name = nextString(),
@@ -158,15 +156,9 @@ object trialcuration {
     trialId = nextStringId
   )
 
-  def nextPatientCancerType(): CancerType = generators.oneOf[CancerType](
-    CancerType.Lung,
-    CancerType.Breast,
-    CancerType.Prostate
-  )
-
   def nextEligibilityArmDisease(): EligibilityArmDisease = EligibilityArmDisease(
     eligibilityArmId = nextLongId,
-    disease = nextPatientCancerType()
+    disease = nextCancerType
   )
 
   private def nextEligibilityArmDiseaseCollection(count: Int): Seq[EligibilityArmDisease] =

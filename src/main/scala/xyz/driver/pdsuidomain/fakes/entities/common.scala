@@ -2,9 +2,12 @@ package xyz.driver.pdsuidomain.fakes.entities
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}
 
-import xyz.driver.core.generators.{nextDouble, nextOption}
-import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
-import xyz.driver.pdsuidomain.entities.{Trial, TrialHistory}
+import xyz.driver.core.generators._
+import xyz.driver.entities.common.FullName
+import xyz.driver.entities.patient.CancerType
+import xyz.driver.pdsuicommon.concurrent.BridgeUploadQueue
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, TextJson, UuidId}
+import xyz.driver.pdsuidomain.entities._
 
 import scala.util.Random
 
@@ -50,7 +53,42 @@ object common {
     ranges.map(_._1) -> ranges.flatMap(_._2)
   }
 
-  def nextStartAndEndPages: (Option[Double], Option[Double]) =
+  def nextStartAndEndPagesOption: (Option[Double], Option[Double]) =
     genBoundedRangeOption[Double](nextDouble(), nextDouble())
+
+  def nextStartAndEndPages: (Double, Double) =
+    genBoundedRange(nextDouble(), nextDouble())
+
+  def nextPatientStatus: Patient.Status = generators.oneOf[Patient.Status](Patient.Status.All)
+
+  def nextFullName[T]: FullName[T] = FullName(
+    firstName = generators.nextName[T](10),
+    middleName = generators.nextName[T](10),
+    lastName = generators.nextName[T](10)
+  )
+
+  def nextCancerType: CancerType =
+    generators.oneOf[CancerType](CancerType.Breast, CancerType.Lung, CancerType.Prostate)
+
+  private val maxAttemptsNumber = 100
+
+  def nextBridgeUploadQueueItem(): BridgeUploadQueue.Item = {
+    BridgeUploadQueue.Item(
+      kind = nextString(),
+      tag = nextString(),
+      created = nextLocalDateTime,
+      attempts = nextInt(maxAttemptsNumber, minValue = 0),
+      nextAttempt = nextLocalDateTime,
+      completed = nextBoolean(),
+      dependencyKind = nextOption(nextString()),
+      dependencyTag = nextOption(nextString())
+    )
+  }
+
+  def nextDocumentType(): DocumentType = generators.oneOf[DocumentType](DocumentType.All: _*)
+
+  def nextProviderType(): ProviderType = generators.oneOf[ProviderType](ProviderType.All: _*)
+
+  def nextTextJson[T](obj: T): TextJson[T] = TextJson(obj)
 
 }
