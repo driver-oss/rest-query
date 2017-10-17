@@ -17,8 +17,16 @@ import xyz.driver.pdsuidomain.formats.json.sprayformats.trialissue._
 import xyz.driver.core.swagger.CustomSwaggerJsonConverter._
 import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.concurrent.BridgeUploadQueue
+import xyz.driver.pdsuidomain.fakes.entities.common
+import xyz.driver.pdsuidomain.formats.json.sprayformats.bridgeuploadqueue._
+import xyz.driver.pdsuidomain.formats.json.sprayformats.record._
+import xyz.driver.pdsuidomain.formats.json.sprayformats.document._
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
 import xyz.driver.pdsuidomain.services.ExtractedDataService.RichExtractedData
+import xyz.driver.pdsuidomain.services.PatientCriterionService.{DraftPatientCriterion, RichPatientCriterion}
+import xyz.driver.pdsuidomain.services.PatientEligibleTrialService.RichPatientEligibleTrial
+import xyz.driver.pdsuidomain.services.PatientHypothesisService.RichPatientHypothesis
+import xyz.driver.pdsuidomain.services.PatientLabelService.RichPatientLabel
 
 import scala.collection.immutable
 
@@ -29,11 +37,18 @@ object CustomSwaggerJsonFormats {
     classOf[LocalDate]     -> stringProperty(example = Some("2010-12-31")),
     classOf[UuidId[_]]     -> stringProperty(example = Some("370b0450-35cb-4aab-ba74-0145be75add5")),
     classOf[StringId[_]]   -> stringProperty(),
-    classOf[LongId[_]]     -> stringProperty()
+    classOf[LongId[_]]     -> stringProperty(),
+    classOf[CancerType]    -> stringProperty()
   )
+
+  val customCommonObjectsExamples = immutable.Map[Class[_], JsValue](
+    classOf[BridgeUploadQueue.Item] -> queueUploadItemFormat.write(common.nextBridgeUploadQueueItem()),
+    classOf[ProviderType]           -> providerTypeFormat.write(common.nextProviderType()),
+    classOf[DocumentType]           -> documentTypeFormat.write(common.nextDocumentType())
+  )
+
   val customTrialCurationProperties = immutable.Map[Class[_], Property](
     classOf[Trial.Status]        -> stringProperty(),
-    classOf[CancerType]          -> stringProperty(),
     classOf[TrialHistory.Action] -> stringProperty(),
     classOf[TrialHistory.State]  -> stringProperty()
   ) ++ customCommonProperties
@@ -59,70 +74,83 @@ object CustomSwaggerJsonFormats {
 
   // records-processing-service
   object Rep {
-    import xyz.driver.pdsuidomain.fakes.entities.rep
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.document
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.documentissue
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.documenthistory
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.record
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.recordissue
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.recordhistory
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.bridgeuploadqueue
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.extracteddata
+    import xyz.driver.pdsuidomain.fakes.entities.recordprocessing._
+    import xyz.driver.pdsuidomain.formats.json.sprayformats._
+
+    val customRecordProcessingProperties = immutable.Map[Class[_], Property](
+      classOf[MedicalRecord.Status]        -> stringProperty(),
+      classOf[MedicalRecordHistory.Action] -> stringProperty(),
+      classOf[MedicalRecordHistory.State]  -> stringProperty(),
+      classOf[Document.Status]             -> stringProperty(),
+      classOf[Document.RequiredType]       -> stringProperty(),
+      classOf[DocumentHistory.Action]      -> stringProperty(),
+      classOf[DocumentHistory.State]       -> stringProperty()
+    ) ++ customCommonProperties
 
     val customRepObjectsExamples = immutable.Map[Class[_], JsValue](
       classOf[Document] ->
-        document.documentFormat.write(rep.DocumentGen.nextDocument()),
-      classOf[Document.Meta] ->
-        document.documentMetaFormat.write(rep.DocumentGen.nextDocumentMeta()),
-      classOf[TextJson[Document.Meta]] ->
-        document.fullDocumentMetaFormat.write(rep.DocumentGen.nextDocumentMetaJson()),
-      classOf[Document.RequiredType] ->
-        document.requiredTypeFormat.write(rep.DocumentGen.nextDocumentRequiredType()),
-      classOf[Document.Status] ->
-        document.documentStatusFormat.write(rep.DocumentGen.nextDocumentStatus()),
+        document.documentFormat.write(nextDocument()),
       classOf[DocumentIssue] ->
-        documentissue.documentIssueFormat.write(rep.DocumentGen.nextDocumentIssue()),
+        documentissue.documentIssueFormat.write(nextDocumentIssue()),
       classOf[DocumentHistory] ->
-        documenthistory.documentHistoryFormat.write(rep.DocumentGen.nextDocumentHistory()),
-      classOf[DocumentHistory.Action] ->
-        documenthistory.documentActionFormat.write(rep.DocumentGen.nextDocumentHistoryAction()),
-      classOf[DocumentHistory.State] ->
-        documenthistory.documentStateFormat.write(rep.DocumentGen.nextDocumentHistoryState()),
-      classOf[ProviderType] ->
-        record.providerTypeFormat.write(rep.MedicalRecordGen.nextProviderType()),
+        documenthistory.documentHistoryFormat.write(nextDocumentHistory()),
       classOf[TextJson[List[MedicalRecord.Meta]]] ->
-        record.recordMetaFormat.write(rep.MedicalRecordGen.nextMedicalRecordMetasJson()),
+        record.recordMetaFormat.write(nextMedicalRecordMetaJson()),
       classOf[MedicalRecord] ->
-        record.recordFormat.write(rep.MedicalRecordGen.nextMedicalRecord()),
-      classOf[MedicalRecord.Meta] ->
-        record.recordMetaTypeFormat.write(rep.MedicalRecordGen.nextMedicalRecordMeta()),
-      classOf[MedicalRecord.Status] ->
-        record.recordStatusFormat.write(rep.MedicalRecordGen.nextMedicalRecordStatus()),
+        record.recordFormat.write(nextMedicalRecord()),
       classOf[MedicalRecordIssue] ->
-        recordissue.recordIssueFormat.write(rep.MedicalRecordGen.nextMedicalRecordIssue()),
+        recordissue.recordIssueFormat.write(nextMedicalRecordIssue()),
       classOf[MedicalRecordHistory] ->
-        recordhistory.recordHistoryFormat.write(rep.MedicalRecordGen.nextMedicalRecordHistory()),
-      classOf[MedicalRecordHistory.Action] ->
-        recordhistory.recordActionFormat.write(rep.MedicalRecordGen.nextMedicalRecordHistoryAction()),
-      classOf[MedicalRecordHistory.State] ->
-        recordhistory.recordStateFormat.write(rep.MedicalRecordGen.nextMedicalRecordHistoryState()),
-      classOf[BridgeUploadQueue.Item] ->
-        bridgeuploadqueue.queueUploadItemFormat.write(rep.BridgeUploadQueueGen.nextBridgeUploadQueueItem()),
-      classOf[ExtractedData.Meta] ->
-        extracteddata.extractedDataMetaFormat.write(rep.ExtractedDataGen.nextExtractedDataMeta()),
-      classOf[ExtractedData.Meta.Evidence] ->
-        extracteddata.metaEvidenceFormat.write(rep.ExtractedDataGen.nextExtractedDataMetaEvidence()),
-      classOf[ExtractedData.Meta.Keyword] ->
-        extracteddata.metaKeywordFormat.write(rep.ExtractedDataGen.nextExtractedDataMetaKeyword()),
-      classOf[ExtractedData.Meta.TextLayerPosition] ->
-        extracteddata.metaTextLayerPositionFormat.write(rep.ExtractedDataGen.nextExtractedDataMetaTextLayerPosition()),
-      classOf[TextJson[ExtractedData.Meta]] ->
-        extracteddata.fullExtractedDataMetaFormat.write(rep.ExtractedDataGen.nextExtractedDataMetaJson()),
+        recordhistory.recordHistoryFormat.write(nextMedicalRecordHistory()),
       classOf[RichExtractedData] ->
-        extracteddata.extractedDataFormat.write(rep.ExtractedDataGen.nextRichExtractedData()),
-      classOf[ExtractedDataLabel] ->
-        extracteddata.extractedDataLabelWriter.write(rep.ExtractedDataGen.nextExtractedDataLabel())
-    )
+        extracteddata.extractedDataFormat.write(nextRichExtractedData()),
+      classOf[MedicalRecord.Meta] ->
+        record.recordMetaTypeFormat.write(nextMedicalRecordMeta()),
+      classOf[TextJson[Document.Meta]] ->
+        document.fullDocumentMetaFormat.write(nextDocumentMetaJson()),
+      classOf[ExtractedData.Meta] ->
+        extracteddata.extractedDataMetaFormat.write(nextExtractedDataMeta()),
+      classOf[ExtractedData.Meta.Evidence] ->
+        extracteddata.metaEvidenceFormat.write(nextExtractedDataMetaEvidence()),
+      classOf[ExtractedData.Meta.Keyword] ->
+        extracteddata.metaKeywordFormat.write(nextExtractedDataMetaKeyword()),
+      classOf[ExtractedData.Meta.TextLayerPosition] ->
+        extracteddata.metaTextLayerPositionFormat.write(nextExtractedDataMetaTextLayerPosition()),
+      classOf[TextJson[ExtractedData.Meta]] ->
+        extracteddata.fullExtractedDataMetaFormat.write(nextExtractedDataMetaJson())
+    ) ++ customCommonObjectsExamples
+  }
+
+  object treatmentmatching {
+    import xyz.driver.pdsuidomain.fakes.entities.treatmentmatching._
+    import xyz.driver.pdsuidomain.formats.json.sprayformats.patient._
+    import xyz.driver.pdsuidomain.formats.json.sprayformats.patientcriterion._
+    import xyz.driver.pdsuidomain.formats.json.sprayformats.patientdefiningcriteria._
+    import xyz.driver.pdsuidomain.formats.json.sprayformats.patienteligibletrial._
+    import xyz.driver.pdsuidomain.formats.json.sprayformats.patientlabel._
+    import xyz.driver.pdsuidomain.formats.json.sprayformats.patienthypothesis._
+    import xyz.driver.pdsuidomain.formats.json.sprayformats.patienthistory._
+    import xyz.driver.pdsuidomain.formats.json.sprayformats.patientissue._
+
+    val customTreatmentMatchingProperties = immutable.Map[Class[_], Property](
+      classOf[Patient.Status]        -> stringProperty(),
+      classOf[PatientHistory.Action] -> stringProperty(),
+      classOf[PatientHistory.State]  -> stringProperty()
+    ) ++ customCommonProperties
+
+    val customTreatmentMatchingObjectsExamples = immutable.Map[Class[_], JsValue](
+      classOf[Patient]                  -> patientWriter.write(nextPatient()),
+      classOf[RichPatientLabel]         -> richPatientLabelWriter.write(nextRichPatientLabel()),
+      classOf[PatientLabel]             -> patientLabelDefiningCriteriaWriter.write(nextPatientLabel()),
+      classOf[RichPatientCriterion]     -> patientCriterionWriter.write(nextRichPatientCriterion()),
+      classOf[DraftPatientCriterion]    -> draftPatientCriterionFormat.write(nextDraftPatientCriterion()),
+      classOf[PatientLabelEvidenceView] -> patientLabelEvidenceWriter.write(nextPatientLabelEvidenceView()),
+      classOf[RichPatientEligibleTrial] -> patientEligibleTrialWriter.write(nextRichPatientEligibleTrial()),
+      classOf[PatientHypothesis]        -> patientHypothesisWriter.write(nextPatientHypothesis()),
+      classOf[RichPatientHypothesis]    -> richPatientHypothesisWriter.write(nextRichPatientHypothesis()),
+      classOf[PatientHistory]           -> patientHistoryFormat.write(nextPatientHistory()),
+      classOf[PatientIssue]             -> patientIssueWriter.write(nextPatientIssue())
+    ) ++ customCommonObjectsExamples
   }
 
 }
