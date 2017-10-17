@@ -110,7 +110,7 @@ object document {
   implicit val documentFormat: RootJsonFormat[Document] = new RootJsonFormat[Document] {
     override def write(document: Document): JsValue =
       JsObject(
-        "id"               -> document.id.id.toJson,
+        "id"               -> document.id.toJson,
         "recordId"         -> document.recordId.toJson,
         "physician"        -> document.physician.toJson,
         "typeId"           -> document.typeId.toJson,
@@ -138,35 +138,35 @@ object document {
 
         val physician = fields
           .get("physician")
-          .map(_.convertTo[String])
+          .flatMap(_.convertTo[Option[String]])
 
         val typeId = fields
           .get("typeId")
-          .map(_.convertTo[LongId[DocumentType]])
+          .flatMap(_.convertTo[Option[LongId[DocumentType]]])
 
         val provider = fields
           .get("provider")
-          .map(_.convertTo[String])
+          .flatMap(_.convertTo[Option[String]])
 
         val providerTypeId = fields
           .get("providerTypeId")
-          .map(_.convertTo[LongId[ProviderType]])
+          .flatMap(_.convertTo[Option[LongId[ProviderType]]])
 
         val institutionName = fields
           .get("institutionName")
-          .map(_.convertTo[String])
+          .flatMap(_.convertTo[Option[String]])
 
         val meta = fields
           .get("meta")
-          .map(_.convertTo[TextJson[Meta]])
+          .flatMap(_.convertTo[Option[TextJson[Meta]]])
 
         val startDate = fields
           .get("startDate")
-          .map(_.convertTo[LocalDate])
+          .flatMap(_.convertTo[Option[LocalDate]])
 
         val endDate = fields
           .get("endDate")
-          .map(_.convertTo[LocalDate])
+          .flatMap(_.convertTo[Option[LocalDate]])
 
         Document(
           id = LongId(0),
