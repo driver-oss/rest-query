@@ -105,7 +105,7 @@ object recordprocessing {
   def nextMedicalRecord(): MedicalRecord = MedicalRecord(
     id = nextLongId[MedicalRecord],
     status = nextMedicalRecordStatus(),
-    previousStatus = None,
+    previousStatus = nextOption(generators.oneOf[MedicalRecord.Status](MedicalRecord.Status.AllPrevious)),
     assignee = nextOption(nextStringId),
     previousAssignee = nextOption(nextStringId),
     lastActiveUserId = nextOption(nextStringId),
@@ -168,7 +168,7 @@ object recordprocessing {
     Document(
       id = nextLongId[Document],
       status = nextDocumentStatus(),
-      previousStatus = None,
+      previousStatus = nextOption(generators.oneOf[Document.Status](Document.Status.AllPrevious)),
       assignee = nextOption(nextStringId[User]),
       previousAssignee = nextOption(nextStringId[User]),
       lastActiveUserId = nextOption(nextStringId[User]),
