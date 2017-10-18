@@ -149,8 +149,6 @@ object trialcuration {
     SurgeryProcedure
   )
 
-  EligibilityArmDisease
-
   def nextEligibilityArm(): EligibilityArm = EligibilityArm(
     id = nextLongId,
     name = nextString(),
