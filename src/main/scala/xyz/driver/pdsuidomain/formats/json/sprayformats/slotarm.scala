@@ -19,7 +19,7 @@ object slotarm {
     case _ => deserializationError(s"Expected Json Object as partial Arm, but got $json")
   }
 
-  def slotArmFormat: RootJsonFormat[SlotArm] = new RootJsonFormat[SlotArm] {
+  implicit def slotArmFormat: RootJsonFormat[SlotArm] = new RootJsonFormat[SlotArm] {
     override def write(obj: SlotArm): JsValue =
       JsObject(
         "id"           -> obj.id.toJson,

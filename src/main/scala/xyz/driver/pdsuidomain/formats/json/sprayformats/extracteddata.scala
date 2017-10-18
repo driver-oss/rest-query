@@ -100,7 +100,7 @@ object extracteddata {
   implicit val extractedDataFormat: RootJsonFormat[RichExtractedData] = new RootJsonFormat[RichExtractedData] {
     override def write(richData: RichExtractedData): JsValue =
       JsObject(
-        "id"         -> richData.extractedData.id.id.toJson,
+        "id"         -> richData.extractedData.id.toJson,
         "documentId" -> richData.extractedData.documentId.toJson,
         "keywordId"  -> richData.extractedData.keywordId.toJson,
         "evidence"   -> richData.extractedData.evidenceText.toJson,

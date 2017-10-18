@@ -48,6 +48,8 @@ object CustomSwaggerJsonFormats {
     import xyz.driver.pdsuidomain.fakes.entities.export
     import xyz.driver.pdsuidomain.formats.json.sprayformats.export._
     import xyz.driver.pdsuidomain.formats.json.sprayformats.arm._
+    import xyz.driver.pdsuidomain.formats.json.sprayformats.slotarm._
+    import xyz.driver.pdsuidomain.formats.json.sprayformats.eligibilityarm._
     import xyz.driver.pdsuidomain.formats.json.sprayformats.criterion._
     import xyz.driver.pdsuidomain.formats.json.sprayformats.intervention._
     import xyz.driver.pdsuidomain.formats.json.sprayformats.hypothesis._
@@ -63,16 +65,18 @@ object CustomSwaggerJsonFormats {
     ) ++ customCommonProperties
 
     val customTrialCurationObjectsExamples = immutable.Map[Class[_], JsValue](
-      classOf[Trial]                 -> trialWriter.write(nextTrial()),
-      classOf[Arm]                   -> armFormat.write(nextArm()),
-      classOf[TrialHistory]          -> trialHistoryFormat.write(nextTrialHistory()),
-      classOf[TrialIssue]            -> trialIssueWriter.write(nextTrialIssue()),
-      classOf[RichCriterion]         -> richCriterionFormat.write(nextRichCriterion()),
-      classOf[InterventionWithArms]  -> interventionFormat.write(nextInterventionWithArms()),
-      classOf[InterventionType]      -> interventionTypeFormat.write(nextInterventionType()),
-      classOf[Hypothesis]            -> hypothesisFormat.write(nextHypothesis()),
-      classOf[StudyDesign]           -> studyDesignFormat.write(nextStudyDesign()),
-      classOf[ExportTrialWithLabels] -> trialWithLabelsFormat.write(export.nextExportTrialWithLabels())
+      classOf[Trial]                      -> trialWriter.write(nextTrial()),
+      classOf[Arm]                        -> armFormat.write(nextArm()),
+      classOf[TrialHistory]               -> trialHistoryFormat.write(nextTrialHistory()),
+      classOf[TrialIssue]                 -> trialIssueWriter.write(nextTrialIssue()),
+      classOf[RichCriterion]              -> richCriterionFormat.write(nextRichCriterion()),
+      classOf[InterventionWithArms]       -> interventionFormat.write(nextInterventionWithArms()),
+      classOf[InterventionType]           -> interventionTypeFormat.write(nextInterventionType()),
+      classOf[Hypothesis]                 -> hypothesisFormat.write(nextHypothesis()),
+      classOf[StudyDesign]                -> studyDesignFormat.write(nextStudyDesign()),
+      classOf[ExportTrialWithLabels]      -> trialWithLabelsFormat.write(export.nextExportTrialWithLabels()),
+      classOf[EligibilityArmWithDiseases] -> eligibilityArmWithDiseasesWriter.write(nextEligibilityArmWithDiseases()),
+      classOf[SlotArm]                    -> slotArmFormat.write(nextSlotArm())
     )
   }
 

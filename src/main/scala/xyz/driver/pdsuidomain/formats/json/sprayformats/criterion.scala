@@ -10,7 +10,7 @@ object criterion {
   import DefaultJsonProtocol._
   import common._
 
-  implicit val criterionLabelWriter = new RootJsonWriter[CriterionLabel] {
+  implicit val criterionLabelWriter: RootJsonWriter[CriterionLabel] = new RootJsonWriter[CriterionLabel] {
     override def write(obj: CriterionLabel) = JsObject(
       "labelId"    -> obj.labelId.toJson,
       "categoryId" -> obj.categoryId.toJson,
@@ -26,20 +26,21 @@ object criterion {
     case JsObject(fields) =>
       val labelId = fields
         .get("labelId")
-        .map(_.convertTo[LongId[Label]])
+        .flatMap(_.convertTo[Option[LongId[Label]]])
 
       val categoryId = fields
         .get("categoryId")
-        .map(_.convertTo[LongId[LabelCategory]])
+        .flatMap(_.convertTo[Option[LongId[LabelCategory]]])
 
       val value = fields
         .get("value")
-        .map(_.convertTo[String] match {
+        .flatMap(_.convertTo[Option[String]])
+        .map {
           case "Yes" => true
           case "No"  => false
           case other =>
             deserializationError(s"Unknown `value` of CriterionLabel object: expected `yes` or `no`, but got $other")
-        })
+        }
 
       val isDefining = fields
         .get("isDefining")
@@ -103,7 +104,7 @@ object criterion {
     case _ => deserializationError(s"Expected Json Object as partial Criterion, but got $json")
   }
 
-  val richCriterionFormat = new RootJsonFormat[RichCriterion] {
+  implicit val richCriterionFormat: RootJsonFormat[RichCriterion] = new RootJsonFormat[RichCriterion] {
     override def write(obj: RichCriterion): JsValue =
       JsObject(
         "id"         -> obj.criterion.id.toJson,
@@ -125,7 +126,7 @@ object criterion {
 
         val text = fields
           .get("text")
-          .map(_.convertTo[String])
+          .flatMap(_.convertTo[Option[String]])
 
         val isCompound = fields
           .get("isCompound")
@@ -133,24 +134,22 @@ object criterion {
 
         val meta = fields
           .get("meta")
-          .map(_.convertTo[String])
-          .getOrElse("")
+          .flatMap(_.convertTo[Option[String]])
 
         val inclusion = fields
           .get("inclusion")
-          .map(_.convertTo[Option[Boolean]])
-          .getOrElse(None)
+          .flatMap(_.convertTo[Option[Boolean]])
 
         val arms = fields
           .get("arms")
-          .map(_.convertTo[List[LongId[EligibilityArm]]])
-          .getOrElse(List.empty[LongId[EligibilityArm]])
+          .map(_.convertTo[Seq[LongId[EligibilityArm]]])
+          .getOrElse(Seq.empty[LongId[EligibilityArm]])
 
         val labels = fields
           .get("labels")
-          .map(_.convertTo[List[JsValue]])
+          .map(_.convertTo[Seq[JsValue]])
           .map(_.map(l => jsValueToCriterionLabel(l, LongId(0))))
-          .getOrElse(List.empty[CriterionLabel])
+          .getOrElse(Seq.empty[CriterionLabel])
 
         RichCriterion(
           criterion = Criterion(
@@ -158,7 +157,7 @@ object criterion {
             trialId = trialId,
             text = text,
             isCompound = isCompound,
-            meta = meta,
+            meta = meta.getOrElse(""),
             inclusion = inclusion
           ),
           armIds = arms,
