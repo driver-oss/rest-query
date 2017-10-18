@@ -34,7 +34,7 @@ object document {
         val name = fields
           .get("name")
           .map(_.convertTo[String])
-          .getOrElse(deserializationError(s"Intervention type json object does not contain `name` field: $json"))
+          .getOrElse(deserializationError(s"Document type json object does not contain `name` field: $json"))
 
         DocumentType
           .fromString(name)

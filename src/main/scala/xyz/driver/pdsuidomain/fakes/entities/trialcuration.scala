@@ -131,10 +131,7 @@ object trialcuration {
     description = generators.nextString()
   )
 
-  def nextStudyDesign(): StudyDesign = StudyDesign(
-    id = nextLongId[StudyDesign],
-    name = generators.nextString()
-  )
+  def nextStudyDesign(): StudyDesign = generators.oneOf[StudyDesign](StudyDesign.All: _*)
 
   def nextInterventionType(): InterventionType = generators.oneOf[InterventionType](
     RadiationTherapy,

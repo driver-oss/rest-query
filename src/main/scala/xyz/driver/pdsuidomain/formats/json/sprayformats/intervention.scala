@@ -128,7 +128,9 @@ object intervention {
           .map(_.convertTo[String])
           .getOrElse(deserializationError(s"Intervention type json object does not contain `name` field: $json"))
 
-        InterventionType.typeFromString(name)
+        InterventionType
+          .typeFromString(name)
+          .getOrElse(deserializationError(s"Unknown intervention type: $name"))
 
       case _ => deserializationError(s"Expected Json Object as Intervention type, but got $json")
     }

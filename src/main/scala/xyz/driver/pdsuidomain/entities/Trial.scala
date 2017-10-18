@@ -7,9 +7,41 @@ import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
 import xyz.driver.pdsuidomain.entities.Trial.Status
 
-final case class StudyDesign(id: LongId[StudyDesign], name: String)
+import scalaz.syntax.equal._
+import scalaz.Scalaz.stringInstance
+
+sealed trait StudyDesign {
+  val id: LongId[StudyDesign]
+  val name: String
+}
 
 object StudyDesign {
+
+  final case object Randomized extends StudyDesign {
+    val id: LongId[StudyDesign] = LongId[StudyDesign](1)
+    val name: String            = "Randomized"
+  }
+
+  final case object NonRandomized extends StudyDesign {
+    val id: LongId[StudyDesign] = LongId[StudyDesign](2)
+    val name: String            = "Non-randomized"
+  }
+
+  final case object SingleGroupAssignment extends StudyDesign {
+    val id: LongId[StudyDesign] = LongId[StudyDesign](3)
+    val name: String            = "Single-group assignment"
+  }
+
+  val All = Seq[StudyDesign](
+    Randomized,
+    NonRandomized,
+    SingleGroupAssignment
+  )
+
+  def fromString(txt: String): Option[StudyDesign] = {
+    All.find(_.name === txt)
+  }
+
   implicit def toPhiString(x: StudyDesign): PhiString = {
     import x._
     phi"StudyDesign(id=$id, category=${Unsafe(name)})"
