@@ -37,8 +37,14 @@ class RestEligibilityVerificationService(transport: ServiceTransport, baseUri: U
                                        excludedArms: Seq[LongId[EligibilityArm]])(
           implicit ctx: AuthorizedServiceRequestContext[AuthUserInfo]): Future[eligibility.MismatchRankedLabels] = {
 
-    val query =
-      Seq("disease" -> cancerType.toString.toUpperCase, "ineligible_arms" -> excludedArms.map(_.id).mkString(","))
+    val query = Seq("disease" -> cancerType.toString.toUpperCase) ++ (if (excludedArms.nonEmpty) {
+                                                                        Seq(
+                                                                          "ineligible_arms" -> excludedArms
+                                                                            .map(_.id)
+                                                                            .mkString(","))
+                                                                      } else {
+                                                                        Seq.empty[(String, String)]
+                                                                      })
 
     val request = get(baseUri, s"/v1/patients/$patientId/labels", query)
     optionalResponse[MismatchRankedLabels](transport.sendRequest(ctx)(request))
