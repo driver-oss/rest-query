@@ -37,15 +37,15 @@ object extracteddata {
     case JsObject(fields) =>
       val labelId = fields
         .get("id")
-        .map(_.convertTo[LongId[Label]])
+        .flatMap(_.convertTo[Option[LongId[Label]]])
 
       val categoryId = fields
         .get("categoryId")
-        .map(_.convertTo[LongId[LabelCategory]])
+        .flatMap(_.convertTo[Option[LongId[LabelCategory]]])
 
       val value = fields
         .get("value")
-        .map(_.convertTo[LabelValue])
+        .flatMap(_.convertTo[Option[LabelValue]])
 
       ExtractedDataLabel(
         id = LongId(0),
@@ -118,15 +118,15 @@ object extracteddata {
 
         val keywordId = fields
           .get("keywordId")
-          .map(_.convertTo[LongId[Keyword]])
+          .flatMap(_.convertTo[Option[LongId[Keyword]]])
 
         val evidence = fields
           .get("evidence")
-          .map(_.convertTo[String])
+          .flatMap(_.convertTo[Option[String]])
 
         val meta = fields
           .get("meta")
-          .map(_.convertTo[TextJson[Meta]])
+          .flatMap(_.convertTo[Option[TextJson[Meta]]])
 
         val labels = fields
           .get("labels")
