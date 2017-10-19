@@ -10,7 +10,6 @@ import xyz.driver.pdsuidomain.formats.json.sprayformats.listresponse._
 import xyz.driver.core.swagger.CustomSwaggerJsonConverter._
 import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.concurrent.BridgeUploadQueue
-import xyz.driver.pdsuidomain.ListResponse._
 import xyz.driver.pdsuidomain.entities.export.patient.ExportPatientWithLabels
 import xyz.driver.pdsuidomain.entities.export.trial.ExportTrialWithLabels
 import xyz.driver.pdsuidomain.fakes.entities.common
@@ -28,6 +27,40 @@ import scala.collection.immutable
 
 object CustomSwaggerJsonFormats {
 
+  trait MedicalRecordListResponse
+  trait MedicalRecordIssueListResponse
+  trait MedicalRecordHistoryListResponse
+  trait DocumentListResponse
+  trait DocumentIssueListResponse
+  trait DocumentHistoryListResponse
+  trait RichExtractedDataListResponse
+  trait DocumentTypeListResponse
+  trait ProviderTypeListResponse
+
+  trait TrialListResponse
+  trait TrialIssueListResponse
+  trait TrialHistoryListResponse
+  trait ArmListResponse
+  trait InterventionWithArmsListResponse
+  trait EligibilityArmWithDiseasesListResponse
+  trait SlotArmListResponse
+  trait RichCriterionListResponse
+  trait InterventionTypeListResponse
+  trait StudyDesignListResponse
+  trait HypothesisListResponse
+
+  trait PatientListResponse
+  trait PatientIssueListResponse
+  trait PatientHistoryListResponse
+  trait PatientLabelListResponse
+  trait RichPatientLabelListResponse
+  trait RichPatientCriterionListResponse
+  trait RichPatientEligibleTrialListResponse
+  trait RichPatientHypothesisListResponse
+  trait PatientLabelEvidenceViewListResponse
+
+  trait QueueUploadItemListResponse
+
   val customCommonProperties = immutable.Map[Class[_], Property](
     classOf[LocalDateTime] -> stringProperty(example = Some("2010-12-31'T'18:59:59Z")),
     classOf[LocalDate]     -> stringProperty(example = Some("2010-12-31")),
@@ -40,7 +73,11 @@ object CustomSwaggerJsonFormats {
   val customCommonObjectsExamples = immutable.Map[Class[_], JsValue](
     classOf[BridgeUploadQueue.Item] -> queueUploadItemFormat.write(common.nextBridgeUploadQueueItem()),
     classOf[ProviderType]           -> providerTypeFormat.write(common.nextProviderType()),
-    classOf[DocumentType]           -> documentTypeFormat.write(common.nextDocumentType())
+    classOf[DocumentType]           -> documentTypeFormat.write(common.nextDocumentType()),
+    classOf[QueueUploadItemListResponse] -> listResponseWriter[BridgeUploadQueue.Item]
+      .write(common.nextBridgeUploadQueueItemListResponse()),
+    classOf[DocumentTypeListResponse] -> listResponseWriter[DocumentType].write(common.nextDocumentTypeListResponse()),
+    classOf[ProviderTypeListResponse] -> listResponseWriter[ProviderType].write(common.nextProviderTypeListResponse())
   )
 
   object trialcuration {
@@ -76,7 +113,21 @@ object CustomSwaggerJsonFormats {
       classOf[StudyDesign]                -> studyDesignFormat.write(nextStudyDesign()),
       classOf[ExportTrialWithLabels]      -> trialWithLabelsFormat.write(export.nextExportTrialWithLabels()),
       classOf[EligibilityArmWithDiseases] -> eligibilityArmWithDiseasesWriter.write(nextEligibilityArmWithDiseases()),
-      classOf[SlotArm]                    -> slotArmFormat.write(nextSlotArm())
+      classOf[SlotArm]                    -> slotArmFormat.write(nextSlotArm()),
+      classOf[TrialListResponse]          -> listResponseWriter[Trial].write(nextTrialListResponse()),
+      classOf[TrialIssueListResponse]     -> listResponseWriter[TrialIssue].write(nextTrialIssueListResponse()),
+      classOf[TrialHistoryListResponse]   -> listResponseWriter[TrialHistory].write(nextTrialHistoryListResponse()),
+      classOf[ArmListResponse]            -> listResponseWriter[Arm].write(nextArmListResponse()),
+      classOf[InterventionWithArmsListResponse] -> listResponseWriter[InterventionWithArms].write(
+        nextInterventionWithArmsListResponse()),
+      classOf[EligibilityArmWithDiseasesListResponse] -> listResponseWriter[EligibilityArmWithDiseases].write(
+        nextEligibilityArmWithDiseasesListResponse()),
+      classOf[SlotArmListResponse]       -> listResponseWriter[SlotArm].write(nextSlotArmListResponse()),
+      classOf[RichCriterionListResponse] -> listResponseWriter[RichCriterion].write(nextRichCriterionListResponse()),
+      classOf[InterventionTypeListResponse] -> listResponseWriter[InterventionType].write(
+        nextInterventionTypeListResponse()),
+      classOf[StudyDesignListResponse] -> listResponseWriter[StudyDesign].write(nextStudyDesignListResponse()),
+      classOf[HypothesisListResponse]  -> listResponseWriter[Hypothesis].write(nextHypothesesListResponse())
     )
   }
 
@@ -101,14 +152,25 @@ object CustomSwaggerJsonFormats {
     ) ++ customCommonProperties
 
     val customRecordProcessingObjectsExamples = immutable.Map[Class[_], JsValue](
-      classOf[Document]                -> documentFormat.write(nextDocument()),
-      classOf[DocumentIssue]           -> documentIssueFormat.write(nextDocumentIssue()),
-      classOf[DocumentHistory]         -> documentHistoryFormat.write(nextDocumentHistory()),
-      classOf[MedicalRecord]           -> recordFormat.write(nextMedicalRecord()),
-      classOf[MedicalRecordIssue]      -> recordIssueFormat.write(nextMedicalRecordIssue()),
-      classOf[MedicalRecordHistory]    -> recordHistoryFormat.write(nextMedicalRecordHistory()),
-      classOf[RichExtractedData]       -> extractedDataFormat.write(nextRichExtractedData()),
-      classOf[ExportPatientWithLabels] -> patientWithLabelsFormat.write(export.nextExportPatientWithLabels())
+      classOf[Document]                  -> documentFormat.write(nextDocument()),
+      classOf[DocumentIssue]             -> documentIssueFormat.write(nextDocumentIssue()),
+      classOf[DocumentHistory]           -> documentHistoryFormat.write(nextDocumentHistory()),
+      classOf[MedicalRecord]             -> recordFormat.write(nextMedicalRecord()),
+      classOf[MedicalRecordIssue]        -> recordIssueFormat.write(nextMedicalRecordIssue()),
+      classOf[MedicalRecordHistory]      -> recordHistoryFormat.write(nextMedicalRecordHistory()),
+      classOf[RichExtractedData]         -> extractedDataFormat.write(nextRichExtractedData()),
+      classOf[ExportPatientWithLabels]   -> patientWithLabelsFormat.write(export.nextExportPatientWithLabels()),
+      classOf[MedicalRecordListResponse] -> listResponseWriter[MedicalRecord].write(nextMedicalRecordListResponse()),
+      classOf[MedicalRecordIssueListResponse] -> listResponseWriter[MedicalRecordIssue].write(
+        nextMedicalRecordIssueListResponse()),
+      classOf[MedicalRecordHistoryListResponse] -> listResponseWriter[MedicalRecordHistory].write(
+        nextMedicalRecordHistoryListResponse()),
+      classOf[DocumentListResponse]      -> listResponseWriter[Document].write(nextDocumentListResponse()),
+      classOf[DocumentIssueListResponse] -> listResponseWriter[DocumentIssue].write(nextDocumentIssueListResponse()),
+      classOf[DocumentHistoryListResponse] -> listResponseWriter[DocumentHistory].write(
+        nextDocumentHistoryListResponse()),
+      classOf[RichExtractedDataListResponse] -> listResponseWriter[RichExtractedData].write(
+        nextRichExtractedDataListResponse())
     ) ++ customCommonObjectsExamples
   }
 
@@ -130,19 +192,19 @@ object CustomSwaggerJsonFormats {
     ) ++ customCommonProperties
 
     val customTreatmentMatchingObjectsExamples = immutable.Map[Class[_], JsValue](
-      classOf[Patient]                  -> patientWriter.write(nextPatient()),
-      classOf[RichPatientLabel]         -> richPatientLabelWriter.write(nextRichPatientLabel()),
-      classOf[PatientLabel]             -> patientLabelDefiningCriteriaWriter.write(nextPatientLabel()),
-      classOf[RichPatientCriterion]     -> patientCriterionWriter.write(nextRichPatientCriterion()),
-      classOf[DraftPatientCriterion]    -> draftPatientCriterionFormat.write(nextDraftPatientCriterion()),
-      classOf[PatientLabelEvidenceView] -> patientLabelEvidenceWriter.write(nextPatientLabelEvidenceView()),
-      classOf[RichPatientEligibleTrial] -> patientEligibleTrialWriter.write(nextRichPatientEligibleTrial()),
-      classOf[PatientHypothesis]        -> patientHypothesisWriter.write(nextPatientHypothesis()),
-      classOf[RichPatientHypothesis]    -> richPatientHypothesisWriter.write(nextRichPatientHypothesis()),
-      classOf[PatientHistory]           -> patientHistoryFormat.write(nextPatientHistory()),
-      classOf[PatientIssue]             -> patientIssueWriter.write(nextPatientIssue()),
-      classOf[PatientListResponse]      -> listResponseWriter[Patient].write(nextPatientListResponse()),
-      classOf[PatientLabelListResponse] -> listResponseWriter[PatientLabel].write(nextPatientLabelListResponse()),
+      classOf[Patient]                   -> patientWriter.write(nextPatient()),
+      classOf[RichPatientLabel]          -> richPatientLabelWriter.write(nextRichPatientLabel()),
+      classOf[PatientLabel]              -> patientLabelDefiningCriteriaWriter.write(nextPatientLabel()),
+      classOf[RichPatientCriterion]      -> patientCriterionWriter.write(nextRichPatientCriterion()),
+      classOf[DraftPatientCriterion]     -> draftPatientCriterionFormat.write(nextDraftPatientCriterion()),
+      classOf[PatientLabelEvidenceView]  -> patientLabelEvidenceWriter.write(nextPatientLabelEvidenceView()),
+      classOf[RichPatientEligibleTrial]  -> patientEligibleTrialWriter.write(nextRichPatientEligibleTrial()),
+      classOf[PatientHypothesis]         -> patientHypothesisWriter.write(nextPatientHypothesis()),
+      classOf[RichPatientHypothesis]     -> richPatientHypothesisWriter.write(nextRichPatientHypothesis()),
+      classOf[PatientHistory]            -> patientHistoryFormat.write(nextPatientHistory()),
+      classOf[PatientIssue]              -> patientIssueWriter.write(nextPatientIssue()),
+      classOf[PatientListResponse]       -> listResponseWriter[Patient].write(nextPatientListResponse()),
+      classOf[PatientLabelListResponse]  -> listResponseWriter[PatientLabel].write(nextPatientLabelListResponse()),
       classOf[RichPatientLabelListResponse] -> listResponseWriter[RichPatientLabel].write(
         nextRichPatientLabelListResponse()),
       classOf[RichPatientCriterionListResponse] -> listResponseWriter[RichPatientCriterion].write(

@@ -14,6 +14,26 @@ object treatmentmatching {
   import common._
   import xyz.driver.core.generators
 
+  final case class DraftPatientCriterionList(list: List[DraftPatientCriterion])
+  object DraftPatientCriterionList {
+    import spray.json._
+    import xyz.driver.pdsuidomain.formats.json.sprayformats.patientcriterion._
+
+    implicit val draftPatientCriterionListFormat: RootJsonFormat[DraftPatientCriterionList] =
+      new RootJsonFormat[DraftPatientCriterionList] {
+        override def write(obj: DraftPatientCriterionList): JsValue = {
+          JsArray(obj.list.map(_.toJson).toVector)
+        }
+
+        override def read(json: JsValue): DraftPatientCriterionList = json match {
+          case j: JsObject =>
+            DraftPatientCriterionList(draftPatientCriterionListReader.read(j))
+
+          case _ => deserializationError(s"Expected List of DraftPatientCriterion json object, but got $json")
+        }
+      }
+  }
+
   def nextPatientOrderId: PatientOrderId = PatientOrderId(generators.nextUuid())
 
   def nextPatientAction: PatientHistory.Action =
@@ -74,6 +94,10 @@ object treatmentmatching {
     eligibilityStatus = generators.nextOption(fakes.entities.labels.nextLabelValue()),
     isVerified = generators.nextOption(generators.nextBoolean())
   )
+
+  def nextDraftPatientCriterionList(): DraftPatientCriterionList = {
+    DraftPatientCriterionList(List.fill(3)(nextDraftPatientCriterion()))
+  }
 
   def nextPatientCriterionArm(criterionId: LongId[PatientCriterion]): PatientCriterionArm = PatientCriterionArm(
     patientCriterionId = criterionId,
@@ -167,128 +191,47 @@ object treatmentmatching {
 
   def nextPatientListResponse(): ListResponse[Patient] = {
     val xs: Seq[Patient] = Seq.fill(3)(nextPatient())
-    val pageSize         = generators.nextInt(xs.size, 1)
-    new ListResponse[Patient](
-      items = xs,
-      meta = ListResponse.Meta(
-        itemsCount = xs.size,
-        pageNumber = generators.nextInt(xs.size / pageSize),
-        pageSize = pageSize,
-        lastUpdate = generators.nextOption(nextLocalDateTime)
-      )
-    )
+    nextListResponse(xs)
   }
 
   def nextRichPatientLabelListResponse(): ListResponse[RichPatientLabel] = {
     val xs: Seq[RichPatientLabel] = Seq.fill(3)(nextRichPatientLabel())
-    val pageSize                  = generators.nextInt(xs.size, 1)
-    new ListResponse[RichPatientLabel](
-      items = xs,
-      meta = ListResponse.Meta(
-        itemsCount = xs.size,
-        pageNumber = generators.nextInt(xs.size / pageSize),
-        pageSize = pageSize,
-        lastUpdate = generators.nextOption(nextLocalDateTime)
-      )
-    )
+    nextListResponse(xs)
   }
 
   def nextPatientLabelListResponse(): ListResponse[PatientLabel] = {
     val xs: Seq[PatientLabel] = Seq.fill(3)(nextPatientLabel())
-    val pageSize              = generators.nextInt(xs.size, 1)
-    new ListResponse[PatientLabel](
-      items = xs,
-      meta = ListResponse.Meta(
-        itemsCount = xs.size,
-        pageNumber = generators.nextInt(xs.size / pageSize),
-        pageSize = pageSize,
-        lastUpdate = generators.nextOption(nextLocalDateTime)
-      )
-    )
+    nextListResponse(xs)
   }
 
   def nextRichPatientCriterionListResponse(): ListResponse[RichPatientCriterion] = {
     val xs: Seq[RichPatientCriterion] = Seq.fill(3)(nextRichPatientCriterion())
-    val pageSize                      = generators.nextInt(xs.size, 1)
-    new ListResponse[RichPatientCriterion](
-      items = xs,
-      meta = ListResponse.Meta(
-        itemsCount = xs.size,
-        pageNumber = generators.nextInt(xs.size / pageSize),
-        pageSize = pageSize,
-        lastUpdate = generators.nextOption(nextLocalDateTime)
-      )
-    )
+    nextListResponse(xs)
   }
 
   def nextRichPatientEligibleTrialListResponse(): ListResponse[RichPatientEligibleTrial] = {
     val xs: Seq[RichPatientEligibleTrial] = Seq.fill(3)(nextRichPatientEligibleTrial())
-    val pageSize                          = generators.nextInt(xs.size, 1)
-    new ListResponse[RichPatientEligibleTrial](
-      items = xs,
-      meta = ListResponse.Meta(
-        itemsCount = xs.size,
-        pageNumber = generators.nextInt(xs.size / pageSize),
-        pageSize = pageSize,
-        lastUpdate = generators.nextOption(nextLocalDateTime)
-      )
-    )
+    nextListResponse(xs)
   }
 
   def nextRichPatientHypothesisListResponse(): ListResponse[RichPatientHypothesis] = {
     val xs: Seq[RichPatientHypothesis] = Seq.fill(3)(nextRichPatientHypothesis())
-    val pageSize                       = generators.nextInt(xs.size, 1)
-    new ListResponse[RichPatientHypothesis](
-      items = xs,
-      meta = ListResponse.Meta(
-        itemsCount = xs.size,
-        pageNumber = generators.nextInt(xs.size / pageSize),
-        pageSize = pageSize,
-        lastUpdate = generators.nextOption(nextLocalDateTime)
-      )
-    )
+    nextListResponse(xs)
   }
 
   def nextPatientLabelEvidenceViewListResponse(): ListResponse[PatientLabelEvidenceView] = {
     val xs: Seq[PatientLabelEvidenceView] = Seq.fill(3)(nextPatientLabelEvidenceView())
-    val pageSize                          = generators.nextInt(xs.size, 1)
-    new ListResponse[PatientLabelEvidenceView](
-      items = xs,
-      meta = ListResponse.Meta(
-        itemsCount = xs.size,
-        pageNumber = generators.nextInt(xs.size / pageSize),
-        pageSize = pageSize,
-        lastUpdate = generators.nextOption(nextLocalDateTime)
-      )
-    )
+    nextListResponse(xs)
   }
 
   def nextPatientIssuesListResponse(): ListResponse[PatientIssue] = {
     val xs: Seq[PatientIssue] = Seq.fill(3)(nextPatientIssue())
-    val pageSize              = generators.nextInt(xs.size, 1)
-    new ListResponse[PatientIssue](
-      items = xs,
-      meta = ListResponse.Meta(
-        itemsCount = xs.size,
-        pageNumber = generators.nextInt(xs.size / pageSize),
-        pageSize = pageSize,
-        lastUpdate = generators.nextOption(nextLocalDateTime)
-      )
-    )
+    nextListResponse(xs)
   }
 
   def nextPatientHistoryListResponse(): ListResponse[PatientHistory] = {
     val xs: Seq[PatientHistory] = Seq.fill(3)(nextPatientHistory())
-    val pageSize                = generators.nextInt(xs.size, 1)
-    new ListResponse[PatientHistory](
-      items = xs,
-      meta = ListResponse.Meta(
-        itemsCount = xs.size,
-        pageNumber = generators.nextInt(xs.size / pageSize),
-        pageSize = pageSize,
-        lastUpdate = generators.nextOption(nextLocalDateTime)
-      )
-    )
+    nextListResponse(xs)
   }
 
 }

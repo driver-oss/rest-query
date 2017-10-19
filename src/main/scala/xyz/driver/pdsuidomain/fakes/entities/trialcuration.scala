@@ -3,6 +3,7 @@ package xyz.driver.pdsuidomain.fakes.entities
 import xyz.driver.core.generators._
 import xyz.driver.entities.labels.{Label, LabelCategory}
 import xyz.driver.pdsuicommon.domain.{LongId, User}
+import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
 
@@ -182,4 +183,60 @@ object trialcuration {
     originalName = nextString(),
     trialId = nextStringId
   )
+
+  def nextTrialListResponse(): ListResponse[Trial] = {
+    val xs: Seq[Trial] = Seq.fill(3)(nextTrial())
+    nextListResponse(xs)
+  }
+
+  def nextTrialIssueListResponse(): ListResponse[TrialIssue] = {
+    val xs: Seq[TrialIssue] = Seq.fill(3)(nextTrialIssue())
+    nextListResponse(xs)
+  }
+
+  def nextTrialHistoryListResponse(): ListResponse[TrialHistory] = {
+    val xs: Seq[TrialHistory] = Seq.fill(3)(nextTrialHistory())
+    nextListResponse(xs)
+  }
+
+  def nextArmListResponse(): ListResponse[Arm] = {
+    val xs: Seq[Arm] = Seq.fill(3)(nextArm())
+    nextListResponse(xs)
+  }
+
+  def nextInterventionWithArmsListResponse(): ListResponse[InterventionWithArms] = {
+    val xs: Seq[InterventionWithArms] = Seq.fill(3)(nextInterventionWithArms())
+    nextListResponse(xs)
+  }
+
+  def nextEligibilityArmWithDiseasesListResponse(): ListResponse[EligibilityArmWithDiseases] = {
+    val xs: Seq[EligibilityArmWithDiseases] = Seq.fill(3)(nextEligibilityArmWithDiseases())
+    nextListResponse(xs)
+  }
+
+  def nextSlotArmListResponse(): ListResponse[SlotArm] = {
+    val xs: Seq[SlotArm] = Seq.fill(3)(nextSlotArm())
+    nextListResponse(xs)
+  }
+
+  def nextRichCriterionListResponse(): ListResponse[RichCriterion] = {
+    val xs: Seq[RichCriterion] = Seq.fill(3)(nextRichCriterion())
+    nextListResponse(xs)
+  }
+
+  def nextInterventionTypeListResponse(): ListResponse[InterventionType] = {
+    val xs: Seq[InterventionType] = Seq.fill(3)(nextInterventionType())
+    nextListResponse(xs)
+  }
+
+  def nextStudyDesignListResponse(): ListResponse[StudyDesign] = {
+    val xs: Seq[StudyDesign] = Seq.fill(3)(nextStudyDesign())
+    nextListResponse(xs)
+  }
+
+  def nextHypothesesListResponse(): ListResponse[Hypothesis] = {
+    val xs: Seq[Hypothesis] = Seq.fill(3)(nextHypothesis())
+    nextListResponse(xs)
+  }
+
 }
