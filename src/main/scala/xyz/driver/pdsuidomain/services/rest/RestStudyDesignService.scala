@@ -26,7 +26,7 @@ class RestStudyDesignService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply    <- apiResponse[ListResponse[ApiStudyDesign]](response)
     } yield {
-      GetListReply.EntityList(reply.items.map(_.toDomain), reply.meta.itemsCount)
+      GetListReply.EntityList(reply.items.flatMap(_.toDomain), reply.meta.itemsCount)
     }
   }
 

@@ -59,7 +59,7 @@ class InterventionFormatSuite extends FlatSpec with Matchers {
   }
 
   "Json format for InterventionType" should "read and write correct JSON" in {
-    val interventionType = InterventionType.typeFromString("Surgery/Procedure")
+    val interventionType = InterventionType.SurgeryProcedure
     val writtenJson      = interventionTypeFormat.write(interventionType)
 
     writtenJson should be(

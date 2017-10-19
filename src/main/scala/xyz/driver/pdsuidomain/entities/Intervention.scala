@@ -5,6 +5,9 @@ import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuidomain.entities.InterventionType.DeliveryMethod
 import xyz.driver.pdsuidomain.entities.InterventionType.DeliveryMethod._
 
+import scalaz.syntax.equal._
+import scalaz.Scalaz.stringInstance
+
 sealed trait InterventionType {
   val id: LongId[InterventionType]
   val name: String
@@ -78,16 +81,8 @@ object InterventionType {
     )
   }
 
-  def typeFromString: PartialFunction[String, InterventionType] = {
-    case "Radiation therapy" => RadiationTherapy
-    case "Chemotherapy"      => Chemotherapy
-    case "Targeted therapy"  => TargetedTherapy
-    case "Immunotherapy"     => Immunotherapy
-    case "Surgery"           => Surgery
-    case "Hormone therapy"   => HormoneTherapy
-    case "Other"             => Other
-    case "Radiation"         => Radiation
-    case "Surgery/Procedure" => SurgeryProcedure
+  def typeFromString(txt: String): Option[InterventionType] = {
+    All.values.find(_.name === txt)
   }
 
   sealed trait DeliveryMethod
