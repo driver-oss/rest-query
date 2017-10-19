@@ -182,7 +182,8 @@ object recordprocessing {
       meta = nextOption(nextDocumentMetaJson()),
       startDate = startDate,
       endDate = endDate,
-      lastUpdate = nextLocalDateTime
+      lastUpdate = nextLocalDateTime,
+      labelVersion = generators.nextInt(100)
     )
   }
 
