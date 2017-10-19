@@ -27,7 +27,7 @@ class RestInterventionTypeService(transport: ServiceTransport, baseUri: Uri)(
       reply    <- apiResponse[ListResponse[ApiInterventionType]](response)
     } yield {
       {
-        val domain = reply.items.map(_.toDomain)
+        val domain = reply.items.flatMap(_.toDomain)
         GetListReply.EntityList(domain.toList, reply.meta.itemsCount)
       }
     }
