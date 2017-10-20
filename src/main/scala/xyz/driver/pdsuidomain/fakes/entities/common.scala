@@ -7,6 +7,7 @@ import xyz.driver.entities.common.FullName
 import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.concurrent.BridgeUploadQueue
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, TextJson, UuidId}
+import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
 
 import scala.util.Random
@@ -85,10 +86,38 @@ object common {
     )
   }
 
+  def nextBridgeUploadQueueItemListResponse(): ListResponse[BridgeUploadQueue.Item] = {
+    val xs: Seq[BridgeUploadQueue.Item] = Seq.fill(3)(nextBridgeUploadQueueItem())
+    nextListResponse(xs)
+  }
+
   def nextDocumentType(): DocumentType = generators.oneOf[DocumentType](DocumentType.All: _*)
 
   def nextProviderType(): ProviderType = generators.oneOf[ProviderType](ProviderType.All: _*)
 
+  def nextDocumentTypeListResponse(): ListResponse[DocumentType] = {
+    val xs: Seq[DocumentType] = Seq.fill(3)(nextDocumentType())
+    nextListResponse(xs)
+  }
+
+  def nextProviderTypeListResponse(): ListResponse[ProviderType] = {
+    val xs: Seq[ProviderType] = Seq.fill(3)(nextProviderType())
+    nextListResponse(xs)
+  }
+
   def nextTextJson[T](obj: T): TextJson[T] = TextJson(obj)
+
+  def nextListResponse[T](xs: Seq[T]): ListResponse[T] = {
+    val pageSize = generators.nextInt(xs.size, 1)
+    ListResponse(
+      items = xs,
+      meta = ListResponse.Meta(
+        itemsCount = xs.size,
+        pageNumber = generators.nextInt(xs.size / pageSize),
+        pageSize = pageSize,
+        lastUpdate = generators.nextOption(nextLocalDateTime)
+      )
+    )
+  }
 
 }
