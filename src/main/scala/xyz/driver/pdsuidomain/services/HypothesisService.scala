@@ -10,7 +10,7 @@ import scala.concurrent.Future
 
 object HypothesisService {
   trait DefaultNotFoundError {
-    def userMessage: String = "Intervention not found"
+    def userMessage: String = "Hypothesis not found"
   }
 
   trait DefaultAccessDeniedError {
