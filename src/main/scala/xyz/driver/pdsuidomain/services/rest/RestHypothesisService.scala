@@ -10,7 +10,8 @@ import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.UuidId
 import xyz.driver.pdsuidomain.entities.Hypothesis
-import xyz.driver.pdsuidomain.formats.json.sprayformats.ListResponse
+import xyz.driver.pdsuidomain.ListResponse
+import xyz.driver.pdsuidomain.formats.json.sprayformats.listresponse._
 import xyz.driver.pdsuidomain.formats.json.sprayformats.hypothesis._
 import xyz.driver.pdsuidomain.services.HypothesisService
 
