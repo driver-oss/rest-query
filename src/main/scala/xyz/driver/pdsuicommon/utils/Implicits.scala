@@ -1,8 +1,5 @@
 package xyz.driver.pdsuicommon.utils
 
-import play.api.libs.json.JsResult
-import xyz.driver.pdsuicommon.json.JsResultOps
-
 import scala.collection.generic.CanBuildFrom
 
 object Implicits {
@@ -23,7 +20,6 @@ object Implicits {
 
   implicit def toMapOps[K, V](x: Map[K, V]): MapOps[K, V] = new MapOps(x)
 
-  implicit def toCharOps(self: Char): CharOps                      = new CharOps(self)
-  implicit def toStringOps(self: String): StringOps                = new StringOps(self)
-  implicit def toJsResultOps[T](self: JsResult[T]): JsResultOps[T] = new JsResultOps(self)
+  implicit def toCharOps(self: Char): CharOps       = new CharOps(self)
+  implicit def toStringOps(self: String): StringOps = new StringOps(self)
 }

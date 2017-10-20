@@ -12,7 +12,7 @@ import xyz.driver.pdsuicommon.error.ErrorsResponse.ResponseError
 import xyz.driver.pdsuicommon.parsers._
 import xyz.driver.pdsuicommon.db.{Pagination, Sorting, SearchFilterExpr}
 import xyz.driver.pdsuicommon.domain._
-import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import xyz.driver.core.rest.AuthProvider
 import scala.util.control._
 
@@ -83,9 +83,9 @@ trait Directives {
 
   def domainRejectionHandler(req: RequestId): RejectionHandler = {
     def wrapContent(message: String) = {
-      import play.api.libs.json._
-      val err  = ErrorsResponse(Seq(ResponseError(None, message, ErrorCode.Unspecified)), req)
-      val text = Json.stringify(implicitly[Writes[ErrorsResponse]].writes(err))
+      import ErrorsResponse._
+      val err: ErrorsResponse = ErrorsResponse(Seq(ResponseError(None, message, ErrorCode.Unspecified)), req)
+      val text                = errorsResponseJsonFormat.write(err).toString()
       HttpEntity(ContentTypes.`application/json`, text)
     }
     RejectionHandler.default.mapRejectionResponse {

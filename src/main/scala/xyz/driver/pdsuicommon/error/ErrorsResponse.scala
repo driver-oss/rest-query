@@ -1,18 +1,14 @@
 package xyz.driver.pdsuicommon.error
 
-import xyz.driver.pdsuicommon.json.Serialization.seqJsonFormat
-import ErrorCode.{ErrorCode, Unspecified}
+import spray.json._
+import ErrorCode._
 import ErrorsResponse.ResponseError
-import xyz.driver.pdsuicommon.auth.{AnonymousRequestContext, RequestId}
-import xyz.driver.pdsuicommon.utils.Utils
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
-import play.api.mvc.Results
-import xyz.driver.pdsuicommon.validation.JsonValidationErrors
+import xyz.driver.pdsuicommon.auth.RequestId
 
 final case class ErrorsResponse(errors: Seq[ResponseError], requestId: RequestId)
 
 object ErrorsResponse {
+  import DefaultJsonProtocol._
 
   /**
     * @param data      Any data that can be associated with particular error.Ex.: error field name
@@ -25,59 +21,34 @@ object ErrorsResponse {
 
   object ResponseError {
 
-    implicit val responseErrorJsonFormat: Format[ResponseError] = (
-      (JsPath \ "data").formatNullable[String] and
-        (JsPath \ "message").format[String] and
-        (JsPath \ "code").format[ErrorCode]
-    )(ResponseError.apply, unlift(ResponseError.unapply))
+    implicit val responseErrorJsonFormat: RootJsonFormat[ResponseError] = jsonFormat3(ResponseError.apply)
 
   }
 
-  implicit val errorsResponseJsonFormat: Format[ErrorsResponse] = (
-    (JsPath \ "errors").format[Seq[ResponseError]] and
-      (JsPath \ "requestId").format[String]
-  )((errs, req) => ErrorsResponse.apply(errs, RequestId(req)), res => (res.errors, res.requestId.value))
-
-  // deprecated, will be removed in REP-436
-  def fromString(message: String, httpStatus: Results#Status)(
-          implicit context: AnonymousRequestContext): ErrorsResponse = {
-    new ErrorsResponse(
-      errors = Seq(
-        ResponseError(
-          data = None,
-          message = message,
-          code = Unspecified
-        )),
-      requestId = context.requestId
-    )
-  }
-
-  // scalastyle:off null
-  def fromExceptionMessage(e: Throwable, httpStatus: Results#Status = Results.InternalServerError)(
-          implicit context: AnonymousRequestContext): ErrorsResponse = {
-    val message = if (e.getMessage == null || e.getMessage.isEmpty) {
-      Utils.getClassSimpleName(e.getClass)
-    } else {
-      e.getMessage
+  implicit val errorsResponseJsonFormat: RootJsonFormat[ErrorsResponse] = new RootJsonFormat[ErrorsResponse] {
+    override def write(obj: ErrorsResponse): JsValue = {
+      JsObject(
+        "errors"    -> obj.errors.map(_.toJson).toJson,
+        "requestId" -> obj.requestId.value.toJson
+      )
     }
 
-    fromString(message, httpStatus)
-  }
-  // scalastyle:on null
+    override def read(json: JsValue) = json match {
+      case JsObject(fields) =>
+        val errors = fields
+          .get("errors")
+          .map(_.convertTo[Seq[ResponseError]])
+          .getOrElse(deserializationError(s"ErrorsResponse json object does not contain `errors` field: $json"))
 
-  // deprecated, will be removed in REP-436
-  def fromJsonValidationErrors(validationErrors: JsonValidationErrors)(
-          implicit context: AnonymousRequestContext): ErrorsResponse = {
-    val errors = validationErrors.map {
-      case (path, xs) =>
-        ResponseError(
-          data = Some(path.toString()),
-          message = xs.map(_.message).mkString("\n"),
-          code = Unspecified
-        )
+        val requestId = fields
+          .get("requestId")
+          .map(id => RequestId(id.convertTo[String]))
+          .getOrElse(deserializationError(s"ErrorsResponse json object does not contain `requestId` field: $json"))
+
+        ErrorsResponse(errors, requestId)
+
+      case _ => deserializationError(s"Expected json as ErrorsResponse, but got $json")
     }
-
-    new ErrorsResponse(errors, context.requestId)
   }
 
 }

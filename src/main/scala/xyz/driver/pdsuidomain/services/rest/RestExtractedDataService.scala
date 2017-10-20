@@ -10,27 +10,27 @@ import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.entities.export.patient.ExportPatientWithLabels
-import xyz.driver.pdsuidomain.formats.json.ListResponse
-import xyz.driver.pdsuidomain.formats.json.extracteddata.ApiExtractedData
 import xyz.driver.pdsuidomain.services.ExtractedDataService
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
-import xyz.driver.pdsuidomain.formats.json.sprayformats.export._
+import xyz.driver.pdsuidomain.ListResponse
+import xyz.driver.pdsuidomain.formats.json.export._
 
 class RestExtractedDataService(transport: ServiceTransport, baseUri: Uri)(
         implicit protected val materializer: Materializer,
         protected val exec: ExecutionContext)
     extends ExtractedDataService with RestHelper {
 
-  import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
+  import xyz.driver.pdsuidomain.formats.json.listresponse._
+  import xyz.driver.pdsuidomain.formats.json.extracteddata._
   import xyz.driver.pdsuidomain.services.ExtractedDataService._
 
   def getById(id: LongId[ExtractedData])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/extracted-data/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiExtractedData](response)
+      reply    <- apiResponse[RichExtractedData](response)
     } yield {
-      GetByIdReply.Entity(reply.toDomain)
+      GetByIdReply.Entity(reply)
     }
   }
 
@@ -44,33 +44,33 @@ class RestExtractedDataService(transport: ServiceTransport, baseUri: Uri)(
                                           filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ListResponse[ApiExtractedData]](response)
+      reply    <- apiResponse[ListResponse[RichExtractedData]](response)
     } yield {
-      GetListReply.EntityList(reply.items.map(_.toDomain), reply.meta.itemsCount)
+      GetListReply.EntityList(reply.items, reply.meta.itemsCount)
     }
   }
 
   def create(draftRichExtractedData: RichExtractedData)(
           implicit requestContext: AuthenticatedRequestContext): Future[CreateReply] = {
     for {
-      entity <- Marshal(ApiExtractedData.fromDomain(draftRichExtractedData)).to[RequestEntity]
+      entity <- Marshal(draftRichExtractedData).to[RequestEntity]
       request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, "/v1/extracted-data")).withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiExtractedData](response)
+      reply    <- apiResponse[RichExtractedData](response)
     } yield {
-      CreateReply.Created(reply.toDomain)
+      CreateReply.Created(reply)
     }
   }
   def update(origRichExtractedData: RichExtractedData, draftRichExtractedData: RichExtractedData)(
           implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
     val id = origRichExtractedData.extractedData.id
     for {
-      entity <- Marshal(ApiExtractedData.fromDomain(draftRichExtractedData)).to[RequestEntity]
+      entity <- Marshal(draftRichExtractedData).to[RequestEntity]
       request = HttpRequest(HttpMethods.PATCH, endpointUri(baseUri, s"/v1/extracted-data/$id")).withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiExtractedData](response)
+      reply    <- apiResponse[RichExtractedData](response)
     } yield {
-      UpdateReply.Updated(reply.toDomain)
+      UpdateReply.Updated(reply)
     }
   }
 

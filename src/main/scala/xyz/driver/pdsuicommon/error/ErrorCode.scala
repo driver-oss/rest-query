@@ -1,7 +1,6 @@
 package xyz.driver.pdsuicommon.error
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{Format, Reads, Writes}
+import xyz.driver.core.json.EnumJsonFormat
 
 @SuppressWarnings(Array("org.wartremover.warts.Enumeration"))
 object ErrorCode extends Enumeration {
@@ -9,9 +8,13 @@ object ErrorCode extends Enumeration {
   type ErrorCode = Value
   val Unspecified = Value(1)
 
-  private val fromJsonReads: Reads[ErrorCode] = Reads.of[Int].map(ErrorCode.apply)
-  private val toJsonWrites: Writes[ErrorCode] = Writes.of[Int].contramap(_.id)
-
-  implicit val jsonFormat: Format[ErrorCode] = Format(fromJsonReads, toJsonWrites)
+  implicit val jsonFormat = new EnumJsonFormat[ErrorCode](
+    "200" -> ErrorCode.Value(200),
+    "400" -> ErrorCode.Value(400),
+    "401" -> ErrorCode.Value(401),
+    "403" -> ErrorCode.Value(403),
+    "404" -> ErrorCode.Value(404),
+    "500" -> ErrorCode.Value(500)
+  )
 
 }

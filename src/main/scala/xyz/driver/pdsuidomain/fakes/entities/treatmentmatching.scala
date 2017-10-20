@@ -17,7 +17,7 @@ object treatmentmatching {
   final case class DraftPatientCriterionList(list: List[DraftPatientCriterion])
   object DraftPatientCriterionList {
     import spray.json._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.patientcriterion._
+    import xyz.driver.pdsuidomain.formats.json.patientcriterion._
 
     implicit val draftPatientCriterionListFormat: RootJsonFormat[DraftPatientCriterionList] =
       new RootJsonFormat[DraftPatientCriterionList] {
