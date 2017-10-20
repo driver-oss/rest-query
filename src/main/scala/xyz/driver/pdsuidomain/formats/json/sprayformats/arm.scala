@@ -19,7 +19,7 @@ object arm {
     case _ => deserializationError(s"Expected Json Object as partial Arm, but got $json")
   }
 
-  def armFormat: RootJsonFormat[Arm] = new RootJsonFormat[Arm] {
+  implicit val armFormat: RootJsonFormat[Arm] = new RootJsonFormat[Arm] {
     override def write(obj: Arm): JsValue =
       JsObject(
         "id"           -> obj.id.toJson,

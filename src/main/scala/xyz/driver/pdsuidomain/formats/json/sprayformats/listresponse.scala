@@ -1,32 +1,15 @@
 package xyz.driver.pdsuidomain.formats.json.sprayformats
 
-import java.time.LocalDateTime
-
 import spray.json._
 import spray.json.DefaultJsonProtocol._
-import xyz.driver.pdsuicommon.db.Pagination
+import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.formats.json.sprayformats.common._
 
-final case class ListResponse[+T](items: Seq[T], meta: ListResponse.Meta)
-
-object ListResponse {
+object listresponse {
   private val itemsField = "items"
   private val metaField  = "meta"
 
-  final case class Meta(itemsCount: Int, pageNumber: Int, pageSize: Int, lastUpdate: Option[LocalDateTime])
-
-  object Meta {
-    def apply(itemsCount: Int, pagination: Pagination, lastUpdate: Option[LocalDateTime]): Meta = {
-      Meta(
-        itemsCount,
-        pagination.pageNumber,
-        pagination.pageSize,
-        lastUpdate
-      )
-    }
-  }
-
-  implicit val listResponseMetaFormat: RootJsonFormat[Meta] = jsonFormat4(Meta.apply)
+  implicit val listResponseMetaFormat: RootJsonFormat[ListResponse.Meta] = jsonFormat4(ListResponse.Meta.apply)
 
   implicit def listResponseWriter[T: JsonWriter]: RootJsonWriter[ListResponse[T]] =
     new RootJsonWriter[ListResponse[T]] {
@@ -52,7 +35,7 @@ object ListResponse {
 
           val meta = fields
             .get(metaField)
-            .map(_.convertTo[Meta])
+            .map(_.convertTo[ListResponse.Meta])
             .getOrElse(deserializationError(s"ListResponse json object does not contain `$metaField` field: $json"))
 
           ListResponse(items, meta)
