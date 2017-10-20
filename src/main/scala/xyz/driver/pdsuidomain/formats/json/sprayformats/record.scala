@@ -42,13 +42,13 @@ object record {
         val name = fields
           .get("name")
           .map(_.convertTo[String])
-          .getOrElse(deserializationError(s"Intervention type json object does not contain `name` field: $json"))
+          .getOrElse(deserializationError(s"Provider type json object does not contain `name` field: $json"))
 
         ProviderType
           .fromString(name)
           .getOrElse(deserializationError(s"Unknown provider type: $name"))
 
-      case _ => deserializationError(s"Expected Json Object as Intervention type, but got $json")
+      case _ => deserializationError(s"Expected Json Object as Provider type, but got $json")
     }
 
     override def write(obj: ProviderType) =
