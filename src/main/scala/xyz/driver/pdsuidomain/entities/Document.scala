@@ -456,7 +456,8 @@ final case class Document(id: LongId[Document] = LongId(0L),
                           meta: Option[TextJson[Meta]], // not null
                           startDate: Option[LocalDate], // not null
                           endDate: Option[LocalDate],
-                          lastUpdate: LocalDateTime) {
+                          lastUpdate: LocalDateTime,
+                          labelVersion: Int) {
 
   import Document.Status._
 
