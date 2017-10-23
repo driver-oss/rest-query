@@ -6,7 +6,7 @@ import java.sql.Connection
 import java.util.logging.Logger
 import javax.sql.DataSource
 
-import com.typesafe.config.ConfigFactory
+import xyz.driver.pdsuicommon.db.SlickQueryBuilder.TableData
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.http.HttpFetcher
 
@@ -27,32 +27,7 @@ class MockDataSource extends DataSource with Closeable {
   override def isWrapperFor(iface: Class[_]): Boolean = throw new NotImplementedError("MockDataSource.isWrapperFor")
 }
 
-object MockMySqlContext {
-
-  val Settings = MySqlContext.Settings(
-    credentials = MySqlContext.DbCredentials(
-      user = "test",
-      password = "test",
-      host = "localhost",
-      port = 3248,
-      dbName = "test",
-      dbCreateFlag = false,
-      dbContext = "test",
-      connectionParams = "",
-      url = ""
-    ),
-    connection = ConfigFactory.empty(),
-    threadPoolSize = 10
-  )
-}
-
-class MockMySqlContext() extends MySqlContext(new MockDataSource, MockMySqlContext.Settings) {
-  override protected def withConnection[T](f: Connection => T): Nothing = {
-    throw new NotImplementedError("MockSqlContext.withConnection")
-  }
-}
-
-class MockFactory()(implicit val sqlContext: MySqlContext) {
+class MockFactory()(implicit val sqlContext: PostgresContext) {
   val MockHttpFetcher: HttpFetcher = { (url: URL) =>
     Future.successful(Array.empty[Byte])
   }
@@ -61,28 +36,26 @@ class MockFactory()(implicit val sqlContext: MySqlContext) {
 object MockQueryBuilder {
 
   type MockRunnerIn       = (SearchFilterExpr, Sorting, Option[Pagination])
-  type MockRunnerOut[T]   = Seq[T]
-  type MockCountRunnerOut = QueryBuilder.CountResult
+  type MockRunnerOut[T]   = Future[Seq[T]]
+  type MockCountRunnerOut = SlickQueryBuilder.CountResult
 
   def apply[T](matcher: PartialFunction[MockRunnerIn, MockRunnerOut[T]])(
           countMatcher: PartialFunction[MockRunnerIn, MockCountRunnerOut])(
-          implicit context: MySqlContext): MysqlQueryBuilder[T] = {
+          implicit context: PostgresContext): SlickQueryBuilder[T] = {
 
-    val runner: QueryBuilder.Runner[T] = { parameters =>
+    val runner: SlickQueryBuilder.Runner[T] = { parameters =>
       matcher((parameters.filter, parameters.sorting, parameters.pagination))
     }
 
-    val countRunner: QueryBuilder.CountRunner = { parameters =>
+    val countRunner: SlickQueryBuilder.CountRunner = { parameters =>
       countMatcher((parameters.filter, parameters.sorting, parameters.pagination))
     }
 
-    MysqlQueryBuilder[T](
-      tableName = "",
-      lastUpdateFieldName = Option.empty[String],
-      nullableFields = Set.empty[String],
-      links = Set.empty[TableLink],
-      runner = runner,
-      countRunner = countRunner
+    val parameters = SlickPostgresQueryBuilderParameters(
+      databaseName = "test",
+      tableData = TableData("", None, Set.empty[String]),
+      links = Map.empty
     )
+    new SlickPostgresQueryBuilder(parameters)(runner, countRunner)
   }
 }
