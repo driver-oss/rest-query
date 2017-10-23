@@ -6,6 +6,7 @@ import xyz.driver.core.generators
 import xyz.driver.core.generators._
 import xyz.driver.entities.labels.{Label, LabelCategory, LabelValue}
 import xyz.driver.pdsuicommon.domain.{LongId, TextJson, User}
+import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities.ExtractedData.Meta
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.fakes.entities.common._
@@ -187,12 +188,12 @@ object recordprocessing {
     )
   }
 
-  def nextDocumentIssue(documentId: LongId[Document] = nextLongId): DocumentIssue = {
+  def nextDocumentIssue(): DocumentIssue = {
     val (startPage, endPage) = nextStartAndEndPagesOption
     DocumentIssue(
       id = nextLongId[DocumentIssue],
       userId = nextStringId[User],
-      documentId = documentId,
+      documentId = nextLongId[Document],
       startPage = startPage,
       endPage = endPage,
       lastUpdate = nextLocalDateTime,
@@ -280,6 +281,41 @@ object recordprocessing {
         nextInt(maxItemsInCollectionNumber)
       )(nextExtractedDataLabel(extractedData.id))
     )
+  }
+
+  def nextMedicalRecordListResponse(): ListResponse[MedicalRecord] = {
+    val xs: Seq[MedicalRecord] = Seq.fill(3)(nextMedicalRecord())
+    nextListResponse(xs)
+  }
+
+  def nextMedicalRecordIssueListResponse(): ListResponse[MedicalRecordIssue] = {
+    val xs: Seq[MedicalRecordIssue] = Seq.fill(3)(nextMedicalRecordIssue())
+    nextListResponse(xs)
+  }
+
+  def nextMedicalRecordHistoryListResponse(): ListResponse[MedicalRecordHistory] = {
+    val xs: Seq[MedicalRecordHistory] = Seq.fill(3)(nextMedicalRecordHistory())
+    nextListResponse(xs)
+  }
+
+  def nextDocumentListResponse(): ListResponse[Document] = {
+    val xs: Seq[Document] = Seq.fill(3)(nextDocument())
+    nextListResponse(xs)
+  }
+
+  def nextDocumentIssueListResponse(): ListResponse[DocumentIssue] = {
+    val xs: Seq[DocumentIssue] = Seq.fill(3)(nextDocumentIssue())
+    nextListResponse(xs)
+  }
+
+  def nextDocumentHistoryListResponse(): ListResponse[DocumentHistory] = {
+    val xs: Seq[DocumentHistory] = Seq.fill(3)(nextDocumentHistory())
+    nextListResponse(xs)
+  }
+
+  def nextRichExtractedDataListResponse(): ListResponse[RichExtractedData] = {
+    val xs: Seq[RichExtractedData] = Seq.fill(3)(nextRichExtractedData())
+    nextListResponse(xs)
   }
 
 }

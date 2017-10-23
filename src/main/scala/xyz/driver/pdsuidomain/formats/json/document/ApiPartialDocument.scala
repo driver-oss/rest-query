@@ -77,7 +77,7 @@ final case class ApiPartialDocument(recordId: Option[Long],
         previousAssignee = None,
         lastActiveUserId = None,
         lastUpdate = LocalDateTime.MIN,
-        labelVersion = 0
+        labelVersion = 1
       )
     } else {
       throw new JsonValidationException(validationErrors)
