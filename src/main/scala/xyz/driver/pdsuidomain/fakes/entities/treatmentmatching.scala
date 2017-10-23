@@ -66,7 +66,8 @@ object treatmentmatching {
     verifiedEligibilityStatus = generators.nextOption(fakes.entities.labels.nextLabelValue()),
     isVerified = generators.nextBoolean(),
     isVisible = generators.nextBoolean(),
-    lastUpdate = nextLocalDateTime
+    lastUpdate = nextLocalDateTime,
+    inclusion = generators.nextOption(generators.nextBoolean())
   )
 
   def nextDraftPatientCriterion(): DraftPatientCriterion = DraftPatientCriterion(
