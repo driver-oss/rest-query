@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 import slick.jdbc.{JdbcProfile, PositionedParameters, SQLActionBuilder, SetParameter}
 import xyz.driver.pdsuicommon.db.Sorting.{Dimension, Sequential}
 import xyz.driver.pdsuicommon.db.SortingOrder.{Ascending, Descending}
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,6 +44,18 @@ object SlickQueryBuilder {
     def apply(v: AnyRef, pp: PositionedParameters) = {
       pp.setObject(v, JDBCType.BINARY.getVendorTypeNumber)
     }
+  }
+
+  implicit def setLongIdQueryParameter[T]: SetParameter[LongId[T]] = SetParameter[LongId[T]] { (v, pp) =>
+    pp.setLong(v.id)
+  }
+
+  implicit def setStringIdQueryParameter[T]: SetParameter[StringId[T]] = SetParameter[StringId[T]] { (v, pp) =>
+    pp.setString(v.id)
+  }
+
+  implicit def setUuidIdQueryParameter[T]: SetParameter[UuidId[T]] = SetParameter[UuidId[T]] { (v, pp) =>
+    pp.setObject(v.id, JDBCType.BINARY.getVendorTypeNumber)
   }
 }
 
