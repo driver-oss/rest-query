@@ -1,14 +1,18 @@
 package xyz.driver.pdsuidomain.services.rest
 
 import scala.concurrent.{ExecutionContext, Future}
-
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import xyz.driver.core.rest._
 import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
-import xyz.driver.pdsuidomain.formats.json.ListResponse
-import xyz.driver.pdsuidomain.formats.json.hypothesis.ApiHypothesis
+import xyz.driver.pdsuicommon.domain.UuidId
+import xyz.driver.pdsuidomain.entities.Hypothesis
+import xyz.driver.pdsuidomain.ListResponse
+import xyz.driver.pdsuidomain.formats.json.sprayformats.listresponse._
+import xyz.driver.pdsuidomain.formats.json.sprayformats.hypothesis._
 import xyz.driver.pdsuidomain.services.HypothesisService
 
 class RestHypothesisService(transport: ServiceTransport, baseUri: Uri)(
@@ -16,7 +20,6 @@ class RestHypothesisService(transport: ServiceTransport, baseUri: Uri)(
         protected val exec: ExecutionContext)
     extends HypothesisService with RestHelper {
 
-  import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
   import xyz.driver.pdsuidomain.services.HypothesisService._
 
   def getAll(sorting: Option[Sorting] = None)(
@@ -24,9 +27,30 @@ class RestHypothesisService(transport: ServiceTransport, baseUri: Uri)(
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, "/v1/hypothesis", sortingQuery(sorting)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ListResponse[ApiHypothesis]](response)
+      reply    <- apiResponse[ListResponse[Hypothesis]](response)
     } yield {
-      GetListReply.EntityList(reply.items.map(_.toDomain), reply.meta.itemsCount)
+      GetListReply.EntityList(reply.items, reply.meta.itemsCount)
+    }
+  }
+
+  def create(draftHypothesis: Hypothesis)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply] = {
+    for {
+      entity <- Marshal(draftHypothesis).to[RequestEntity]
+      request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, "/v1/hypothesis")).withEntity(entity)
+      response <- transport.sendRequestGetResponse(requestContext)(request)
+      reply    <- apiResponse[Hypothesis](response)
+    } yield {
+      CreateReply.Created(reply)
+    }
+  }
+
+  def delete(id: UuidId[Hypothesis])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply] = {
+    val request = HttpRequest(HttpMethods.DELETE, endpointUri(baseUri, s"/v1/hypothesis/$id"))
+    for {
+      response <- transport.sendRequestGetResponse(requestContext)(request)
+      _        <- apiResponse[HttpEntity](response)
+    } yield {
+      DeleteReply.Deleted
     }
   }
 
