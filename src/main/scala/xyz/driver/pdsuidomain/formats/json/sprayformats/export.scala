@@ -3,6 +3,7 @@ package xyz.driver.pdsuidomain.formats.json.sprayformats
 import spray.json._
 import xyz.driver.entities.labels.Label
 import xyz.driver.formats.json.labels._
+import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuidomain.entities.export.patient._
 import xyz.driver.pdsuidomain.entities.export.trial.{ExportTrialArm, ExportTrialLabelCriterion, ExportTrialWithLabels}
 import xyz.driver.pdsuidomain.entities.{Criterion, EligibilityArm}
@@ -12,6 +13,14 @@ object export {
   import common._
   import document._
   import record._
+
+  private def deserializationErrorFieldMessage(field: String, json: JsValue)(implicit className: String) = {
+    deserializationError(s"$className json object do not contain '$field' field: $json")
+  }
+
+  private def deserializationErrorEntityMessage(json: JsValue)(implicit className: String) = {
+    deserializationError(s"Expected Json Object as $className, but got $json")
+  }
 
   implicit val patientLabelEvidenceDocumentFormat: RootJsonFormat[ExportPatientLabelEvidenceDocument] =
     jsonFormat5(ExportPatientLabelEvidenceDocument.apply)
@@ -29,6 +38,8 @@ object export {
 
   implicit val trialLabelCriterionFormat: RootJsonFormat[ExportTrialLabelCriterion] =
     new RootJsonFormat[ExportTrialLabelCriterion] {
+      implicit val className: String = "ExportTrialLabelCriterion"
+
       override def write(obj: ExportTrialLabelCriterion): JsValue =
         JsObject(
           "value" -> obj.value
@@ -43,40 +54,69 @@ object export {
           "criterionText" -> obj.criteria.toJson,
           "armIds"        -> obj.armIds.toJson,
           "isCompound"    -> obj.isCompound.toJson,
-          "isDefining"    -> obj.isDefining.toJson
+          "isDefining"    -> obj.isDefining.toJson,
+          "inclusion"     -> obj.inclusion.toJson
         )
 
       override def read(json: JsValue): ExportTrialLabelCriterion = {
+        json match {
+          case JsObject(fields) =>
+            val value = fields
+              .get("value")
+              .map(_.convertTo[String])
+              .map {
+                case "Yes"     => Option(true)
+                case "No"      => Option(false)
+                case "Unknown" => Option.empty[Boolean]
+              }
+              .getOrElse(deserializationErrorFieldMessage("value", json))
 
-        val fields = Seq("value", "labelId", "criterionId", "criterionText", "armIds", "isCompound", "isDefining")
+            val labelId = fields
+              .get("labelId")
+              .map(_.convertTo[LongId[Label]])
+              .getOrElse(deserializationErrorFieldMessage("labelId", json))
 
-        json.asJsObject.getFields(fields: _*) match {
-          case Seq(JsString(valueString),
-                   labelId,
-                   criterionId,
-                   JsString(criterionText),
-                   JsArray(armIdsVector),
-                   JsBoolean(isCompound),
-                   JsBoolean(isDefining)) =>
-            val value = valueString match {
-              case "Yes"     => Option(true)
-              case "No"      => Option(false)
-              case "Unknown" => Option.empty[Boolean]
-            }
+            val criterionId = fields
+              .get("criterionId")
+              .map(_.convertTo[LongId[Criterion]])
+              .getOrElse(deserializationErrorFieldMessage("criterionId", json))
+
+            val criterionText = fields
+              .get("criterionText")
+              .map(_.convertTo[String])
+              .getOrElse(deserializationErrorFieldMessage("criterionText", json))
+
+            val armIds = fields
+              .get("armIds")
+              .map(_.convertTo[Set[LongId[EligibilityArm]]])
+              .getOrElse(deserializationErrorFieldMessage("armIds", json))
+
+            val isCompound = fields
+              .get("isCompound")
+              .map(_.convertTo[Boolean])
+              .getOrElse(deserializationErrorFieldMessage("isCompound", json))
+
+            val isDefining = fields
+              .get("isDefining")
+              .map(_.convertTo[Boolean])
+              .getOrElse(deserializationErrorFieldMessage("isDefining", json))
+
+            val inclusion = fields
+              .get("inclusion")
+              .flatMap(_.convertTo[Option[Boolean]])
 
             ExportTrialLabelCriterion(
-              longIdFormat[Criterion].read(criterionId),
+              criterionId,
               value,
-              longIdFormat[Label].read(labelId),
-              armIdsVector.map(longIdFormat[EligibilityArm].read).toSet,
+              labelId,
+              armIds,
               criterionText,
               isCompound,
-              isDefining
+              isDefining,
+              inclusion
             )
 
-          case _ =>
-            deserializationError(
-              s"Cannot find required fields ${fields.mkString(", ")} in ExportTrialLabelCriterion object!")
+          case _ => deserializationErrorEntityMessage(json)
         }
       }
     }

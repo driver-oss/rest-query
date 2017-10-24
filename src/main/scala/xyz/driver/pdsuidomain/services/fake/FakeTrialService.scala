@@ -85,7 +85,8 @@ class FakeTrialService extends TrialService {
           generators.setOf(LongId[EligibilityArm](generators.nextInt(999999).toLong)),
           generators.nextName().value,
           generators.nextBoolean(),
-          generators.nextBoolean()
+          generators.nextBoolean(),
+          generators.nextOption(generators.nextBoolean())
         ))
     )
 

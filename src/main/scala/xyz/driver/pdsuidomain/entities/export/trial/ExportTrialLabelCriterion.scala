@@ -11,13 +11,14 @@ final case class ExportTrialLabelCriterion(criterionId: LongId[Criterion],
                                            armIds: Set[LongId[EligibilityArm]],
                                            criteria: String,
                                            isCompound: Boolean,
-                                           isDefining: Boolean)
+                                           isDefining: Boolean,
+                                           inclusion: Option[Boolean])
 
 object ExportTrialLabelCriterion {
 
   implicit def toPhiString(x: ExportTrialLabelCriterion): PhiString = {
     import x._
     phi"TrialLabelCriterion(criterionId=$criterionId, value=$value, labelId=$labelId, " +
-      phi"criteria=${Unsafe(criteria)}, isCompound=$isCompound, isDefining=$isDefining)"
+      phi"criteria=${Unsafe(criteria)}, isCompound=$isCompound, isDefining=$isDefining), inclusion=${Unsafe(inclusion)}"
   }
 }
