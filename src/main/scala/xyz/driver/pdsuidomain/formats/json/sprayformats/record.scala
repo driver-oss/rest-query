@@ -94,7 +94,7 @@ object record {
 
         val endOriginalPage = fields
           .get("endOriginalPage")
-          .map(_.convertTo[Double])
+          .flatMap(_.convertTo[Option[Double]])
 
         Duplicate(
           startPage = startPage,
