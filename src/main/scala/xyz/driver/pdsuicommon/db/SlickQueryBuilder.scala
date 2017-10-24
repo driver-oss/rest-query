@@ -209,10 +209,10 @@ sealed trait SlickQueryBuilderParameters {
         sql""
 
       case AllowAll =>
-        sql"1"
+        sql"1=1"
 
       case DenyAll =>
-        sql"0"
+        sql"1=0"
 
       case Atom.Binary(dimension, Eq, value) if isNull(value) =>
         sql"#${escapeDimension(dimension)} is NULL"
