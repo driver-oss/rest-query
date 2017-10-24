@@ -79,7 +79,7 @@ object SearchFilterParser {
   }
 
   private val numericOperatorParser: Parser[String] = {
-    P(IgnoreCase("eq") | ((IgnoreCase("gt") | IgnoreCase("lt")) ~ IgnoreCase("eq").?)).!
+    P(IgnoreCase("eq") | IgnoreCase("noteq") | ((IgnoreCase("gt") | IgnoreCase("lt")) ~ IgnoreCase("eq").?)).!
   }
 
   private val naryOperatorParser: Parser[String] = P(IgnoreCase("in")).!
