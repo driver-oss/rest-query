@@ -108,10 +108,9 @@ object SearchFilterParser {
     P((IgnoreCase("true") | IgnoreCase("false")).!.map(_.toBoolean))
 
   private val binaryAtomParser: Parser[SearchFilterExpr.Atom.Binary] = P(
-    dimensionParser ~ whitespaceParser ~ (
-      (numericOperatorParser.! ~ whitespaceParser ~ (longParser | booleanParser | numberParser.!)) |
-        (commonOperatorParser.! ~ whitespaceParser ~ AnyChar.rep(min = 1).!)
-    ) ~ End
+    dimensionParser ~ whitespaceParser ~
+      ((numericOperatorParser.! ~ whitespaceParser ~ (longParser | booleanParser | numberParser.!) ~ End) |
+        (commonOperatorParser.! ~ whitespaceParser ~ AnyChar.rep(min = 1).! ~ End))
   ).map {
     case BinaryAtomFromTuple(atom) => atom
   }
