@@ -1,5 +1,7 @@
 package xyz.driver.pdsuicommon.parsers
 
+import java.util.UUID
+
 import xyz.driver.pdsuicommon.db.SearchFilterExpr.Dimension
 import xyz.driver.pdsuicommon.db.{SearchFilterBinaryOperation, SearchFilterExpr, SearchFilterNAryOperation}
 import xyz.driver.pdsuicommon.utils.Implicits.toStringOps
@@ -127,9 +129,10 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
         }
 
         "actual patientId uuid" - {
-          "should parse the full UUID" in {
+          "should parse the full UUID as java.util.UUID type" in {
             val filter = SearchFilterParser.parse(Seq("filters" -> "patientId EQ 4b4879f7-42b3-4b7c-a685-5c97d9e69e7c"))
-            assert(filter === Success(SearchFilterExpr.Atom.Binary(Dimension(None, "patient_id"), Eq, "4b4879f7-42b3-4b7c-a685-5c97d9e69e7c")))
+            assert(filter === Success(SearchFilterExpr.Atom.Binary(
+              Dimension(None, "patient_id"), Eq, UUID.fromString("4b4879f7-42b3-4b7c-a685-5c97d9e69e7c"))))
           }
         }
 

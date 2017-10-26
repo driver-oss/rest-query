@@ -1,5 +1,7 @@
 package xyz.driver.pdsuicommon.parsers
 
+import java.util.UUID
+
 import xyz.driver.pdsuicommon.utils.Implicits.{toCharOps, toStringOps}
 import fastparse.all._
 import fastparse.core.Parsed
@@ -89,10 +91,8 @@ object SearchFilterParser {
     case _         => true
   }
 
-  // Exclude Unicode "digits"
-  private val digitsParser: Parser[String] = P(CharIn('0' to '9').rep(min = 1).!)
+  private val digitsParser: Parser[String] = P(CharIn('0' to '9').rep(min = 1).!) // Exclude Unicode "digits"
 
-  // @TODO Make complex checking here
   private val numberParser: Parser[String] = P(isPositiveParser ~ digitsParser.! ~ ("." ~ digitsParser).!.?).map {
     case (false, intPart, Some(fracPart)) => s"-$intPart.${fracPart.tail}"
     case (false, intPart, None)           => s"-$intPart"
@@ -107,10 +107,20 @@ object SearchFilterParser {
   private val booleanParser: Parser[Boolean] =
     P((IgnoreCase("true") | IgnoreCase("false")).!.map(_.toBoolean))
 
+  private val hexDigit: Parser[String] = P((CharIn('a' to 'f') | CharIn('A' to 'F') | CharIn('0' to '9')).!)
+
+  private val uuidParser: Parser[UUID] =
+    P(
+      hexDigit.rep(8).! ~ "-" ~ hexDigit.rep(4).! ~ "-" ~ hexDigit.rep(4).! ~ "-" ~ hexDigit.rep(4).! ~ "-" ~ hexDigit
+        .rep(12)
+        .!).map {
+      case (group1, group2, group3, group4, group5) => UUID.fromString(s"$group1-$group2-$group3-$group4-$group5")
+    }
+
   private val binaryAtomParser: Parser[SearchFilterExpr.Atom.Binary] = P(
     dimensionParser ~ whitespaceParser ~
-      ((numericOperatorParser.! ~ whitespaceParser ~ (longParser | booleanParser | numberParser.!) ~ End) |
-        (commonOperatorParser.! ~ whitespaceParser ~ AnyChar.rep(min = 1).! ~ End))
+      ((numericOperatorParser.! ~ whitespaceParser ~ (longParser | numberParser.!) ~ End) |
+        (commonOperatorParser.! ~ whitespaceParser ~ (uuidParser | booleanParser | AnyChar.rep(min = 1).!) ~ End))
   ).map {
     case BinaryAtomFromTuple(atom) => atom
   }
@@ -118,9 +128,9 @@ object SearchFilterParser {
   private val nAryAtomParser: Parser[SearchFilterExpr.Atom.NAry] = P(
     dimensionParser ~ whitespaceParser ~ (
       naryOperatorParser ~ whitespaceParser ~
-        (longParser.rep(min = 1, sep = ",") | booleanParser.rep(min = 1, sep = ",") | nAryValueParser.!.rep(min = 1,
-                                                                                                            sep = ","))
-    ) ~ End
+        ((longParser.rep(min = 1, sep = ",") ~ End) | (booleanParser.rep(min = 1, sep = ",") ~ End) |
+          (nAryValueParser.!.rep(min = 1, sep = ",") ~ End))
+    )
   ).map {
     case NAryAtomFromTuple(atom) => atom
   }
