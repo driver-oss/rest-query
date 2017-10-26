@@ -9,6 +9,7 @@ import xyz.driver.pdsuidomain.entities.{ExtractedData, ExtractedDataLabel}
 import xyz.driver.pdsuidomain.services.ExtractedDataService.RichExtractedData
 
 class ExtractedDataFormatSuite extends FlatSpec with Matchers {
+
   import extracteddata._
 
   "Json format for ExtractedData" should "read and write correct JSON" in {
@@ -17,8 +18,18 @@ class ExtractedDataFormatSuite extends FlatSpec with Matchers {
       documentId = LongId(101),
       keywordId = Some(LongId(201)),
       evidenceText = Some("evidence text"),
-      meta = None
-    )
+      meta = Option(TextJson(Meta(
+        evidence = None,
+        keyword =
+          Some(Meta.Keyword(
+            page = 1,
+            pageRatio = Some(1.6161616161616161d),
+            index = 0,
+            sortIndex = "1080000"
+          ))
+      )
+    )))
+
     val extractedDataLabels = List(
       ExtractedDataLabel(
         id = LongId(1),
@@ -43,11 +54,13 @@ class ExtractedDataFormatSuite extends FlatSpec with Matchers {
 
     writtenJson should be(
       """{"id":1,"documentId":101,"keywordId":201,"evidence":"evidence text","meta":null,
-        "labels":[{"id":null,"categoryId":null,"value":"Yes"},{"id":12,"categoryId":1,"value":"No"}]}""".parseJson)
+        "labels":[{"id":null,"categoryId":null,"value":"Yes"},{"id":12,"categoryId":1,"value":"No"}],
+        "meta":{"keyword":{"index":0,"page":1,"pageRatio":1.6161616161616161,"sortIndex":"1080000"}}}""".parseJson)
 
     val createExtractedDataJson =
       """{"documentId":101,"keywordId":201,"evidence":"evidence text",
-        "labels":[{"value":"Yes"},{"id":12,"categoryId":1,"value":"No"}]}""".parseJson
+        "labels":[{"value":"Yes"},{"id":12,"categoryId":1,"value":"No"}],
+        "meta":{"keyword":{"index":0,"page":1,"pageRatio":1.6161616161616161,"sortIndex":"1080000"}}}""".parseJson
     val expectedCreatedExtractedData = origRichExtractedData.copy(
       extractedData = extractedData.copy(id = LongId(0)),
       labels = extractedDataLabels.map(_.copy(id = LongId(0), dataId = LongId(0)))
@@ -80,12 +93,12 @@ class ExtractedDataFormatSuite extends FlatSpec with Matchers {
         evidenceText = Some("new evidence text"),
         meta = Some(
           TextJson(Meta(
-            keyword = Meta.Keyword(page = 1, pageRatio = None, index = 2, sortIndex = "ASC"),
-            evidence = Meta.Evidence(
+            keyword = Some(Meta.Keyword(page = 1, pageRatio = None, index = 2, sortIndex = "ASC")),
+            evidence = Some(Meta.Evidence(
               pageRatio = 1.0,
               start = Meta.TextLayerPosition(page = 1, index = 3, offset = 2),
               end = Meta.TextLayerPosition(page = 2, index = 3, offset = 10)
-            )
+            ))
           )))
       ),
       labels = updatedExtractedDataLabels

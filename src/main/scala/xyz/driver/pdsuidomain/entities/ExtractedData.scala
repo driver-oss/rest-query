@@ -17,7 +17,7 @@ final case class ExtractedData(id: LongId[ExtractedData] = LongId(0L),
 
 object ExtractedData {
 
-  final case class Meta(keyword: Meta.Keyword, evidence: Meta.Evidence)
+  final case class Meta(keyword: Option[Meta.Keyword], evidence: Option[Meta.Evidence])
 
   object Meta {
     final case class Evidence(pageRatio: Double, start: TextLayerPosition, end: TextLayerPosition)
