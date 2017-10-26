@@ -22,7 +22,8 @@ final case class ApiPatientCriterion(id: Long,
                                      verifiedEligibilityStatus: Option[String],
                                      isVerified: Boolean,
                                      isVisible: Boolean,
-                                     lastUpdate: ZonedDateTime)
+                                     lastUpdate: ZonedDateTime,
+                                     inclusion: Option[Boolean])
 
 object ApiPatientCriterion {
 
@@ -49,7 +50,8 @@ object ApiPatientCriterion {
         }), Writes.of[String])) and
       (JsPath \ "isVerified").format[Boolean] and
       (JsPath \ "isVisible").format[Boolean] and
-      (JsPath \ "lastUpdate").format[ZonedDateTime]
+      (JsPath \ "lastUpdate").format[ZonedDateTime] and
+      (JsPath \ "inclusion").formatNullable[Boolean]
     ) (ApiPatientCriterion.apply, unlift(ApiPatientCriterion.unapply))
 
   def fromDomain(patientCriterion: PatientCriterion,
@@ -70,6 +72,7 @@ object ApiPatientCriterion {
     verifiedEligibilityStatus = patientCriterion.verifiedEligibilityStatus.map(_.toString),
     isVerified = patientCriterion.isVerified,
     isVisible = patientCriterion.isVisible,
-    lastUpdate = ZonedDateTime.of(patientCriterion.lastUpdate, ZoneId.of("Z"))
+    lastUpdate = ZonedDateTime.of(patientCriterion.lastUpdate, ZoneId.of("Z")),
+    inclusion = patientCriterion.inclusion
   )
 }

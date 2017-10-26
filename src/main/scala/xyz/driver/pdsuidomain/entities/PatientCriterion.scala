@@ -9,11 +9,11 @@ import xyz.driver.pdsuicommon.logging._
 object PatientCriterion {
   implicit def toPhiString(x: PatientCriterion): PhiString = {
     import x._
-    phi"PatientCriterion(id=$id, patientLabelId=$patientLabelId, trialId=${Unsafe(trialId)}, nctId=${Unsafe(nctId)}, " +
+    phi"PatientCriterion(id=$id, patientLabelId=$patientLabelId, trialId=${Unsafe(trialId)}, nctId=$nctId, " +
       phi"criterionId=$criterionId, criterionValue=${Unsafe(criterionValue)}, " +
       phi"isImplicitMatch=$criterionIsDefining), criterionIsDefining=${Unsafe(criterionIsDefining)}, " +
       phi"eligibilityStatus=${Unsafe(eligibilityStatus)}, verifiedEligibilityStatus=${Unsafe(verifiedEligibilityStatus)}, " +
-      phi"isVerified=${Unsafe(isVerified)}, lastUpdate=${Unsafe(lastUpdate)}"
+      phi"isVerified=${Unsafe(isVerified)}, lastUpdate=${Unsafe(lastUpdate)}, inclusion=${Unsafe(inclusion)}"
   }
 
   /**
@@ -52,7 +52,8 @@ final case class PatientCriterion(id: LongId[PatientCriterion],
                                   verifiedEligibilityStatus: Option[LabelValue],
                                   isVerified: Boolean,
                                   isVisible: Boolean,
-                                  lastUpdate: LocalDateTime) {
+                                  lastUpdate: LocalDateTime,
+                                  inclusion: Option[Boolean]) {
   def isIneligibleForEv: Boolean = eligibilityStatus.contains(LabelValue.No) && isVerified
 }
 
