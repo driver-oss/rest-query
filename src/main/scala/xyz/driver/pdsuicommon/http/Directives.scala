@@ -72,7 +72,7 @@ trait Directives {
 
   def domainExceptionHandler(req: RequestId): ExceptionHandler = {
     def errorResponse(ex: Throwable) =
-      ErrorsResponse(Seq(ResponseError(None, ex.getMessage, ErrorCode.Unspecified)), req)
+      ErrorsResponse(Seq(ResponseError(None, ex.getMessage, 1)), req)
     ExceptionHandler {
       case ex: AuthenticationException => complete(StatusCodes.Unauthorized        -> errorResponse(ex))
       case ex: AuthorizationException  => complete(StatusCodes.Forbidden           -> errorResponse(ex))
@@ -85,7 +85,7 @@ trait Directives {
   def domainRejectionHandler(req: RequestId): RejectionHandler = {
     def wrapContent(message: String) = {
       import ErrorsResponse._
-      val err: ErrorsResponse = ErrorsResponse(Seq(ResponseError(None, message, ErrorCode.Unspecified)), req)
+      val err: ErrorsResponse = ErrorsResponse(Seq(ResponseError(None, message, 1)), req)
       val text                = errorsResponseJsonFormat.write(err).toString()
       HttpEntity(ContentTypes.`application/json`, text)
     }

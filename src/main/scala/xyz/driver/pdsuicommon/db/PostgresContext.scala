@@ -1,12 +1,15 @@
 package xyz.driver.pdsuicommon.db
 
 import java.io.Closeable
+import java.time.{LocalDateTime, ZoneOffset}
+import java.util.UUID
 import java.util.concurrent.Executors
 import javax.sql.DataSource
 
 import io.getquill._
 import xyz.driver.pdsuicommon.concurrent.MdcExecutionContext
 import xyz.driver.pdsuicommon.db.PostgresContext.Settings
+import xyz.driver.pdsuicommon.domain.UuidId
 import xyz.driver.pdsuicommon.logging._
 
 import scala.concurrent.ExecutionContext
@@ -44,5 +47,26 @@ class PostgresContext(val dataSource: DataSource with Closeable, settings: Setti
   override def close(): Unit = {
     super.close()
     tpe.shutdownNow()
+  }
+
+  /**
+    * Usable for QueryBuilder's extractors
+    */
+  def timestampToLocalDateTime(timestamp: java.sql.Timestamp): LocalDateTime = {
+    LocalDateTime.ofInstant(timestamp.toInstant, ZoneOffset.UTC)
+  }
+
+  implicit def encodeUuidId[T] = MappedEncoding[UuidId[T], String](_.toString)
+  implicit def decodeUuidId[T] = MappedEncoding[String, UuidId[T]] { uuid =>
+    UuidId[T](UUID.fromString(uuid))
+  }
+
+  def decodeOptUuidId[T] = MappedEncoding[Option[String], Option[UuidId[T]]] {
+    case Some(x) => Option(x).map(y => UuidId[T](UUID.fromString(y)))
+    case None    => None
+  }
+
+  implicit def decodeUuid[T] = MappedEncoding[String, UUID] { uuid =>
+    UUID.fromString(uuid)
   }
 }

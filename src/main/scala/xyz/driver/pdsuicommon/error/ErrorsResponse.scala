@@ -1,7 +1,6 @@
 package xyz.driver.pdsuicommon.error
 
 import spray.json._
-import ErrorCode._
 import ErrorsResponse.ResponseError
 import xyz.driver.pdsuicommon.auth.RequestId
 
@@ -17,7 +16,7 @@ object ErrorsResponse {
     *
     * @see https://driverinc.atlassian.net/wiki/display/RA/REST+API+Specification#RESTAPISpecification-HTTPStatuscodes
     */
-  final case class ResponseError(data: Option[String], message: String, code: ErrorCode)
+  final case class ResponseError(data: Option[String], message: String, code: Int)
 
   object ResponseError {
 
