@@ -11,12 +11,12 @@ import xyz.driver.pdsuicommon.error._
 import xyz.driver.pdsuicommon.error.DomainError._
 import xyz.driver.pdsuicommon.error.ErrorsResponse.ResponseError
 import xyz.driver.pdsuicommon.parsers._
-import xyz.driver.pdsuicommon.db.{Pagination, Sorting, SearchFilterExpr}
+import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterExpr, Sorting}
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
-import xyz.driver.core.rest.AuthProvider
-import scala.util.control._
+import xyz.driver.core.rest.auth.AuthProvider
 
+import scala.util.control._
 import scala.util._
 
 trait Directives {
