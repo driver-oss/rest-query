@@ -144,7 +144,9 @@ object ACL extends PhiLogging {
   object Hypothesis
       extends BaseACL(
         label = "hypothesis",
-        read = Set(TrialSummarizer, TrialAdmin) ++ TreatmentMatchingRoles
+        read = Set(TrialSummarizer, TrialAdmin) ++ TreatmentMatchingRoles,
+        create = Set(TrialAdmin),
+        delete = Set(TrialAdmin)
       )
 
   object Criterion

@@ -92,7 +92,8 @@ class ExportFormatSuite extends FlatSpec with Matchers {
         armIds = Set(LongId(1), LongId(2)),
         criteria = "criteria 10 text",
         isCompound = false,
-        isDefining = false
+        isDefining = false,
+        inclusion = Some(false)
       ),
       ExportTrialLabelCriterion(
         criterionId = LongId(11),
@@ -101,7 +102,8 @@ class ExportFormatSuite extends FlatSpec with Matchers {
         armIds = Set(LongId(2)),
         criteria = "criteria 11 text",
         isCompound = true,
-        isDefining = false
+        isDefining = false,
+        inclusion = None
       )
     )
     val trialWithLabels = ExportTrialWithLabels(
@@ -117,8 +119,10 @@ class ExportFormatSuite extends FlatSpec with Matchers {
     writtenJson should be(
       """{"nctId":"NCT000001","trialId":"40892a07-c638-49d2-9795-1edfefbbcc7c","lastReviewed":"2017-08-10T18:00Z",
         "labelVersion":1,"arms":[{"armId":1,"armName":"arm 1","diseaseList":["Breast"]},{"armId":2,"armName":"arm 2","diseaseList":["Breast"]}],"criteria":[
-        {"value":"Yes","labelId":21,"criterionId":10,"criterionText":"criteria 10 text","armIds":[1,2],"isCompound":false,"isDefining":false},
-        {"value":"Unknown","labelId":21,"criterionId":11,"criterionText":"criteria 11 text","armIds":[2],"isCompound":true,"isDefining":false}]}""".parseJson)
+        {"value":"Yes","labelId":21,"criterionId":10,"criterionText":"criteria 10 text","armIds":[1,2],"isCompound":false,
+        "isDefining":false,"inclusion":false},
+        {"value":"Unknown","labelId":21,"criterionId":11,"criterionText":"criteria 11 text","armIds":[2],"isCompound":true,
+        "isDefining":false,"inclusion":null}]}""".parseJson)
   }
 
 }

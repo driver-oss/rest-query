@@ -26,7 +26,8 @@ class PatientCriterionFormatSuite extends FlatSpec with Matchers {
       verifiedEligibilityStatus = None,
       isVisible = true,
       isVerified = true,
-      lastUpdate = LocalDateTime.parse("2017-08-10T18:00:00")
+      lastUpdate = LocalDateTime.parse("2017-08-10T18:00:00"),
+      inclusion = Some(true)
     )
     val arms = List(
       PatientCriterionArm(patientCriterionId = LongId(1), armId = LongId(31), armName = "arm 31"),
@@ -38,7 +39,7 @@ class PatientCriterionFormatSuite extends FlatSpec with Matchers {
     writtenJson should be(
       """{"id":1,"labelId":21,"nctId":"NCT00001","criterionId":101,"criterionText":"criterion text","criterionValue":"Yes",
          "criterionIsDefining":false,"criterionIsCompound":false,"eligibilityStatus":"Yes","verifiedEligibilityStatus":null,
-         "isVisible":true,"isVerified":true,"lastUpdate":"2017-08-10T18:00Z","arms":["arm 31","arm 32"]}""".parseJson)
+         "isVisible":true,"isVerified":true,"lastUpdate":"2017-08-10T18:00Z","arms":["arm 31","arm 32"],"inclusion":true}""".parseJson)
 
     val updatePatientCriterionJson      = """{"verifiedEligibilityStatus":"No"}""".parseJson
     val expectedUpdatedPatientCriterion = orig.copy(verifiedEligibilityStatus = Some(LabelValue.No))

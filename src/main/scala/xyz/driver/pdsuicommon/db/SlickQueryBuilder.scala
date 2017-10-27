@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 import slick.jdbc.{JdbcProfile, PositionedParameters, SQLActionBuilder, SetParameter}
 import xyz.driver.pdsuicommon.db.Sorting.{Dimension, Sequential}
 import xyz.driver.pdsuicommon.db.SortingOrder.{Ascending, Descending}
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,6 +44,18 @@ object SlickQueryBuilder {
     def apply(v: AnyRef, pp: PositionedParameters) = {
       pp.setObject(v, JDBCType.BINARY.getVendorTypeNumber)
     }
+  }
+
+  implicit def setLongIdQueryParameter[T]: SetParameter[LongId[T]] = SetParameter[LongId[T]] { (v, pp) =>
+    pp.setLong(v.id)
+  }
+
+  implicit def setStringIdQueryParameter[T]: SetParameter[StringId[T]] = SetParameter[StringId[T]] { (v, pp) =>
+    pp.setString(v.id)
+  }
+
+  implicit def setUuidIdQueryParameter[T]: SetParameter[UuidId[T]] = SetParameter[UuidId[T]] { (v, pp) =>
+    pp.setObject(v.id, JDBCType.BINARY.getVendorTypeNumber)
   }
 }
 
@@ -160,7 +173,7 @@ sealed trait SlickQueryBuilderParameters {
     def isNull(string: AnyRef) = Option(string).isEmpty || string.toString.toLowerCase == "null"
 
     def escapeDimension(dimension: SearchFilterExpr.Dimension) = {
-      s"$escapedTableName.$qs${dimension.name}$qs"
+      s"${dimension.tableName.map(t => s"$qs$databaseName$qs.$qs$t$qs").getOrElse(escapedTableName)}.$qs${dimension.name}$qs"
     }
 
     def filterToSqlMultiple(operands: Seq[SearchFilterExpr]) = operands.collect {
@@ -174,9 +187,9 @@ sealed trait SlickQueryBuilderParameters {
       if (conditions.nonEmpty) {
         val condition = conditions.head
         if (first) {
-          multipleSqlToAction(false, op, conditions.tail, condition)
+          multipleSqlToAction(first = false, op, conditions.tail, condition)
         } else {
-          multipleSqlToAction(false, op, conditions.tail, sql concat sql" #${op} " concat condition)
+          multipleSqlToAction(first = false, op, conditions.tail, sql concat sql" #${op} " concat condition)
         }
       } else sql
     }
@@ -184,9 +197,9 @@ sealed trait SlickQueryBuilderParameters {
     def concatenateParameters(sql: SQLActionBuilder, first: Boolean, tail: Seq[AnyRef]): SQLActionBuilder = {
       if (tail.nonEmpty) {
         if (!first) {
-          concatenateParameters(sql concat sql""",${tail.head}""", false, tail.tail)
+          concatenateParameters(sql concat sql""",${tail.head}""", first = false, tail.tail)
         } else {
-          concatenateParameters(sql"""(${tail.head}""", false, tail.tail)
+          concatenateParameters(sql"""(${tail.head}""", first = false, tail.tail)
         }
       } else sql concat sql")"
     }
@@ -196,10 +209,10 @@ sealed trait SlickQueryBuilderParameters {
         sql""
 
       case AllowAll =>
-        sql"1"
+        sql"1=1"
 
       case DenyAll =>
-        sql"0"
+        sql"1=0"
 
       case Atom.Binary(dimension, Eq, value) if isNull(value) =>
         sql"#${escapeDimension(dimension)} is NULL"
@@ -232,17 +245,19 @@ sealed trait SlickQueryBuilderParameters {
           case SearchFilterNAryOperation.NotIn => sql" not in "
         }
 
-        val formattedValues = if (values.nonEmpty) {
-          concatenateParameters(sql"", true, values)
-        } else sql"NULL"
-        sql"#${escapeDimension(dimension)}" concat sqlOp concat formattedValues
+        if (values.nonEmpty) {
+          val formattedValues = concatenateParameters(sql"", first = true, values)
+          sql"#${escapeDimension(dimension)}" concat sqlOp concat formattedValues
+        } else {
+          sql"1=0"
+        }
 
       case Intersection(operands) =>
-        val filter = multipleSqlToAction(true, "and", filterToSqlMultiple(operands), sql"")
+        val filter = multipleSqlToAction(first = true, "and", filterToSqlMultiple(operands), sql"")
         sql"(" concat filter concat sql")"
 
       case Union(operands) =>
-        val filter = multipleSqlToAction(true, "or", filterToSqlMultiple(operands), sql"")
+        val filter = multipleSqlToAction(first = true, "or", filterToSqlMultiple(operands), sql"")
         sql"(" concat filter concat sql")"
     }
   }

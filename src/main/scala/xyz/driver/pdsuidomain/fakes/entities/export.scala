@@ -28,7 +28,8 @@ object export {
       armIds = setOf(nextLongId[EligibilityArm]),
       criteria = nextString(100),
       isCompound = nextBoolean(),
-      isDefining = nextBoolean()
+      isDefining = nextBoolean(),
+      inclusion = nextOption(nextBoolean())
     )
 
   def nextExportTrialWithLabels(): ExportTrialWithLabels =

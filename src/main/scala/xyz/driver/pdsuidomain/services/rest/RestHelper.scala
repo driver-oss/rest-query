@@ -59,9 +59,9 @@ trait RestHelper {
     def exprToQuery(expr: SearchFilterExpr): Seq[(String, String)] = expr match {
       case SearchFilterExpr.Empty => Seq.empty
       case SearchFilterExpr.Atom.Binary(dimension, op, value) =>
-        Seq("filters" -> s"${dimension.name} ${opToString(op)} $value")
+        Seq("filters" -> s"${dimension.tableName.fold("")(t => s"$t.") + dimension.name} ${opToString(op)} $value")
       case SearchFilterExpr.Atom.NAry(dimension, SearchFilterNAryOperation.In, values) =>
-        Seq("filters" -> s"${dimension.name} in ${values.mkString(",")}")
+        Seq("filters" -> s"${dimension.tableName.fold("")(t => s"$t.") + dimension.name} in ${values.mkString(",")}")
       case SearchFilterExpr.Intersection(ops) =>
         ops.flatMap(op => exprToQuery(op))
       case expr => sys.error(s"No parser available for filter expression $expr.")

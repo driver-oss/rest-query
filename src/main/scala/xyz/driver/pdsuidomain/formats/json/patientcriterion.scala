@@ -56,7 +56,8 @@ object patientcriterion {
           "verifiedEligibilityStatus" -> obj.patientCriterion.verifiedEligibilityStatus.toJson,
           "isVerified"                -> obj.patientCriterion.isVerified.toJson,
           "isVisible"                 -> obj.patientCriterion.isVisible.toJson,
-          "lastUpdate"                -> obj.patientCriterion.lastUpdate.toJson
+          "lastUpdate"                -> obj.patientCriterion.lastUpdate.toJson,
+          "inclusion"                 -> obj.patientCriterion.inclusion.toJson
         )
       }
     }

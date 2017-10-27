@@ -15,7 +15,7 @@ lazy val core = (project in file("."))
     "com.typesafe.scala-logging"        %% "scala-logging"          % "3.5.0",
     "io.getquill"                       %% "quill-jdbc"             % "1.2.1",
     "io.github.cloudify"                %% "spdf"                   % "1.4.0",
-    "xyz.driver"                        %% "core"                   % "1.2.2",
+    "xyz.driver"                        %% "core"                   % "1.2.3",
     "xyz.driver"                        %% "domain-model"           % "0.17.8",
     "ch.qos.logback"                    % "logback-classic"         % "1.1.7",
     "com.fasterxml.jackson.datatype"    % "jackson-datatype-jsr310" % "2.8.4",

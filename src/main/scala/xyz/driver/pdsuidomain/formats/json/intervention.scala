@@ -99,7 +99,8 @@ object intervention {
 
       val deliveryMethod = fields
         .get("deliveryMethod")
-        .map(_.convertTo[String])
+        .map(_.convertTo[Option[String]])
+        .getOrElse(orig.intervention.deliveryMethod)
 
       val origIntervention = orig.intervention
       val arms = fields
@@ -112,7 +113,7 @@ object intervention {
           typeId = typeId.orElse(origIntervention.typeId),
           dosage = dosage.getOrElse(origIntervention.dosage),
           isActive = isActive.getOrElse(origIntervention.isActive),
-          deliveryMethod = deliveryMethod.orElse(origIntervention.deliveryMethod)
+          deliveryMethod = deliveryMethod
         ),
         arms = arms.getOrElse(orig.arms)
       )

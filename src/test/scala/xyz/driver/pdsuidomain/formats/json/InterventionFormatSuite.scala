@@ -19,7 +19,7 @@ class InterventionFormatSuite extends FlatSpec with Matchers {
       dosage = "",
       originalDosage = "",
       isActive = true,
-      deliveryMethod = Some("pill")
+      deliveryMethod = Some("Inhalation")
     )
     val arms = List(
       InterventionArm(interventionId = intervention.id, armId = LongId(20)),
@@ -34,11 +34,11 @@ class InterventionFormatSuite extends FlatSpec with Matchers {
 
     writtenJson should be(
       """{"id":1,"name":"intervention name","typeId":10,"dosage":"","isActive":true,"arms":[20,21,22],
-        "trialId":"NCT000001","deliveryMethod":"pill","originalName":"orig name","originalDosage":"","originalType":"orig type"}""".parseJson)
+        "trialId":"NCT000001","deliveryMethod":"Inhalation","originalName":"orig name","originalDosage":"","originalType":"orig type"}""".parseJson)
 
     val createInterventionJson =
       """{"id":1,"name":"intervention name","typeId":10,"dosage":"","isActive":true,"arms":[20,21,22],
-        "trialId":"NCT000001","deliveryMethod":"pill"}""".parseJson
+        "trialId":"NCT000001","deliveryMethod":"Inhalation"}""".parseJson
     val parsedCreateIntervention = interventionFormat.read(createInterventionJson)
     val expectedCreateIntervention = parsedCreateIntervention.copy(
       intervention = intervention.copy(id = LongId(0), originalType = None, originalName = "intervention name"),
@@ -46,9 +46,9 @@ class InterventionFormatSuite extends FlatSpec with Matchers {
     )
     parsedCreateIntervention should be(expectedCreateIntervention)
 
-    val updateInterventionJson = """{"dosage":"descr","arms":[21,22]}""".parseJson
+    val updateInterventionJson = """{"dosage":"descr","deliveryMethod":null,"arms":[21,22]}""".parseJson
     val expectedUpdatedIntervention = orig.copy(
-      intervention = intervention.copy(dosage = "descr"),
+      intervention = intervention.copy(dosage = "descr", deliveryMethod = None),
       arms = List(
         InterventionArm(interventionId = intervention.id, armId = LongId(21)),
         InterventionArm(interventionId = intervention.id, armId = LongId(22))

@@ -15,6 +15,7 @@ object record {
   import common._
 
   implicit val recordStatusFormat = new EnumJsonFormat[Status](
+    "PreCleaning"   -> Status.PreCleaning,
     "Unprocessed"   -> Status.Unprocessed,
     "PreOrganized"  -> Status.PreOrganized,
     "New"           -> Status.New,
@@ -93,7 +94,7 @@ object record {
 
         val endOriginalPage = fields
           .get("endOriginalPage")
-          .map(_.convertTo[Double])
+          .flatMap(_.convertTo[Option[Double]])
 
         Duplicate(
           startPage = startPage,

@@ -3,6 +3,7 @@ package xyz.driver.pdsuicommon.http
 import akka.http.scaladsl.server._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.model._
+import xyz.driver.core.app.DriverApp
 import xyz.driver.core.rest.ContextHeaders
 import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.auth._
@@ -88,7 +89,7 @@ trait Directives {
       val text                = errorsResponseJsonFormat.write(err).toString()
       HttpEntity(ContentTypes.`application/json`, text)
     }
-    RejectionHandler.default.mapRejectionResponse {
+    DriverApp.rejectionHandler.mapRejectionResponse {
       case res @ HttpResponse(_, _, ent: HttpEntity.Strict, _) =>
         res.copy(entity = wrapContent(ent.data.utf8String))
       case x => x // pass through all other types of responses

@@ -245,13 +245,13 @@ object recordprocessing {
 
   def nextExtractedDataMeta(): Meta = {
     ExtractedData.Meta(
-      nextExtractedDataMetaKeyword(),
-      nextExtractedDataMetaEvidence()
+      nextOption(nextExtractedDataMetaKeyword()),
+      nextOption(nextExtractedDataMetaEvidence())
     )
   }
 
   def nextExtractedDataMetaJson(): TextJson[Meta] =
-    nextTextJson(ExtractedData.Meta(nextExtractedDataMetaKeyword(), nextExtractedDataMetaEvidence()))
+    nextTextJson(nextExtractedDataMeta())
 
   def nextExtractedData(): ExtractedData = {
     ExtractedData(
