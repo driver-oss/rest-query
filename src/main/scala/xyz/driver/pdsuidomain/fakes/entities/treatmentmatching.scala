@@ -1,5 +1,6 @@
 package xyz.driver.pdsuidomain.fakes.entities
 
+import eu.timepit.refined.numeric.NonNegative
 import xyz.driver.entities.labels.Label
 import xyz.driver.fakes
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, User}
@@ -9,6 +10,7 @@ import xyz.driver.pdsuidomain.services.PatientCriterionService.{DraftPatientCrit
 import xyz.driver.pdsuidomain.services.PatientEligibleTrialService.RichPatientEligibleTrial
 import xyz.driver.pdsuidomain.services.PatientHypothesisService.RichPatientHypothesis
 import xyz.driver.pdsuidomain.services.PatientLabelService.RichPatientLabel
+import eu.timepit.refined.{refineV, refineMV}
 
 object treatmentmatching {
   import common._
@@ -163,7 +165,10 @@ object treatmentmatching {
     patientId = nextUuidId[Patient],
     hypothesisId = nextUuidId[Hypothesis],
     rationale = Option(generators.nextString()),
-    matchedTrials = generators.nextInt(Int.MaxValue).toLong
+    matchedTrials = refineV[NonNegative](generators.nextInt(Int.MaxValue).toLong) match {
+      case Left(_)            => refineMV[NonNegative](0)
+      case Right(nonNegative) => nonNegative
+    }
   )
 
   def nextRichPatientHypothesis(): RichPatientHypothesis = RichPatientHypothesis(
@@ -177,7 +182,7 @@ object treatmentmatching {
     patientId = nextUuidId[Patient],
     lastUpdate = nextLocalDateTime,
     isDraft = generators.nextBoolean(),
-    text = generators.nextString(),
+    text = generators.nextNonEmptyString(),
     archiveRequired = generators.nextBoolean()
   )
 

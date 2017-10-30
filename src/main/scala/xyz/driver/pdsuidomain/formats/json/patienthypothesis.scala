@@ -7,6 +7,7 @@ import xyz.driver.pdsuidomain.services.PatientHypothesisService.RichPatientHypot
 object patienthypothesis {
   import DefaultJsonProtocol._
   import common._
+  import xyz.driver.core.json._
 
   def applyUpdateToPatientHypothesis(json: JsValue, orig: PatientHypothesis): PatientHypothesis = json match {
     case JsObject(fields) =>

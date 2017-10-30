@@ -2,6 +2,8 @@ package xyz.driver.pdsuidomain.entities
 
 import java.time.LocalDateTime
 
+import eu.timepit.refined.api.Refined
+import eu.timepit.refined.collection.NonEmpty
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.logging._
 
@@ -10,7 +12,7 @@ final case class PatientIssue(id: LongId[PatientIssue],
                               patientId: UuidId[Patient],
                               lastUpdate: LocalDateTime,
                               isDraft: Boolean,
-                              text: String,
+                              text: String Refined NonEmpty,
                               archiveRequired: Boolean)
 
 object PatientIssue {

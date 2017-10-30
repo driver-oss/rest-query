@@ -1,10 +1,12 @@
 package xyz.driver.pdsuidomain.formats.json
 
+import eu.timepit.refined.numeric.NonNegative
 import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
 import xyz.driver.pdsuicommon.domain.UuidId
 import xyz.driver.pdsuidomain.entities.PatientHypothesis
 import xyz.driver.pdsuidomain.services.PatientHypothesisService.RichPatientHypothesis
+import eu.timepit.refined.refineMV
 
 class PatientHypothesisFormatSuite extends FlatSpec with Matchers {
   import xyz.driver.pdsuidomain.formats.json.patienthypothesis._
@@ -15,7 +17,7 @@ class PatientHypothesisFormatSuite extends FlatSpec with Matchers {
       patientId = UuidId("748b5884-3528-4cb9-904b-7a8151d6e343"),
       hypothesisId = UuidId("e76e2fc4-a29c-44fb-a81b-8856d06bb1d4"),
       rationale = None,
-      matchedTrials = 1
+      matchedTrials = refineMV[NonNegative](1)
     )
     val writtenJson = richPatientHypothesisWriter.write(RichPatientHypothesis(orig, isRequired = true))
 
@@ -35,7 +37,7 @@ class PatientHypothesisFormatSuite extends FlatSpec with Matchers {
       patientId = UuidId("748b5884-3528-4cb9-904b-7a8151d6e343"),
       hypothesisId = UuidId("e76e2fc4-a29c-44fb-a81b-8856d06bb1d4"),
       rationale = None,
-      matchedTrials = 1
+      matchedTrials = refineMV[NonNegative](1)
     )
     val writtenJson = patientHypothesisWriter.write(orig)
 

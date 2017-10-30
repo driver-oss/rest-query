@@ -1,9 +1,14 @@
 package xyz.driver.pdsuidomain.formats.json
 
+import java.time.{LocalDate, LocalDateTime}
+
 import spray.json._
 import xyz.driver.core.json.EnumJsonFormat
+import xyz.driver.entities.common.FullName
+import xyz.driver.entities.patient.CancerType
 import xyz.driver.formats.json.common._
 import xyz.driver.formats.json.patient._
+import xyz.driver.pdsuicommon.domain.{StringId, User, UuidId}
 import xyz.driver.pdsuidomain.entities._
 
 object patient {
@@ -11,7 +16,7 @@ object patient {
   import Patient._
   import common._
 
-  implicit val patientStatusFormat = new EnumJsonFormat[Status](
+  implicit val patientStatusFormat: RootJsonFormat[Status] = new EnumJsonFormat[Status](
     "New"      -> Status.New,
     "Verified" -> Status.Verified,
     "Reviewed" -> Status.Reviewed,
@@ -20,7 +25,7 @@ object patient {
     "Flagged"  -> Status.Flagged
   )
 
-  implicit val patientOrderIdFormat = new RootJsonFormat[PatientOrderId] {
+  implicit val patientOrderIdFormat: RootJsonFormat[PatientOrderId] = new RootJsonFormat[PatientOrderId] {
     override def write(orderId: PatientOrderId): JsString = JsString(orderId.toString)
     override def read(json: JsValue): PatientOrderId = json match {
       case JsString(value) => PatientOrderId(value)
@@ -44,7 +49,76 @@ object patient {
         "orderId"          -> patient.orderId.toJson
       )
 
-    override def read(json: JsValue): Patient = jsonReader[Patient].read(json)
+    override def read(json: JsValue): Patient = {
+      json match {
+        case JsObject(fields) =>
+          val id = fields
+            .get("id")
+            .map(_.convertTo[UuidId[Patient]])
+            .getOrElse(deserializationError(s"Patient create json object does not contain `id` field: $json"))
+
+          val status = fields
+            .get("status")
+            .map(_.convertTo[Patient.Status])
+            .getOrElse(deserializationError(s"Patient create json object does not contain `status` field: $json"))
+
+          val name = fields
+            .get("name")
+            .map(_.convertTo[FullName[Patient]])
+            .getOrElse(deserializationError(s"Patient create json object does not contain `name` field: $json"))
+
+          val dob = fields
+            .get("dob")
+            .map(_.convertTo[LocalDate])
+            .getOrElse(deserializationError(s"Patient create json object does not contain `dob` field: $json"))
+
+          val assignee = fields
+            .get("assignee")
+            .flatMap(_.convertTo[Option[StringId[User]]])
+
+          val previousStatus = fields
+            .get("previousStatus")
+            .flatMap(_.convertTo[Option[Patient.Status]])
+
+          val previousAssignee = fields
+            .get("previousAssignee")
+            .flatMap(_.convertTo[Option[StringId[User]]])
+
+          val lastActiveUser = fields
+            .get("lastActiveUser")
+            .flatMap(_.convertTo[Option[StringId[User]]])
+
+          val disease = fields
+            .get("disease")
+            .map(_.convertTo[CancerType])
+            .getOrElse(deserializationError(s"Patient create json object does not contain `disease` field: $json"))
+
+          val orderId = fields
+            .get("orderId")
+            .map(_.convertTo[PatientOrderId])
+            .getOrElse(deserializationError(s"Patient create json object does not contain `orderId` field: $json"))
+
+          val lastUpdate = fields
+            .get("lastUpdate")
+            .map(_.convertTo[LocalDateTime])
+            .getOrElse(deserializationError(s"Patient create json object does not contain `lastUpdate` field: $json"))
+
+          Patient(id,
+                  status,
+                  name,
+                  dob,
+                  assignee,
+                  previousStatus,
+                  previousAssignee,
+                  lastActiveUser,
+                  isUpdateRequired = false,
+                  disease,
+                  orderId,
+                  lastUpdate)
+
+        case _ => deserializationError(s"Expected Json Object as Trial, but got $json")
+      }
+    }
   }
 
 }

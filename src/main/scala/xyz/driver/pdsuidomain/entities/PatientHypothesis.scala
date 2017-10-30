@@ -1,5 +1,7 @@
 package xyz.driver.pdsuidomain.entities
 
+import eu.timepit.refined.api.Refined
+import eu.timepit.refined.numeric.NonNegative
 import xyz.driver.pdsuicommon.domain.UuidId
 import xyz.driver.pdsuicommon.logging._
 
@@ -15,4 +17,4 @@ final case class PatientHypothesis(id: UuidId[PatientHypothesis],
                                    patientId: UuidId[Patient],
                                    hypothesisId: UuidId[Hypothesis],
                                    rationale: Option[String],
-                                   matchedTrials: Long)
+                                   matchedTrials: Long Refined NonNegative)
