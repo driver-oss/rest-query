@@ -13,28 +13,28 @@ import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.entities.export.trial.ExportTrialWithLabels
-import xyz.driver.pdsuidomain.formats.json.ListResponse
-import xyz.driver.pdsuidomain.formats.json.trial.ApiTrial
 import xyz.driver.pdsuidomain.services.TrialService
 import spray.json.DefaultJsonProtocol._
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import xyz.driver.entities.patient.CancerType
-import xyz.driver.pdsuidomain.formats.json.sprayformats.export._
+import xyz.driver.pdsuidomain.ListResponse
+import xyz.driver.pdsuidomain.formats.json.export._
 
 class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit protected val materializer: Materializer,
                                                                   protected val exec: ExecutionContext)
     extends TrialService with RestHelper {
 
-  import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
+  import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+  import xyz.driver.pdsuidomain.formats.json.listresponse._
+  import xyz.driver.pdsuidomain.formats.json.trial._
   import xyz.driver.pdsuidomain.services.TrialService._
 
   def getById(id: StringId[Trial])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/trial/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiTrial](response)
+      reply    <- apiResponse[Trial](response)
     } yield {
-      GetByIdReply.Entity(reply.toDomain)
+      GetByIdReply.Entity(reply)
     }
   }
 
@@ -80,9 +80,9 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
       endpointUri(baseUri, "/v1/trial", filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ListResponse[ApiTrial]](response)
+      reply    <- apiResponse[ListResponse[Trial]](response)
     } yield {
-      GetListReply.EntityList(reply.items.map(_.toDomain), reply.meta.itemsCount, reply.meta.lastUpdate)
+      GetListReply.EntityList(reply.items, reply.meta.itemsCount, reply.meta.lastUpdate)
     }
   }
 
@@ -90,12 +90,12 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
           implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
     val id = origTrial.id.id
     for {
-      entity <- Marshal(ApiTrial.fromDomain(draftTrial)).to[RequestEntity]
+      entity <- Marshal(draftTrial).to[RequestEntity]
       request = HttpRequest(HttpMethods.PATCH, endpointUri(baseUri, s"/v1/trial/$id")).withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiTrial](response)
+      reply    <- apiResponse[Trial](response)
     } yield {
-      UpdateReply.Updated(reply.toDomain)
+      UpdateReply.Updated(reply)
     }
   }
 
@@ -105,9 +105,9 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/trial/$id/$action"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiTrial](response)
+      reply    <- apiResponse[Trial](response)
     } yield {
-      UpdateReply.Updated(reply.toDomain)
+      UpdateReply.Updated(reply)
     }
   }
 

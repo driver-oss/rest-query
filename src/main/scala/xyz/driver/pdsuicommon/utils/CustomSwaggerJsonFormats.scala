@@ -6,16 +6,16 @@ import io.swagger.models.properties.Property
 import spray.json.JsValue
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuidomain.entities._
-import xyz.driver.pdsuidomain.formats.json.sprayformats.listresponse._
+import xyz.driver.pdsuidomain.formats.json.listresponse._
 import xyz.driver.core.swagger.CustomSwaggerJsonConverter._
 import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.concurrent.BridgeUploadQueue
 import xyz.driver.pdsuidomain.entities.export.patient.ExportPatientWithLabels
 import xyz.driver.pdsuidomain.entities.export.trial.ExportTrialWithLabels
 import xyz.driver.pdsuidomain.fakes.entities.common
-import xyz.driver.pdsuidomain.formats.json.sprayformats.bridgeuploadqueue._
-import xyz.driver.pdsuidomain.formats.json.sprayformats.record._
-import xyz.driver.pdsuidomain.formats.json.sprayformats.document._
+import xyz.driver.pdsuidomain.formats.json.bridgeuploadqueue._
+import xyz.driver.pdsuidomain.formats.json.record._
+import xyz.driver.pdsuidomain.formats.json.document._
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
 import xyz.driver.pdsuidomain.services.ExtractedDataService.RichExtractedData
 import xyz.driver.pdsuidomain.services.PatientCriterionService.{DraftPatientCriterion, RichPatientCriterion}
@@ -83,17 +83,17 @@ object CustomSwaggerJsonFormats {
   object trialcuration {
     import xyz.driver.pdsuidomain.fakes.entities.trialcuration._
     import xyz.driver.pdsuidomain.fakes.entities.export
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.export._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.arm._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.slotarm._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.eligibilityarm._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.criterion._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.intervention._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.hypothesis._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.studydesign._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.trial._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.trialhistory._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.trialissue._
+    import xyz.driver.pdsuidomain.formats.json.export._
+    import xyz.driver.pdsuidomain.formats.json.arm._
+    import xyz.driver.pdsuidomain.formats.json.slotarm._
+    import xyz.driver.pdsuidomain.formats.json.eligibilityarm._
+    import xyz.driver.pdsuidomain.formats.json.criterion._
+    import xyz.driver.pdsuidomain.formats.json.intervention._
+    import xyz.driver.pdsuidomain.formats.json.hypothesis._
+    import xyz.driver.pdsuidomain.formats.json.studydesign._
+    import xyz.driver.pdsuidomain.formats.json.trial._
+    import xyz.driver.pdsuidomain.formats.json.trialhistory._
+    import xyz.driver.pdsuidomain.formats.json.trialissue._
 
     val customTrialCurationProperties = immutable.Map[Class[_], Property](
       classOf[Trial.Status]        -> stringProperty(),
@@ -102,7 +102,7 @@ object CustomSwaggerJsonFormats {
     ) ++ customCommonProperties
 
     val customTrialCurationObjectsExamples = immutable.Map[Class[_], JsValue](
-      classOf[Trial]                      -> trialWriter.write(nextTrial()),
+      classOf[Trial]                      -> trialFormat.write(nextTrial()),
       classOf[Arm]                        -> armFormat.write(nextArm()),
       classOf[TrialHistory]               -> trialHistoryFormat.write(nextTrialHistory()),
       classOf[TrialIssue]                 -> trialIssueWriter.write(nextTrialIssue()),
@@ -134,12 +134,12 @@ object CustomSwaggerJsonFormats {
   object recordprocessing {
     import xyz.driver.pdsuidomain.fakes.entities.recordprocessing._
     import xyz.driver.pdsuidomain.fakes.entities.export
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.export._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.documentissue._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.documenthistory._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.recordissue._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.recordhistory._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.extracteddata._
+    import xyz.driver.pdsuidomain.formats.json.export._
+    import xyz.driver.pdsuidomain.formats.json.documentissue._
+    import xyz.driver.pdsuidomain.formats.json.documenthistory._
+    import xyz.driver.pdsuidomain.formats.json.recordissue._
+    import xyz.driver.pdsuidomain.formats.json.recordhistory._
+    import xyz.driver.pdsuidomain.formats.json.extracteddata._
 
     val customRecordProcessingProperties = immutable.Map[Class[_], Property](
       classOf[MedicalRecord.Status]        -> stringProperty(),
@@ -176,14 +176,14 @@ object CustomSwaggerJsonFormats {
 
   object treatmentmatching {
     import xyz.driver.pdsuidomain.fakes.entities.treatmentmatching._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.patient._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.patientcriterion._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.patientdefiningcriteria._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.patienteligibletrial._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.patientlabel._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.patienthypothesis._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.patienthistory._
-    import xyz.driver.pdsuidomain.formats.json.sprayformats.patientissue._
+    import xyz.driver.pdsuidomain.formats.json.patient._
+    import xyz.driver.pdsuidomain.formats.json.patientcriterion._
+    import xyz.driver.pdsuidomain.formats.json.patientdefiningcriteria._
+    import xyz.driver.pdsuidomain.formats.json.patienteligibletrial._
+    import xyz.driver.pdsuidomain.formats.json.patientlabel._
+    import xyz.driver.pdsuidomain.formats.json.patienthypothesis._
+    import xyz.driver.pdsuidomain.formats.json.patienthistory._
+    import xyz.driver.pdsuidomain.formats.json.patientissue._
 
     val customTreatmentMatchingProperties = immutable.Map[Class[_], Property](
       classOf[Patient.Status]        -> stringProperty(),
@@ -192,7 +192,7 @@ object CustomSwaggerJsonFormats {
     ) ++ customCommonProperties
 
     val customTreatmentMatchingObjectsExamples = immutable.Map[Class[_], JsValue](
-      classOf[Patient]                  -> patientWriter.write(nextPatient()),
+      classOf[Patient]                  -> patientFormat.write(nextPatient()),
       classOf[RichPatientLabel]         -> richPatientLabelWriter.write(nextRichPatientLabel()),
       classOf[PatientLabel]             -> patientLabelDefiningCriteriaWriter.write(nextPatientLabel()),
       classOf[RichPatientCriterion]     -> patientCriterionWriter.write(nextRichPatientCriterion()),

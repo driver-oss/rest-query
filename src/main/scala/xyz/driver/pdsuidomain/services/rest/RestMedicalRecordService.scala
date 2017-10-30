@@ -3,8 +3,8 @@ package xyz.driver.pdsuidomain.services.rest
 import akka.NotUsed
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
-import scala.concurrent.{ExecutionContext, Future}
 
+import scala.concurrent.{ExecutionContext, Future}
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
@@ -12,9 +12,8 @@ import xyz.driver.core.rest.{Pagination => _, _}
 import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
+import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
-import xyz.driver.pdsuidomain.formats.json.ListResponse
-import xyz.driver.pdsuidomain.formats.json.record.ApiRecord
 import xyz.driver.pdsuidomain.services.MedicalRecordService
 
 class RestMedicalRecordService(transport: ServiceTransport, baseUri: Uri)(
@@ -22,7 +21,9 @@ class RestMedicalRecordService(transport: ServiceTransport, baseUri: Uri)(
         protected val exec: ExecutionContext)
     extends MedicalRecordService with RestHelper {
 
-  import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
+  import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+  import xyz.driver.pdsuidomain.formats.json.listresponse._
+  import xyz.driver.pdsuidomain.formats.json.record._
   import xyz.driver.pdsuidomain.services.MedicalRecordService._
 
   def getById(recordId: LongId[MedicalRecord])(
@@ -30,9 +31,9 @@ class RestMedicalRecordService(transport: ServiceTransport, baseUri: Uri)(
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/record/$recordId"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiRecord](response)
+      reply    <- apiResponse[MedicalRecord](response)
     } yield {
-      GetByIdReply.Entity(reply.toDomain)
+      GetByIdReply.Entity(reply)
     }
   }
 
@@ -59,20 +60,20 @@ class RestMedicalRecordService(transport: ServiceTransport, baseUri: Uri)(
       endpointUri(baseUri, "/v1/record", filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ListResponse[ApiRecord]](response)
+      reply    <- apiResponse[ListResponse[MedicalRecord]](response)
     } yield {
-      GetListReply.EntityList(reply.items.map(_.toDomain), reply.meta.itemsCount, reply.meta.lastUpdate)
+      GetListReply.EntityList(reply.items, reply.meta.itemsCount, reply.meta.lastUpdate)
     }
   }
 
   def create(draftRecord: MedicalRecord)(implicit requestContext: AnonymousRequestContext): Future[CreateReply] = {
     for {
-      entity <- Marshal(ApiRecord.fromDomain(draftRecord)).to[RequestEntity]
+      entity <- Marshal(draftRecord).to[RequestEntity]
       request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, "/v1/record")).withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiRecord](response)
+      reply    <- apiResponse[MedicalRecord](response)
     } yield {
-      CreateReply.Created(reply.toDomain)
+      CreateReply.Created(reply)
     }
   }
 
@@ -80,12 +81,12 @@ class RestMedicalRecordService(transport: ServiceTransport, baseUri: Uri)(
           implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
     val id = origRecord.id.toString
     for {
-      entity <- Marshal(ApiRecord.fromDomain(draftRecord)).to[RequestEntity]
+      entity <- Marshal(draftRecord).to[RequestEntity]
       request = HttpRequest(HttpMethods.PATCH, endpointUri(baseUri, s"/v1/record/$id")).withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiRecord](response)
+      reply    <- apiResponse[MedicalRecord](response)
     } yield {
-      UpdateReply.Updated(reply.toDomain)
+      UpdateReply.Updated(reply)
     }
   }
 
@@ -95,9 +96,9 @@ class RestMedicalRecordService(transport: ServiceTransport, baseUri: Uri)(
     val request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, s"/v1/record/$id/$action"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiRecord](response)
+      reply    <- apiResponse[MedicalRecord](response)
     } yield {
-      UpdateReply.Updated(reply.toDomain)
+      UpdateReply.Updated(reply)
     }
   }
 

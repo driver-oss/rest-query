@@ -1,7 +1,7 @@
 package xyz.driver.pdsuicommon.db
 
 import java.io.Closeable
-import java.time._
+import java.time.{LocalDateTime, ZoneOffset}
 import java.util.UUID
 import java.util.concurrent.Executors
 import javax.sql.DataSource
@@ -35,8 +35,7 @@ object PostgresContext extends PhiLogging {
 }
 
 class PostgresContext(val dataSource: DataSource with Closeable, settings: Settings)
-    extends PostgresJdbcContext[SnakeCase](dataSource) with TransactionalContext
-    with EntityExtractorDerivation[SnakeCase] {
+    extends PostgresJdbcContext[SnakeCase](dataSource) with TransactionalContext {
 
   private val tpe = Executors.newFixedThreadPool(settings.threadPoolSize)
 

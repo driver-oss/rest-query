@@ -8,25 +8,27 @@ import xyz.driver.core.rest.{Pagination => _, _}
 import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
+import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
-import xyz.driver.pdsuidomain.formats.json.ListResponse
-import xyz.driver.pdsuidomain.formats.json.patient.ApiPatient
 import xyz.driver.pdsuidomain.services.PatientService
 
 class RestPatientService(transport: ServiceTransport, baseUri: Uri)(implicit protected val materializer: Materializer,
                                                                     protected val exec: ExecutionContext)
     extends PatientService with RestHelper {
 
-  import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
+  import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+  import xyz.driver.pdsuidomain.formats.json.listresponse._
+  import xyz.driver.pdsuidomain.formats.json.patient._
+
   import xyz.driver.pdsuidomain.services.PatientService._
 
   def getById(id: UuidId[Patient])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/patient/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiPatient](response)
+      reply    <- apiResponse[Patient](response)
     } yield {
-      GetByIdReply.Entity(reply.toDomain)
+      GetByIdReply.Entity(reply)
     }
   }
 
@@ -39,9 +41,9 @@ class RestPatientService(transport: ServiceTransport, baseUri: Uri)(implicit pro
       endpointUri(baseUri, "/v1/patient", filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ListResponse[ApiPatient]](response)
+      reply    <- apiResponse[ListResponse[Patient]](response)
     } yield {
-      GetListReply.EntityList(reply.items.map(_.toDomain), reply.meta.itemsCount, reply.meta.lastUpdate)
+      GetListReply.EntityList(reply.items, reply.meta.itemsCount, reply.meta.lastUpdate)
     }
   }
 
@@ -51,9 +53,9 @@ class RestPatientService(transport: ServiceTransport, baseUri: Uri)(implicit pro
     val request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, s"/v1/patient/$id/$action"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiPatient](response)
+      reply    <- apiResponse[Patient](response)
     } yield {
-      UpdateReply.Updated(reply.toDomain)
+      UpdateReply.Updated(reply)
     }
   }
 

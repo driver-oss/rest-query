@@ -13,9 +13,8 @@ import xyz.driver.pdsuicommon.error.ErrorsResponse.ResponseError
 import xyz.driver.pdsuicommon.parsers._
 import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterExpr, Sorting}
 import xyz.driver.pdsuicommon.domain._
-import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import xyz.driver.core.rest.auth.AuthProvider
-
 import scala.util.control._
 import scala.util._
 
@@ -72,7 +71,7 @@ trait Directives {
 
   def domainExceptionHandler(req: RequestId): ExceptionHandler = {
     def errorResponse(ex: Throwable) =
-      ErrorsResponse(Seq(ResponseError(None, ex.getMessage, ErrorCode.Unspecified)), req)
+      ErrorsResponse(Seq(ResponseError(None, ex.getMessage, 1)), req)
     ExceptionHandler {
       case ex: AuthenticationException => complete(StatusCodes.Unauthorized        -> errorResponse(ex))
       case ex: AuthorizationException  => complete(StatusCodes.Forbidden           -> errorResponse(ex))
@@ -84,9 +83,9 @@ trait Directives {
 
   def domainRejectionHandler(req: RequestId): RejectionHandler = {
     def wrapContent(message: String) = {
-      import play.api.libs.json._
-      val err  = ErrorsResponse(Seq(ResponseError(None, message, ErrorCode.Unspecified)), req)
-      val text = Json.stringify(implicitly[Writes[ErrorsResponse]].writes(err))
+      import ErrorsResponse._
+      val err: ErrorsResponse = ErrorsResponse(Seq(ResponseError(None, message, 1)), req)
+      val text                = errorsResponseJsonFormat.write(err).toString()
       HttpEntity(ContentTypes.`application/json`, text)
     }
     DriverApp.rejectionHandler.mapRejectionResponse {

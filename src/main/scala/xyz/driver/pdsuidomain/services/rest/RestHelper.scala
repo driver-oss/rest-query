@@ -17,6 +17,8 @@ import xyz.driver.pdsuicommon.db.{
 import xyz.driver.pdsuicommon.error._
 
 trait RestHelper {
+  import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+  import ErrorsResponse._
 
   implicit protected val materializer: Materializer
   implicit protected val exec: ExecutionContext
@@ -89,7 +91,6 @@ trait RestHelper {
           implicit unmarshaller: Unmarshaller[ResponseEntity, ApiReply]): Future[ApiReply] = {
 
     def extractErrorMessage(response: HttpResponse): Future[String] = {
-      import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
       Unmarshal(response.entity)
         .to[ErrorsResponse]
         .transform(

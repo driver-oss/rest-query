@@ -83,7 +83,7 @@ sealed trait SlickQueryBuilderParameters {
   }
 
   def toSql(countQuery: Boolean = false)(implicit profile: JdbcProfile): SQLActionBuilder = {
-    toSql(countQuery, QueryBuilderParameters.AllFields)
+    toSql(countQuery, SlickQueryBuilderParameters.AllFields)
   }
 
   def toSql(countQuery: Boolean, fields: Set[String])(implicit profile: JdbcProfile): SQLActionBuilder = {

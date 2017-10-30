@@ -24,7 +24,7 @@ class RestEligibilityVerificationService(transport: ServiceTransport, baseUri: U
 
   import DefaultJsonProtocol._
   import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
-  import xyz.driver.pdsuidomain.formats.json.sprayformats.eligibility._
+  import xyz.driver.pdsuidomain.formats.json.eligibility._
 
   override def getMatchedPatients()(
           implicit ctx: AuthorizedServiceRequestContext[AuthUserInfo]): ListT[Future, eligibility.MatchedPatient] = {

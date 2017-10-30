@@ -1,7 +1,6 @@
 package xyz.driver.pdsuidomain.services.rest
 
 import scala.concurrent.{ExecutionContext, Future}
-
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
@@ -9,25 +8,26 @@ import xyz.driver.core.rest.{Pagination => _, _}
 import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
+import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
-import xyz.driver.pdsuidomain.formats.json.ListResponse
-import xyz.driver.pdsuidomain.formats.json.document.ApiDocument
 import xyz.driver.pdsuidomain.services.DocumentService
 
 class RestDocumentService(transport: ServiceTransport, baseUri: Uri)(implicit protected val materializer: Materializer,
                                                                      protected val exec: ExecutionContext)
     extends DocumentService with RestHelper {
 
-  import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
+  import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+  import xyz.driver.pdsuidomain.formats.json.listresponse._
+  import xyz.driver.pdsuidomain.formats.json.document._
   import xyz.driver.pdsuidomain.services.DocumentService._
 
   def getById(id: LongId[Document])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/document/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiDocument](response)
+      reply    <- apiResponse[Document](response)
     } yield {
-      GetByIdReply.Entity(reply.toDomain)
+      GetByIdReply.Entity(reply)
     }
   }
 
@@ -42,32 +42,32 @@ class RestDocumentService(transport: ServiceTransport, baseUri: Uri)(implicit pr
                                           filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ListResponse[ApiDocument]](response)
+      reply    <- apiResponse[ListResponse[Document]](response)
     } yield {
-      GetListReply.EntityList(reply.items.map(_.toDomain), reply.meta.itemsCount, reply.meta.lastUpdate)
+      GetListReply.EntityList(reply.items, reply.meta.itemsCount, reply.meta.lastUpdate)
     }
   }
 
   def create(draftDocument: Document)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply] = {
     for {
-      entity <- Marshal(ApiDocument.fromDomain(draftDocument)).to[RequestEntity]
+      entity <- Marshal(draftDocument).to[RequestEntity]
       request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, "/v1/document")).withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiDocument](response)
+      reply    <- apiResponse[Document](response)
     } yield {
-      CreateReply.Created(reply.toDomain)
+      CreateReply.Created(reply)
     }
   }
 
   def update(orig: Document, draft: Document)(
           implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
     for {
-      entity <- Marshal(ApiDocument.fromDomain(draft)).to[RequestEntity]
+      entity <- Marshal(draft).to[RequestEntity]
       request = HttpRequest(HttpMethods.PATCH, endpointUri(baseUri, s"/v1/document/${orig.id}")).withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiDocument](response)
+      reply    <- apiResponse[Document](response)
     } yield {
-      UpdateReply.Updated(reply.toDomain)
+      UpdateReply.Updated(reply)
     }
   }
 
@@ -87,9 +87,9 @@ class RestDocumentService(transport: ServiceTransport, baseUri: Uri)(implicit pr
     val request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, s"/v1/document/$id/$action"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiDocument](response)
+      reply    <- apiResponse[Document](response)
     } yield {
-      UpdateReply.Updated(reply.toDomain)
+      UpdateReply.Updated(reply)
     }
   }
 

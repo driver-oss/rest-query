@@ -8,9 +8,8 @@ import xyz.driver.core.rest.{Pagination => _, _}
 import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
+import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
-import xyz.driver.pdsuidomain.formats.json.ListResponse
-import xyz.driver.pdsuidomain.formats.json.intervention.ApiIntervention
 import xyz.driver.pdsuidomain.services.InterventionService
 
 class RestInterventionService(transport: ServiceTransport, baseUri: Uri)(
@@ -18,7 +17,9 @@ class RestInterventionService(transport: ServiceTransport, baseUri: Uri)(
         protected val exec: ExecutionContext)
     extends InterventionService with RestHelper {
 
-  import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
+  import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+  import xyz.driver.pdsuidomain.formats.json.listresponse._
+  import xyz.driver.pdsuidomain.formats.json.intervention._
   import xyz.driver.pdsuidomain.services.InterventionService._
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
@@ -31,9 +32,9 @@ class RestInterventionService(transport: ServiceTransport, baseUri: Uri)(
                                           filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ListResponse[ApiIntervention]](response)
+      reply    <- apiResponse[ListResponse[InterventionWithArms]](response)
     } yield {
-      GetListReply.EntityList(reply.items.map(_.toDomain), reply.meta.itemsCount)
+      GetListReply.EntityList(reply.items, reply.meta.itemsCount)
     }
   }
 
@@ -41,9 +42,9 @@ class RestInterventionService(transport: ServiceTransport, baseUri: Uri)(
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/intervention/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiIntervention](response)
+      reply    <- apiResponse[InterventionWithArms](response)
     } yield {
-      GetByIdReply.Entity(reply.toDomain)
+      GetByIdReply.Entity(reply)
     }
   }
 
@@ -51,24 +52,24 @@ class RestInterventionService(transport: ServiceTransport, baseUri: Uri)(
           implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
     val id = origIntervention.intervention.id
     for {
-      entity <- Marshal(ApiIntervention.fromDomain(draftIntervention)).to[RequestEntity]
+      entity <- Marshal(draftIntervention).to[RequestEntity]
       request = HttpRequest(HttpMethods.PATCH, endpointUri(baseUri, s"/v1/intervention/$id")).withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiIntervention](response)
+      reply    <- apiResponse[InterventionWithArms](response)
     } yield {
-      UpdateReply.Updated(reply.toDomain)
+      UpdateReply.Updated(reply)
     }
   }
 
   def create(draftIntervention: InterventionWithArms)(
           implicit requestContext: AuthenticatedRequestContext): Future[CreateReply] = {
     for {
-      entity <- Marshal(ApiIntervention.fromDomain(draftIntervention)).to[RequestEntity]
+      entity <- Marshal(draftIntervention).to[RequestEntity]
       request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, "/v1/intervention")).withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiIntervention](response)
+      reply    <- apiResponse[InterventionWithArms](response)
     } yield {
-      CreateReply.Created(reply.toDomain)
+      CreateReply.Created(reply)
     }
   }
 

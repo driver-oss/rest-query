@@ -1,7 +1,6 @@
 package xyz.driver.pdsuidomain.services.rest
 
 import scala.concurrent.{ExecutionContext, Future}
-
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
@@ -9,8 +8,8 @@ import xyz.driver.core.rest.{Pagination => _, _}
 import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
+import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
-import xyz.driver.pdsuidomain.formats.json.ListResponse
 import xyz.driver.pdsuidomain.services.CriterionService
 
 class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
@@ -18,19 +17,20 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
         protected val exec: ExecutionContext)
     extends CriterionService with RestHelper {
 
-  import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
-  import xyz.driver.pdsuidomain.formats.json.criterion.ApiCriterion
+  import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+  import xyz.driver.pdsuidomain.formats.json.listresponse._
+  import xyz.driver.pdsuidomain.formats.json.criterion._
   import xyz.driver.pdsuidomain.services.CriterionService._
 
   def create(draftRichCriterion: RichCriterion)(
           implicit requestContext: AuthenticatedRequestContext): Future[CreateReply] = {
     for {
-      entity <- Marshal(ApiCriterion.fromDomain(draftRichCriterion)).to[RequestEntity]
+      entity <- Marshal(draftRichCriterion).to[RequestEntity]
       request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, "/v1/criterion")).withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiCriterion](response)
+      reply    <- apiResponse[RichCriterion](response)
     } yield {
-      CreateReply.Created(reply.toDomain)
+      CreateReply.Created(reply)
     }
   }
 
@@ -38,9 +38,9 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/criterion/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiCriterion](response)
+      reply    <- apiResponse[RichCriterion](response)
     } yield {
-      GetByIdReply.Entity(reply.toDomain)
+      GetByIdReply.Entity(reply)
     }
   }
 
@@ -54,9 +54,9 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
                                           filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ListResponse[ApiCriterion]](response)
+      reply    <- apiResponse[ListResponse[RichCriterion]](response)
     } yield {
-      GetListReply.EntityList(reply.items.map(_.toDomain), reply.meta.itemsCount, reply.meta.lastUpdate)
+      GetListReply.EntityList(reply.items, reply.meta.itemsCount, reply.meta.lastUpdate)
     }
   }
 
@@ -64,12 +64,12 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
           implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
     val id = origRichCriterion.criterion.id
     for {
-      entity <- Marshal(ApiCriterion.fromDomain(draftRichCriterion)).to[RequestEntity]
+      entity <- Marshal(draftRichCriterion).to[RequestEntity]
       request = HttpRequest(HttpMethods.PATCH, endpointUri(baseUri, s"/v1/criterion/$id")).withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiCriterion](response)
+      reply    <- apiResponse[RichCriterion](response)
     } yield {
-      UpdateReply.Updated(reply.toDomain)
+      UpdateReply.Updated(reply)
     }
   }
 

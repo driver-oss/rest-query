@@ -1,7 +1,6 @@
 package xyz.driver.pdsuidomain.services.rest
 
 import scala.concurrent.{ExecutionContext, Future}
-
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
@@ -9,16 +8,17 @@ import xyz.driver.core.rest.{Pagination => _, _}
 import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
+import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
-import xyz.driver.pdsuidomain.formats.json.ListResponse
-import xyz.driver.pdsuidomain.formats.json.arm.ApiArm
 import xyz.driver.pdsuidomain.services.ArmService
 
 class RestArmService(transport: ServiceTransport, baseUri: Uri)(implicit protected val materializer: Materializer,
                                                                 protected val exec: ExecutionContext)
     extends ArmService with RestHelper {
 
-  import xyz.driver.pdsuicommon.serialization.PlayJsonSupport._
+  import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+  import xyz.driver.pdsuidomain.formats.json.listresponse._
+  import xyz.driver.pdsuidomain.formats.json.arm._
   import xyz.driver.pdsuidomain.services.ArmService._
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
@@ -30,9 +30,9 @@ class RestArmService(transport: ServiceTransport, baseUri: Uri)(implicit protect
       endpointUri(baseUri, "/v1/arm", filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ListResponse[ApiArm]](response)
+      reply    <- apiResponse[ListResponse[Arm]](response)
     } yield {
-      GetListReply.EntityList(reply.items.map(_.toDomain), reply.meta.itemsCount)
+      GetListReply.EntityList(reply.items, reply.meta.itemsCount)
     }
   }
 
@@ -40,20 +40,20 @@ class RestArmService(transport: ServiceTransport, baseUri: Uri)(implicit protect
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/arm/$armId"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiArm](response)
+      reply    <- apiResponse[Arm](response)
     } yield {
-      GetByIdReply.Entity(reply.toDomain)
+      GetByIdReply.Entity(reply)
     }
   }
 
   def create(draftArm: Arm)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply] = {
     for {
-      entity <- Marshal(ApiArm.fromDomain(draftArm)).to[RequestEntity]
+      entity <- Marshal(draftArm).to[RequestEntity]
       request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, "/v1/arm")).withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiArm](response)
+      reply    <- apiResponse[Arm](response)
     } yield {
-      CreateReply.Created(reply.toDomain)
+      CreateReply.Created(reply)
     }
   }
 
@@ -62,9 +62,9 @@ class RestArmService(transport: ServiceTransport, baseUri: Uri)(implicit protect
     val request = HttpRequest(HttpMethods.PATCH, endpointUri(baseUri, s"/v1/arm/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[ApiArm](response)
+      reply    <- apiResponse[Arm](response)
     } yield {
-      UpdateReply.Updated(reply.toDomain)
+      UpdateReply.Updated(reply)
     }
   }
 

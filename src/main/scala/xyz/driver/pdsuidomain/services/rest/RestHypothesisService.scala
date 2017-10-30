@@ -1,18 +1,16 @@
 package xyz.driver.pdsuidomain.services.rest
 
-import scala.concurrent.{ExecutionContext, Future}
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.marshalling.Marshal
+
+import scala.concurrent.{ExecutionContext, Future}
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import xyz.driver.core.rest._
 import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.UuidId
-import xyz.driver.pdsuidomain.entities.Hypothesis
 import xyz.driver.pdsuidomain.ListResponse
-import xyz.driver.pdsuidomain.formats.json.sprayformats.listresponse._
-import xyz.driver.pdsuidomain.formats.json.sprayformats.hypothesis._
+import xyz.driver.pdsuidomain.entities.Hypothesis
 import xyz.driver.pdsuidomain.services.HypothesisService
 
 class RestHypothesisService(transport: ServiceTransport, baseUri: Uri)(
@@ -20,6 +18,9 @@ class RestHypothesisService(transport: ServiceTransport, baseUri: Uri)(
         protected val exec: ExecutionContext)
     extends HypothesisService with RestHelper {
 
+  import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+  import xyz.driver.pdsuidomain.formats.json.listresponse._
+  import xyz.driver.pdsuidomain.formats.json.hypothesis._
   import xyz.driver.pdsuidomain.services.HypothesisService._
 
   def getAll(sorting: Option[Sorting] = None)(
