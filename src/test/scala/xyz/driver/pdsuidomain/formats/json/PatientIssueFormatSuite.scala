@@ -2,12 +2,10 @@ package xyz.driver.pdsuidomain.formats.json
 
 import java.time.LocalDateTime
 
-import eu.timepit.refined.collection.NonEmpty
 import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuidomain.entities.PatientIssue
-import eu.timepit.refined.refineMV
 
 class PatientIssueFormatSuite extends FlatSpec with Matchers {
   import xyz.driver.pdsuidomain.formats.json.patientissue._
@@ -19,7 +17,7 @@ class PatientIssueFormatSuite extends FlatSpec with Matchers {
       userId = StringId("userId-001"),
       lastUpdate = LocalDateTime.parse("2017-08-10T18:00:00"),
       isDraft = false,
-      text = refineMV[NonEmpty]("message text"),
+      text = "message text",
       archiveRequired = false
     )
     val writtenJson = patientIssueWriter.write(patientIssue)
@@ -37,7 +35,7 @@ class PatientIssueFormatSuite extends FlatSpec with Matchers {
     val updatePatientIssueJson =
       """{"text":"new issue text","evidence":"issue evidence","archiveRequired":true}""".parseJson
     val expectedUpdatedPatientIssue = patientIssue.copy(
-      text = refineMV[NonEmpty]("new issue text"),
+      text = "new issue text",
       archiveRequired = true
     )
     val parsedUpdatePatientIssue = applyUpdateToPatientIssue(updatePatientIssueJson, patientIssue)

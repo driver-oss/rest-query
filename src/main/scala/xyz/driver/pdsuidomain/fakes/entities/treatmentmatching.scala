@@ -182,7 +182,7 @@ object treatmentmatching {
     patientId = nextUuidId[Patient],
     lastUpdate = nextLocalDateTime,
     isDraft = generators.nextBoolean(),
-    text = generators.nextNonEmptyString(),
+    text = generators.nextString(),
     archiveRequired = generators.nextBoolean()
   )
 
