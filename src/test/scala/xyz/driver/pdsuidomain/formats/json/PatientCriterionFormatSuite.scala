@@ -34,12 +34,14 @@ class PatientCriterionFormatSuite extends FlatSpec with Matchers {
       PatientCriterionArm(patientCriterionId = LongId(1), armId = LongId(32), armName = "arm 32")
     )
     val richPatientCriterion = RichPatientCriterion(orig, LongId(21), arms)
-    val writtenJson          = patientCriterionWriter.write(richPatientCriterion)
+    val writtenJson          = richPatientCriterionFormat.write(richPatientCriterion)
 
     writtenJson should be(
-      """{"id":1,"labelId":21,"nctId":"NCT00001","criterionId":101,"criterionText":"criterion text","criterionValue":"Yes",
-         "criterionIsDefining":false,"criterionIsCompound":false,"eligibilityStatus":"Yes","verifiedEligibilityStatus":null,
-         "isVisible":true,"isVerified":true,"lastUpdate":"2017-08-10T18:00Z","arms":["arm 31","arm 32"],"inclusion":true}""".parseJson)
+      """{"isVerified":true,"patientLabelId":1,"lastUpdate":"2017-08-10T18:00Z","trialId":0,
+         "armList":[{"patientCriterionId":1,"armId":31,"armName":"arm 31"},{"patientCriterionId":1,
+         "armId":32,"armName":"arm 32"}],"eligibilityStatus":"Yes","id":1,"nctId":"NCT00001",
+         "criterionId":101,"criterionValue":true,"criterionIsDefining":false,"labelId":21,
+         "isVisible":true,"criterionText":"criterion text","inclusion":true}""".parseJson)
 
     val updatePatientCriterionJson      = """{"verifiedEligibilityStatus":"No"}""".parseJson
     val expectedUpdatedPatientCriterion = orig.copy(verifiedEligibilityStatus = Some(LabelValue.No))

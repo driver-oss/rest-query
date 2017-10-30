@@ -195,7 +195,7 @@ object CustomSwaggerJsonFormats {
       classOf[Patient]                  -> patientFormat.write(nextPatient()),
       classOf[RichPatientLabel]         -> richPatientLabelFormat.write(nextRichPatientLabel()),
       classOf[PatientLabel]             -> patientLabelDefiningCriteriaWriter.write(nextPatientLabel()),
-      classOf[RichPatientCriterion]     -> patientCriterionWriter.write(nextRichPatientCriterion()),
+      classOf[RichPatientCriterion]     -> richPatientCriterionFormat.write(nextRichPatientCriterion()),
       classOf[DraftPatientCriterion]    -> draftPatientCriterionFormat.write(nextDraftPatientCriterion()),
       classOf[PatientLabelEvidenceView] -> patientLabelEvidenceWriter.write(nextPatientLabelEvidenceView()),
       classOf[RichPatientEligibleTrial] -> patientEligibleTrialWriter.write(nextRichPatientEligibleTrial()),
