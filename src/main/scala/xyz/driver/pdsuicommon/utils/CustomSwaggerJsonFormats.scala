@@ -193,7 +193,7 @@ object CustomSwaggerJsonFormats {
 
     val customTreatmentMatchingObjectsExamples = immutable.Map[Class[_], JsValue](
       classOf[Patient]                  -> patientFormat.write(nextPatient()),
-      classOf[RichPatientLabel]         -> richPatientLabelWriter.write(nextRichPatientLabel()),
+      classOf[RichPatientLabel]         -> richPatientLabelFormat.write(nextRichPatientLabel()),
       classOf[PatientLabel]             -> patientLabelDefiningCriteriaWriter.write(nextPatientLabel()),
       classOf[RichPatientCriterion]     -> patientCriterionWriter.write(nextRichPatientCriterion()),
       classOf[DraftPatientCriterion]    -> draftPatientCriterionFormat.write(nextDraftPatientCriterion()),
