@@ -23,11 +23,11 @@ class PatientLabelFormatSuite extends FlatSpec with Matchers {
       score = 1,
       isImplicitMatch = false
     )
-    val writtenJson = richPatientLabelWriter.write(RichPatientLabel(orig, isVerified = true))
+    val writtenJson = richPatientLabelFormat.write(RichPatientLabel(orig, isVerified = true))
 
     writtenJson should be(
-      """{"id":1,"labelId":20,"primaryValue":"Yes","verifiedPrimaryValue":null,"isVisible":true,"isVerified":true,
-        "score":1,"isImplicitMatch":false}""".parseJson)
+      """{"id":1,"labelId":20,"primaryValue":"Yes","isVisible":true,"isVerified":true,
+        "score":1,"isImplicitMatch":false, "patientId":"748b5884-3528-4cb9-904b-7a8151d6e343"}""".parseJson)
 
     val updatePatientLabelJson      = """{"verifiedPrimaryValue":"No"}""".parseJson
     val expectedUpdatedPatientLabel = orig.copy(verifiedPrimaryValue = Some(LabelValue.No))

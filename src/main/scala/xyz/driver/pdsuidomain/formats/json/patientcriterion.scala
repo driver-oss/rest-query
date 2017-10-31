@@ -1,8 +1,9 @@
 package xyz.driver.pdsuidomain.formats.json
 
 import spray.json._
-import xyz.driver.entities.labels.LabelValue
+import xyz.driver.entities.labels.{Label, LabelValue}
 import xyz.driver.formats.json.labels._
+import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.PatientCriterionService.{DraftPatientCriterion, RichPatientCriterion}
 
@@ -36,28 +37,28 @@ object patientcriterion {
     override def read(json: JsValue) = json.convertTo[List[JsValue]].map(_.convertTo[DraftPatientCriterion])
   }
 
-  implicit val patientCriterionWriter: RootJsonWriter[RichPatientCriterion] =
-    new RootJsonWriter[RichPatientCriterion] {
+  implicit val patientCriterionFormat: RootJsonFormat[PatientCriterion]       = jsonFormat14(PatientCriterion.apply)
+  implicit val patientCriterionArmFormat: RootJsonFormat[PatientCriterionArm] = jsonFormat3(PatientCriterionArm.apply)
+
+  implicit val richPatientCriterionFormat: RootJsonFormat[RichPatientCriterion] =
+    new RootJsonFormat[RichPatientCriterion] {
+      override def read(json: JsValue): RichPatientCriterion = {
+        val fields  = json.asJsObject.fields
+        val labelId = fields.getOrElse("labelId", deserializationError("field 'labelId' is missing"))
+        val arms    = fields.getOrElse("armList", deserializationError("field 'arms' is missing"))
+        RichPatientCriterion(
+          json.convertTo[PatientCriterion],
+          labelId.convertTo[LongId[Label]],
+          arms.convertTo[List[PatientCriterionArm]]
+        )
+      }
       override def write(obj: RichPatientCriterion): JsValue = {
         JsObject(
-          "id"            -> obj.patientCriterion.id.toJson,
-          "labelId"       -> obj.labelId.toJson,
-          "nctId"         -> obj.patientCriterion.nctId.toJson,
-          "criterionId"   -> obj.patientCriterion.criterionId.toJson,
-          "criterionText" -> obj.patientCriterion.criterionText.toJson,
-          "criterionValue" -> obj.patientCriterion.criterionValue.map {
-            case true  => "Yes"
-            case false => "No"
-          }.toJson,
-          "criterionIsDefining"       -> obj.patientCriterion.criterionIsDefining.toJson,
-          "criterionIsCompound"       -> obj.patientCriterion.criterionValue.isEmpty.toJson,
-          "arms"                      -> obj.armList.map(_.armName).toJson,
-          "eligibilityStatus"         -> obj.patientCriterion.eligibilityStatus.toJson,
-          "verifiedEligibilityStatus" -> obj.patientCriterion.verifiedEligibilityStatus.toJson,
-          "isVerified"                -> obj.patientCriterion.isVerified.toJson,
-          "isVisible"                 -> obj.patientCriterion.isVisible.toJson,
-          "lastUpdate"                -> obj.patientCriterion.lastUpdate.toJson,
-          "inclusion"                 -> obj.patientCriterion.inclusion.toJson
+          obj.patientCriterion.toJson.asJsObject.fields ++
+            Map(
+              "labelId" -> obj.labelId.toJson,
+              "armList" -> obj.armList.toJson
+            )
         )
       }
     }

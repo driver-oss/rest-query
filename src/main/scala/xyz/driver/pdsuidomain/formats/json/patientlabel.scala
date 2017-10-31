@@ -33,18 +33,17 @@ object patientlabel {
     case _ => deserializationError(s"Expected Json Object as PatientLabel, but got $json")
   }
 
-  implicit val richPatientLabelWriter: RootJsonWriter[RichPatientLabel] = new RootJsonWriter[RichPatientLabel] {
+  implicit val patientLabelFormat: RootJsonFormat[PatientLabel] = jsonFormat8(PatientLabel.apply)
+
+  implicit val richPatientLabelFormat: RootJsonFormat[RichPatientLabel] = new RootJsonFormat[RichPatientLabel] {
+    override def read(json: JsValue): RichPatientLabel = {
+      val isVerified =
+        json.asJsObject.fields.getOrElse("isVerified", deserializationError("isVerified field is missing"))
+      RichPatientLabel(json.convertTo[PatientLabel], isVerified.convertTo[Boolean])
+    }
     override def write(obj: RichPatientLabel): JsValue = {
-      JsObject(
-        "id"                   -> obj.patientLabel.id.toJson,
-        "labelId"              -> obj.patientLabel.labelId.toJson,
-        "primaryValue"         -> obj.patientLabel.primaryValue.toJson,
-        "verifiedPrimaryValue" -> obj.patientLabel.verifiedPrimaryValue.toJson,
-        "score"                -> obj.patientLabel.score.toJson,
-        "isImplicitMatch"      -> obj.patientLabel.isImplicitMatch.toJson,
-        "isVisible"            -> obj.patientLabel.isVisible.toJson,
-        "isVerified"           -> obj.isVerified.toJson
-      )
+      val labelFields = obj.patientLabel.toJson.asJsObject.fields
+      JsObject(labelFields ++ Map("isVerified" -> obj.isVerified.toJson))
     }
   }
 
