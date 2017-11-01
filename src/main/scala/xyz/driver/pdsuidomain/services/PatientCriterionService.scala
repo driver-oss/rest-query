@@ -15,13 +15,19 @@ import scala.concurrent.Future
 object PatientCriterionService {
 
   final case class DraftPatientCriterion(id: LongId[PatientCriterion],
-                                         eligibilityStatus: Option[LabelValue],
+                                         eligibilityStatus: Option[Option[LabelValue]],
                                          isVerified: Option[Boolean]) {
     def applyTo(orig: PatientCriterion) = {
       orig.copy(
-        eligibilityStatus = eligibilityStatus.orElse(orig.eligibilityStatus),
+        eligibilityStatus = eligibilityStatus.getOrElse(orig.eligibilityStatus),
         isVerified = isVerified.getOrElse(orig.isVerified)
       )
+    }
+  }
+
+  object DraftPatientCriterion {
+    implicit def toPhiString(x: DraftPatientCriterion): PhiString = {
+      phi"DraftPatientCriterion(id=${x.id}, eligibilityStatus=${Unsafe(x.eligibilityStatus)}, isVerified=${x.isVerified})"
     }
   }
 

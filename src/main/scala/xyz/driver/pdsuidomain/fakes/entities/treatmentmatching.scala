@@ -94,7 +94,9 @@ object treatmentmatching {
 
   def nextDraftPatientCriterion(): DraftPatientCriterion = DraftPatientCriterion(
     id = nextLongId[PatientCriterion],
-    eligibilityStatus = generators.nextOption(fakes.entities.labels.nextLabelValue()),
+    eligibilityStatus = generators.nextOption(
+      generators.nextOption(fakes.entities.labels.nextLabelValue())
+    ),
     isVerified = generators.nextOption(generators.nextBoolean())
   )
 
