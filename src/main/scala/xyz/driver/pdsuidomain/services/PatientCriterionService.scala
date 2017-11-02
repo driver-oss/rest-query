@@ -15,11 +15,11 @@ import scala.concurrent.Future
 object PatientCriterionService {
 
   final case class DraftPatientCriterion(id: LongId[PatientCriterion],
-                                         eligibilityStatus: Option[Option[LabelValue]],
+                                         eligibilityStatus: Option[LabelValue],
                                          isVerified: Option[Boolean]) {
     def applyTo(orig: PatientCriterion) = {
       orig.copy(
-        eligibilityStatus = eligibilityStatus.getOrElse(orig.eligibilityStatus),
+        eligibilityStatus = eligibilityStatus.orElse(orig.eligibilityStatus),
         isVerified = isVerified.getOrElse(orig.isVerified)
       )
     }

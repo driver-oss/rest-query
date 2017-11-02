@@ -51,7 +51,7 @@ class PatientCriterionFormatSuite extends FlatSpec with Matchers {
     val updateBulkPatientCriterionJson =
       """[{"id":1,"eligibilityStatus":"No"},{"id":2,"isVerified":false}]""".parseJson
     val expectedDraftPatientCriterionList = List(
-      DraftPatientCriterion(id = LongId(1), eligibilityStatus = Some(Some(LabelValue.No)), isVerified = None),
+      DraftPatientCriterion(id = LongId(1), eligibilityStatus = Some(LabelValue.No), isVerified = None),
       DraftPatientCriterion(id = LongId(2), eligibilityStatus = None, isVerified = Some(false))
     )
     val parsedDraftPatientCriterionList = draftPatientCriterionListReader.read(updateBulkPatientCriterionJson)
