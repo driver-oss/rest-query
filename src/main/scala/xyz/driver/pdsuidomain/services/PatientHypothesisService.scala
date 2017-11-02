@@ -23,17 +23,9 @@ object PatientHypothesisService {
     def userMessage: String = "Access denied"
   }
 
-  final case class RichPatientHypothesis(patientHypothesis: PatientHypothesis, isRequired: Boolean)
-
-  object RichPatientHypothesis {
-    implicit def toPhiString(x: RichPatientHypothesis): PhiString = {
-      phi"RichPatientHypothesis(patientHypothesis=${x.patientHypothesis}, isRequired=${x.isRequired})"
-    }
-  }
-
   sealed trait GetListReply
   object GetListReply {
-    final case class EntityList(xs: Seq[RichPatientHypothesis], totalFound: Int) extends GetListReply
+    final case class EntityList(xs: Seq[PatientHypothesis], totalFound: Int) extends GetListReply
 
     case object AuthorizationError
         extends GetListReply with DomainError.AuthorizationError with DefaultAccessDeniedError
@@ -46,7 +38,7 @@ object PatientHypothesisService {
 
   sealed trait GetByIdReply
   object GetByIdReply {
-    final case class Entity(x: RichPatientHypothesis) extends GetByIdReply
+    final case class Entity(x: PatientHypothesis) extends GetByIdReply
 
     type Error = GetByIdReply with DomainError
 

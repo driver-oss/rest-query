@@ -8,7 +8,6 @@ import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.PatientCriterionService.{DraftPatientCriterion, RichPatientCriterion}
 import xyz.driver.pdsuidomain.services.PatientEligibleTrialService.RichPatientEligibleTrial
-import xyz.driver.pdsuidomain.services.PatientHypothesisService.RichPatientHypothesis
 import xyz.driver.pdsuidomain.services.PatientLabelService.RichPatientLabel
 import eu.timepit.refined.{refineV, refineMV}
 
@@ -173,11 +172,6 @@ object treatmentmatching {
     }
   )
 
-  def nextRichPatientHypothesis(): RichPatientHypothesis = RichPatientHypothesis(
-    patientHypothesis = nextPatientHypothesis(),
-    isRequired = generators.nextBoolean()
-  )
-
   def nextPatientIssue(): PatientIssue = PatientIssue(
     id = nextLongId[PatientIssue],
     userId = nextStringId[User],
@@ -222,8 +216,8 @@ object treatmentmatching {
     nextListResponse(xs)
   }
 
-  def nextRichPatientHypothesisListResponse(): ListResponse[RichPatientHypothesis] = {
-    val xs: Seq[RichPatientHypothesis] = Seq.fill(3)(nextRichPatientHypothesis())
+  def nextPatientHypothesisListResponse(): ListResponse[PatientHypothesis] = {
+    val xs: Seq[PatientHypothesis] = Seq.fill(3)(nextPatientHypothesis())
     nextListResponse(xs)
   }
 

@@ -20,7 +20,6 @@ import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
 import xyz.driver.pdsuidomain.services.ExtractedDataService.RichExtractedData
 import xyz.driver.pdsuidomain.services.PatientCriterionService.{DraftPatientCriterion, RichPatientCriterion}
 import xyz.driver.pdsuidomain.services.PatientEligibleTrialService.RichPatientEligibleTrial
-import xyz.driver.pdsuidomain.services.PatientHypothesisService.RichPatientHypothesis
 import xyz.driver.pdsuidomain.services.PatientLabelService.RichPatientLabel
 
 import scala.collection.immutable
@@ -56,7 +55,7 @@ object CustomSwaggerJsonFormats {
   trait RichPatientLabelListResponse
   trait RichPatientCriterionListResponse
   trait RichPatientEligibleTrialListResponse
-  trait RichPatientHypothesisListResponse
+  trait PatientHypothesisListResponse
   trait PatientLabelEvidenceViewListResponse
 
   trait QueueUploadItemListResponse
@@ -200,7 +199,6 @@ object CustomSwaggerJsonFormats {
       classOf[PatientLabelEvidenceView] -> patientLabelEvidenceWriter.write(nextPatientLabelEvidenceView()),
       classOf[RichPatientEligibleTrial] -> patientEligibleTrialWriter.write(nextRichPatientEligibleTrial()),
       classOf[PatientHypothesis]        -> patientHypothesisWriter.write(nextPatientHypothesis()),
-      classOf[RichPatientHypothesis]    -> richPatientHypothesisWriter.write(nextRichPatientHypothesis()),
       classOf[PatientHistory]           -> patientHistoryFormat.write(nextPatientHistory()),
       classOf[PatientIssue]             -> patientIssueWriter.write(nextPatientIssue()),
       classOf[PatientListResponse]      -> listResponseWriter[Patient].write(nextPatientListResponse()),
@@ -213,8 +211,8 @@ object CustomSwaggerJsonFormats {
         nextPatientLabelEvidenceViewListResponse()),
       classOf[RichPatientEligibleTrialListResponse] -> listResponseWriter[RichPatientEligibleTrial].write(
         nextRichPatientEligibleTrialListResponse()),
-      classOf[RichPatientHypothesisListResponse] -> listResponseWriter[RichPatientHypothesis].write(
-        nextRichPatientHypothesisListResponse()),
+      classOf[PatientHypothesisListResponse] -> listResponseWriter[PatientHypothesis].write(
+        nextPatientHypothesisListResponse()),
       classOf[PatientIssueListResponse]   -> listResponseWriter[PatientIssue].write(nextPatientIssuesListResponse()),
       classOf[PatientHistoryListResponse] -> listResponseWriter[PatientHistory].write(nextPatientHistoryListResponse())
     ) ++ customCommonObjectsExamples
