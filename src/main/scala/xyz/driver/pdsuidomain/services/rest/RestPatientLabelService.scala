@@ -31,7 +31,7 @@ class RestPatientLabelService(transport: ServiceTransport, baseUri: Uri)(
           implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] = {
     val request = HttpRequest(HttpMethods.GET,
                               endpointUri(baseUri,
-                                          s"/v1/patient/$patientId/labels",
+                                          s"/v1/patient/$patientId/label",
                                           filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
