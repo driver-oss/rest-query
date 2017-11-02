@@ -6,7 +6,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import xyz.driver.core.rest._
-import xyz.driver.pdsuicommon.auth._
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.UuidId
 import xyz.driver.pdsuidomain.ListResponse
@@ -24,7 +24,7 @@ class RestHypothesisService(transport: ServiceTransport, baseUri: Uri)(
   import xyz.driver.pdsuidomain.services.HypothesisService._
 
   def getAll(sorting: Option[Sorting] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, "/v1/hypothesis", sortingQuery(sorting)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
@@ -34,7 +34,8 @@ class RestHypothesisService(transport: ServiceTransport, baseUri: Uri)(
     }
   }
 
-  def create(draftHypothesis: Hypothesis)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply] = {
+  def create(draftHypothesis: Hypothesis)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[CreateReply] = {
     for {
       entity <- Marshal(draftHypothesis).to[RequestEntity]
       request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, "/v1/hypothesis")).withEntity(entity)
@@ -45,7 +46,8 @@ class RestHypothesisService(transport: ServiceTransport, baseUri: Uri)(
     }
   }
 
-  def delete(id: UuidId[Hypothesis])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply] = {
+  def delete(id: UuidId[Hypothesis])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[DeleteReply] = {
     val request = HttpRequest(HttpMethods.DELETE, endpointUri(baseUri, s"/v1/hypothesis/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)

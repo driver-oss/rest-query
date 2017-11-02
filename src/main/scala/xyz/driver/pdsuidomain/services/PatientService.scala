@@ -2,7 +2,8 @@ package xyz.driver.pdsuidomain.services
 
 import java.time.LocalDateTime
 
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.error.DomainError
@@ -41,7 +42,8 @@ object PatientService {
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    final case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
+    final case class CommonError(userMessage: String)(
+            implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo])
         extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
@@ -74,22 +76,29 @@ trait PatientService {
 
   import PatientService._
 
-  def getById(id: UuidId[Patient])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(id: UuidId[Patient])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply]
 
-  def unassign(origPatient: Patient)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def unassign(origPatient: Patient)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def start(origPatient: Patient)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def start(origPatient: Patient)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def submit(origPatient: Patient)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def submit(origPatient: Patient)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def restart(origPatient: Patient)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def restart(origPatient: Patient)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def flag(origPatient: Patient)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def flag(origPatient: Patient)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def resolve(origPatient: Patient)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def resolve(origPatient: Patient)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 }

@@ -1,6 +1,7 @@
 package xyz.driver.pdsuidomain.services
 
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db.Sorting
 import xyz.driver.pdsuicommon.domain.UuidId
 import xyz.driver.pdsuicommon.error.DomainError
@@ -58,9 +59,11 @@ trait HypothesisService {
   import HypothesisService._
 
   def getAll(sorting: Option[Sorting] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply]
 
-  def create(draftHypothesis: Hypothesis)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
+  def create(draftHypothesis: Hypothesis)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[CreateReply]
 
-  def delete(id: UuidId[Hypothesis])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
+  def delete(id: UuidId[Hypothesis])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[DeleteReply]
 }

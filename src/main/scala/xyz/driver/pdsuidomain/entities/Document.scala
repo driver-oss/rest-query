@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.core.{JsonGenerator, JsonParser}
 import com.fasterxml.jackson.databind._
 import com.fasterxml.jackson.databind.annotation.{JsonDeserialize, JsonSerialize}
+import xyz.driver.core.auth.User
 import xyz.driver.pdsuicommon.compat.Implicits._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.logging._

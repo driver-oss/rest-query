@@ -1,21 +1,31 @@
 package xyz.driver.pdsuicommon.acl
 
+import xyz.driver.core.auth.Role
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
+import xyz.driver.entities.auth._
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.logging._
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
 
 /**
   * @see https://driverinc.atlassian.net/wiki/display/RA/User+permissions#UserPermissions-AccessControlList
   */
 object ACL extends PhiLogging {
 
-  import xyz.driver.pdsuicommon.domain.User.Role
-  import Role._
-
   type AclCheck = Role => Boolean
 
   val Forbid: AclCheck = _ => false
 
   val Allow: AclCheck = _ => true
+
+  val RepRoles: Set[Role] = Set[Role](RecordAdmin, RecordCleaner, RecordOrganizer, DocumentExtractor)
+
+  val TcRoles: Set[Role] = Set[Role](TrialSummarizer, CriteriaCurator, TrialAdmin)
+
+  val TreatmentMatchingRoles: Set[Role] = Set[Role](RoutesCurator, EligibilityVerifier, TreatmentMatchingAdmin)
+
+  val PepRoles: Set[Role] = Set[Role](ResearchOncologist)
+
+  val All: Set[Role] = RepRoles ++ TcRoles ++ TreatmentMatchingRoles ++ PepRoles + AdministratorRole
 
   // Common
 
@@ -28,9 +38,9 @@ object ACL extends PhiLogging {
   object Queue
       extends BaseACL(
         label = "queue",
-        create = Set(SystemUser),
-        read = Set(SystemUser),
-        update = Set(SystemUser)
+        create = Set(AdministratorRole),
+        read = Set(AdministratorRole),
+        update = Set(AdministratorRole)
       )
 
   // REP
@@ -38,7 +48,7 @@ object ACL extends PhiLogging {
   object MedicalRecord
       extends BaseACL(
         label = "medical record",
-        read = RepRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist + SystemUser,
+        read = RepRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist + AdministratorRole,
         update = RepRoles - DocumentExtractor
       )
 
@@ -116,7 +126,7 @@ object ACL extends PhiLogging {
   object Trial
       extends BaseACL(
         label = "trial",
-        read = TcRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist + SystemUser,
+        read = TcRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist + AdministratorRole,
         update = TcRoles
       )
 
@@ -187,7 +197,7 @@ object ACL extends PhiLogging {
   object Patient
       extends BaseACL(
         label = "patient",
-        read = TreatmentMatchingRoles + ResearchOncologist + SystemUser,
+        read = TreatmentMatchingRoles + ResearchOncologist + AdministratorRole,
         update = TreatmentMatchingRoles
       )
 
@@ -248,20 +258,20 @@ object ACL extends PhiLogging {
                          update: AclCheck = Forbid,
                          delete: AclCheck = Forbid) {
 
-    def isCreateAllow()(implicit requestContext: AuthenticatedRequestContext): Boolean = {
-      check("create", create)(requestContext.executor.roles)
+    def isCreateAllow()(implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Boolean = {
+      check("create", create)(requestContext.authenticatedUser.roles)
     }
 
-    def isReadAllow()(implicit requestContext: AuthenticatedRequestContext): Boolean = {
-      check("read", read)(requestContext.executor.roles)
+    def isReadAllow()(implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Boolean = {
+      check("read", read)(requestContext.authenticatedUser.roles)
     }
 
-    def isUpdateAllow()(implicit requestContext: AuthenticatedRequestContext): Boolean = {
-      check("update", update)(requestContext.executor.roles)
+    def isUpdateAllow()(implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Boolean = {
+      check("update", update)(requestContext.authenticatedUser.roles)
     }
 
-    def isDeleteAllow()(implicit requestContext: AuthenticatedRequestContext): Boolean = {
-      check("delete", delete)(requestContext.executor.roles)
+    def isDeleteAllow()(implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Boolean = {
+      check("delete", delete)(requestContext.authenticatedUser.roles)
     }
 
     private def check(action: String, isAllowed: AclCheck)(executorRoles: Set[Role]): Boolean = {

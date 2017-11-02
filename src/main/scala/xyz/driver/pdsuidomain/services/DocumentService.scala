@@ -2,7 +2,8 @@ package xyz.driver.pdsuidomain.services
 
 import java.time.LocalDateTime
 
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.error.DomainError
@@ -32,7 +33,8 @@ object DocumentService {
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    final case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
+    final case class CommonError(userMessage: String)(
+            implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo])
         extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
@@ -106,31 +108,40 @@ trait DocumentService {
 
   import DocumentService._
 
-  def getById(id: LongId[Document])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(id: LongId[Document])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply]
 
-  def create(draftDocument: Document)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
+  def create(draftDocument: Document)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[CreateReply]
 
   def update(orig: Document, draft: Document)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def delete(id: LongId[Document])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
+  def delete(id: LongId[Document])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[DeleteReply]
 
-  def start(orig: Document)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def start(orig: Document)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def submit(orig: Document)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def submit(orig: Document)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def restart(orig: Document)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def restart(orig: Document)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def flag(orig: Document)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def flag(orig: Document)(implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def resolve(orig: Document)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def resolve(orig: Document)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def unassign(orig: Document)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def unassign(orig: Document)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def archive(orig: Document)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def archive(orig: Document)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 }

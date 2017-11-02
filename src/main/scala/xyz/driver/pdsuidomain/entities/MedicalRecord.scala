@@ -5,6 +5,9 @@ import java.time.LocalDateTime
 
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type
 import com.fasterxml.jackson.annotation.{JsonProperty, JsonSubTypes, JsonTypeInfo}
+import xyz.driver.core.auth.User
+import xyz.driver.entities.assays.PatientCase
+import xyz.driver.entities.clinic.ClinicalRecord
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
@@ -151,9 +154,9 @@ final case class MedicalRecord(id: LongId[MedicalRecord],
                                previousAssignee: Option[StringId[User]],
                                lastActiveUserId: Option[StringId[User]],
                                patientId: UuidId[Patient],
-                               requestId: RecordRequestId,
+                               requestId: xyz.driver.core.Id[ClinicalRecord],
                                disease: String,
-                               caseId: Option[CaseId],
+                               caseId: Option[xyz.driver.core.Id[PatientCase]],
                                physician: Option[String],
                                meta: Option[TextJson[List[Meta]]],
                                lastUpdate: LocalDateTime,

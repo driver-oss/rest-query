@@ -2,10 +2,13 @@ package xyz.driver.pdsuidomain.fakes.entities
 
 import java.time.LocalDate
 
+import xyz.driver.core.auth.User
 import xyz.driver.core.generators
 import xyz.driver.core.generators._
+import xyz.driver.entities.assays.PatientCase
+import xyz.driver.entities.clinic.ClinicalRecord
 import xyz.driver.entities.labels.{Label, LabelCategory, LabelValue}
-import xyz.driver.pdsuicommon.domain.{LongId, TextJson, User}
+import xyz.driver.pdsuicommon.domain.{LongId, TextJson}
 import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities.ExtractedData.Meta
 import xyz.driver.pdsuidomain.entities._
@@ -101,19 +104,17 @@ object recordprocessing {
 
   def nextMedicalRecordMeta(): MedicalRecord.Meta = generators.oneOf(medicalRecordMeta)()
 
-  def nextRecordRequestId(): RecordRequestId = RecordRequestId(generators.nextUuid())
-
   def nextMedicalRecord(): MedicalRecord = MedicalRecord(
     id = nextLongId[MedicalRecord],
     status = nextMedicalRecordStatus(),
     previousStatus = nextOption(generators.oneOf[MedicalRecord.Status](MedicalRecord.Status.AllPrevious)),
-    assignee = nextOption(nextStringId),
-    previousAssignee = nextOption(nextStringId),
-    lastActiveUserId = nextOption(nextStringId),
-    patientId = nextUuidId,
-    requestId = nextRecordRequestId(),
+    assignee = nextOption(nextStringId[User]),
+    previousAssignee = nextOption(nextStringId[User]),
+    lastActiveUserId = nextOption(nextStringId[User]),
+    patientId = nextUuidId[Patient],
+    requestId = generators.nextId[ClinicalRecord](),
     disease = generators.nextString(),
-    caseId = nextOption(CaseId(generators.nextString())),
+    caseId = nextOption(generators.nextId[PatientCase]()),
     physician = nextOption(generators.nextString()),
     meta = nextOption(nextMedicalRecordMetaJson()),
     lastUpdate = nextLocalDateTime,

@@ -2,7 +2,8 @@ package xyz.driver.pdsuidomain.services
 
 import java.time.LocalDateTime
 
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterExpr, Sorting}
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.error.DomainError
@@ -39,6 +40,6 @@ trait MedicalRecordHistoryService {
                         filter: SearchFilterExpr = SearchFilterExpr.Empty,
                         sorting: Option[Sorting] = None,
                         pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply]
 
 }

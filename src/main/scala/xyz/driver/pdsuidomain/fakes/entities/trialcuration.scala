@@ -1,8 +1,9 @@
 package xyz.driver.pdsuidomain.fakes.entities
 
+import xyz.driver.core.auth.User
 import xyz.driver.core.generators._
 import xyz.driver.entities.labels.{Label, LabelCategory}
-import xyz.driver.pdsuicommon.domain.{LongId, User}
+import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion

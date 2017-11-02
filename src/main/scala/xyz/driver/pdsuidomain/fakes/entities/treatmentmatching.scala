@@ -3,13 +3,14 @@ package xyz.driver.pdsuidomain.fakes.entities
 import eu.timepit.refined.numeric.NonNegative
 import xyz.driver.entities.labels.Label
 import xyz.driver.fakes
-import xyz.driver.pdsuicommon.domain.{LongId, StringId, User}
+import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.PatientCriterionService.{DraftPatientCriterion, RichPatientCriterion}
 import xyz.driver.pdsuidomain.services.PatientEligibleTrialService.RichPatientEligibleTrial
 import xyz.driver.pdsuidomain.services.PatientLabelService.RichPatientLabel
-import eu.timepit.refined.{refineV, refineMV}
+import eu.timepit.refined.{refineMV, refineV}
+import xyz.driver.core.auth.User
 
 object treatmentmatching {
   import common._
@@ -35,8 +36,6 @@ object treatmentmatching {
       }
   }
 
-  def nextPatientOrderId: PatientOrderId = PatientOrderId(generators.nextUuid())
-
   def nextPatientAction: PatientHistory.Action =
     generators.oneOf[PatientHistory.Action](PatientHistory.Action.All)
 
@@ -54,7 +53,7 @@ object treatmentmatching {
     lastActiveUserId = generators.nextOption(nextStringId[User]),
     isUpdateRequired = generators.nextBoolean(),
     disease = nextCancerType,
-    orderId = nextPatientOrderId,
+    orderId = generators.nextId(),
     lastUpdate = nextLocalDateTime
   )
 

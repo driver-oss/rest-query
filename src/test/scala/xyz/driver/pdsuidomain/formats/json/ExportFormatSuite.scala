@@ -1,13 +1,14 @@
 package xyz.driver.pdsuidomain.formats.json
 
 import java.time.{LocalDate, LocalDateTime}
-import java.util.UUID
 
 import org.scalatest.{FlatSpec, Matchers}
 import spray.json._
+import xyz.driver.core.Id
+import xyz.driver.entities.clinic.ClinicalRecord
 import xyz.driver.entities.labels.LabelValue
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
-import xyz.driver.pdsuidomain.entities.{DocumentType, ProviderType, RecordRequestId}
+import xyz.driver.pdsuidomain.entities.{DocumentType, ProviderType}
 
 class ExportFormatSuite extends FlatSpec with Matchers {
   import xyz.driver.pdsuidomain.formats.json.export._
@@ -16,7 +17,7 @@ class ExportFormatSuite extends FlatSpec with Matchers {
     import xyz.driver.pdsuidomain.entities.export.patient._
     val document = ExportPatientLabelEvidenceDocument(
       documentId = LongId(101),
-      requestId = RecordRequestId(UUID.fromString("7b54a75d-4197-4b27-9045-b9b6cb131be9")),
+      requestId = Id[ClinicalRecord]("7b54a75d-4197-4b27-9045-b9b6cb131be9"),
       documentType = DocumentType.OutpatientPhysicianNote,
       providerType = ProviderType.Surgery,
       date = LocalDate.parse("2017-08-10")

@@ -1,6 +1,7 @@
 package xyz.driver.pdsuidomain.services
 
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.error.DomainError
@@ -31,7 +32,8 @@ object ArmService {
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    final case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
+    final case class CommonError(userMessage: String)(
+            implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo])
         extends GetByIdReply with DomainError
   }
 
@@ -112,13 +114,17 @@ trait ArmService {
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply]
 
-  def getById(armId: LongId[Arm])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(armId: LongId[Arm])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply]
 
-  def create(draftArm: Arm)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
+  def create(draftArm: Arm)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[CreateReply]
 
-  def update(origArm: Arm, draftArm: Arm)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def update(origArm: Arm, draftArm: Arm)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def delete(id: LongId[Arm])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
+  def delete(id: LongId[Arm])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[DeleteReply]
 }

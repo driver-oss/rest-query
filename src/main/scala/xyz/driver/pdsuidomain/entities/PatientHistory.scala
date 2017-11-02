@@ -2,7 +2,8 @@ package xyz.driver.pdsuidomain.entities
 
 import java.time.{LocalDateTime, ZoneId}
 
-import xyz.driver.pdsuicommon.domain.{LongId, StringId, User, UuidId}
+import xyz.driver.core.auth.User
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
 import xyz.driver.pdsuidomain.entities.PatientHistory.{Action, State}

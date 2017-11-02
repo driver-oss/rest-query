@@ -4,8 +4,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import akka.http.scaladsl.model.{HttpResponse, ResponseEntity, StatusCodes, Uri}
 import akka.http.scaladsl.unmarshalling.{Unmarshal, Unmarshaller}
 import akka.stream.Materializer
-import xyz.driver.core.rest.{ContextHeaders, ServiceRequestContext}
-import xyz.driver.pdsuicommon.auth.{AnonymousRequestContext, AuthenticatedRequestContext}
 import xyz.driver.pdsuicommon.db.{
   Pagination,
   SearchFilterBinaryOperation,
@@ -108,22 +106,9 @@ trait RestHelper {
           case StatusCodes.Forbidden    => new AuthorizationException(message)
           case StatusCodes.NotFound     => new NotFoundException(message)
           case other =>
-            new DomainException(s"Unhandled domain error for HTTP status ${other.value}. ${message}")
+            new DomainException(s"Unhandled domain error for HTTP status ${other.value}. $message")
         })
       }
     }
-  }
-
-  implicit def toServiceRequestContext(requestContext: AnonymousRequestContext): ServiceRequestContext = {
-    val auth: Map[String, String] = requestContext match {
-      case ctx: AuthenticatedRequestContext =>
-        Map(
-          ContextHeaders.AuthenticationTokenHeader -> ctx.authToken,
-          ContextHeaders.TrackingIdHeader          -> ctx.requestId.value
-        )
-      case _ =>
-        Map()
-    }
-    new ServiceRequestContext(contextHeaders = auth, trackingId = requestContext.requestId.value)
   }
 }

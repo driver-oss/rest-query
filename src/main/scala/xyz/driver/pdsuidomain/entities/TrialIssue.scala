@@ -2,7 +2,8 @@ package xyz.driver.pdsuidomain.entities
 
 import java.time.LocalDateTime
 
-import xyz.driver.pdsuicommon.domain.{LongId, StringId, User}
+import xyz.driver.core.auth.User
+import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuicommon.logging._
 
 final case class TrialIssue(id: LongId[TrialIssue],

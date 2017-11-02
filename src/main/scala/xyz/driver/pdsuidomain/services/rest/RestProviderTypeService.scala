@@ -4,7 +4,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import xyz.driver.core.rest.{Pagination => _, _}
-import xyz.driver.pdsuicommon.auth._
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities.ProviderType
@@ -21,7 +21,7 @@ class RestProviderTypeService(transport: ServiceTransport, baseUri: Uri)(
   import xyz.driver.pdsuidomain.services.ProviderTypeService._
 
   def getAll(sorting: Option[Sorting] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, "/v1/provider-type", sortingQuery(sorting)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)

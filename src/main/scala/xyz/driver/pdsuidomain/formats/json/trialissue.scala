@@ -3,7 +3,8 @@ package xyz.driver.pdsuidomain.formats.json
 import java.time.LocalDateTime
 
 import spray.json._
-import xyz.driver.pdsuicommon.domain.{LongId, StringId, User}
+import xyz.driver.core.auth.User
+import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuidomain.entities._
 
 object trialissue {

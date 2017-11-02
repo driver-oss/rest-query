@@ -1,11 +1,10 @@
 package xyz.driver.pdsuidomain.services.rest
 
 import scala.concurrent.{ExecutionContext, Future}
-
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import xyz.driver.core.rest.{Pagination => _, _}
-import xyz.driver.pdsuicommon.auth._
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.ListResponse
@@ -22,7 +21,8 @@ class RestPatientService(transport: ServiceTransport, baseUri: Uri)(implicit pro
 
   import xyz.driver.pdsuidomain.services.PatientService._
 
-  def getById(id: UuidId[Patient])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply] = {
+  def getById(id: UuidId[Patient])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/patient/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
@@ -35,7 +35,7 @@ class RestPatientService(transport: ServiceTransport, baseUri: Uri)(implicit pro
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply] = {
     val request = HttpRequest(
       HttpMethods.GET,
       endpointUri(baseUri, "/v1/patient", filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
@@ -48,7 +48,7 @@ class RestPatientService(transport: ServiceTransport, baseUri: Uri)(implicit pro
   }
 
   private def editAction(orig: Patient, action: String)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] = {
     val id      = orig.id.toString
     val request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, s"/v1/patient/$id/$action"))
     for {
@@ -59,16 +59,22 @@ class RestPatientService(transport: ServiceTransport, baseUri: Uri)(implicit pro
     }
   }
 
-  def unassign(origPatient: Patient)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def unassign(origPatient: Patient)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     editAction(origPatient, "unassign")
-  def start(origPatient: Patient)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def start(origPatient: Patient)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     editAction(origPatient, "start")
-  def submit(origPatient: Patient)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def submit(origPatient: Patient)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     editAction(origPatient, "submit")
-  def restart(origPatient: Patient)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def restart(origPatient: Patient)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     editAction(origPatient, "restart")
-  def flag(origPatient: Patient)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def flag(origPatient: Patient)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     editAction(origPatient, "flag")
-  def resolve(origPatient: Patient)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def resolve(origPatient: Patient)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     editAction(origPatient, "resolve")
 }

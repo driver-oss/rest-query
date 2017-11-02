@@ -2,9 +2,8 @@ package xyz.driver.pdsuicommon.error
 
 import spray.json._
 import ErrorsResponse.ResponseError
-import xyz.driver.pdsuicommon.auth.RequestId
 
-final case class ErrorsResponse(errors: Seq[ResponseError], requestId: RequestId)
+final case class ErrorsResponse(errors: Seq[ResponseError], requestId: String)
 
 object ErrorsResponse {
   import DefaultJsonProtocol._
@@ -28,11 +27,11 @@ object ErrorsResponse {
     override def write(obj: ErrorsResponse): JsValue = {
       JsObject(
         "errors"    -> obj.errors.map(_.toJson).toJson,
-        "requestId" -> obj.requestId.value.toJson
+        "requestId" -> obj.requestId.toJson
       )
     }
 
-    override def read(json: JsValue) = json match {
+    override def read(json: JsValue): ErrorsResponse = json match {
       case JsObject(fields) =>
         val errors = fields
           .get("errors")
@@ -41,7 +40,7 @@ object ErrorsResponse {
 
         val requestId = fields
           .get("requestId")
-          .map(id => RequestId(id.convertTo[String]))
+          .map(id => id.convertTo[String])
           .getOrElse(deserializationError(s"ErrorsResponse json object does not contain `requestId` field: $json"))
 
         ErrorsResponse(errors, requestId)

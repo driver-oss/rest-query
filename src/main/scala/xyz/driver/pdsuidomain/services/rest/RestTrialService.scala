@@ -8,7 +8,6 @@ import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import xyz.driver.core.rest.{Pagination => _, _}
-import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.entities._
@@ -16,6 +15,7 @@ import xyz.driver.pdsuidomain.entities.export.trial.ExportTrialWithLabels
 import xyz.driver.pdsuidomain.services.TrialService
 import spray.json.DefaultJsonProtocol._
 import xyz.driver.entities.patient.CancerType
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.formats.json.export._
 
@@ -28,7 +28,8 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
   import xyz.driver.pdsuidomain.formats.json.trial._
   import xyz.driver.pdsuidomain.services.TrialService._
 
-  def getById(id: StringId[Trial])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply] = {
+  def getById(id: StringId[Trial])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/trial/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
@@ -39,7 +40,7 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
   }
 
   def getTrialWithLabels(trialId: StringId[Trial], cancerType: CancerType)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetTrialWithLabelsReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetTrialWithLabelsReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/export/trial/$cancerType/$trialId"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
@@ -50,7 +51,7 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
   }
 
   def getTrialsWithLabels(cancerType: CancerType)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetTrialsWithLabelsReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetTrialsWithLabelsReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/export/trial/$cancerType"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
@@ -61,7 +62,8 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
   }
 
   def getPdfSource(trialId: StringId[Trial])(
-          implicit requestContext: AuthenticatedRequestContext): Future[Source[ByteString, NotUsed]] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]
+  ): Future[Source[ByteString, NotUsed]] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/trial/$trialId/source"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
@@ -74,7 +76,7 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply] = {
     val request = HttpRequest(
       HttpMethods.GET,
       endpointUri(baseUri, "/v1/trial", filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
@@ -87,7 +89,7 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
   }
 
   def update(origTrial: Trial, draftTrial: Trial)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] = {
     val id = origTrial.id.id
     for {
       entity <- Marshal(draftTrial).to[RequestEntity]
@@ -100,7 +102,7 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
   }
 
   private def singleAction(origTrial: Trial, action: String)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] = {
     val id      = origTrial.id.id
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/trial/$id/$action"))
     for {
@@ -111,18 +113,25 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
     }
   }
 
-  def start(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def start(origTrial: Trial)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     singleAction(origTrial, "start")
-  def submit(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def submit(origTrial: Trial)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     singleAction(origTrial, "submit")
-  def restart(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def restart(origTrial: Trial)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     singleAction(origTrial, "restart")
-  def flag(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def flag(origTrial: Trial)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     singleAction(origTrial, "flag")
-  def resolve(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def resolve(origTrial: Trial)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     singleAction(origTrial, "resolve")
-  def archive(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def archive(origTrial: Trial)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     singleAction(origTrial, "archive")
-  def unassign(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def unassign(origTrial: Trial)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     singleAction(origTrial, "unassign")
 }

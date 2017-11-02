@@ -5,7 +5,7 @@ import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import xyz.driver.core.rest.{Pagination => _, _}
 import xyz.driver.entities.labels.Label
-import xyz.driver.pdsuicommon.auth._
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.ListResponse
@@ -28,7 +28,7 @@ class RestPatientLabelService(transport: ServiceTransport, baseUri: Uri)(
              filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply] = {
     val request = HttpRequest(HttpMethods.GET,
                               endpointUri(baseUri,
                                           s"/v1/patient/$patientId/label",
@@ -44,7 +44,8 @@ class RestPatientLabelService(transport: ServiceTransport, baseUri: Uri)(
   def getDefiningCriteriaList(patientId: UuidId[Patient],
                               hypothesisId: UuidId[Hypothesis],
                               pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetDefiningCriteriaListReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]
+  ): Future[GetDefiningCriteriaListReply] = {
     val request = HttpRequest(HttpMethods.GET,
                               endpointUri(baseUri, s"/patient/$patientId/hypothesis", paginationQuery(pagination)))
     for {
@@ -56,7 +57,7 @@ class RestPatientLabelService(transport: ServiceTransport, baseUri: Uri)(
   }
 
   def getByLabelIdOfPatient(patientId: UuidId[Patient], labelId: LongId[Label])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetByLabelIdReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByLabelIdReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/patient/$patientId/label/$labelId"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
@@ -67,7 +68,7 @@ class RestPatientLabelService(transport: ServiceTransport, baseUri: Uri)(
   }
 
   def update(origPatientLabel: PatientLabel, draftPatientLabel: PatientLabel)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] = {
     for {
       entity <- Marshal(draftPatientLabel).to[RequestEntity]
       request = HttpRequest(

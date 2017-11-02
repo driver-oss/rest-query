@@ -4,9 +4,6 @@ import akka.http.scaladsl.server._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.model._
 import xyz.driver.core.app.DriverApp
-import xyz.driver.core.rest.ContextHeaders
-import xyz.driver.entities.users.AuthUserInfo
-import xyz.driver.pdsuicommon.auth._
 import xyz.driver.pdsuicommon.error._
 import xyz.driver.pdsuicommon.error.DomainError._
 import xyz.driver.pdsuicommon.error.ErrorsResponse.ResponseError
@@ -14,7 +11,9 @@ import xyz.driver.pdsuicommon.parsers._
 import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterExpr, Sorting}
 import xyz.driver.pdsuicommon.domain._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
-import xyz.driver.core.rest.auth.AuthProvider
+import xyz.driver.core.generators
+import xyz.driver.core.rest.ContextHeaders
+
 import scala.util.control._
 import scala.util._
 
@@ -69,7 +68,7 @@ trait Directives {
     case other                    => other
   }
 
-  def domainExceptionHandler(req: RequestId): ExceptionHandler = {
+  def domainExceptionHandler(req: String): ExceptionHandler = {
     def errorResponse(ex: Throwable) =
       ErrorsResponse(Seq(ResponseError(None, ex.getMessage, 1)), req)
     ExceptionHandler {
@@ -81,7 +80,7 @@ trait Directives {
     }
   }
 
-  def domainRejectionHandler(req: RequestId): RejectionHandler = {
+  def domainRejectionHandler(req: String): RejectionHandler = {
     def wrapContent(message: String) = {
       import ErrorsResponse._
       val err: ErrorsResponse = ErrorsResponse(Seq(ResponseError(None, message, 1)), req)
@@ -95,25 +94,13 @@ trait Directives {
     }
   }
 
-  val tracked: Directive1[RequestId] = optionalHeaderValueByName(ContextHeaders.TrackingIdHeader) flatMap {
-    case Some(id) => provide(RequestId(id))
-    case None     => provide(RequestId())
+  val tracked: Directive1[String] = optionalHeaderValueByName(ContextHeaders.TrackingIdHeader) flatMap {
+    case Some(id) => provide(id)
+    case None     => provide(generators.nextUuid().toString)
   }
 
   val domainResponse: Directive0 = tracked.flatMap { id =>
     handleExceptions(domainExceptionHandler(id)) & handleRejections(domainRejectionHandler(id))
-  }
-
-  implicit class AuthProviderWrapper(provider: AuthProvider[AuthUserInfo]) {
-    val authenticated: Directive1[AuthenticatedRequestContext] = (provider.authorize() & tracked) tflatMap {
-      case (core, requestId) =>
-        provide(
-          new AuthenticatedRequestContext(
-            core.authenticatedUser,
-            requestId,
-            core.contextHeaders(ContextHeaders.AuthenticationTokenHeader)
-          ))
-    }
   }
 
 }

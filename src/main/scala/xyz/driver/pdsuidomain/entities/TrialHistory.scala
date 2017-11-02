@@ -6,6 +6,7 @@ import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
 import TrialHistory._
+import xyz.driver.core.auth.User
 
 object TrialHistory {
 

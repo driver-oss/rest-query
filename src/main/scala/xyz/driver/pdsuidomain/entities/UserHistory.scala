@@ -2,6 +2,7 @@ package xyz.driver.pdsuidomain.entities
 
 import java.time.{LocalDateTime, ZoneId}
 
+import xyz.driver.core.auth.User
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils

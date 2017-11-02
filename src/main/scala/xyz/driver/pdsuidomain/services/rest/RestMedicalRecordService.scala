@@ -9,7 +9,7 @@ import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import xyz.driver.core.rest.{Pagination => _, _}
-import xyz.driver.pdsuicommon.auth._
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.ListResponse
@@ -27,7 +27,7 @@ class RestMedicalRecordService(transport: ServiceTransport, baseUri: Uri)(
   import xyz.driver.pdsuidomain.services.MedicalRecordService._
 
   def getById(recordId: LongId[MedicalRecord])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/record/$recordId"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
@@ -38,9 +38,10 @@ class RestMedicalRecordService(transport: ServiceTransport, baseUri: Uri)(
   }
 
   def getPdfSource(recordId: LongId[MedicalRecord])(
-          implicit requestContext: AuthenticatedRequestContext): Future[Source[ByteString, NotUsed]] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]
+  ): Future[Source[ByteString, NotUsed]] = {
 
-    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/record/${recordId}/source"))
+    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/record/$recordId/source"))
 
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
@@ -53,7 +54,7 @@ class RestMedicalRecordService(transport: ServiceTransport, baseUri: Uri)(
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply] = {
 
     val request = HttpRequest(
       HttpMethods.GET,
@@ -66,7 +67,8 @@ class RestMedicalRecordService(transport: ServiceTransport, baseUri: Uri)(
     }
   }
 
-  def create(draftRecord: MedicalRecord)(implicit requestContext: AnonymousRequestContext): Future[CreateReply] = {
+  def create(draftRecord: MedicalRecord)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[CreateReply] = {
     for {
       entity <- Marshal(draftRecord).to[RequestEntity]
       request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, "/v1/record")).withEntity(entity)
@@ -78,7 +80,7 @@ class RestMedicalRecordService(transport: ServiceTransport, baseUri: Uri)(
   }
 
   def update(origRecord: MedicalRecord, draftRecord: MedicalRecord)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] = {
     val id = origRecord.id.toString
     for {
       entity <- Marshal(draftRecord).to[RequestEntity]
@@ -91,7 +93,7 @@ class RestMedicalRecordService(transport: ServiceTransport, baseUri: Uri)(
   }
 
   private def editAction(orig: MedicalRecord, action: String)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] = {
     val id      = orig.id.toString
     val request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, s"/v1/record/$id/$action"))
     for {
@@ -102,19 +104,26 @@ class RestMedicalRecordService(transport: ServiceTransport, baseUri: Uri)(
     }
   }
 
-  def start(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def start(orig: MedicalRecord)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     editAction(orig, "start")
-  def submit(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def submit(orig: MedicalRecord)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     editAction(orig, "submit")
-  def restart(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def restart(orig: MedicalRecord)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     editAction(orig, "restart")
-  def flag(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def flag(orig: MedicalRecord)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     editAction(orig, "flag")
-  def resolve(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def resolve(orig: MedicalRecord)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     editAction(orig, "resolve")
-  def unassign(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def unassign(orig: MedicalRecord)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     editAction(orig, "unassign")
-  def archive(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] =
+  def archive(orig: MedicalRecord)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     editAction(orig, "archive")
 
 }

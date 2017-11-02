@@ -4,7 +4,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import xyz.driver.core.rest._
-import xyz.driver.pdsuicommon.auth._
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities.StudyDesign
@@ -21,7 +21,7 @@ class RestStudyDesignService(transport: ServiceTransport, baseUri: Uri)(
   import xyz.driver.pdsuidomain.services.StudyDesignService._
 
   def getAll(sorting: Option[Sorting] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, "/v1/study-design", sortingQuery(sorting)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)

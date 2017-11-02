@@ -2,6 +2,8 @@ package xyz.driver.pdsuidomain.entities
 
 import java.time.{LocalDate, LocalDateTime}
 
+import xyz.driver.core.auth.User
+import xyz.driver.entities.clinic.TestOrder
 import xyz.driver.entities.common.FullName
 import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.domain._
@@ -26,21 +28,9 @@ object Patient {
     case object Flagged  extends Status
     case object Done     extends Status
 
-    val AllPrevious = Set[Status](
-      New,
-      Verified,
-      Reviewed,
-      Curated
-    )
+    val AllPrevious: Set[Status] = Set[Status](New, Verified, Reviewed, Curated)
 
-    val All = Set[Status](
-      New,
-      Verified,
-      Reviewed,
-      Curated,
-      Flagged,
-      Done
-    )
+    val All: Set[Status] = Set[Status](New, Verified, Reviewed, Curated, Flagged, Done)
 
     implicit def toPhiString(x: Status): PhiString = Unsafe(Utils.getClassSimpleName(x.getClass))
   }
@@ -62,7 +52,7 @@ final case class Patient(id: UuidId[Patient],
                          lastActiveUserId: Option[StringId[User]],
                          isUpdateRequired: Boolean,
                          disease: CancerType,
-                         orderId: PatientOrderId,
+                         orderId: xyz.driver.core.Id[TestOrder],
                          lastUpdate: LocalDateTime) {
 
   import Patient.Status._

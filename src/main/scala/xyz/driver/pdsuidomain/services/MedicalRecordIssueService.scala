@@ -2,7 +2,8 @@ package xyz.driver.pdsuidomain.services
 
 import java.time.LocalDateTime
 
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterExpr, Sorting}
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.error.DomainError
@@ -73,21 +74,22 @@ trait MedicalRecordIssueService {
 
   import MedicalRecordIssueService._
 
-  def create(draft: MedicalRecordIssue)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
+  def create(draft: MedicalRecordIssue)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[CreateReply]
 
   def getById(recordId: LongId[MedicalRecord], id: LongId[MedicalRecordIssue])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply]
 
   def getListByRecordId(recordId: LongId[MedicalRecord],
                         filter: SearchFilterExpr = SearchFilterExpr.Empty,
                         sorting: Option[Sorting] = None,
                         pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListByRecordIdReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListByRecordIdReply]
 
   def update(orig: MedicalRecordIssue, draft: MedicalRecordIssue)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
   def delete(recordId: LongId[MedicalRecord], id: LongId[MedicalRecordIssue])(
-          implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[DeleteReply]
 
 }

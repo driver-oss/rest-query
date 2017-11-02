@@ -3,8 +3,9 @@ package xyz.driver.pdsuidomain.formats.json
 import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 
 import spray.json._
+import xyz.driver.core.auth.User
 import xyz.driver.core.json.EnumJsonFormat
-import xyz.driver.pdsuicommon.domain.{LongId, StringId, User, UuidId}
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuidomain.entities._
 
 object trial {
