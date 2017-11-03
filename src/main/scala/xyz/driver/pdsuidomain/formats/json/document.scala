@@ -12,7 +12,7 @@ object document {
   import Document._
   import common._
 
-  implicit val documentStatusFormat = new EnumJsonFormat[Status](
+  implicit val documentStatusFormat: RootJsonFormat[Status] = new EnumJsonFormat[Status](
     "New"       -> Status.New,
     "Organized" -> Status.Organized,
     "Extracted" -> Status.Extracted,
@@ -21,7 +21,7 @@ object document {
     "Archived"  -> Status.Archived
   )
 
-  implicit val requiredTypeFormat = new EnumJsonFormat[RequiredType](
+  implicit val requiredTypeFormat: RootJsonFormat[RequiredType] = new EnumJsonFormat[RequiredType](
     "OPN" -> RequiredType.OPN,
     "PN"  -> RequiredType.PN
   )
@@ -132,6 +132,10 @@ object document {
 
     override def read(json: JsValue): Document = json match {
       case JsObject(fields) =>
+        val id = fields
+          .get("id")
+          .flatMap(_.convertTo[Option[LongId[Document]]])
+
         val recordId = fields
           .get("recordId")
           .map(_.convertTo[LongId[MedicalRecord]])
@@ -170,7 +174,7 @@ object document {
           .flatMap(_.convertTo[Option[LocalDate]])
 
         Document(
-          id = LongId(0),
+          id = id.getOrElse(LongId(0)),
           recordId = recordId,
           status = Document.Status.New,
           physician = physician,
