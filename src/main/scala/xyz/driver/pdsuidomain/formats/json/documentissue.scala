@@ -48,10 +48,12 @@ object documentissue {
           .map(_.convertTo[String])
           .getOrElse(deserializationError(s"DocumentIssue json object does not contain `text` field: $json"))
 
+        val id        = fields.get("id").map(_.convertTo[LongId[DocumentIssue]])
         val startPage = fields.get("startPage").map(_.convertTo[Double])
         val endPage   = fields.get("endPage").map(_.convertTo[Double])
+
         DocumentIssue(
-          id = LongId(0),
+          id = id.getOrElse(LongId(0)),
           userId = userId,
           documentId = documentId,
           lastUpdate = LocalDateTime.MIN,

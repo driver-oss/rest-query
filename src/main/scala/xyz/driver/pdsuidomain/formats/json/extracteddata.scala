@@ -110,6 +110,10 @@ object extracteddata {
 
     override def read(json: JsValue): RichExtractedData = json match {
       case JsObject(fields) =>
+        val id = fields
+          .get("id")
+          .flatMap(_.convertTo[Option[LongId[ExtractedData]]])
+
         val documentId = fields
           .get("documentId")
           .map(_.convertTo[LongId[Document]])
@@ -135,6 +139,7 @@ object extracteddata {
           .map(l => applyLabelsForExtractedData(l, LongId(0)))
 
         val extractedData = ExtractedData(
+          id = id.getOrElse(LongId(0L)),
           documentId = documentId,
           keywordId = keywordId,
           evidenceText = evidence,

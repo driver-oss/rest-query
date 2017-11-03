@@ -30,7 +30,7 @@ object patientissue {
     json.asJsObject.getFields("text") match {
       case Seq(text) =>
         PatientIssue(
-          id = LongId(0),
+          id = json.asJsObject.fields.get("id").flatMap(_.convertTo[Option[LongId[PatientIssue]]]).getOrElse(LongId(0)),
           userId = userId,
           patientId = patientId,
           lastUpdate = LocalDateTime.MIN,

@@ -48,10 +48,12 @@ object recordissue {
         .map(_.convertTo[String])
         .getOrElse(deserializationError(s"MedicalRecordIssue json object does not contain `text` field: $json"))
 
+      val id        = fields.get("id").flatMap(_.convertTo[Option[LongId[MedicalRecordIssue]]]).getOrElse(LongId(0))
       val startPage = fields.get("startPage").map(_.convertTo[Double])
       val endPage   = fields.get("endPage").map(_.convertTo[Double])
+
       MedicalRecordIssue(
-        id = LongId(0),
+        id = id,
         userId = userId,
         recordId = recordId,
         lastUpdate = LocalDateTime.MIN,

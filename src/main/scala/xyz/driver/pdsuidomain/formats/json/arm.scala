@@ -31,7 +31,7 @@ object arm {
     override def read(json: JsValue): Arm = json.asJsObject.getFields("trialId", "name") match {
       case Seq(trialId, name) =>
         Arm(
-          id = LongId(0),
+          id = json.asJsObject.fields.get("id").flatMap(_.convertTo[Option[LongId[Arm]]]).getOrElse(LongId(0)),
           name = name.convertTo[String],
           trialId = trialId.convertTo[StringId[Trial]],
           originalName = name.convertTo[String]

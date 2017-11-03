@@ -164,6 +164,10 @@ object record {
 
       override def read(json: JsValue): MedicalRecord = json match {
         case JsObject(fields) =>
+          val id = fields
+            .get("id")
+            .flatMap(_.convertTo[Option[LongId[MedicalRecord]]])
+
           val disease = fields
             .get("disease")
             .map(_.convertTo[String])
@@ -180,7 +184,7 @@ object record {
             .getOrElse(deserializationError(s"MedicalRecord json object does not contain `requestId` field: $json"))
 
           MedicalRecord(
-            id = LongId(0),
+            id = id.getOrElse(LongId(0)),
             status = MedicalRecord.Status.New,
             previousStatus = None,
             assignee = None,

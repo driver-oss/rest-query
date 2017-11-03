@@ -119,6 +119,10 @@ object criterion {
 
     override def read(json: JsValue): RichCriterion = json match {
       case JsObject(fields) =>
+        val id = fields
+          .get("id")
+          .flatMap(_.convertTo[Option[LongId[Criterion]]])
+
         val trialId = fields
           .get("trialId")
           .map(_.convertTo[StringId[Trial]])
@@ -153,7 +157,7 @@ object criterion {
 
         RichCriterion(
           criterion = Criterion(
-            id = LongId(0),
+            id = id.getOrElse(LongId(0)),
             trialId = trialId,
             text = text,
             isCompound = isCompound,

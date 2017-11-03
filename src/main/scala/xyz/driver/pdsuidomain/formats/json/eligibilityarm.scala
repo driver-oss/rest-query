@@ -39,6 +39,10 @@ object eligibilityarm {
       override def read(json: JsValue): EligibilityArmWithDiseases = {
         json match {
           case JsObject(fields) =>
+            val id = fields
+              .get("id")
+              .flatMap(_.convertTo[Option[LongId[EligibilityArm]]])
+
             val name = fields
               .get("name")
               .map(_.convertTo[String])
@@ -55,7 +59,7 @@ object eligibilityarm {
               .getOrElse(deserializationErrorFieldMessage("diseases", json))
 
             val eligibilityArm = EligibilityArm(
-              id = LongId(0),
+              id = id.getOrElse(LongId(0)),
               name = name,
               trialId = trialId,
               originalName = name
