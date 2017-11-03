@@ -1,7 +1,7 @@
 package xyz.driver.pdsuidomain.formats.json
 
 import spray.json._
-import xyz.driver.core.json.EnumJsonFormat
+import xyz.driver.core.json._
 import xyz.driver.pdsuidomain.entities._
 
 object patienthistory {
@@ -9,14 +9,14 @@ object patienthistory {
   import PatientHistory._
   import common._
 
-  implicit val patientStateFormat = new EnumJsonFormat[State](
+  implicit val patientStateFormat: RootJsonFormat[State] = new EnumJsonFormat[State](
     "Verify" -> State.Verify,
     "Curate" -> State.Curate,
     "Review" -> State.Review,
     "Flag"   -> State.Flag
   )
 
-  implicit val patientActionFormat = new EnumJsonFormat[Action](
+  implicit val patientActionFormat: RootJsonFormat[Action] = new EnumJsonFormat[Action](
     "Start"    -> Action.Start,
     "Submit"   -> Action.Submit,
     "Unassign" -> Action.Unassign,

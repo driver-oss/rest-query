@@ -12,7 +12,7 @@ object MedicalRecordHistory {
 
   implicit def toPhiString(x: MedicalRecordHistory): PhiString = {
     import x._
-    phi"MedicalRecordHistory(id=$id, executor=$executor, recordId=$recordId, state=$state, action=$action, " +
+    phi"MedicalRecordHistory(id=$id, executor=${Unsafe(executor)}, recordId=$recordId, state=$state, action=$action, " +
       phi"created=$created)"
   }
 
@@ -87,7 +87,7 @@ object MedicalRecordHistory {
 }
 
 final case class MedicalRecordHistory(id: LongId[MedicalRecordHistory],
-                                      executor: StringId[User],
+                                      executor: xyz.driver.core.Id[User],
                                       recordId: LongId[MedicalRecord],
                                       state: State,
                                       action: Action,

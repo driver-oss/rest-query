@@ -10,7 +10,7 @@ import xyz.driver.entities.common.FullName
 import xyz.driver.entities.patient.CancerType
 import xyz.driver.formats.json.common._
 import xyz.driver.formats.json.patient._
-import xyz.driver.pdsuicommon.domain.{StringId, UuidId}
+import xyz.driver.pdsuicommon.domain.UuidId
 import xyz.driver.pdsuidomain.entities._
 
 object patient {
@@ -68,7 +68,7 @@ object patient {
 
           val assignee = fields
             .get("assignee")
-            .flatMap(_.convertTo[Option[StringId[User]]])
+            .flatMap(_.convertTo[Option[xyz.driver.core.Id[User]]])
 
           val previousStatus = fields
             .get("previousStatus")
@@ -76,11 +76,11 @@ object patient {
 
           val previousAssignee = fields
             .get("previousAssignee")
-            .flatMap(_.convertTo[Option[StringId[User]]])
+            .flatMap(_.convertTo[Option[xyz.driver.core.Id[User]]])
 
           val lastActiveUser = fields
             .get("lastActiveUser")
-            .flatMap(_.convertTo[Option[StringId[User]]])
+            .flatMap(_.convertTo[Option[xyz.driver.core.Id[User]]])
 
           val disease = fields
             .get("disease")

@@ -7,7 +7,7 @@ import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.logging._
 
 final case class PatientIssue(id: LongId[PatientIssue],
-                              userId: StringId[User],
+                              userId: xyz.driver.core.Id[User],
                               patientId: UuidId[Patient],
                               lastUpdate: LocalDateTime,
                               isDraft: Boolean,
@@ -17,6 +17,6 @@ final case class PatientIssue(id: LongId[PatientIssue],
 object PatientIssue {
   implicit def toPhiString(x: PatientIssue): PhiString = {
     import x._
-    phi"PatientIssue(id=$id, userId=$userId, patientId=$patientId)"
+    phi"PatientIssue(id=$id, userId=${Unsafe(userId)}, patientId=$patientId)"
   }
 }

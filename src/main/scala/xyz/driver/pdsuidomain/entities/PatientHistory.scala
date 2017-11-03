@@ -3,7 +3,7 @@ package xyz.driver.pdsuidomain.entities
 import java.time.{LocalDateTime, ZoneId}
 
 import xyz.driver.core.auth.User
-import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
+import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
 import xyz.driver.pdsuidomain.entities.PatientHistory.{Action, State}
@@ -12,7 +12,8 @@ object PatientHistory {
 
   implicit def toPhiString(x: PatientHistory): PhiString = {
     import x._
-    phi"PatientHistory(id=$id, executor=$executor, patientId=$patientId, state=$state, action=$action, created=$created)"
+    phi"PatientHistory(id=$id, executor=${Unsafe(executor)}, patientId=$patientId, " +
+      phi"state=$state, action=$action, created=$created)"
   }
 
   sealed trait State
@@ -86,7 +87,7 @@ object PatientHistory {
 }
 
 final case class PatientHistory(id: LongId[PatientHistory],
-                                executor: StringId[User],
+                                executor: xyz.driver.core.Id[User],
                                 patientId: UuidId[Patient],
                                 state: State,
                                 action: Action,

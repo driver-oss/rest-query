@@ -404,8 +404,9 @@ object Document {
 
   implicit def toPhiString(x: Document): PhiString = {
     import x._
-    phi"Document(id=$id, status=$status, assignee=$assignee, " +
-      phi"previousAssignee=$previousAssignee, lastActiveUserId=$lastActiveUserId, recordId=$recordId)"
+    phi"Document(id=$id, status=$status, assignee=${Unsafe(assignee)}, " +
+      phi"previousAssignee=${Unsafe(previousAssignee)}, " +
+      phi"lastActiveUserId=${Unsafe(lastActiveUserId)}, recordId=$recordId)"
   }
 
   val validator: Validator[Document, Document] = { input =>
@@ -444,9 +445,9 @@ object Document {
 final case class Document(id: LongId[Document] = LongId(0L),
                           status: Document.Status,
                           previousStatus: Option[Document.Status],
-                          assignee: Option[StringId[User]],
-                          previousAssignee: Option[StringId[User]],
-                          lastActiveUserId: Option[StringId[User]],
+                          assignee: Option[xyz.driver.core.Id[User]],
+                          previousAssignee: Option[xyz.driver.core.Id[User]],
+                          lastActiveUserId: Option[xyz.driver.core.Id[User]],
                           recordId: LongId[MedicalRecord],
                           physician: Option[String],
                           typeId: Option[LongId[DocumentType]], // not null

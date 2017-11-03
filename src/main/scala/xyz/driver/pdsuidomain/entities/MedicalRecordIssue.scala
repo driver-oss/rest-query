@@ -3,11 +3,11 @@ package xyz.driver.pdsuidomain.entities
 import java.time.LocalDateTime
 
 import xyz.driver.core.auth.User
-import xyz.driver.pdsuicommon.domain.{LongId, StringId}
+import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.logging._
 
 final case class MedicalRecordIssue(id: LongId[MedicalRecordIssue],
-                                    userId: StringId[User],
+                                    userId: xyz.driver.core.Id[User],
                                     recordId: LongId[MedicalRecord],
                                     startPage: Option[Double],
                                     endPage: Option[Double],
@@ -19,6 +19,6 @@ final case class MedicalRecordIssue(id: LongId[MedicalRecordIssue],
 object MedicalRecordIssue {
   implicit def toPhiString(x: MedicalRecordIssue): PhiString = {
     import x._
-    phi"MedicalRecordIssue(id=$id, userId=$userId, recordId=$recordId)"
+    phi"MedicalRecordIssue(id=$id, userId=${Unsafe(userId)}, recordId=$recordId)"
   }
 }

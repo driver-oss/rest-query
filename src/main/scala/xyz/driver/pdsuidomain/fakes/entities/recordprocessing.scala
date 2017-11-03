@@ -108,9 +108,9 @@ object recordprocessing {
     id = nextLongId[MedicalRecord],
     status = nextMedicalRecordStatus(),
     previousStatus = nextOption(generators.oneOf[MedicalRecord.Status](MedicalRecord.Status.AllPrevious)),
-    assignee = nextOption(nextStringId[User]),
-    previousAssignee = nextOption(nextStringId[User]),
-    lastActiveUserId = nextOption(nextStringId[User]),
+    assignee = nextOption(generators.nextId[User]),
+    previousAssignee = nextOption(generators.nextId[User]),
+    lastActiveUserId = nextOption(generators.nextId[User]),
     patientId = nextUuidId[Patient],
     requestId = generators.nextId[ClinicalRecord](),
     disease = generators.nextString(),
@@ -123,7 +123,7 @@ object recordprocessing {
 
   def nextMedicalRecordHistory(): MedicalRecordHistory = MedicalRecordHistory(
     id = nextLongId[MedicalRecordHistory],
-    executor = nextStringId[User],
+    executor = generators.nextId[User],
     recordId = nextLongId[MedicalRecord],
     state = nextMedicalRecordHistoryState(),
     action = nextMedicalRecordHistoryAction(),
@@ -135,7 +135,7 @@ object recordprocessing {
 
     MedicalRecordIssue(
       id = nextLongId[MedicalRecordIssue],
-      userId = nextStringId[User],
+      userId = generators.nextId[User],
       recordId = nextLongId[MedicalRecord],
       startPage = startPage,
       endPage = endPage,
@@ -171,9 +171,9 @@ object recordprocessing {
       id = nextLongId[Document],
       status = nextDocumentStatus(),
       previousStatus = nextOption(generators.oneOf[Document.Status](Document.Status.AllPrevious)),
-      assignee = nextOption(nextStringId[User]),
-      previousAssignee = nextOption(nextStringId[User]),
-      lastActiveUserId = nextOption(nextStringId[User]),
+      assignee = nextOption(generators.nextId[User]),
+      previousAssignee = nextOption(generators.nextId[User]),
+      lastActiveUserId = nextOption(generators.nextId[User]),
       recordId = nextLongId[MedicalRecord],
       physician = nextOption(nextString()),
       typeId = nextOption(nextLongId[DocumentType]),
@@ -193,7 +193,7 @@ object recordprocessing {
     val (startPage, endPage) = nextStartAndEndPagesOption
     DocumentIssue(
       id = nextLongId[DocumentIssue],
-      userId = nextStringId[User],
+      userId = generators.nextId[User],
       documentId = nextLongId[Document],
       startPage = startPage,
       endPage = endPage,
@@ -206,7 +206,7 @@ object recordprocessing {
 
   def nextDocumentHistory(): DocumentHistory = DocumentHistory(
     id = nextLongId[DocumentHistory],
-    executor = nextStringId[User],
+    executor = generators.nextId[User],
     documentId = nextLongId[Document],
     state = nextDocumentHistoryState(),
     action = nextDocumentHistoryAction(),

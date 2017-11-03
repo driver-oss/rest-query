@@ -47,10 +47,10 @@ object treatmentmatching {
     status = nextPatientStatus,
     name = nextFullName[Patient],
     dob = nextLocalDate,
-    assignee = generators.nextOption(nextStringId[User]),
+    assignee = generators.nextOption(generators.nextId[User]),
     previousStatus = generators.nextOption(generators.oneOf[Patient.Status](Patient.Status.AllPrevious)),
-    previousAssignee = generators.nextOption(nextStringId[User]),
-    lastActiveUserId = generators.nextOption(nextStringId[User]),
+    previousAssignee = generators.nextOption(generators.nextId[User]),
+    lastActiveUserId = generators.nextOption(generators.nextId[User]),
     isUpdateRequired = generators.nextBoolean(),
     disease = nextCancerType,
     orderId = generators.nextId(),
@@ -171,7 +171,7 @@ object treatmentmatching {
 
   def nextPatientIssue(): PatientIssue = PatientIssue(
     id = nextLongId[PatientIssue],
-    userId = nextStringId[User],
+    userId = generators.nextId[User],
     patientId = nextUuidId[Patient],
     lastUpdate = nextLocalDateTime,
     isDraft = generators.nextBoolean(),
@@ -181,7 +181,7 @@ object treatmentmatching {
 
   def nextPatientHistory(): PatientHistory = PatientHistory(
     id = nextLongId[PatientHistory],
-    executor = nextStringId[User],
+    executor = generators.nextId[User],
     patientId = nextUuidId[Patient],
     state = nextPatientState,
     action = nextPatientAction,

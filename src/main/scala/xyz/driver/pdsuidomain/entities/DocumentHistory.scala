@@ -12,7 +12,7 @@ object DocumentHistory {
 
   implicit def toPhiString(x: DocumentHistory): PhiString = {
     import x._
-    phi"DocumentHistory(id=$id, executor=$executor, documentId=$documentId, state=$state, action=$action, " +
+    phi"DocumentHistory(id=$id, executor=${Unsafe(executor)}, documentId=$documentId, state=$state, action=$action, " +
       phi"created=$created)"
   }
 
@@ -84,7 +84,7 @@ object DocumentHistory {
 }
 
 final case class DocumentHistory(id: LongId[DocumentHistory],
-                                 executor: StringId[User],
+                                 executor: xyz.driver.core.Id[User],
                                  documentId: LongId[Document],
                                  state: State,
                                  action: Action,

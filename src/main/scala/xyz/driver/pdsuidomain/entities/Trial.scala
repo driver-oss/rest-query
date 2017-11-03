@@ -87,7 +87,7 @@ object Trial {
   implicit def toPhiString(x: Trial): PhiString = {
     import x._
     phi"Trial(id=$id, externalId=$externalId, status=$status, previousStatus=$previousStatus, " +
-      phi"lastActiveUserId=$lastActiveUserId, assignee=$assignee, previousAssignee=$previousAssignee, "
+      phi"lastActiveUserId=${Unsafe(lastActiveUserId)}, assignee=${Unsafe(assignee)}, previousAssignee=${Unsafe(previousAssignee)})"
   }
 
   final case class Locations(locations: List[String])
@@ -96,10 +96,10 @@ object Trial {
 final case class Trial(id: StringId[Trial],
                        externalId: UuidId[Trial],
                        status: Status,
-                       assignee: Option[StringId[User]],
+                       assignee: Option[xyz.driver.core.Id[User]],
                        previousStatus: Option[Status],
-                       previousAssignee: Option[StringId[User]],
-                       lastActiveUserId: Option[StringId[User]],
+                       previousAssignee: Option[xyz.driver.core.Id[User]],
+                       lastActiveUserId: Option[xyz.driver.core.Id[User]],
                        lastUpdate: LocalDateTime,
                        phase: String,
                        hypothesisId: Option[UuidId[Hypothesis]],

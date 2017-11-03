@@ -112,7 +112,7 @@ object MedicalRecord {
       case _               => None
     }
 
-    val All = Set[Status](
+    val All: Set[Status] = Set[Status](
       Unprocessed,
       PreCleaning,
       New,
@@ -126,7 +126,7 @@ object MedicalRecord {
       Archived
     )
 
-    val AllPrevious = Set[Status](New, Cleaned, Reviewed, Organized)
+    val AllPrevious: Set[Status] = Set[Status](New, Cleaned, Reviewed, Organized)
 
     implicit def toPhiString(x: Status): PhiString = Unsafe(Utils.getClassSimpleName(x.getClass))
   }
@@ -142,17 +142,17 @@ object MedicalRecord {
 
   implicit def toPhiString(x: MedicalRecord): PhiString = {
     import x._
-    phi"MedicalRecord(id=$id, status=$status, assignee=$assignee, " +
-      phi"previousAssignee=$previousAssignee, lastActiveUserId=$lastActiveUserId)"
+    phi"MedicalRecord(id=$id, status=$status, assignee=${Unsafe(assignee)}, " +
+      phi"previousAssignee=${Unsafe(previousAssignee)}, lastActiveUserId=${Unsafe(lastActiveUserId)})"
   }
 }
 
 final case class MedicalRecord(id: LongId[MedicalRecord],
                                status: MedicalRecord.Status,
                                previousStatus: Option[MedicalRecord.Status],
-                               assignee: Option[StringId[User]],
-                               previousAssignee: Option[StringId[User]],
-                               lastActiveUserId: Option[StringId[User]],
+                               assignee: Option[xyz.driver.core.Id[User]],
+                               previousAssignee: Option[xyz.driver.core.Id[User]],
+                               lastActiveUserId: Option[xyz.driver.core.Id[User]],
                                patientId: UuidId[Patient],
                                requestId: xyz.driver.core.Id[ClinicalRecord],
                                disease: String,

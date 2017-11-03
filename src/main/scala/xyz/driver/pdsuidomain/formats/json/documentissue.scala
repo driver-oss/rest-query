@@ -4,7 +4,8 @@ import java.time.LocalDateTime
 
 import spray.json._
 import xyz.driver.core.auth.User
-import xyz.driver.pdsuicommon.domain.{LongId, StringId}
+import xyz.driver.core.json._
+import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuidomain.entities._
 
 object documentissue {
@@ -37,7 +38,9 @@ object documentissue {
 
   }
 
-  def jsValueToDocumentIssue(json: JsValue, documentId: LongId[Document], userId: StringId[User]): DocumentIssue =
+  def jsValueToDocumentIssue(json: JsValue,
+                             documentId: LongId[Document],
+                             userId: xyz.driver.core.Id[User]): DocumentIssue =
     json match {
       case JsObject(fields) =>
         val text = fields

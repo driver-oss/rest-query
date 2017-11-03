@@ -8,7 +8,7 @@ import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
 
 final case class UserHistory(id: LongId[UserHistory],
-                             executor: StringId[User],
+                             executor: xyz.driver.core.Id[User],
                              recordId: Option[LongId[MedicalRecord]] = None,
                              documentId: Option[LongId[Document]] = None,
                              trialId: Option[StringId[Trial]] = None,
@@ -19,7 +19,7 @@ final case class UserHistory(id: LongId[UserHistory],
 
 object UserHistory {
 
-  def forDocument(executor: StringId[User],
+  def forDocument(executor: xyz.driver.core.Id[User],
                   documentId: LongId[Document],
                   state: UserHistory.State,
                   action: UserHistory.Action): UserHistory = UserHistory(
@@ -30,7 +30,7 @@ object UserHistory {
     action = action
   )
 
-  def forRecord(executor: StringId[User],
+  def forRecord(executor: xyz.driver.core.Id[User],
                 recordId: LongId[MedicalRecord],
                 state: UserHistory.State,
                 action: UserHistory.Action): UserHistory = UserHistory(
@@ -41,7 +41,7 @@ object UserHistory {
     action = action
   )
 
-  def forPatient(executor: StringId[User],
+  def forPatient(executor: xyz.driver.core.Id[User],
                  patientId: UuidId[Patient],
                  state: UserHistory.State,
                  action: UserHistory.Action): UserHistory = UserHistory(
@@ -139,7 +139,7 @@ object UserHistory {
 
   implicit def toPhiString(x: UserHistory): PhiString = {
     import x._
-    phi"UserHistory(id=$id, executor=$executor, recordId=$recordId, " +
+    phi"UserHistory(id=$id, executor=${Unsafe(executor)}, recordId=$recordId, " +
       phi"documentId=$documentId, trialId=$trialId, patientId=$patientId, " +
       phi"state=$state, action=$action, created=$created)"
   }

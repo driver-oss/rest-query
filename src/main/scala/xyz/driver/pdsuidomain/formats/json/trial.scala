@@ -4,7 +4,7 @@ import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 
 import spray.json._
 import xyz.driver.core.auth.User
-import xyz.driver.core.json.EnumJsonFormat
+import xyz.driver.core.json._
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuidomain.entities._
 
@@ -65,16 +65,16 @@ object trial {
             .getOrElse(deserializationError(s"Trial create json object does not contain `status` field: $json"))
           val assignee = fields
             .get("assignee")
-            .flatMap(_.convertTo[Option[StringId[User]]])
+            .flatMap(_.convertTo[Option[xyz.driver.core.Id[User]]])
           val previousStatus = fields
             .get("previousStatus")
             .flatMap(_.convertTo[Option[Trial.Status]])
           val previousAssignee = fields
             .get("previousAssignee")
-            .flatMap(_.convertTo[Option[StringId[User]]])
+            .flatMap(_.convertTo[Option[xyz.driver.core.Id[User]]])
           val lastActiveUser = fields
             .get("lastActiveUser")
-            .flatMap(_.convertTo[Option[StringId[User]]])
+            .flatMap(_.convertTo[Option[xyz.driver.core.Id[User]]])
           val lastUpdate = fields
             .get("lastUpdate")
             .map(_.convertTo[LocalDateTime])

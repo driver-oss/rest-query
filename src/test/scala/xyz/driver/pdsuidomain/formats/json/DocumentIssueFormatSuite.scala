@@ -2,9 +2,9 @@ package xyz.driver.pdsuidomain.formats.json
 
 import java.time.LocalDateTime
 
-import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
-import xyz.driver.pdsuicommon.domain.{LongId, StringId}
+import spray.json._
+import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuidomain.entities.DocumentIssue
 
 class DocumentIssueFormatSuite extends FlatSpec with Matchers {
@@ -14,7 +14,7 @@ class DocumentIssueFormatSuite extends FlatSpec with Matchers {
     val documentIssue = DocumentIssue(
       id = LongId(10),
       documentId = LongId(1),
-      userId = StringId("userId-001"),
+      userId = xyz.driver.core.Id("userId-001"),
       lastUpdate = LocalDateTime.parse("2017-08-10T18:00:00"),
       isDraft = false,
       text = "message text",
@@ -31,7 +31,7 @@ class DocumentIssueFormatSuite extends FlatSpec with Matchers {
     val createDocumentIssueJson = """{"text":"message text","startPage":1.0,"endPage":2.0}""".parseJson
     val expectedCreatedDocumentIssue =
       documentIssue.copy(id = LongId(0), lastUpdate = LocalDateTime.MIN, isDraft = true)
-    val parsedCreateDocumentIssue = jsValueToDocumentIssue(createDocumentIssueJson, LongId(1), StringId("userId-001"))
+    val parsedCreateDocumentIssue = jsValueToDocumentIssue(createDocumentIssueJson, LongId(1), xyz.driver.core.Id("userId-001"))
     parsedCreateDocumentIssue should be(expectedCreatedDocumentIssue)
 
     val updateDocumentIssueJson =
