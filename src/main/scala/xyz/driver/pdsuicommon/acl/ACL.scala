@@ -258,25 +258,21 @@ object ACL extends PhiLogging {
                          update: AclCheck = Forbid,
                          delete: AclCheck = Forbid) {
 
-    def isCreateAllow()(implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Boolean = {
+    def isCreateAllow()(implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Boolean =
       check("create", create)(requestContext.authenticatedUser.roles)
-    }
 
-    def isReadAllow()(implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Boolean = {
+    def isReadAllow()(implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Boolean =
       check("read", read)(requestContext.authenticatedUser.roles)
-    }
 
-    def isUpdateAllow()(implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Boolean = {
+    def isUpdateAllow()(implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Boolean =
       check("update", update)(requestContext.authenticatedUser.roles)
-    }
 
-    def isDeleteAllow()(implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Boolean = {
+    def isDeleteAllow()(implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Boolean =
       check("delete", delete)(requestContext.authenticatedUser.roles)
-    }
 
     private def check(action: String, isAllowed: AclCheck)(executorRoles: Set[Role]): Boolean = {
       loggedError(
-        executorRoles.exists(isAllowed),
+        executorRoles.exists(isAllowed) || executorRoles.contains(AdministratorRole),
         phi"${Unsafe(executorRoles.mkString(", "))} has no access to ${Unsafe(action)} a ${Unsafe(label)}"
       )
     }
