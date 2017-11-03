@@ -2,6 +2,8 @@ package xyz.driver.pdsuidomain.entities
 
 import java.time.{LocalDate, LocalDateTime}
 
+import xyz.driver.core.auth.User
+import xyz.driver.entities.clinic.TestOrder
 import xyz.driver.entities.common.FullName
 import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.domain._
@@ -26,29 +28,17 @@ object Patient {
     case object Flagged  extends Status
     case object Done     extends Status
 
-    val AllPrevious = Set[Status](
-      New,
-      Verified,
-      Reviewed,
-      Curated
-    )
+    val AllPrevious: Set[Status] = Set[Status](New, Verified, Reviewed, Curated)
 
-    val All = Set[Status](
-      New,
-      Verified,
-      Reviewed,
-      Curated,
-      Flagged,
-      Done
-    )
+    val All: Set[Status] = Set[Status](New, Verified, Reviewed, Curated, Flagged, Done)
 
     implicit def toPhiString(x: Status): PhiString = Unsafe(Utils.getClassSimpleName(x.getClass))
   }
 
   implicit def toPhiString(x: Patient): PhiString = {
     import x._
-    phi"Patient(id=$id, status=$status, previousStatus=$previousStatus, lastActiveUserId=$lastActiveUserId" +
-      phi"assignee=$assignee, previousAssignee=$previousAssignee)"
+    phi"Patient(id=$id, status=$status, previousStatus=$previousStatus, lastActiveUserId=${Unsafe(lastActiveUserId)}" +
+      phi"assignee=${Unsafe(assignee)}, previousAssignee=${Unsafe(previousAssignee)})"
   }
 }
 
@@ -56,13 +46,13 @@ final case class Patient(id: UuidId[Patient],
                          status: Patient.Status,
                          name: FullName[Patient],
                          dob: LocalDate,
-                         assignee: Option[StringId[User]],
+                         assignee: Option[xyz.driver.core.Id[User]],
                          previousStatus: Option[Patient.Status],
-                         previousAssignee: Option[StringId[User]],
-                         lastActiveUserId: Option[StringId[User]],
+                         previousAssignee: Option[xyz.driver.core.Id[User]],
+                         lastActiveUserId: Option[xyz.driver.core.Id[User]],
                          isUpdateRequired: Boolean,
                          disease: CancerType,
-                         orderId: PatientOrderId,
+                         orderId: xyz.driver.core.Id[TestOrder],
                          lastUpdate: LocalDateTime) {
 
   import Patient.Status._

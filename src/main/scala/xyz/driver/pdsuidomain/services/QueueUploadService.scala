@@ -1,6 +1,7 @@
 package xyz.driver.pdsuidomain.services
 
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.concurrent.BridgeUploadQueue
 import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterExpr, Sorting}
 import xyz.driver.pdsuicommon.error.DomainError
@@ -62,15 +63,18 @@ trait QueueUploadService {
 
   import QueueUploadService._
 
-  def create(kind: String, tag: String)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
+  def create(kind: String, tag: String)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[CreateReply]
 
-  def getById(kind: String, tag: String)(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(kind: String, tag: String)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply]
 
-  def reset(kind: String, tag: String)(implicit requestContext: AuthenticatedRequestContext): Future[ResetReply]
+  def reset(kind: String, tag: String)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[ResetReply]
 
 }

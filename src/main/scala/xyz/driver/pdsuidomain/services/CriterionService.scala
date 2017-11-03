@@ -2,7 +2,8 @@ package xyz.driver.pdsuidomain.services
 
 import java.time.LocalDateTime
 
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.error.DomainError
@@ -54,7 +55,8 @@ object CriterionService {
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    final case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
+    final case class CommonError(userMessage: String)(
+            implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo])
         extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
@@ -106,17 +108,19 @@ trait CriterionService {
   import CriterionService._
 
   def create(draftRichCriterion: RichCriterion)(
-          implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[CreateReply]
 
-  def getById(id: LongId[Criterion])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(id: LongId[Criterion])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply]
 
   def update(origRichCriterion: RichCriterion, draftRichCriterion: RichCriterion)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def delete(id: LongId[Criterion])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
+  def delete(id: LongId[Criterion])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[DeleteReply]
 }

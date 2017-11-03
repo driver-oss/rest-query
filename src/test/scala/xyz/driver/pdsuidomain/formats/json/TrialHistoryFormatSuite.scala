@@ -14,7 +14,7 @@ class TrialHistoryFormatSuite extends FlatSpec with Matchers {
     val trialHistory = TrialHistory(
       id = LongId(10),
       trialId = StringId("NCT000001"),
-      executor = StringId("userId-001"),
+      executor = xyz.driver.core.Id("userId-001"),
       state = TrialHistory.State.Summarize,
       action = TrialHistory.Action.Start,
       created = LocalDateTime.parse("2017-08-10T18:00:00")

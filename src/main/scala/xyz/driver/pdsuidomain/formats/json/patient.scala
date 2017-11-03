@@ -3,12 +3,14 @@ package xyz.driver.pdsuidomain.formats.json
 import java.time.{LocalDate, LocalDateTime}
 
 import spray.json._
-import xyz.driver.core.json.EnumJsonFormat
+import xyz.driver.core.auth.User
+import xyz.driver.core.json._
+import xyz.driver.entities.clinic.TestOrder
 import xyz.driver.entities.common.FullName
 import xyz.driver.entities.patient.CancerType
 import xyz.driver.formats.json.common._
 import xyz.driver.formats.json.patient._
-import xyz.driver.pdsuicommon.domain.{StringId, User, UuidId}
+import xyz.driver.pdsuicommon.domain.UuidId
 import xyz.driver.pdsuidomain.entities._
 
 object patient {
@@ -24,14 +26,6 @@ object patient {
     "Done"     -> Status.Done,
     "Flagged"  -> Status.Flagged
   )
-
-  implicit val patientOrderIdFormat: RootJsonFormat[PatientOrderId] = new RootJsonFormat[PatientOrderId] {
-    override def write(orderId: PatientOrderId): JsString = JsString(orderId.toString)
-    override def read(json: JsValue): PatientOrderId = json match {
-      case JsString(value) => PatientOrderId(value)
-      case _               => deserializationError(s"Expected string as PatientOrderId, but got $json")
-    }
-  }
 
   implicit val patientFormat: RootJsonFormat[Patient] = new RootJsonFormat[Patient] {
     override def write(patient: Patient): JsValue =
@@ -74,7 +68,7 @@ object patient {
 
           val assignee = fields
             .get("assignee")
-            .flatMap(_.convertTo[Option[StringId[User]]])
+            .flatMap(_.convertTo[Option[xyz.driver.core.Id[User]]])
 
           val previousStatus = fields
             .get("previousStatus")
@@ -82,11 +76,11 @@ object patient {
 
           val previousAssignee = fields
             .get("previousAssignee")
-            .flatMap(_.convertTo[Option[StringId[User]]])
+            .flatMap(_.convertTo[Option[xyz.driver.core.Id[User]]])
 
           val lastActiveUser = fields
             .get("lastActiveUser")
-            .flatMap(_.convertTo[Option[StringId[User]]])
+            .flatMap(_.convertTo[Option[xyz.driver.core.Id[User]]])
 
           val disease = fields
             .get("disease")
@@ -95,7 +89,7 @@ object patient {
 
           val orderId = fields
             .get("orderId")
-            .map(_.convertTo[PatientOrderId])
+            .map(_.convertTo[xyz.driver.core.Id[TestOrder]])
             .getOrElse(deserializationError(s"Patient create json object does not contain `orderId` field: $json"))
 
           val lastUpdate = fields

@@ -14,7 +14,7 @@ class TrialIssueFormatSuite extends FlatSpec with Matchers {
     val trialIssue = TrialIssue(
       id = LongId(10),
       trialId = StringId("NCT000001"),
-      userId = StringId("userId-001"),
+      userId = xyz.driver.core.Id("userId-001"),
       lastUpdate = LocalDateTime.parse("2017-08-10T18:00:00"),
       isDraft = false,
       text = "message text",
@@ -30,7 +30,7 @@ class TrialIssueFormatSuite extends FlatSpec with Matchers {
     val createTrialIssueJson      = """{"text":"message text","evidence":"evidence","meta":"{}"}""".parseJson
     val expectedCreatedTrialIssue = trialIssue.copy(id = LongId(0), lastUpdate = LocalDateTime.MIN, isDraft = true)
     val parsedCreateTrialIssue =
-      jsValueToTrialIssue(createTrialIssueJson, StringId("NCT000001"), StringId("userId-001"))
+      jsValueToTrialIssue(createTrialIssueJson, StringId("NCT000001"), xyz.driver.core.Id("userId-001"))
     parsedCreateTrialIssue should be(expectedCreatedTrialIssue)
 
     val updateTrialIssueJson =

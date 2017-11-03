@@ -2,7 +2,8 @@ package xyz.driver.pdsuidomain.services
 
 import java.time.LocalDateTime
 
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterExpr, Sorting}
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.error.DomainError
@@ -73,21 +74,22 @@ trait DocumentIssueService {
 
   import DocumentIssueService._
 
-  def create(draft: DocumentIssue)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
+  def create(draft: DocumentIssue)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[CreateReply]
 
   def getById(documentId: LongId[Document], id: LongId[DocumentIssue])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply]
 
   def getListByDocumentId(documentId: LongId[Document],
                           filter: SearchFilterExpr = SearchFilterExpr.Empty,
                           sorting: Option[Sorting] = None,
                           pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListByDocumentIdReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListByDocumentIdReply]
 
   def update(orig: DocumentIssue, draft: DocumentIssue)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
   def delete(documentId: LongId[Document], id: LongId[DocumentIssue])(
-          implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[DeleteReply]
 
 }

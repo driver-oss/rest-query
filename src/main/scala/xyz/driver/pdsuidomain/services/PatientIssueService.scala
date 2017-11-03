@@ -2,7 +2,8 @@ package xyz.driver.pdsuidomain.services
 
 import java.time.LocalDateTime
 
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterExpr, Sorting}
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuicommon.error.DomainError
@@ -73,21 +74,22 @@ trait PatientIssueService {
 
   import PatientIssueService._
 
-  def create(draft: PatientIssue)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
+  def create(draft: PatientIssue)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[CreateReply]
 
   def getById(patientId: UuidId[Patient], id: LongId[PatientIssue])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply]
 
   def getListByPatientId(patientId: UuidId[Patient],
                          filter: SearchFilterExpr = SearchFilterExpr.Empty,
                          sorting: Option[Sorting] = None,
                          pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListByPatientIdReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListByPatientIdReply]
 
   def update(orig: PatientIssue, draft: PatientIssue)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
   def delete(patientId: UuidId[Patient], id: LongId[PatientIssue])(
-          implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[DeleteReply]
 
 }

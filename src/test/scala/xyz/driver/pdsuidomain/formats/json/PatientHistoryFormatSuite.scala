@@ -2,9 +2,9 @@ package xyz.driver.pdsuidomain.formats.json
 
 import java.time.LocalDateTime
 
-import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
-import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
+import spray.json._
+import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuidomain.entities.PatientHistory
 
 class PatientHistoryFormatSuite extends FlatSpec with Matchers {
@@ -14,7 +14,7 @@ class PatientHistoryFormatSuite extends FlatSpec with Matchers {
     val patientHistory = PatientHistory(
       id = LongId(10),
       patientId = UuidId("40892a07-c638-49d2-9795-1edfefbbcc7c"),
-      executor = StringId("userId-001"),
+      executor = xyz.driver.core.Id("userId-001"),
       state = PatientHistory.State.Verify,
       action = PatientHistory.Action.Start,
       created = LocalDateTime.parse("2017-08-10T18:00:00")

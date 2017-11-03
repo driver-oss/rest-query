@@ -1,6 +1,7 @@
 package xyz.driver.pdsuidomain.services
 
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterExpr, Sorting}
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuicommon.error.DomainError
@@ -118,15 +119,15 @@ trait PatientEligibleTrialService {
              filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply]
 
   def getById(patientId: UuidId[Patient], id: LongId[PatientTrialArmGroup])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply]
 
   def getCriterionListByGroupId(patientId: UuidId[Patient], id: LongId[PatientTrialArmGroup])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetCriterionListOfGroupReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetCriterionListOfGroupReply]
 
   def update(origEligibleTrialWithTrial: RichPatientEligibleTrial,
              draftPatientTrialArmGroup: PatientTrialArmGroupView)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 }

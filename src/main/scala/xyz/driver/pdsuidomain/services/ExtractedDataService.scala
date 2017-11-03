@@ -1,6 +1,7 @@
 package xyz.driver.pdsuidomain.services
 
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterExpr, Sorting}
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuicommon.error.DomainError
@@ -103,21 +104,23 @@ trait ExtractedDataService {
 
   import ExtractedDataService._
 
-  def getById(id: LongId[ExtractedData])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(id: LongId[ExtractedData])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply]
 
   def getPatientLabels(id: UuidId[Patient])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetPatientLabelsReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetPatientLabelsReply]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply]
 
   def create(draftRichExtractedData: RichExtractedData)(
-          implicit requestContext: AuthenticatedRequestContext): Future[CreateReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[CreateReply]
 
   def update(origRichExtractedData: RichExtractedData, draftRichExtractedData: RichExtractedData)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def delete(id: LongId[ExtractedData])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply]
+  def delete(id: LongId[ExtractedData])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[DeleteReply]
 }

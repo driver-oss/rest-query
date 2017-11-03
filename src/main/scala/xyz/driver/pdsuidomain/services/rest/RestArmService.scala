@@ -5,7 +5,7 @@ import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import xyz.driver.core.rest.{Pagination => _, _}
-import xyz.driver.pdsuicommon.auth._
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.ListResponse
@@ -24,7 +24,7 @@ class RestArmService(transport: ServiceTransport, baseUri: Uri)(implicit protect
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply] = {
     val request = HttpRequest(
       HttpMethods.GET,
       endpointUri(baseUri, "/v1/arm", filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
@@ -36,7 +36,8 @@ class RestArmService(transport: ServiceTransport, baseUri: Uri)(implicit protect
     }
   }
 
-  def getById(armId: LongId[Arm])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply] = {
+  def getById(armId: LongId[Arm])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/arm/$armId"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
@@ -46,7 +47,8 @@ class RestArmService(transport: ServiceTransport, baseUri: Uri)(implicit protect
     }
   }
 
-  def create(draftArm: Arm)(implicit requestContext: AuthenticatedRequestContext): Future[CreateReply] = {
+  def create(draftArm: Arm)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[CreateReply] = {
     for {
       entity <- Marshal(draftArm).to[RequestEntity]
       request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, "/v1/arm")).withEntity(entity)
@@ -57,7 +59,8 @@ class RestArmService(transport: ServiceTransport, baseUri: Uri)(implicit protect
     }
   }
 
-  def update(origArm: Arm, draftArm: Arm)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
+  def update(origArm: Arm, draftArm: Arm)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] = {
     val id      = origArm.id
     val request = HttpRequest(HttpMethods.PATCH, endpointUri(baseUri, s"/v1/arm/$id"))
     for {
@@ -68,7 +71,8 @@ class RestArmService(transport: ServiceTransport, baseUri: Uri)(implicit protect
     }
   }
 
-  def delete(id: LongId[Arm])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply] = {
+  def delete(id: LongId[Arm])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[DeleteReply] = {
     val request = HttpRequest(HttpMethods.DELETE, endpointUri(baseUri, s"/v1/arm/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)

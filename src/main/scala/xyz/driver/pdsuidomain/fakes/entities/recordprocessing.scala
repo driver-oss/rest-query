@@ -2,10 +2,13 @@ package xyz.driver.pdsuidomain.fakes.entities
 
 import java.time.LocalDate
 
+import xyz.driver.core.auth.User
 import xyz.driver.core.generators
 import xyz.driver.core.generators._
+import xyz.driver.entities.assays.PatientCase
+import xyz.driver.entities.clinic.ClinicalRecord
 import xyz.driver.entities.labels.{Label, LabelCategory, LabelValue}
-import xyz.driver.pdsuicommon.domain.{LongId, TextJson, User}
+import xyz.driver.pdsuicommon.domain.{LongId, TextJson}
 import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities.ExtractedData.Meta
 import xyz.driver.pdsuidomain.entities._
@@ -101,19 +104,17 @@ object recordprocessing {
 
   def nextMedicalRecordMeta(): MedicalRecord.Meta = generators.oneOf(medicalRecordMeta)()
 
-  def nextRecordRequestId(): RecordRequestId = RecordRequestId(generators.nextUuid())
-
   def nextMedicalRecord(): MedicalRecord = MedicalRecord(
     id = nextLongId[MedicalRecord],
     status = nextMedicalRecordStatus(),
     previousStatus = nextOption(generators.oneOf[MedicalRecord.Status](MedicalRecord.Status.AllPrevious)),
-    assignee = nextOption(nextStringId),
-    previousAssignee = nextOption(nextStringId),
-    lastActiveUserId = nextOption(nextStringId),
-    patientId = nextUuidId,
-    requestId = nextRecordRequestId(),
+    assignee = nextOption(generators.nextId[User]),
+    previousAssignee = nextOption(generators.nextId[User]),
+    lastActiveUserId = nextOption(generators.nextId[User]),
+    patientId = nextUuidId[Patient],
+    requestId = generators.nextId[ClinicalRecord](),
     disease = generators.nextString(),
-    caseId = nextOption(CaseId(generators.nextString())),
+    caseId = nextOption(generators.nextId[PatientCase]()),
     physician = nextOption(generators.nextString()),
     meta = nextOption(nextMedicalRecordMetaJson()),
     lastUpdate = nextLocalDateTime,
@@ -122,7 +123,7 @@ object recordprocessing {
 
   def nextMedicalRecordHistory(): MedicalRecordHistory = MedicalRecordHistory(
     id = nextLongId[MedicalRecordHistory],
-    executor = nextStringId[User],
+    executor = generators.nextId[User],
     recordId = nextLongId[MedicalRecord],
     state = nextMedicalRecordHistoryState(),
     action = nextMedicalRecordHistoryAction(),
@@ -134,7 +135,7 @@ object recordprocessing {
 
     MedicalRecordIssue(
       id = nextLongId[MedicalRecordIssue],
-      userId = nextStringId[User],
+      userId = generators.nextId[User],
       recordId = nextLongId[MedicalRecord],
       startPage = startPage,
       endPage = endPage,
@@ -170,9 +171,9 @@ object recordprocessing {
       id = nextLongId[Document],
       status = nextDocumentStatus(),
       previousStatus = nextOption(generators.oneOf[Document.Status](Document.Status.AllPrevious)),
-      assignee = nextOption(nextStringId[User]),
-      previousAssignee = nextOption(nextStringId[User]),
-      lastActiveUserId = nextOption(nextStringId[User]),
+      assignee = nextOption(generators.nextId[User]),
+      previousAssignee = nextOption(generators.nextId[User]),
+      lastActiveUserId = nextOption(generators.nextId[User]),
       recordId = nextLongId[MedicalRecord],
       physician = nextOption(nextString()),
       typeId = nextOption(nextLongId[DocumentType]),
@@ -192,7 +193,7 @@ object recordprocessing {
     val (startPage, endPage) = nextStartAndEndPagesOption
     DocumentIssue(
       id = nextLongId[DocumentIssue],
-      userId = nextStringId[User],
+      userId = generators.nextId[User],
       documentId = nextLongId[Document],
       startPage = startPage,
       endPage = endPage,
@@ -205,7 +206,7 @@ object recordprocessing {
 
   def nextDocumentHistory(): DocumentHistory = DocumentHistory(
     id = nextLongId[DocumentHistory],
-    executor = nextStringId[User],
+    executor = generators.nextId[User],
     documentId = nextLongId[Document],
     state = nextDocumentHistoryState(),
     action = nextDocumentHistoryAction(),

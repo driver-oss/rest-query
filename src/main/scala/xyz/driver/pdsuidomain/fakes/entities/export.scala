@@ -1,13 +1,10 @@
 package xyz.driver.pdsuidomain.fakes.entities
 
+import xyz.driver.core.generators
+import xyz.driver.entities.clinic.ClinicalRecord
 import xyz.driver.entities.labels.Label
 import xyz.driver.fakes
-import xyz.driver.pdsuidomain.entities.export.patient.{
-  ExportPatientLabel,
-  ExportPatientLabelEvidence,
-  ExportPatientLabelEvidenceDocument,
-  ExportPatientWithLabels
-}
+import xyz.driver.pdsuidomain.entities.export.patient._
 import xyz.driver.pdsuidomain.entities.export.trial._
 import xyz.driver.pdsuidomain.entities._
 
@@ -45,7 +42,7 @@ object export {
   def nextExportPatientLabelEvidenceDocument(): ExportPatientLabelEvidenceDocument = {
     ExportPatientLabelEvidenceDocument(
       documentId = nextLongId[Document],
-      requestId = recordprocessing.nextRecordRequestId(),
+      requestId = generators.nextId[ClinicalRecord](),
       documentType = nextDocumentType(),
       providerType = nextProviderType(),
       date = nextLocalDate

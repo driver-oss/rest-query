@@ -4,7 +4,9 @@ import akka.NotUsed
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import java.time.LocalDateTime
-import xyz.driver.pdsuicommon.auth.{AnonymousRequestContext, AuthenticatedRequestContext}
+
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuicommon.error._
@@ -85,32 +87,40 @@ trait MedicalRecordService {
   import MedicalRecordService._
 
   def getById(recordId: LongId[MedicalRecord])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply]
 
   def getPdfSource(recordId: LongId[MedicalRecord])(
-          implicit requestContext: AuthenticatedRequestContext): Future[Source[ByteString, NotUsed]]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Source[ByteString, NotUsed]]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply]
 
-  def create(draft: MedicalRecord)(implicit requestContext: AnonymousRequestContext): Future[CreateReply]
+  def create(draft: MedicalRecord)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[CreateReply]
 
   def update(origRecord: MedicalRecord, draftRecord: MedicalRecord)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def start(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def start(orig: MedicalRecord)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def submit(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def submit(orig: MedicalRecord)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def restart(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def restart(orig: MedicalRecord)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def flag(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def flag(orig: MedicalRecord)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def resolve(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def resolve(orig: MedicalRecord)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def unassign(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def unassign(orig: MedicalRecord)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def archive(orig: MedicalRecord)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def archive(orig: MedicalRecord)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 }

@@ -5,7 +5,7 @@ import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import xyz.driver.core.rest.{Pagination => _, _}
-import xyz.driver.pdsuicommon.auth._
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.ListResponse
@@ -25,7 +25,7 @@ class RestInterventionService(transport: ServiceTransport, baseUri: Uri)(
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply] = {
     val request = HttpRequest(HttpMethods.GET,
                               endpointUri(baseUri,
                                           "/v1/intervention",
@@ -38,7 +38,8 @@ class RestInterventionService(transport: ServiceTransport, baseUri: Uri)(
     }
   }
 
-  def getById(id: LongId[Intervention])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply] = {
+  def getById(id: LongId[Intervention])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/intervention/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
@@ -49,7 +50,7 @@ class RestInterventionService(transport: ServiceTransport, baseUri: Uri)(
   }
 
   def update(origIntervention: InterventionWithArms, draftIntervention: InterventionWithArms)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] = {
     val id = origIntervention.intervention.id
     for {
       entity <- Marshal(draftIntervention).to[RequestEntity]
@@ -62,7 +63,7 @@ class RestInterventionService(transport: ServiceTransport, baseUri: Uri)(
   }
 
   def create(draftIntervention: InterventionWithArms)(
-          implicit requestContext: AuthenticatedRequestContext): Future[CreateReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[CreateReply] = {
     for {
       entity <- Marshal(draftIntervention).to[RequestEntity]
       request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, "/v1/intervention")).withEntity(entity)
@@ -73,7 +74,8 @@ class RestInterventionService(transport: ServiceTransport, baseUri: Uri)(
     }
   }
 
-  def delete(id: LongId[Intervention])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply] = {
+  def delete(id: LongId[Intervention])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[DeleteReply] = {
     val request = HttpRequest(HttpMethods.DELETE, endpointUri(baseUri, s"/v1/intervention/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)

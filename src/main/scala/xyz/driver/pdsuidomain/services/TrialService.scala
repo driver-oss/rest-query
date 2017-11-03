@@ -5,8 +5,9 @@ import java.time.LocalDateTime
 import akka.NotUsed
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
 import xyz.driver.entities.patient.CancerType
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.StringId
 import xyz.driver.pdsuicommon.error.DomainError
@@ -46,7 +47,8 @@ object TrialService {
     case object AuthorizationError
         extends GetByIdReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
-    final case class CommonError(userMessage: String)(implicit requestContext: AuthenticatedRequestContext)
+    final case class CommonError(userMessage: String)(
+            implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo])
         extends GetByIdReply with DomainError
 
     implicit def toPhiString(reply: GetByIdReply): PhiString = reply match {
@@ -107,37 +109,45 @@ trait TrialService {
 
   import TrialService._
 
-  def getById(id: StringId[Trial])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+  def getById(id: StringId[Trial])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply]
 
   def getTrialWithLabels(trialId: StringId[Trial], cancerType: CancerType)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetTrialWithLabelsReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetTrialWithLabelsReply]
 
   def getTrialsWithLabels(cancerType: CancerType)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetTrialsWithLabelsReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetTrialsWithLabelsReply]
 
   def getPdfSource(trialId: StringId[Trial])(
-          implicit requestContext: AuthenticatedRequestContext): Future[Source[ByteString, NotUsed]]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Source[ByteString, NotUsed]]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply]
 
   def update(origTrial: Trial, draftTrial: Trial)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def start(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def start(origTrial: Trial)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def submit(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def submit(origTrial: Trial)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def restart(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def restart(origTrial: Trial)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def flag(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def flag(origTrial: Trial)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def resolve(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def resolve(origTrial: Trial)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def archive(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def archive(origTrial: Trial)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def unassign(origTrial: Trial)(implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+  def unassign(origTrial: Trial)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
 }

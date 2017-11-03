@@ -1,8 +1,9 @@
 package xyz.driver.pdsuidomain.fakes.entities
 
+import xyz.driver.core.auth.User
 import xyz.driver.core.generators._
 import xyz.driver.entities.labels.{Label, LabelCategory}
-import xyz.driver.pdsuicommon.domain.{LongId, User}
+import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
@@ -19,10 +20,10 @@ object trialcuration {
     id = nextStringId[Trial],
     externalId = nextUuidId[Trial],
     status = nextTrialStatus,
-    assignee = Option(nextStringId[User]),
+    assignee = Option(generators.nextId[User]),
     previousStatus = Option(nextPreviousTrialStatus),
-    previousAssignee = Option(nextStringId[User]),
-    lastActiveUserId = Option(nextStringId[User]),
+    previousAssignee = Option(generators.nextId[User]),
+    lastActiveUserId = Option(generators.nextId[User]),
     lastUpdate = nextLocalDateTime,
     phase = generators.nextString(),
     hypothesisId = Option(nextUuidId[Hypothesis]),
@@ -106,7 +107,7 @@ object trialcuration {
 
   def nextTrialIssue(): TrialIssue = TrialIssue(
     id = nextLongId[TrialIssue],
-    userId = nextStringId[User],
+    userId = generators.nextId[User],
     trialId = nextStringId[Trial],
     lastUpdate = nextLocalDateTime,
     isDraft = generators.nextBoolean(),
@@ -118,7 +119,7 @@ object trialcuration {
 
   def nextTrialHistory(): TrialHistory = TrialHistory(
     id = nextLongId[TrialHistory],
-    executor = nextStringId[User],
+    executor = generators.nextId[User],
     trialId = nextStringId[Trial],
     state = nextTrialState,
     action = nextTrialAction,

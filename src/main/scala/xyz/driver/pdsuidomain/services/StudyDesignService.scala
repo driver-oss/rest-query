@@ -1,6 +1,7 @@
 package xyz.driver.pdsuidomain.services
 
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db.Sorting
 import xyz.driver.pdsuicommon.error.DomainError
 import xyz.driver.pdsuidomain.entities.StudyDesign
@@ -23,5 +24,5 @@ trait StudyDesignService {
   import StudyDesignService._
 
   def getAll(sorting: Option[Sorting] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply]
 }

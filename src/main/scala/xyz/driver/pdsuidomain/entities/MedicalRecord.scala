@@ -5,6 +5,9 @@ import java.time.LocalDateTime
 
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type
 import com.fasterxml.jackson.annotation.{JsonProperty, JsonSubTypes, JsonTypeInfo}
+import xyz.driver.core.auth.User
+import xyz.driver.entities.assays.PatientCase
+import xyz.driver.entities.clinic.ClinicalRecord
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
@@ -109,7 +112,7 @@ object MedicalRecord {
       case _               => None
     }
 
-    val All = Set[Status](
+    val All: Set[Status] = Set[Status](
       Unprocessed,
       PreCleaning,
       New,
@@ -123,7 +126,7 @@ object MedicalRecord {
       Archived
     )
 
-    val AllPrevious = Set[Status](New, Cleaned, Reviewed, Organized)
+    val AllPrevious: Set[Status] = Set[Status](New, Cleaned, Reviewed, Organized)
 
     implicit def toPhiString(x: Status): PhiString = Unsafe(Utils.getClassSimpleName(x.getClass))
   }
@@ -139,21 +142,21 @@ object MedicalRecord {
 
   implicit def toPhiString(x: MedicalRecord): PhiString = {
     import x._
-    phi"MedicalRecord(id=$id, status=$status, assignee=$assignee, " +
-      phi"previousAssignee=$previousAssignee, lastActiveUserId=$lastActiveUserId)"
+    phi"MedicalRecord(id=$id, status=$status, assignee=${Unsafe(assignee)}, " +
+      phi"previousAssignee=${Unsafe(previousAssignee)}, lastActiveUserId=${Unsafe(lastActiveUserId)})"
   }
 }
 
 final case class MedicalRecord(id: LongId[MedicalRecord],
                                status: MedicalRecord.Status,
                                previousStatus: Option[MedicalRecord.Status],
-                               assignee: Option[StringId[User]],
-                               previousAssignee: Option[StringId[User]],
-                               lastActiveUserId: Option[StringId[User]],
+                               assignee: Option[xyz.driver.core.Id[User]],
+                               previousAssignee: Option[xyz.driver.core.Id[User]],
+                               lastActiveUserId: Option[xyz.driver.core.Id[User]],
                                patientId: UuidId[Patient],
-                               requestId: RecordRequestId,
+                               requestId: xyz.driver.core.Id[ClinicalRecord],
                                disease: String,
-                               caseId: Option[CaseId],
+                               caseId: Option[xyz.driver.core.Id[PatientCase]],
                                physician: Option[String],
                                meta: Option[TextJson[List[Meta]]],
                                lastUpdate: LocalDateTime,

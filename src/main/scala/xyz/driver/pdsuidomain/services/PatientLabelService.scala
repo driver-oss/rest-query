@@ -1,7 +1,8 @@
 package xyz.driver.pdsuidomain.services
 
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
 import xyz.driver.entities.labels.Label
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.error.DomainError
@@ -111,16 +112,16 @@ trait PatientLabelService {
              filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply]
 
   def getDefiningCriteriaList(patientId: UuidId[Patient],
                               hypothesisId: UuidId[Hypothesis],
                               pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetDefiningCriteriaListReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetDefiningCriteriaListReply]
 
   def getByLabelIdOfPatient(patientId: UuidId[Patient], labelId: LongId[Label])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetByLabelIdReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByLabelIdReply]
 
   def update(origPatientLabel: PatientLabel, draftPatientLabel: PatientLabel)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 }

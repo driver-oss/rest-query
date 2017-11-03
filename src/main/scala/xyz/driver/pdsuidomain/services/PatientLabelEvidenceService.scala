@@ -1,7 +1,8 @@
 package xyz.driver.pdsuidomain.services
 
+import xyz.driver.core.rest.AuthorizedServiceRequestContext
 import xyz.driver.entities.labels.Label
-import xyz.driver.pdsuicommon.auth.AuthenticatedRequestContext
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuicommon.error.DomainError
@@ -54,12 +55,12 @@ trait PatientLabelEvidenceService {
   import PatientLabelEvidenceService._
 
   def getById(patientId: UuidId[Patient], labelId: LongId[Label], id: LongId[PatientLabelEvidence])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply]
 
   def getAll(patientId: UuidId[Patient],
              labelId: LongId[Label],
              filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply]
 }

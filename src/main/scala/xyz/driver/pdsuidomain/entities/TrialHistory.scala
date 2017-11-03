@@ -6,12 +6,13 @@ import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
 import TrialHistory._
+import xyz.driver.core.auth.User
 
 object TrialHistory {
 
   implicit def toPhiString(x: TrialHistory): PhiString = {
     import x._
-    phi"TrialHistory(id=$id, executor=$executor, trialId=$trialId, state=$state, action=$action, created=$created)"
+    phi"TrialHistory(id=$id, executor=${Unsafe(executor)}, trialId=$trialId, state=$state, action=$action, created=$created)"
   }
 
   sealed trait State
@@ -85,7 +86,7 @@ object TrialHistory {
 }
 
 final case class TrialHistory(id: LongId[TrialHistory],
-                              executor: StringId[User],
+                              executor: xyz.driver.core.Id[User],
                               trialId: StringId[Trial],
                               state: State,
                               action: Action,

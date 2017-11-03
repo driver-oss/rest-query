@@ -3,7 +3,7 @@ package xyz.driver.pdsuidomain.formats.json
 import java.time.{LocalDate, LocalDateTime}
 
 import spray.json._
-import xyz.driver.core.json.EnumJsonFormat
+import xyz.driver.core.json._
 import xyz.driver.pdsuicommon.domain.{LongId, TextJson}
 import xyz.driver.pdsuidomain.entities._
 

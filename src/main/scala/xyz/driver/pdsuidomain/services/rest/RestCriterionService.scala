@@ -5,7 +5,7 @@ import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import xyz.driver.core.rest.{Pagination => _, _}
-import xyz.driver.pdsuicommon.auth._
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.ListResponse
@@ -23,7 +23,7 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
   import xyz.driver.pdsuidomain.services.CriterionService._
 
   def create(draftRichCriterion: RichCriterion)(
-          implicit requestContext: AuthenticatedRequestContext): Future[CreateReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[CreateReply] = {
     for {
       entity <- Marshal(draftRichCriterion).to[RequestEntity]
       request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, "/v1/criterion")).withEntity(entity)
@@ -34,7 +34,8 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
     }
   }
 
-  def getById(id: LongId[Criterion])(implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply] = {
+  def getById(id: LongId[Criterion])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/criterion/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
@@ -47,7 +48,7 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply] = {
     val request = HttpRequest(HttpMethods.GET,
                               endpointUri(baseUri,
                                           s"/v1/criterion",
@@ -61,7 +62,7 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
   }
 
   def update(origRichCriterion: RichCriterion, draftRichCriterion: RichCriterion)(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] = {
     val id = origRichCriterion.criterion.id
     for {
       entity <- Marshal(draftRichCriterion).to[RequestEntity]
@@ -73,7 +74,8 @@ class RestCriterionService(transport: ServiceTransport, baseUri: Uri)(
     }
   }
 
-  def delete(id: LongId[Criterion])(implicit requestContext: AuthenticatedRequestContext): Future[DeleteReply] = {
+  def delete(id: LongId[Criterion])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[DeleteReply] = {
     val request = HttpRequest(HttpMethods.DELETE, endpointUri(baseUri, s"/v1/criterion/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)

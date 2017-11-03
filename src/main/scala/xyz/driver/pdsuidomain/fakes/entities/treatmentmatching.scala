@@ -3,13 +3,14 @@ package xyz.driver.pdsuidomain.fakes.entities
 import eu.timepit.refined.numeric.NonNegative
 import xyz.driver.entities.labels.Label
 import xyz.driver.fakes
-import xyz.driver.pdsuicommon.domain.{LongId, StringId, User}
+import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.PatientCriterionService.{DraftPatientCriterion, RichPatientCriterion}
 import xyz.driver.pdsuidomain.services.PatientEligibleTrialService.RichPatientEligibleTrial
 import xyz.driver.pdsuidomain.services.PatientLabelService.RichPatientLabel
-import eu.timepit.refined.{refineV, refineMV}
+import eu.timepit.refined.{refineMV, refineV}
+import xyz.driver.core.auth.User
 
 object treatmentmatching {
   import common._
@@ -35,8 +36,6 @@ object treatmentmatching {
       }
   }
 
-  def nextPatientOrderId: PatientOrderId = PatientOrderId(generators.nextUuid())
-
   def nextPatientAction: PatientHistory.Action =
     generators.oneOf[PatientHistory.Action](PatientHistory.Action.All)
 
@@ -48,13 +47,13 @@ object treatmentmatching {
     status = nextPatientStatus,
     name = nextFullName[Patient],
     dob = nextLocalDate,
-    assignee = generators.nextOption(nextStringId[User]),
+    assignee = generators.nextOption(generators.nextId[User]),
     previousStatus = generators.nextOption(generators.oneOf[Patient.Status](Patient.Status.AllPrevious)),
-    previousAssignee = generators.nextOption(nextStringId[User]),
-    lastActiveUserId = generators.nextOption(nextStringId[User]),
+    previousAssignee = generators.nextOption(generators.nextId[User]),
+    lastActiveUserId = generators.nextOption(generators.nextId[User]),
     isUpdateRequired = generators.nextBoolean(),
     disease = nextCancerType,
-    orderId = nextPatientOrderId,
+    orderId = generators.nextId(),
     lastUpdate = nextLocalDateTime
   )
 
@@ -172,7 +171,7 @@ object treatmentmatching {
 
   def nextPatientIssue(): PatientIssue = PatientIssue(
     id = nextLongId[PatientIssue],
-    userId = nextStringId[User],
+    userId = generators.nextId[User],
     patientId = nextUuidId[Patient],
     lastUpdate = nextLocalDateTime,
     isDraft = generators.nextBoolean(),
@@ -182,7 +181,7 @@ object treatmentmatching {
 
   def nextPatientHistory(): PatientHistory = PatientHistory(
     id = nextLongId[PatientHistory],
-    executor = nextStringId[User],
+    executor = generators.nextId[User],
     patientId = nextUuidId[Patient],
     state = nextPatientState,
     action = nextPatientAction,

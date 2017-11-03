@@ -1,10 +1,11 @@
 package xyz.driver.pdsuidomain.formats.json
 
 import java.time.LocalDateTime
-import java.util.UUID
 
 import spray.json._
-import xyz.driver.core.json.{EnumJsonFormat, GadtJsonFormat}
+import xyz.driver.core.Id
+import xyz.driver.core.json._
+import xyz.driver.entities.clinic.ClinicalRecord
 import xyz.driver.pdsuicommon.domain.{LongId, TextJson, UuidId}
 import xyz.driver.pdsuidomain.entities.MedicalRecord.Meta._
 import xyz.driver.pdsuidomain.entities._
@@ -14,7 +15,7 @@ object record {
   import MedicalRecord._
   import common._
 
-  implicit val recordStatusFormat = new EnumJsonFormat[Status](
+  implicit val recordStatusFormat: EnumJsonFormat[Status] = new EnumJsonFormat[Status](
     "PreCleaning"   -> Status.PreCleaning,
     "Unprocessed"   -> Status.Unprocessed,
     "PreOrganized"  -> Status.PreOrganized,
@@ -28,14 +29,6 @@ object record {
     "Flagged"       -> Status.Flagged,
     "Archived"      -> Status.Archived
   )
-
-  implicit val requestIdFormat = new RootJsonFormat[RecordRequestId] {
-    override def write(requestId: RecordRequestId): JsString = JsString(requestId.toString)
-    override def read(json: JsValue): RecordRequestId = json match {
-      case JsString(value) => RecordRequestId(UUID.fromString(value))
-      case _               => deserializationError(s"Expected string as RecordRequestId, but got $json")
-    }
-  }
 
   implicit val providerTypeFormat: RootJsonFormat[ProviderType] = new RootJsonFormat[ProviderType] {
     override def read(json: JsValue): ProviderType = json match {
@@ -54,14 +47,6 @@ object record {
 
     override def write(obj: ProviderType) =
       JsObject("id" -> obj.id.toJson, "name" -> obj.name.toJson)
-  }
-
-  implicit val caseIdFormat = new RootJsonFormat[CaseId] {
-    override def write(caseId: CaseId): JsString = JsString(caseId.toString)
-    override def read(json: JsValue): CaseId = json match {
-      case JsString(value) => CaseId(value)
-      case _               => deserializationError(s"Expected string as CaseId, but got $json")
-    }
   }
 
   implicit val duplicateMetaFormat: RootJsonFormat[Duplicate] = new RootJsonFormat[Duplicate] {
@@ -149,7 +134,7 @@ object record {
     }
   }
 
-  implicit val recordMetaFormat = new RootJsonFormat[TextJson[List[Meta]]] {
+  implicit val recordMetaFormat: RootJsonFormat[TextJson[List[Meta]]] = new RootJsonFormat[TextJson[List[Meta]]] {
     override def write(obj: TextJson[List[Meta]]): JsArray = JsArray(obj.content.map(_.toJson).toVector)
     override def read(json: JsValue): TextJson[List[Meta]] = json match {
       case JsArray(values) => TextJson[List[Meta]](values.map(_.convertTo[Meta]).toList)
@@ -191,7 +176,7 @@ object record {
 
           val requestId = fields
             .get("requestId")
-            .map(_.convertTo[RecordRequestId])
+            .map(_.convertTo[Id[ClinicalRecord]])
             .getOrElse(deserializationError(s"MedicalRecord json object does not contain `requestId` field: $json"))
 
           MedicalRecord(

@@ -1,10 +1,11 @@
 package xyz.driver.pdsuidomain.formats.json
 
 import java.time.LocalDateTime
-import java.util.UUID
 
 import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
+import xyz.driver.core.Id
+import xyz.driver.entities.clinic.ClinicalRecord
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities.MedicalRecord.Status
@@ -18,7 +19,7 @@ class ListResponseFormatSuite extends FlatSpec with Matchers {
   private val lastUpdate        = LocalDateTime.parse("2017-08-10T18:00:00")
   private val lastUpdateToLocal = "2017-08-10T18:00Z"
 
-  def metaJsonObjectAsString(meta: ListResponse.Meta) = {
+  def metaJsonObjectAsString(meta: ListResponse.Meta): String = {
     import meta._
     val lastUpdate = meta.lastUpdate
       .map(_ => s""","lastUpdate":"$lastUpdateToLocal"""")
@@ -74,7 +75,7 @@ class ListResponseFormatSuite extends FlatSpec with Matchers {
       physician = Some("physician"),
       meta = None,
       disease = "Breast",
-      requestId = RecordRequestId(UUID.fromString("7b54a75d-4197-4b27-9045-b9b6cb131be9")),
+      requestId = Id[ClinicalRecord]("7b54a75d-4197-4b27-9045-b9b6cb131be9"),
       caseId = None,
       patientId = UuidId("748b5884-3528-4cb9-904b-7a8151d6e343"),
       totalPages = 10

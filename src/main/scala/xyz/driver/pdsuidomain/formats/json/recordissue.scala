@@ -3,7 +3,9 @@ package xyz.driver.pdsuidomain.formats.json
 import java.time.LocalDateTime
 
 import spray.json._
-import xyz.driver.pdsuicommon.domain.{LongId, StringId, User}
+import xyz.driver.core.auth.User
+import xyz.driver.core.json._
+import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuidomain.entities._
 
 object recordissue {
@@ -39,7 +41,7 @@ object recordissue {
 
   def jsValueToRecordIssue(json: JsValue,
                            recordId: LongId[MedicalRecord],
-                           userId: StringId[User]): MedicalRecordIssue = json match {
+                           userId: xyz.driver.core.Id[User]): MedicalRecordIssue = json match {
     case JsObject(fields) =>
       val text = fields
         .get("text")
@@ -63,6 +65,6 @@ object recordissue {
     case _ => deserializationError(s"Expected Json Object as MedicalRecordIssue, but got $json")
   }
 
-  implicit val recordIssueFormat = jsonFormat9(MedicalRecordIssue.apply)
+  implicit val recordIssueFormat: RootJsonFormat[MedicalRecordIssue] = jsonFormat9(MedicalRecordIssue.apply)
 
 }

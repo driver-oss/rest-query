@@ -4,7 +4,7 @@ import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import xyz.driver.core.rest.{Pagination => _, _}
-import xyz.driver.pdsuicommon.auth._
+import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.ListResponse
@@ -28,7 +28,7 @@ class RestPatientCriterionService(transport: ServiceTransport, baseUri: Uri)(
              filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetListReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply] = {
     val request = HttpRequest(HttpMethods.GET,
                               endpointUri(baseUri,
                                           s"/v1/patient/$patientId/criterion",
@@ -42,7 +42,7 @@ class RestPatientCriterionService(transport: ServiceTransport, baseUri: Uri)(
   }
 
   def getById(patientId: UuidId[Patient], id: LongId[PatientCriterion])(
-          implicit requestContext: AuthenticatedRequestContext): Future[GetByIdReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/patient/$patientId/criterion/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
@@ -53,7 +53,7 @@ class RestPatientCriterionService(transport: ServiceTransport, baseUri: Uri)(
   }
 
   def updateList(patientId: UuidId[Patient], draftEntities: List[DraftPatientCriterion])(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] = {
     for {
       entity <- Marshal(draftEntities).to[RequestEntity]
       request = HttpRequest(HttpMethods.PATCH, endpointUri(baseUri, s"/v1/patient/$patientId/criterion"))
@@ -66,7 +66,7 @@ class RestPatientCriterionService(transport: ServiceTransport, baseUri: Uri)(
   }
 
   def update(origEntity: PatientCriterion, draftEntity: PatientCriterion, patientId: UuidId[Patient])(
-          implicit requestContext: AuthenticatedRequestContext): Future[UpdateReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] = {
     for {
       entity <- Marshal(draftEntity).to[RequestEntity]
       request = HttpRequest(

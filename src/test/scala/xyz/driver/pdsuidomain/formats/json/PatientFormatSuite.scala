@@ -4,10 +4,12 @@ import java.time.{LocalDate, LocalDateTime}
 
 import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
+import xyz.driver.core.Id
+import xyz.driver.entities.clinic.TestOrder
 import xyz.driver.entities.common.FullName
 import xyz.driver.entities.patient.CancerType
 import xyz.driver.pdsuicommon.domain.UuidId
-import xyz.driver.pdsuidomain.entities.{Patient, PatientOrderId}
+import xyz.driver.pdsuidomain.entities.Patient
 
 class PatientFormatSuite extends FlatSpec with Matchers {
   import xyz.driver.pdsuidomain.formats.json.patient._
@@ -24,7 +26,7 @@ class PatientFormatSuite extends FlatSpec with Matchers {
       lastActiveUserId = None,
       isUpdateRequired = false,
       disease = CancerType.Breast,
-      orderId = PatientOrderId("7b54a75d-4197-4b27-9045-b9b6cb131be9"),
+      orderId = Id[TestOrder]("7b54a75d-4197-4b27-9045-b9b6cb131be9"),
       lastUpdate = LocalDateTime.parse("2017-08-10T18:00:00")
     )
     val writtenJson = patientFormat.write(orig)

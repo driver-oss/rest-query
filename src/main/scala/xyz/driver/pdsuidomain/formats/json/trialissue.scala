@@ -3,7 +3,9 @@ package xyz.driver.pdsuidomain.formats.json
 import java.time.LocalDateTime
 
 import spray.json._
-import xyz.driver.pdsuicommon.domain.{LongId, StringId, User}
+import xyz.driver.core.auth.User
+import xyz.driver.core.json._
+import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuidomain.entities._
 
 object trialissue {
@@ -24,7 +26,7 @@ object trialissue {
     }
   }
 
-  def jsValueToTrialIssue(json: JsValue, trialId: StringId[Trial], userId: StringId[User]): TrialIssue = {
+  def jsValueToTrialIssue(json: JsValue, trialId: StringId[Trial], userId: xyz.driver.core.Id[User]): TrialIssue = {
     json.asJsObject.getFields("text", "evidence", "meta") match {
       case Seq(text, evidence, meta) =>
         TrialIssue(

@@ -2,13 +2,14 @@ package xyz.driver.pdsuidomain.entities
 
 import java.time.LocalDateTime
 
-import xyz.driver.pdsuicommon.domain.{LongId, StringId, User, UuidId}
+import xyz.driver.core.auth.User
+import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuicommon.logging._
 
 final case class Message(id: LongId[Message],
                          text: String,
                          lastUpdate: LocalDateTime,
-                         userId: StringId[User],
+                         userId: xyz.driver.core.Id[User],
                          isDraft: Boolean,
                          recordId: Option[LongId[MedicalRecord]],
                          documentId: Option[LongId[Document]],
@@ -29,6 +30,6 @@ object Message {
       .orElse(documentId.map(_.toString))
       .orElse(patientId.map(_.toString))
 
-    phi"Message(id=$id, userId=$userId, isDraft=$isDraft, entityId=${Unsafe(entityId)}"
+    phi"Message(id=$id, userId=${Unsafe(userId)}, isDraft=$isDraft, entityId=${Unsafe(entityId)}"
   }
 }

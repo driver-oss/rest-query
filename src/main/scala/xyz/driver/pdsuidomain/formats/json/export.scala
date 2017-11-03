@@ -1,6 +1,7 @@
 package xyz.driver.pdsuidomain.formats.json
 
 import spray.json._
+import xyz.driver.core.json.idFormat
 import xyz.driver.entities.labels.Label
 import xyz.driver.formats.json.labels._
 import xyz.driver.pdsuicommon.domain.LongId

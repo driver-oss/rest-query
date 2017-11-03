@@ -1,7 +1,7 @@
 package xyz.driver.pdsuidomain.formats.json
 
 import spray.json._
-import xyz.driver.core.json.EnumJsonFormat
+import xyz.driver.core.json._
 import xyz.driver.pdsuidomain.entities._
 
 object documenthistory {
