@@ -165,11 +165,17 @@ object trial {
         .map(_.convertTo[Option[String]].getOrElse(""))
         .getOrElse(orig.title)
 
+      val originalTitle = fields
+        .get("originalTitle")
+        .flatMap(_.convertTo[Option[String]])
+        .getOrElse(orig.originalTitle)
+
       orig.copy(
         hypothesisId = hypothesisId,
         studyDesignId = studyDesignId,
         overview = overview,
-        title = title
+        title = title,
+        originalTitle = originalTitle
       )
 
     case _ => deserializationError(s"Expected Json Object as Trial, but got $json")
