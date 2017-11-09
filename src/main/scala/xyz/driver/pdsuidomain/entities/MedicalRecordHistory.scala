@@ -52,32 +52,44 @@ object MedicalRecordHistory {
   }
 
   object Action {
-    case object Start    extends Action
-    case object Submit   extends Action
-    case object Unassign extends Action
-    case object Resolve  extends Action
-    case object Flag     extends Action
-    case object Archive  extends Action
+    case object Start     extends Action
+    case object Submit    extends Action
+    case object Unassign  extends Action
+    case object Resolve   extends Action
+    case object Flag      extends Action
+    case object Archive   extends Action
+    case object Duplicate extends Action
+    case object Reorder   extends Action
+    case object Rotation  extends Action
+    case object Clean     extends Action
 
     val All: Set[Action] =
       Set[Action](Start, Submit, Unassign, Resolve, Flag, Archive)
 
     val fromString: PartialFunction[String, Action] = {
-      case "Start"    => Action.Start
-      case "Submit"   => Action.Submit
-      case "Unassign" => Action.Unassign
-      case "Resolve"  => Action.Resolve
-      case "Flag"     => Action.Flag
-      case "Archive"  => Action.Archive
+      case "Start"     => Action.Start
+      case "Submit"    => Action.Submit
+      case "Unassign"  => Action.Unassign
+      case "Resolve"   => Action.Resolve
+      case "Flag"      => Action.Flag
+      case "Archive"   => Action.Archive
+      case "Duplicate" => Action.Duplicate
+      case "Reorder"   => Action.Reorder
+      case "Rotate"    => Action.Rotation
+      case "Clean"     => Action.Clean
     }
 
     def actionToString(x: Action): String = x match {
-      case Action.Start    => "Start"
-      case Action.Submit   => "Submit"
-      case Action.Unassign => "Unassign"
-      case Action.Resolve  => "Resolve"
-      case Action.Flag     => "Flag"
-      case Action.Archive  => "Archive"
+      case Action.Start     => "Start"
+      case Action.Submit    => "Submit"
+      case Action.Unassign  => "Unassign"
+      case Action.Resolve   => "Resolve"
+      case Action.Flag      => "Flag"
+      case Action.Archive   => "Archive"
+      case Action.Duplicate => "Duplicate"
+      case Action.Reorder   => "Reorder"
+      case Action.Rotation  => "Rotate"
+      case Action.Clean     => "Clean"
     }
 
     implicit def toPhiString(x: Action): PhiString =
