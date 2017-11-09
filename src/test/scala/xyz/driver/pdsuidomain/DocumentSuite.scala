@@ -7,10 +7,9 @@ import org.scalatest.FreeSpecLike
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Span}
 import xyz.driver.pdsuicommon.domain.{LongId, TextJson}
-import xyz.driver.pdsuicommon.utils.DiffUtils
 import xyz.driver.pdsuidomain.entities.Document
 
-class DocumentSuite extends FreeSpecLike with DiffUtils with ScalaFutures {
+class DocumentSuite extends FreeSpecLike with ScalaFutures {
 
   implicit val defaultPatience: PatienceConfig =
     PatienceConfig(timeout = Span(1000, Millis), interval = Span(20, Millis))
