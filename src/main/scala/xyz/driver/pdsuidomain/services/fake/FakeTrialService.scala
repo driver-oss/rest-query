@@ -117,7 +117,7 @@ class FakeTrialService extends TrialService {
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     update(origTrial, origTrial)
 
-  def archive(origTrial: Trial)(
+  def archive(origTrial: Trial, comment: Option[String])(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     update(origTrial, origTrial)
 

@@ -101,10 +101,16 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
     }
   }
 
-  private def singleAction(origTrial: Trial, action: String)(
+  private def singleAction(origTrial: Trial, action: String, comment: Option[String] = None)(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] = {
+
+    val query = comment match {
+      case Some(s) => Seq("comment" -> s)
+      case None    => Seq.empty[(String, String)]
+    }
+
     val id      = origTrial.id.id
-    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/trial/$id/$action"))
+    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/trial/$id/$action", query))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply    <- apiResponse[Trial](response)
@@ -116,21 +122,27 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
   def start(origTrial: Trial)(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     singleAction(origTrial, "start")
+
   def submit(origTrial: Trial)(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     singleAction(origTrial, "submit")
+
   def restart(origTrial: Trial)(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     singleAction(origTrial, "restart")
+
   def flag(origTrial: Trial)(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     singleAction(origTrial, "flag")
+
   def resolve(origTrial: Trial)(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     singleAction(origTrial, "resolve")
-  def archive(origTrial: Trial)(
+
+  def archive(origTrial: Trial, comment: Option[String])(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
-    singleAction(origTrial, "archive")
+    singleAction(origTrial, "archive", comment)
+
   def unassign(origTrial: Trial)(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     singleAction(origTrial, "unassign")
