@@ -25,6 +25,6 @@ object trialhistory {
     "Archive"  -> Action.Archive
   )
 
-  implicit val trialHistoryFormat: RootJsonFormat[TrialHistory] = jsonFormat6(TrialHistory.apply)
+  implicit val trialHistoryFormat: RootJsonFormat[TrialHistory] = jsonFormat7(TrialHistory.apply)
 
 }

@@ -17,12 +17,13 @@ class TrialHistoryFormatSuite extends FlatSpec with Matchers {
       executor = xyz.driver.core.Id("userId-001"),
       state = TrialHistory.State.Summarize,
       action = TrialHistory.Action.Start,
-      created = LocalDateTime.parse("2017-08-10T18:00:00")
+      created = LocalDateTime.parse("2017-08-10T18:00:00"),
+      comment = Option("Yolo!")
     )
     val writtenJson = trialHistoryFormat.write(trialHistory)
 
     writtenJson should be("""{"id":10,"executor":"userId-001","trialId":"NCT000001","state":"Summarize",
-        "action":"Start","created":"2017-08-10T18:00Z"}""".parseJson)
+        "action":"Start","created":"2017-08-10T18:00Z", "comment": "Yolo!"}""".parseJson)
 
     val parsedTrialHistory = trialHistoryFormat.read(writtenJson)
     parsedTrialHistory should be(trialHistory)

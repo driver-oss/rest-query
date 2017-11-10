@@ -123,7 +123,8 @@ object trialcuration {
     trialId = nextStringId[Trial],
     state = nextTrialState,
     action = nextTrialAction,
-    created = nextLocalDateTime
+    created = nextLocalDateTime,
+    comment = generators.nextOption(generators.nextString())
   )
 
   def nextHypothesis(): Hypothesis = Hypothesis(

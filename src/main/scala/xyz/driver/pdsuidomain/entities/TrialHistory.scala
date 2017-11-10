@@ -90,4 +90,5 @@ final case class TrialHistory(id: LongId[TrialHistory],
                               trialId: StringId[Trial],
                               state: State,
                               action: Action,
-                              created: LocalDateTime = LocalDateTime.now(ZoneId.of("Z")))
+                              created: LocalDateTime = LocalDateTime.now(ZoneId.of("Z")),
+                              comment: Option[String] = None)
