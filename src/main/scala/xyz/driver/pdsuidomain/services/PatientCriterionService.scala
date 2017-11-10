@@ -20,7 +20,7 @@ object PatientCriterionService {
                                          isVerified: Option[Boolean]) {
     def applyTo(orig: PatientCriterion) = {
       orig.copy(
-        eligibilityStatus = eligibilityStatus.orElse(orig.eligibilityStatus),
+        eligibilityStatus = eligibilityStatus.getOrElse(orig.eligibilityStatus),
         isVerified = isVerified.getOrElse(orig.isVerified)
       )
     }

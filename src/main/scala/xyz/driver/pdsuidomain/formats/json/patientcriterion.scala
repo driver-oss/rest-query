@@ -15,12 +15,12 @@ object patientcriterion {
     case JsObject(fields) =>
       val eligibilityStatus = fields
         .get("eligibilityStatus")
-        .map(_.convertTo[Option[LabelValue]])
+        .map(_.convertTo[LabelValue])
         .getOrElse(orig.eligibilityStatus)
 
       val verifiedEligibilityStatus = fields
         .get("verifiedEligibilityStatus")
-        .map(_.convertTo[Option[LabelValue]])
+        .map(_.convertTo[LabelValue])
         .getOrElse(orig.verifiedEligibilityStatus)
 
       orig.copy(

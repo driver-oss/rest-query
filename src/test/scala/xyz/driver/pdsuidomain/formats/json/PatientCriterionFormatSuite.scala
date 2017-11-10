@@ -22,8 +22,8 @@ class PatientCriterionFormatSuite extends FlatSpec with Matchers {
       criterionText = "criterion text",
       criterionValue = Some(true),
       criterionIsDefining = false,
-      eligibilityStatus = Some(LabelValue.Yes),
-      verifiedEligibilityStatus = None,
+      eligibilityStatus = LabelValue.Yes,
+      verifiedEligibilityStatus = LabelValue.Unknown,
       isVisible = true,
       isVerified = true,
       lastUpdate = LocalDateTime.parse("2017-08-10T18:00:00"),
@@ -39,12 +39,12 @@ class PatientCriterionFormatSuite extends FlatSpec with Matchers {
     writtenJson should be(
       """{"isVerified":true,"patientLabelId":1,"lastUpdate":"2017-08-10T18:00Z","trialId":0,
          "armList":[{"patientCriterionId":1,"armId":31,"armName":"arm 31"},{"patientCriterionId":1,
-         "armId":32,"armName":"arm 32"}],"eligibilityStatus":"Yes","id":1,"nctId":"NCT00001",
+         "armId":32,"armName":"arm 32"}],"eligibilityStatus":"Yes","verifiedEligibilityStatus":"Unknown","id":1,"nctId":"NCT00001",
          "criterionId":101,"criterionValue":true,"criterionIsDefining":false,"labelId":21,
          "isVisible":true,"criterionText":"criterion text","inclusion":true}""".parseJson)
 
     val updatePatientCriterionJson      = """{"verifiedEligibilityStatus":"No"}""".parseJson
-    val expectedUpdatedPatientCriterion = orig.copy(verifiedEligibilityStatus = Some(LabelValue.No))
+    val expectedUpdatedPatientCriterion = orig.copy(verifiedEligibilityStatus = LabelValue.No)
     val parsedUpdatePatientCriterion    = applyUpdateToPatientCriterion(updatePatientCriterionJson, orig)
     parsedUpdatePatientCriterion should be(expectedUpdatedPatientCriterion)
 

@@ -38,8 +38,8 @@ class PatientEligibleTrialFormatSuite extends FlatSpec with Matchers {
       patientId = UuidId("748b5884-3528-4cb9-904b-7a8151d6e343"),
       trialId = StringId("NCT000001"),
       hypothesisId = UuidId("e76e2fc4-a29c-44fb-a81b-8856d06bb1d4"),
-      eligibilityStatus = Some(LabelValue.Yes),
-      verifiedEligibilityStatus = Some(LabelValue.Yes),
+      eligibilityStatus = LabelValue.Yes,
+      verifiedEligibilityStatus = LabelValue.Yes,
       isVerified = false
     )
     val arms = List(

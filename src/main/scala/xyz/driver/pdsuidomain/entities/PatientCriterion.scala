@@ -19,17 +19,16 @@ object PatientCriterion {
   /**
     * @see https://driverinc.atlassian.net/wiki/display/MTCH/EV+Business+Process
     */
-  def getEligibilityStatus(criterionValue: Option[Boolean], primaryValue: Option[LabelValue]): Option[LabelValue] = {
+  def getEligibilityStatus(criterionValue: Option[Boolean], primaryValue: LabelValue): LabelValue = {
     primaryValue match {
-      case None                              => None
-      case Some(LabelValue.Maybe)            => Some(LabelValue.Maybe)
-      case Some(_) if criterionValue.isEmpty => Some(LabelValue.Maybe)
-      case Some(status) =>
-        Some(
+      case LabelValue.Unknown          => LabelValue.Unknown
+      case LabelValue.Maybe            => LabelValue.Maybe
+      case _ if criterionValue.isEmpty => LabelValue.Maybe
+      case status =>
+        LabelValue.fromBoolean(
           LabelValue.fromBoolean(
-            LabelValue.fromBoolean(
-              criterionValue.getOrElse(throw new IllegalArgumentException("Criterion should not be empty"))) == status
-          ))
+            criterionValue.getOrElse(throw new IllegalArgumentException("Criterion should not be empty"))) == status
+        )
     }
   }
 
@@ -48,13 +47,13 @@ final case class PatientCriterion(id: LongId[PatientCriterion],
                                   criterionText: String,
                                   criterionValue: Option[Boolean],
                                   criterionIsDefining: Boolean,
-                                  eligibilityStatus: Option[LabelValue],
-                                  verifiedEligibilityStatus: Option[LabelValue],
+                                  eligibilityStatus: LabelValue,
+                                  verifiedEligibilityStatus: LabelValue,
                                   isVerified: Boolean,
                                   isVisible: Boolean,
                                   lastUpdate: LocalDateTime,
                                   inclusion: Option[Boolean]) {
-  def isIneligibleForEv: Boolean = eligibilityStatus.contains(LabelValue.No) && isVerified
+  def isIneligibleForEv: Boolean = eligibilityStatus == LabelValue.No && isVerified
 }
 
 object PatientCriterionArm {
