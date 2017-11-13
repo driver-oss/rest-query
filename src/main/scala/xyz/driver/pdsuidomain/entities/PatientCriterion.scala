@@ -53,7 +53,8 @@ final case class PatientCriterion(id: LongId[PatientCriterion],
                                   isVisible: Boolean,
                                   lastUpdate: LocalDateTime,
                                   inclusion: Option[Boolean]) {
-  def isIneligibleForEv: Boolean = eligibilityStatus == LabelValue.No && isVerified
+  import scalaz.syntax.equal._
+  def isIneligibleForEv: Boolean = eligibilityStatus === LabelValue.No && isVerified
 }
 
 object PatientCriterionArm {
