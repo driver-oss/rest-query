@@ -17,8 +17,8 @@ final case class PatientLabel(id: LongId[PatientLabel],
                               patientId: UuidId[Patient],
                               labelId: LongId[Label],
                               score: Int,
-                              primaryValue: Option[LabelValue],
-                              verifiedPrimaryValue: Option[LabelValue],
+                              primaryValue: LabelValue,
+                              verifiedPrimaryValue: LabelValue,
                               isImplicitMatch: Boolean,
                               isVisible: Boolean)
 

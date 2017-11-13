@@ -17,12 +17,12 @@ object patientlabel {
     case JsObject(fields) =>
       val primaryValue = fields
         .get("primaryValue")
-        .map(_.convertTo[Option[LabelValue]])
+        .map(_.convertTo[LabelValue])
         .getOrElse(orig.primaryValue)
 
       val verifiedPrimaryValue = fields
         .get("verifiedPrimaryValue")
-        .map(_.convertTo[Option[LabelValue]])
+        .map(_.convertTo[LabelValue])
         .getOrElse(orig.verifiedPrimaryValue)
 
       orig.copy(
