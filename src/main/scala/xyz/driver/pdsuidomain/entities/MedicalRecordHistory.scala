@@ -8,8 +8,6 @@ import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
 import xyz.driver.pdsuidomain.entities.MedicalRecordHistory._
 
-import scala.collection.immutable
-
 object MedicalRecordHistory {
 
   implicit def toPhiString(x: MedicalRecordHistory): PhiString = {
@@ -27,11 +25,7 @@ object MedicalRecordHistory {
     case object Review   extends State
     case object Flag     extends State
 
-    private implicit def stateToName(state: State): (State, String) = {
-      state -> state.toString
-    }
-
-    private val stateToName = immutable.Map[State, String](
+    val All: Set[State] = Set(
       State.New,
       State.Clean,
       State.Organize,
@@ -39,7 +33,8 @@ object MedicalRecordHistory {
       State.Flag
     )
 
-    val All: Set[State] = stateToName.keySet
+    private val stateToName: Map[State, String] =
+      All.map(s => s -> s.toString).toMap
 
     val fromString: PartialFunction[String, State] =
       for ((k, v) <- stateToName) yield (v, k)
@@ -73,11 +68,7 @@ object MedicalRecordHistory {
     case object CreatedRecord    extends Action
     case object ReadRecord       extends Action
 
-    private implicit def stateToName(action: Action): (Action, String) = {
-      action -> action.toString
-    }
-
-    private val actionToName = immutable.Map[Action, String](
+    val All: Set[Action] = Set(
       Action.Start,
       Action.Submit,
       Action.Unassign,
@@ -96,10 +87,11 @@ object MedicalRecordHistory {
       Action.ReadRecord
     )
 
+    private val actionToName: Map[Action, String] =
+      All.map(a => a -> a.toString).toMap
+
     val fromString: PartialFunction[String, Action] =
       for ((k, v) <- actionToName) yield (v, k)
-
-    val All: Set[Action] = actionToName.keySet
 
     def actionToString: Action => String = actionToName
 
