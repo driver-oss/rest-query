@@ -25,11 +25,15 @@ object DocumentHistory {
     case object Flag    extends State
     case object New     extends State
 
+    private implicit def stateToName(state: State): (State, String) = {
+      state -> state.getClass.getSimpleName
+    }
+
     private val stateToName = immutable.Map[State, String](
-      State.Extract -> "Extract",
-      State.Review  -> "Review",
-      State.Flag    -> "Flag",
-      State.New     -> "New"
+      State.Extract,
+      State.Review,
+      State.Flag,
+      State.New
     )
 
     val All: Set[State] = stateToName.keySet
@@ -61,19 +65,21 @@ object DocumentHistory {
     case object PostedEvidence  extends Action
     case object CreatedDocument extends Action
     case object ReadDocument    extends Action
-    case object DeletedDocument extends Action
+
+    private implicit def stateToName(action: Action): (Action, String) = {
+      action -> action.getClass.getSimpleName
+    }
 
     private val actionToName = immutable.Map[Action, String](
-      Action.Start           -> "Start",
-      Action.Submit          -> "Submit",
-      Action.Unassign        -> "Unassign",
-      Action.Resolve         -> "Resolve",
-      Action.Flag            -> "Flag",
-      Action.Archive         -> "Archive",
-      Action.PostedEvidence  -> "PostedEvidence",
-      Action.CreatedDocument -> "CreatedDocument",
-      Action.DeletedDocument -> "DeletedDocument",
-      Action.ReadDocument    -> "ReadDocument"
+      Action.Start,
+      Action.Submit,
+      Action.Unassign,
+      Action.Resolve,
+      Action.Flag,
+      Action.Archive,
+      Action.PostedEvidence,
+      Action.CreatedDocument,
+      Action.ReadDocument
     )
 
     val All: Set[Action] = actionToName.keySet

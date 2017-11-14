@@ -21,16 +21,22 @@ object MedicalRecordHistory {
   sealed trait State
 
   object State {
+    case object New      extends State
     case object Clean    extends State
     case object Organize extends State
     case object Review   extends State
     case object Flag     extends State
 
+    private implicit def stateToName(state: State): (State, String) = {
+      state -> state.getClass.getSimpleName
+    }
+
     private val stateToName = immutable.Map[State, String](
-      State.Clean    -> "Clean",
-      State.Organize -> "Organize",
-      State.Review   -> "Review",
-      State.Flag     -> "Flag"
+      State.New,
+      State.Clean,
+      State.Organize,
+      State.Review,
+      State.Flag
     )
 
     val All: Set[State] = stateToName.keySet
@@ -67,23 +73,27 @@ object MedicalRecordHistory {
     case object CreatedRecord    extends Action
     case object ReadRecord       extends Action
 
+    private implicit def stateToName(action: Action): (Action, String) = {
+      action -> action.getClass.getSimpleName
+    }
+
     private val actionToName = immutable.Map[Action, String](
-      Action.Start            -> "Start",
-      Action.Submit           -> "Submit",
-      Action.Unassign         -> "Unassign",
-      Action.Resolve          -> "Resolve",
-      Action.Flag             -> "Flag",
-      Action.Archive          -> "Archive",
-      Action.SavedDuplicate   -> "SavedDuplicate",
-      Action.SavedReorder     -> "SavedReorder",
-      Action.SavedRotation    -> "SavedRotate",
-      Action.DeletedDuplicate -> "DeletedDuplicate",
-      Action.DeletedReorder   -> "DeletedReorder",
-      Action.DeletedRotation  -> "DeletedRotation",
-      Action.CreatedDocument  -> "CreatedDocument",
-      Action.DeletedDocument  -> "DeletedDocument",
-      Action.CreatedRecord    -> "CreatedRecord",
-      Action.ReadRecord       -> "ReadRecord"
+      Action.Start,
+      Action.Submit,
+      Action.Unassign,
+      Action.Resolve,
+      Action.Flag,
+      Action.Archive,
+      Action.SavedDuplicate,
+      Action.SavedReorder,
+      Action.SavedRotation,
+      Action.DeletedDuplicate,
+      Action.DeletedReorder,
+      Action.DeletedRotation,
+      Action.CreatedDocument,
+      Action.DeletedDocument,
+      Action.CreatedRecord,
+      Action.ReadRecord
     )
 
     val fromString: PartialFunction[String, Action] =
