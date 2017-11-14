@@ -410,31 +410,31 @@ object Document {
 
   val validator: Validator[Document, Document] = { input =>
     for {
-      typeId <- Validators.nonEmpty("typeId")(input.typeId)
+      typeId <- Validators.nonEmpty("typeId")(input.typeId).right
 
-      providerTypeId <- Validators.nonEmpty("providerTypeId")(input.providerTypeId)
+      providerTypeId <- Validators.nonEmpty("providerTypeId")(input.providerTypeId).right
 
-      institutionName <- Validators.nonEmpty("institutionName")(input.institutionName)
+      institutionName <- Validators.nonEmpty("institutionName")(input.institutionName).right
 
-      meta <- Validators.nonEmpty("meta")(input.meta)
+      meta <- Validators.nonEmpty("meta")(input.meta).right
 
-      startDate <- Validators.nonEmpty("startDate")(input.startDate)
+      startDate <- Validators.nonEmpty("startDate")(input.startDate).right
 
-      isOrderRight <- input.endDate match {
+      isOrderRight <- (input.endDate match {
                        case Some(endDate) if startDate.isAfter(endDate) =>
                          Validators.fail("The start date should be less, than the end one")
 
                        case _ => Validators.success(true)
-                     }
+                     }).right
 
       areDatesInThePast <- {
-        val dates      = List(input.startDate, input.endDate).flatten
-        val now        = LocalDate.now()
+        val dates = List(input.startDate, input.endDate).flatten
+        val now = LocalDate.now()
         val hasInvalid = dates.exists(_.isAfter(now))
 
         if (hasInvalid) Validators.fail("Dates should be in the past")
         else Validators.success(true)
-      }
+      }.right
     } yield input
   }
 
