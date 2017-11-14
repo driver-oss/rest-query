@@ -17,8 +17,8 @@ class PatientLabelFormatSuite extends FlatSpec with Matchers {
       id = LongId(1),
       patientId = UuidId("748b5884-3528-4cb9-904b-7a8151d6e343"),
       labelId = LongId(20),
-      primaryValue = Some(LabelValue.Yes),
-      verifiedPrimaryValue = None,
+      primaryValue = LabelValue.Yes,
+      verifiedPrimaryValue = LabelValue.Unknown,
       isVisible = true,
       score = 1,
       isImplicitMatch = false
@@ -26,11 +26,11 @@ class PatientLabelFormatSuite extends FlatSpec with Matchers {
     val writtenJson = richPatientLabelFormat.write(RichPatientLabel(orig, isVerified = true))
 
     writtenJson should be(
-      """{"id":1,"labelId":20,"primaryValue":"Yes","isVisible":true,"isVerified":true,
+      """{"id":1,"labelId":20,"primaryValue":"Yes","isVisible":true,"isVerified":true,"verifiedPrimaryValue":"Unknown",
         "score":1,"isImplicitMatch":false, "patientId":"748b5884-3528-4cb9-904b-7a8151d6e343"}""".parseJson)
 
     val updatePatientLabelJson      = """{"verifiedPrimaryValue":"No"}""".parseJson
-    val expectedUpdatedPatientLabel = orig.copy(verifiedPrimaryValue = Some(LabelValue.No))
+    val expectedUpdatedPatientLabel = orig.copy(verifiedPrimaryValue = LabelValue.No)
     val parsedUpdatePatientLabel    = applyUpdateToPatientLabel(updatePatientLabelJson, orig)
     parsedUpdatePatientLabel should be(expectedUpdatedPatientLabel)
   }
@@ -65,8 +65,8 @@ class PatientLabelFormatSuite extends FlatSpec with Matchers {
       id = LongId(1),
       patientId = UuidId("748b5884-3528-4cb9-904b-7a8151d6e343"),
       labelId = LongId(20),
-      primaryValue = Some(LabelValue.Yes),
-      verifiedPrimaryValue = Some(LabelValue.Yes),
+      primaryValue = LabelValue.Yes,
+      verifiedPrimaryValue = LabelValue.Yes,
       isVisible = true,
       score = 1,
       isImplicitMatch = false

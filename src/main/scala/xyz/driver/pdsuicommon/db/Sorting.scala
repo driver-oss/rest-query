@@ -40,7 +40,7 @@ object Sorting {
 
   def filter(sorting: Sorting, p: Dimension => Boolean): Seq[Dimension] = sorting match {
     case x: Dimension if p(x) => Seq(x)
-    case x: Dimension         => Seq.empty
+    case _: Dimension         => Seq.empty
     case Sequential(xs)       => xs.filter(p)
   }
 
@@ -51,7 +51,7 @@ object Sorting {
       r += f(x)
       r.result()
 
-    case x: Dimension   => bf.apply().result()
+    case _: Dimension   => bf.apply().result()
     case Sequential(xs) => xs.collect(f)
   }
 

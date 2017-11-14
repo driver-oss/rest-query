@@ -38,22 +38,22 @@ object PatientTrialArmGroup {
   /**
     * @see https://driverinc.atlassian.net/wiki/display/DMPD/EV+Business+Process
     */
-  def getEligibilityStatusForRc(criterionList: TraversableOnce[PatientCriterion]): Option[LabelValue] = {
-    def isEligible: Boolean   = criterionList.forall(_.verifiedEligibilityStatus.contains(LabelValue.Yes))
-    def isIneligible: Boolean = criterionList.exists(_.verifiedEligibilityStatus.contains(LabelValue.No))
-    def isUnknown: Boolean    = criterionList.forall(_.verifiedEligibilityStatus.isEmpty)
+  def getEligibilityStatusForRc(criterionList: TraversableOnce[PatientCriterion]): LabelValue = {
+    def isEligible: Boolean   = criterionList.forall(_.verifiedEligibilityStatus == LabelValue.Yes)
+    def isIneligible: Boolean = criterionList.exists(_.verifiedEligibilityStatus == LabelValue.No)
+    def isUnknown: Boolean    = criterionList.forall(_.verifiedEligibilityStatus == LabelValue.Unknown)
 
-    if (isEligible) Some(LabelValue.Yes)
-    else if (isIneligible) Some(LabelValue.No)
-    else if (isUnknown) None
-    else Some(LabelValue.Maybe)
+    if (isEligible) LabelValue.Yes
+    else if (isIneligible) LabelValue.No
+    else if (isUnknown) LabelValue.Unknown
+    else LabelValue.Maybe
   }
 }
 
 final case class PatientTrialArmGroup(id: LongId[PatientTrialArmGroup],
                                       eligibleTrialId: UuidId[PatientEligibleTrial],
-                                      eligibilityStatus: Option[LabelValue],
-                                      verifiedEligibilityStatus: Option[LabelValue],
+                                      eligibilityStatus: LabelValue,
+                                      verifiedEligibilityStatus: LabelValue,
                                       isVerified: Boolean)
 
 object PatientTrialArmGroupView {
@@ -70,8 +70,8 @@ final case class PatientTrialArmGroupView(id: LongId[PatientTrialArmGroup],
                                           patientId: UuidId[Patient],
                                           trialId: StringId[Trial],
                                           hypothesisId: UuidId[Hypothesis],
-                                          eligibilityStatus: Option[LabelValue],
-                                          verifiedEligibilityStatus: Option[LabelValue],
+                                          eligibilityStatus: LabelValue,
+                                          verifiedEligibilityStatus: LabelValue,
                                           isVerified: Boolean) {
 
   def applyTo(trialArmGroup: PatientTrialArmGroup) = {

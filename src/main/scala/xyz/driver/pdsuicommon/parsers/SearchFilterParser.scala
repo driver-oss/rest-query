@@ -5,7 +5,6 @@ import java.util.UUID
 import xyz.driver.pdsuicommon.utils.Implicits.{toCharOps, toStringOps}
 import fastparse.all._
 import fastparse.core.Parsed
-import fastparse.parsers.Intrinsics.CharPred
 import xyz.driver.pdsuicommon.db.{SearchFilterBinaryOperation, SearchFilterExpr, SearchFilterNAryOperation}
 import xyz.driver.pdsuicommon.utils.Utils._
 
@@ -150,14 +149,14 @@ object SearchFilterParser {
 
       case head :: Nil =>
         atomParser.parse(head) match {
-          case Parsed.Success(x, _) => x
-          case e: Parsed.Failure    => throw new ParseQueryArgException("filters" -> formatFailure(1, e))
+          case Parsed.Success(x, _)    => x
+          case e: Parsed.Failure[_, _] => throw new ParseQueryArgException("filters" -> formatFailure(1, e))
         }
 
       case xs =>
         val parsed = xs.map(x => atomParser.parse(x))
         val failures: Seq[String] = parsed.zipWithIndex.collect {
-          case (e: Parsed.Failure, index) => formatFailure(index, e)
+          case (e: Parsed.Failure[_, _], index) => formatFailure(index, e)
         }
 
         if (failures.isEmpty) {
@@ -172,8 +171,8 @@ object SearchFilterParser {
     }
   }
 
-  private def formatFailure(sectionIndex: Int, e: Parsed.Failure): String = {
-    s"section $sectionIndex: ${ParseError.msg(e.extra.input, e.extra.traced.expected, e.index)}"
+  private def formatFailure(sectionIndex: Int, e: Parsed.Failure[_, _]): String = {
+    s"section $sectionIndex: ${fastparse.core.ParseError.msg(e.extra.input, e.extra.traced.expected, e.index)}"
   }
 
 }

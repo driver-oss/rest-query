@@ -21,7 +21,7 @@ object TestUtils {
       MatchResult(
         left.isFailure && left.failed.get.getClass == ct.runtimeClass,
         left match {
-          case Success(x) => s"$left did not fail"
+          case Success(_) => s"$left did not fail"
           case Failure(e) =>
             s"$left did fail with ${Utils.getClassSimpleName(e.getClass)}, " +
               s"not ${Utils.getClassSimpleName(ct.runtimeClass)}"
@@ -45,7 +45,7 @@ object TestUtils {
 
     def failureProp: Prop = self match {
       case Success(x) => false :| s"invalid: $x"
-      case Failure(e) => true
+      case Failure(_) => true
     }
 
   }

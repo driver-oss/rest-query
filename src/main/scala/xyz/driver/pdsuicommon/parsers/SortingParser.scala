@@ -49,7 +49,7 @@ object SortingParser {
         val parser = sequentialSortingParser(validDimensions.toSeq)
         parser.parse(rawSorting) match {
           case Parsed.Success(x, _) => x
-          case e: Parsed.Failure =>
+          case e: Parsed.Failure[_, _] =>
             throw new ParseQueryArgException("sort" -> formatFailure(e))
         }
 
@@ -57,8 +57,8 @@ object SortingParser {
     }
   }
 
-  private def formatFailure(e: Parsed.Failure): String = {
-    ParseError.msg(e.extra.input, e.extra.traced.expected, e.index)
+  private def formatFailure(e: Parsed.Failure[_, _]): String = {
+    fastparse.core.ParseError.msg(e.extra.input, e.extra.traced.expected, e.index)
   }
 
 }

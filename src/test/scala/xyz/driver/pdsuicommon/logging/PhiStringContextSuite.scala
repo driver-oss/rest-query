@@ -4,7 +4,7 @@ import org.scalatest.FreeSpecLike
 
 class PhiStringContextSuite extends FreeSpecLike {
 
-  class Foo(x: Int, y: String) {
+  case class Foo(x: Int, y: String) {
     val z: Boolean = true
   }
 

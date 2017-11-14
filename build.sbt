@@ -3,14 +3,12 @@ import Keys._
 
 lazy val core = (project in file("."))
   .driverLibrary("pds-ui-common")
-  .settings(scalastyleSettings ++ wartRemoverSettings ++ formatSettings)
-  .settings(wartremoverErrors in (Compile, compile) --= Seq(
-    Wart.ImplicitConversion, Wart.MutableDataStructures, Wart.TraversableOps, Wart.OptionPartial))
+  .settings(lintingSettings)
+  .settings(scalacOptions -= "-Xfatal-warnings") // this is needed to ignore unused implicits that are actually used in scala 2.11
   .settings(sources in (Compile, doc) := Seq.empty, publishArtifact in (Compile, packageDoc) := false)
   .settings(libraryDependencies ++= Seq(
-    "com.fasterxml.jackson.module"      %% "jackson-module-scala"   % "2.8.3",
     "com.github.pureconfig"             %% "pureconfig"             % "0.7.2",
-    "com.lihaoyi"                       %% "fastparse"              % "0.3.7",
+    "com.lihaoyi"                       %% "fastparse"              % "1.0.0",
     "com.typesafe.akka"                 %% "akka-http"              % "10.0.10",
     "com.typesafe.scala-logging"        %% "scala-logging"          % "3.5.0",
     "io.getquill"                       %% "quill-jdbc"             % "1.2.1",
@@ -25,7 +23,6 @@ lazy val core = (project in file("."))
     "com.typesafe"                      % "config"                  % "1.3.0",
     "org.asynchttpclient"               % "async-http-client"       % "2.0.24",
     "org.slf4j"                         % "slf4j-api"               % "1.7.21",
-    "ai.x"                              %% "diff"                   % "1.2.0-get-simple-name-fix" % "test",
     "org.scalacheck"                    %% "scalacheck"              % "1.13.4" % "test",
     "org.scalatest"                     %% "scalatest"              % "3.0.1"  % "test"
   ))

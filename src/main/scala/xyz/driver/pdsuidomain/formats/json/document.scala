@@ -141,6 +141,14 @@ object document {
           .map(_.convertTo[LongId[MedicalRecord]])
           .getOrElse(deserializationError(s"Document create json object does not contain `recordId` field: $json"))
 
+        val status = fields
+          .get("status")
+          .flatMap(_.convertTo[Option[Document.Status]])
+
+        val previousStatus = fields
+          .get("previousStatus")
+          .flatMap(_.convertTo[Option[Document.Status]])
+
         val physician = fields
           .get("physician")
           .flatMap(_.convertTo[Option[String]])
@@ -148,6 +156,10 @@ object document {
         val typeId = fields
           .get("typeId")
           .flatMap(_.convertTo[Option[LongId[DocumentType]]])
+
+        val requiredType = fields
+          .get("requiredType")
+          .flatMap(_.convertTo[Option[Document.RequiredType]])
 
         val provider = fields
           .get("provider")
@@ -173,25 +185,33 @@ object document {
           .get("endDate")
           .flatMap(_.convertTo[Option[LocalDate]])
 
+        val lastUpdate = fields
+          .get("lastUpdate")
+          .flatMap(_.convertTo[Option[LocalDateTime]])
+
+        val labelVersion = fields
+          .get("labelVersion")
+          .flatMap(_.convertTo[Option[Int]])
+
         Document(
           id = id.getOrElse(LongId(0)),
           recordId = recordId,
-          status = Document.Status.New,
+          status = status.getOrElse(Document.Status.New),
           physician = physician,
           typeId = typeId,
           startDate = startDate,
           endDate = endDate,
           providerName = provider,
           providerTypeId = providerTypeId,
-          requiredType = None,
+          requiredType = requiredType,
           institutionName = institutionName,
           meta = meta,
-          previousStatus = None,
+          previousStatus = previousStatus,
           assignee = None,
           previousAssignee = None,
           lastActiveUserId = None,
-          lastUpdate = LocalDateTime.MIN,
-          labelVersion = 0
+          lastUpdate = lastUpdate.getOrElse(LocalDateTime.MIN),
+          labelVersion = labelVersion.getOrElse(0)
         )
 
       case _ => deserializationError(s"Expected Json Object as Document, but got $json")

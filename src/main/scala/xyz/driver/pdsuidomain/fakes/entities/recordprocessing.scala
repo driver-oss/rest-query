@@ -264,7 +264,7 @@ object recordprocessing {
     )
   }
 
-  def nextExtractedDataLabel(dataId: LongId[ExtractedData]): ExtractedDataLabel = {
+  def nextExtractedDataLabel(): ExtractedDataLabel = {
     ExtractedDataLabel(
       id = nextLongId[ExtractedDataLabel],
       dataId = nextLongId[ExtractedData],
@@ -280,7 +280,7 @@ object recordprocessing {
       extractedData = extractedData,
       labels = List.fill(
         nextInt(maxItemsInCollectionNumber)
-      )(nextExtractedDataLabel(extractedData.id))
+      )(nextExtractedDataLabel())
     )
   }
 

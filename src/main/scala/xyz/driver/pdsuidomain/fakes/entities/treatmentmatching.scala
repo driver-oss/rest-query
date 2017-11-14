@@ -62,8 +62,8 @@ object treatmentmatching {
     patientId = nextUuidId[Patient],
     labelId = nextLongId[Label],
     score = generators.nextInt(100),
-    primaryValue = generators.nextOption(fakes.entities.labels.nextLabelValue()),
-    verifiedPrimaryValue = generators.nextOption(fakes.entities.labels.nextLabelValue()),
+    primaryValue = fakes.entities.labels.nextLabelValue(),
+    verifiedPrimaryValue = fakes.entities.labels.nextLabelValue(),
     isImplicitMatch = generators.nextBoolean(),
     isVisible = generators.nextBoolean()
   )
@@ -82,8 +82,8 @@ object treatmentmatching {
     criterionText = generators.nextString(),
     criterionValue = generators.nextOption(generators.nextBoolean()),
     criterionIsDefining = generators.nextBoolean(),
-    eligibilityStatus = generators.nextOption(fakes.entities.labels.nextLabelValue()),
-    verifiedEligibilityStatus = generators.nextOption(fakes.entities.labels.nextLabelValue()),
+    eligibilityStatus = fakes.entities.labels.nextLabelValue(),
+    verifiedEligibilityStatus = fakes.entities.labels.nextLabelValue(),
     isVerified = generators.nextBoolean(),
     isVisible = generators.nextBoolean(),
     lastUpdate = nextLocalDateTime,
@@ -139,8 +139,8 @@ object treatmentmatching {
     patientId = nextUuidId[Patient],
     trialId = trialId,
     hypothesisId = nextUuidId[Hypothesis],
-    eligibilityStatus = generators.nextOption(fakes.entities.labels.nextLabelValue()),
-    verifiedEligibilityStatus = generators.nextOption(fakes.entities.labels.nextLabelValue()),
+    eligibilityStatus = fakes.entities.labels.nextLabelValue(),
+    verifiedEligibilityStatus = fakes.entities.labels.nextLabelValue(),
     isVerified = generators.nextBoolean()
   )
 

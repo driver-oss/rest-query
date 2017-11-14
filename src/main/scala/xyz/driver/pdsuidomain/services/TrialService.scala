@@ -144,7 +144,7 @@ trait TrialService {
   def resolve(origTrial: Trial)(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
-  def archive(origTrial: Trial)(
+  def archive(origTrial: Trial, comment: Option[String])(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
   def unassign(origTrial: Trial)(
