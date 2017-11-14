@@ -428,8 +428,8 @@ object Document {
                      }).right
 
       areDatesInThePast <- {
-        val dates = List(input.startDate, input.endDate).flatten
-        val now = LocalDate.now()
+        val dates      = List(input.startDate, input.endDate).flatten
+        val now        = LocalDate.now()
         val hasInvalid = dates.exists(_.isAfter(now))
 
         if (hasInvalid) Validators.fail("Dates should be in the past")

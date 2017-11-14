@@ -8,6 +8,8 @@ import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
 import xyz.driver.pdsuidomain.entities.MedicalRecordHistory._
 
+import scala.collection.immutable
+
 object MedicalRecordHistory {
 
   implicit def toPhiString(x: MedicalRecordHistory): PhiString = {
@@ -17,73 +19,93 @@ object MedicalRecordHistory {
   }
 
   sealed trait State
+
   object State {
+    case object New      extends State
     case object Clean    extends State
     case object Organize extends State
     case object Review   extends State
     case object Flag     extends State
 
-    val All: Set[State] = Set[State](Clean, Organize, Review, Flag)
-
-    val fromString: PartialFunction[String, State] = {
-      case "Clean"    => State.Clean
-      case "Organize" => State.Organize
-      case "Review"   => State.Review
-      case "Flag"     => State.Flag
+    private implicit def stateToName(state: State): (State, String) = {
+      state -> state.getClass.getSimpleName
     }
 
-    def stateToString(x: State): String = x match {
-      case State.Clean    => "Clean"
-      case State.Organize => "Organize"
-      case State.Review   => "Review"
-      case State.Flag     => "Flag"
-    }
+    private val stateToName = immutable.Map[State, String](
+      State.New,
+      State.Clean,
+      State.Organize,
+      State.Review,
+      State.Flag
+    )
+
+    val All: Set[State] = stateToName.keySet
+
+    val fromString: PartialFunction[String, State] =
+      for ((k, v) <- stateToName) yield (v, k)
+
+    def stateToString: State => String = stateToName
 
     implicit def toPhiString(x: State): PhiString =
       Unsafe(Utils.getClassSimpleName(x.getClass))
   }
 
   sealed trait Action extends Product with Serializable {
-
-    def oneOf(xs: Action*): Boolean = xs.contains(this)
-
+    def oneOf(xs: Action*): Boolean     = xs.contains(this)
     def oneOf(xs: Set[Action]): Boolean = xs.contains(this)
-
   }
 
   object Action {
-    case object Start    extends Action
-    case object Submit   extends Action
-    case object Unassign extends Action
-    case object Resolve  extends Action
-    case object Flag     extends Action
-    case object Archive  extends Action
+    case object Start            extends Action
+    case object Submit           extends Action
+    case object Unassign         extends Action
+    case object Resolve          extends Action
+    case object Flag             extends Action
+    case object Archive          extends Action
+    case object SavedDuplicate   extends Action
+    case object SavedReorder     extends Action
+    case object SavedRotation    extends Action
+    case object DeletedDuplicate extends Action
+    case object DeletedReorder   extends Action
+    case object DeletedRotation  extends Action
+    case object CreatedDocument  extends Action
+    case object DeletedDocument  extends Action
+    case object CreatedRecord    extends Action
+    case object ReadRecord       extends Action
 
-    val All: Set[Action] =
-      Set[Action](Start, Submit, Unassign, Resolve, Flag, Archive)
-
-    val fromString: PartialFunction[String, Action] = {
-      case "Start"    => Action.Start
-      case "Submit"   => Action.Submit
-      case "Unassign" => Action.Unassign
-      case "Resolve"  => Action.Resolve
-      case "Flag"     => Action.Flag
-      case "Archive"  => Action.Archive
+    private implicit def stateToName(action: Action): (Action, String) = {
+      action -> action.getClass.getSimpleName
     }
 
-    def actionToString(x: Action): String = x match {
-      case Action.Start    => "Start"
-      case Action.Submit   => "Submit"
-      case Action.Unassign => "Unassign"
-      case Action.Resolve  => "Resolve"
-      case Action.Flag     => "Flag"
-      case Action.Archive  => "Archive"
-    }
+    private val actionToName = immutable.Map[Action, String](
+      Action.Start,
+      Action.Submit,
+      Action.Unassign,
+      Action.Resolve,
+      Action.Flag,
+      Action.Archive,
+      Action.SavedDuplicate,
+      Action.SavedReorder,
+      Action.SavedRotation,
+      Action.DeletedDuplicate,
+      Action.DeletedReorder,
+      Action.DeletedRotation,
+      Action.CreatedDocument,
+      Action.DeletedDocument,
+      Action.CreatedRecord,
+      Action.ReadRecord
+    )
+
+    val fromString: PartialFunction[String, Action] =
+      for ((k, v) <- actionToName) yield (v, k)
+
+    val All: Set[Action] = actionToName.keySet
+
+    def actionToString: Action => String = actionToName
 
     implicit def toPhiString(x: Action): PhiString =
       Unsafe(Utils.getClassSimpleName(x.getClass))
   }
-
 }
 
 final case class MedicalRecordHistory(id: LongId[MedicalRecordHistory],
