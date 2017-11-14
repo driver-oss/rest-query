@@ -26,7 +26,7 @@ object DocumentHistory {
     case object New     extends State
 
     private implicit def stateToName(state: State): (State, String) = {
-      state -> state.getClass.getSimpleName
+      state -> state.toString
     }
 
     private val stateToName = immutable.Map[State, String](
@@ -67,7 +67,7 @@ object DocumentHistory {
     case object ReadDocument    extends Action
 
     private implicit def stateToName(action: Action): (Action, String) = {
-      action -> action.getClass.getSimpleName
+      action -> action.toString
     }
 
     private val actionToName = immutable.Map[Action, String](

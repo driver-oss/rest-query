@@ -28,7 +28,7 @@ object MedicalRecordHistory {
     case object Flag     extends State
 
     private implicit def stateToName(state: State): (State, String) = {
-      state -> state.getClass.getSimpleName
+      state -> state.toString
     }
 
     private val stateToName = immutable.Map[State, String](
@@ -74,7 +74,7 @@ object MedicalRecordHistory {
     case object ReadRecord       extends Action
 
     private implicit def stateToName(action: Action): (Action, String) = {
-      action -> action.getClass.getSimpleName
+      action -> action.toString
     }
 
     private val actionToName = immutable.Map[Action, String](
