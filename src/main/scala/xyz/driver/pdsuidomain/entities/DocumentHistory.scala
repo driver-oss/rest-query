@@ -18,16 +18,20 @@ object DocumentHistory {
 
   sealed trait State
   object State {
+    case object New     extends State
     case object Extract extends State
     case object Review  extends State
+    case object Done    extends State
     case object Flag    extends State
-    case object New     extends State
+    case object Archive extends State
 
     val All: Set[State] = Set(
+      State.New,
       State.Extract,
       State.Review,
+      State.Done,
       State.Flag,
-      State.New
+      State.Archive
     )
 
     private val stateToName: Map[State, String] =
@@ -51,15 +55,15 @@ object DocumentHistory {
   }
 
   object Action {
-    case object Start           extends Action
-    case object Submit          extends Action
-    case object Unassign        extends Action
-    case object Resolve         extends Action
-    case object Flag            extends Action
-    case object Archive         extends Action
-    case object PostedEvidence  extends Action
-    case object CreatedDocument extends Action
-    case object ReadDocument    extends Action
+    case object Start          extends Action
+    case object Submit         extends Action
+    case object Unassign       extends Action
+    case object Resolve        extends Action
+    case object Flag           extends Action
+    case object Archive        extends Action
+    case object PostEvidence  extends Action
+    case object CreateDocument extends Action
+    case object ReadDocument   extends Action
 
     val All: Set[Action] = Set(
       Action.Start,
@@ -68,8 +72,8 @@ object DocumentHistory {
       Action.Resolve,
       Action.Flag,
       Action.Archive,
-      Action.PostedEvidence,
-      Action.CreatedDocument,
+      Action.PostEvidence,
+      Action.CreateDocument,
       Action.ReadDocument
     )
 
