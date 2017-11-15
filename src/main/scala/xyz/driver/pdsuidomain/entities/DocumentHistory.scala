@@ -6,7 +6,7 @@ import xyz.driver.core.auth.User
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuicommon.logging._
 import xyz.driver.pdsuicommon.utils.Utils
-import xyz.driver.pdsuidomain.entities.DocumentHistory._
+import xyz.driver.pdsuidomain.entities.DocumentHistory.{Action, _}
 
 object DocumentHistory {
 
@@ -18,23 +18,29 @@ object DocumentHistory {
 
   sealed trait State
   object State {
+    case object New     extends State
     case object Extract extends State
     case object Review  extends State
+    case object Done    extends State
     case object Flag    extends State
+    case object Archive extends State
 
-    val All: Set[State] = Set[State](Extract, Review, Flag)
+    val All: Set[State] = Set(
+      State.New,
+      State.Extract,
+      State.Review,
+      State.Done,
+      State.Flag,
+      State.Archive
+    )
 
-    val fromString: PartialFunction[String, State] = {
-      case "Extract" => State.Extract
-      case "Review"  => State.Review
-      case "Flag"    => State.Flag
-    }
+    private val stateToName: Map[State, String] =
+      All.map(s => s -> s.toString).toMap
 
-    def stateToString(x: State): String = x match {
-      case State.Extract => "Extract"
-      case State.Review  => "Review"
-      case State.Flag    => "Flag"
-    }
+    val fromString: PartialFunction[String, State] =
+      for ((k, v) <- stateToName) yield (v, k)
+
+    def stateToString: State => String = stateToName
 
     implicit def toPhiString(x: State): PhiString =
       Unsafe(Utils.getClassSimpleName(x.getClass))
@@ -49,38 +55,39 @@ object DocumentHistory {
   }
 
   object Action {
-    case object Start    extends Action
-    case object Submit   extends Action
-    case object Unassign extends Action
-    case object Resolve  extends Action
-    case object Flag     extends Action
-    case object Archive  extends Action
+    case object Start          extends Action
+    case object Submit         extends Action
+    case object Unassign       extends Action
+    case object Resolve        extends Action
+    case object Flag           extends Action
+    case object Archive        extends Action
+    case object PostEvidence   extends Action
+    case object CreateDocument extends Action
+    case object ReadDocument   extends Action
 
-    val All: Set[Action] =
-      Set[Action](Start, Submit, Unassign, Resolve, Flag, Archive)
+    val All: Set[Action] = Set(
+      Action.Start,
+      Action.Submit,
+      Action.Unassign,
+      Action.Resolve,
+      Action.Flag,
+      Action.Archive,
+      Action.PostEvidence,
+      Action.CreateDocument,
+      Action.ReadDocument
+    )
 
-    val fromString: PartialFunction[String, Action] = {
-      case "Start"    => Action.Start
-      case "Submit"   => Action.Submit
-      case "Unassign" => Action.Unassign
-      case "Resolve"  => Action.Resolve
-      case "Flag"     => Action.Flag
-      case "Archive"  => Action.Archive
-    }
+    private val actionToName: Map[Action, String] =
+      All.map(a => a -> a.toString).toMap
 
-    def actionToString(x: Action): String = x match {
-      case Action.Start    => "Start"
-      case Action.Submit   => "Submit"
-      case Action.Unassign => "Unassign"
-      case Action.Resolve  => "Resolve"
-      case Action.Flag     => "Flag"
-      case Action.Archive  => "Archive"
-    }
+    val fromString: PartialFunction[String, Action] =
+      for ((k, v) <- actionToName) yield (v, k)
+
+    def actionToString: Action => String = actionToName
 
     implicit def toPhiString(x: Action): PhiString =
       Unsafe(Utils.getClassSimpleName(x.getClass))
   }
-
 }
 
 final case class DocumentHistory(id: LongId[DocumentHistory],
