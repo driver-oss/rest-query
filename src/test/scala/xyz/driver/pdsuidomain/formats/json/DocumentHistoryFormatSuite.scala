@@ -2,15 +2,33 @@ package xyz.driver.pdsuidomain.formats.json
 
 import java.time.LocalDateTime
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{FreeSpecLike, Matchers}
 import spray.json._
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuidomain.entities.DocumentHistory
 
-class DocumentHistoryFormatSuite extends FlatSpec with Matchers {
+class DocumentHistoryFormatSuite extends FreeSpecLike with Matchers {
   import xyz.driver.pdsuidomain.formats.json.documenthistory._
 
-  "Json format for DocumentHistory" should "read and write correct JSON" in {
+  "Can read and write DocumentHistory states" - {
+    val states = DocumentHistory.State.All
+    states.foreach { state =>s"$state" in test(state)}
+  }
+
+  "Can read and write DocumentHistory actions" - {
+    val actions = DocumentHistory.Action.All
+    actions.foreach { action =>s"$action" in test(action)}
+  }
+
+  private def test(state: DocumentHistory.State) = {
+    documentStateFormat.read(documentStateFormat.write(state)) shouldBe state
+  }
+
+  private def test(action: DocumentHistory.Action) = {
+    documentActionFormat.read(documentActionFormat.write(action)) shouldBe action
+  }
+
+  "Json format for DocumentHistory should read and write correct JSON" - {
     val documentHistory = DocumentHistory(
       id = LongId(10),
       documentId = LongId(1),
