@@ -61,7 +61,7 @@ object DocumentHistory {
     case object Resolve        extends Action
     case object Flag           extends Action
     case object Archive        extends Action
-    case object PostEvidence  extends Action
+    case object PostEvidence   extends Action
     case object CreateDocument extends Action
     case object ReadDocument   extends Action
 
