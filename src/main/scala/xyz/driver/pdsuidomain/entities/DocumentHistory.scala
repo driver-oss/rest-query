@@ -61,7 +61,7 @@ object DocumentHistory {
     case object Resolve        extends Action
     case object Flag           extends Action
     case object Archive        extends Action
-    case object PosteEvidence  extends Action
+    case object PostEvidence  extends Action
     case object CreateDocument extends Action
     case object ReadDocument   extends Action
 
@@ -72,7 +72,7 @@ object DocumentHistory {
       Action.Resolve,
       Action.Flag,
       Action.Archive,
-      Action.PosteEvidence,
+      Action.PostEvidence,
       Action.CreateDocument,
       Action.ReadDocument
     )
