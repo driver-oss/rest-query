@@ -23,14 +23,18 @@ object MedicalRecordHistory {
     case object Clean    extends State
     case object Organize extends State
     case object Review   extends State
+    case object Done     extends State
     case object Flag     extends State
+    case object Archive  extends State
 
     val All: Set[State] = Set(
       State.New,
       State.Clean,
       State.Organize,
       State.Review,
-      State.Flag
+      State.Done,
+      State.Flag,
+      State.Archive
     )
 
     private val stateToName: Map[State, String] =
@@ -51,22 +55,22 @@ object MedicalRecordHistory {
   }
 
   object Action {
-    case object Start            extends Action
-    case object Submit           extends Action
-    case object Unassign         extends Action
-    case object Resolve          extends Action
-    case object Flag             extends Action
-    case object Archive          extends Action
-    case object SavedDuplicate   extends Action
-    case object SavedReorder     extends Action
-    case object SavedRotation    extends Action
-    case object DeletedDuplicate extends Action
-    case object DeletedReorder   extends Action
-    case object DeletedRotation  extends Action
-    case object CreatedDocument  extends Action
-    case object DeletedDocument  extends Action
-    case object CreatedRecord    extends Action
-    case object ReadRecord       extends Action
+    case object Start           extends Action
+    case object Submit          extends Action
+    case object Unassign        extends Action
+    case object Resolve         extends Action
+    case object Flag            extends Action
+    case object Archive         extends Action
+    case object SaveDuplicate   extends Action
+    case object SaveReorder     extends Action
+    case object SaveRotation    extends Action
+    case object DeleteDuplicate extends Action
+    case object DeleteReorder   extends Action
+    case object DeleteRotation  extends Action
+    case object CreateDocument  extends Action
+    case object DeleteDocument  extends Action
+    case object CreateRecord    extends Action
+    case object ReadRecord      extends Action
 
     val All: Set[Action] = Set(
       Action.Start,
@@ -75,15 +79,15 @@ object MedicalRecordHistory {
       Action.Resolve,
       Action.Flag,
       Action.Archive,
-      Action.SavedDuplicate,
-      Action.SavedReorder,
-      Action.SavedRotation,
-      Action.DeletedDuplicate,
-      Action.DeletedReorder,
-      Action.DeletedRotation,
-      Action.CreatedDocument,
-      Action.DeletedDocument,
-      Action.CreatedRecord,
+      Action.SaveDuplicate,
+      Action.SaveReorder,
+      Action.SaveRotation,
+      Action.DeleteDuplicate,
+      Action.DeleteReorder,
+      Action.DeleteRotation,
+      Action.CreateDocument,
+      Action.DeleteDocument,
+      Action.CreateRecord,
       Action.ReadRecord
     )
 
