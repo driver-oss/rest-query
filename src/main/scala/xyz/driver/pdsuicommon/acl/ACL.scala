@@ -48,7 +48,7 @@ object ACL extends PhiLogging {
   object MedicalRecord
       extends BaseACL(
         label = "medical record",
-        read = RepRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist + AdministratorRole,
+        read = RepRoles ++ TreatmentMatchingRoles + ResearchOncologist + AdministratorRole,
         update = RepRoles - DocumentExtractor
       )
 
@@ -71,7 +71,7 @@ object ACL extends PhiLogging {
       extends BaseACL(
         label = "document",
         create = Set(RecordOrganizer, RecordAdmin),
-        read = RepRoles - RecordCleaner + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist,
+        read = RepRoles - RecordCleaner ++ TreatmentMatchingRoles + ResearchOncologist,
         update = RepRoles - RecordCleaner,
         delete = Set(RecordOrganizer, RecordAdmin)
       )
@@ -95,7 +95,7 @@ object ACL extends PhiLogging {
       extends BaseACL(
         label = "extracted data",
         create = Set(DocumentExtractor, RecordAdmin),
-        read = Set(DocumentExtractor, RecordAdmin, RoutesCurator, TreatmentMatchingAdmin, ResearchOncologist),
+        read = Set(DocumentExtractor, RecordAdmin) ++ TreatmentMatchingRoles + ResearchOncologist,
         update = Set(DocumentExtractor, RecordAdmin),
         delete = Set(DocumentExtractor, RecordAdmin)
       )
@@ -103,13 +103,13 @@ object ACL extends PhiLogging {
   object ProviderType
       extends BaseACL(
         label = "provider type",
-        read = RepRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist
+        read = RepRoles ++ TreatmentMatchingRoles + ResearchOncologist
       )
 
   object DocumentType
       extends BaseACL(
         label = "document type",
-        read = RepRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist
+        read = RepRoles ++ TreatmentMatchingRoles + ResearchOncologist
       )
 
   object Message
