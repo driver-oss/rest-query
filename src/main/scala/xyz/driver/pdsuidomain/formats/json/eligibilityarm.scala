@@ -92,18 +92,13 @@ object eligibilityarm {
 
         val diseases = fields
           .get("diseases")
-          .map(_.convertTo[Seq[CancerType]])
-          .getOrElse(orig.eligibilityArmDiseases.map(_.disease))
+          .map(_.convertTo[Seq[CancerType]].map(x => EligibilityArmDisease(orig.eligibilityArm.id, x)))
+          .getOrElse(orig.eligibilityArmDiseases)
 
         orig.copy(
           eligibilityArm = orig.eligibilityArm
             .copy(name = name),
-          eligibilityArmDiseases = orig.eligibilityArmDiseases
-            .zip(diseases)
-            .map {
-              case (eligibilityArmDisease, disease) =>
-                eligibilityArmDisease.copy(disease = disease)
-            }
+          eligibilityArmDiseases = diseases
         )
 
       case _ => deserializationErrorEntityMessage(json)

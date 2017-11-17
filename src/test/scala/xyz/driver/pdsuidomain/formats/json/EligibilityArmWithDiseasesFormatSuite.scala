@@ -39,9 +39,10 @@ class EligibilityArmWithDiseasesFormatSuite extends FlatSpec with Matchers {
     val parsedArmWithDiseases     = eligibilityArmWithDiseasesReader.read(createArmWithDiseasesJson)
     parsedArmWithDiseases should be(eligibilityArmWithDiseases)
 
-    val updateArmWithDiseasesJson      = """{"name":"new arm name"}""".parseJson
+    val updateArmWithDiseasesJson      = """{"name":"new arm name","diseases":["Lung","Breast"]}""".parseJson
     val expectedUpdatedArmWithDiseases = eligibilityArmWithDiseases.copy(
-      eligibilityArm = eligibilityArmWithDiseases.eligibilityArm.copy(name = "new arm name")
+      eligibilityArm = eligibilityArmWithDiseases.eligibilityArm.copy(name = "new arm name"),
+      eligibilityArmDiseases = Seq(disease, disease.copy(disease = CancerType.Breast))
     )
 
     val parsedUpdateArmWithDiseases =
