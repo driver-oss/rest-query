@@ -6,4 +6,5 @@ jdk:
 scala:
   - 2.11.8
 
-script: "sbt clean test"
+script:
+  - echo 'credentials += Credentials("Artifactory Realm", "drivergrp.jfrog.io", "sbt-publisher", sys.env("ARTIFACTORY_PASSWORD"))' > project/credentials.sbt "sbt clean test"
