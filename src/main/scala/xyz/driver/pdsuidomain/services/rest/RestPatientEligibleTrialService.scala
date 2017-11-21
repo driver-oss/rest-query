@@ -4,14 +4,13 @@ import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import xyz.driver.core.rest.{Pagination => _, _}
-import xyz.driver.entities.labels.Label
 import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.PatientCriterionService.RichPatientCriterion
-import xyz.driver.pdsuidomain.services.{PatientEligibleTrialService, PatientLabelService}
+import xyz.driver.pdsuidomain.services.PatientEligibleTrialService
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -20,11 +19,11 @@ class RestPatientEligibleTrialService(transport: ServiceTransport, baseUri: Uri)
   protected val exec: ExecutionContext)
   extends PatientEligibleTrialService with RestHelper {
 
+  import PatientEligibleTrialService._
   import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
   import xyz.driver.pdsuidomain.formats.json.listresponse._
-  import xyz.driver.pdsuidomain.formats.json.patienteligibletrial._
   import xyz.driver.pdsuidomain.formats.json.patientcriterion._
-  import PatientEligibleTrialService._
+  import xyz.driver.pdsuidomain.formats.json.patienteligibletrial._
 
   def getAll(patientId: UuidId[Patient],
              filter: SearchFilterExpr = SearchFilterExpr.Empty,
