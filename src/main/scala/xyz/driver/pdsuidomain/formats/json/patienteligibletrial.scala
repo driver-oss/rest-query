@@ -14,9 +14,8 @@ object patienteligibletrial {
   def applyUpdateToTrialArmGroup(json: JsValue, orig: PatientTrialArmGroupView): PatientTrialArmGroupView =
     json match {
       case JsObject(fields) =>
-        val isVerified = fields
-          .get("isVerified")
-          .map(_.convertTo[Boolean])
+        val isVerified = fields.get("group").map(_.asJsObject)
+          .flatMap(_.fields.get("isVerified")).map(_.convertTo[Boolean])
           .getOrElse(orig.isVerified)
 
         orig.copy(isVerified = isVerified)
