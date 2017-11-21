@@ -47,13 +47,19 @@ class PatientEligibleTrialFormatSuite extends FlatSpec with Matchers {
       PatientCriterionArm(patientCriterionId = LongId(1), armId = LongId(32), armName = "arm 32")
     )
     val orig        = RichPatientEligibleTrial(trial, group, arms)
-    val writtenJson = patientEligibleTrialWriter.write(orig)
+    val writtenJson = patientEligibleTrialFormat.write(orig)
 
     writtenJson should be(
-      """{"id":1,"patientId":"748b5884-3528-4cb9-904b-7a8151d6e343","trialId":"NCT000001","trialTitle":"trial title",
-         "hypothesisId":"e76e2fc4-a29c-44fb-a81b-8856d06bb1d4","verifiedEligibilityStatus":"Yes","isVerified":false,"arms":["arm 31","arm 32"]}""".parseJson)
+      """{"trial":{"isPartner":false,"assignee":null,"lastUpdate":"2017-08-10T18:16:19Z","previousStatus":null,
+        "isUpdated":false,"overviewTemplate":"","phase":"","originalStudyDesignId":null,
+        "hypothesisId":"e76e2fc4-a29c-44fb-a81b-8856d06bb1d4","originalTitle":"orig trial title","studyDesignId":321,
+        "lastActiveUser":null,"externalid":"40892a07-c638-49d2-9795-1edfefbbcc7c","id":"NCT000001","status":"Done",
+        "overview":null,"previousAssignee":null,"title":"trial title"},"group":{"isVerified":false
+        ,"patientId":"748b5884-3528-4cb9-904b-7a8151d6e343","hypothesisId":"e76e2fc4-a29c-44fb-a81b-8856d06bb1d4",
+        "verifiedEligibilityStatus":"Yes","trialId":"NCT000001","eligibilityStatus":"Yes","id":1},
+        "arms":[{"patientCriterionId":1,"armId":31,"armName":"arm 31"},{"patientCriterionId":1,"armId":32,"armName":"arm 32"}]}""".parseJson)
 
-    val updatePatientEligibleTrialJson      = """{"isVerified":true}""".parseJson
+    val updatePatientEligibleTrialJson      = """{"group":{"isVerified":true}}""".parseJson
     val expectedUpdatedPatientTrialArmGroup = group.copy(isVerified = true)
     val parsedUpdatePatientTrialArmGroup    = applyUpdateToTrialArmGroup(updatePatientEligibleTrialJson, group)
     parsedUpdatePatientTrialArmGroup should be(expectedUpdatedPatientTrialArmGroup)
