@@ -32,7 +32,7 @@ class RestPatientEligibleTrialService(transport: ServiceTransport, baseUri: Uri)
               implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply] = {
     val request = HttpRequest(HttpMethods.GET,
       endpointUri(baseUri,
-        s"/v1/patient/$patientId/label",
+        s"/v1/patient/$patientId/trial",
         filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
