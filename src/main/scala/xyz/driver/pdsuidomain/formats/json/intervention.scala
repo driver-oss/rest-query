@@ -87,7 +87,7 @@ object intervention {
 
       val typeId = fields
         .get("typeId")
-        .map(_.convertTo[LongId[InterventionType]])
+        .map(_.convertTo[Option[LongId[InterventionType]]])
 
       val dosage = fields
         .get("dosage")
@@ -110,7 +110,7 @@ object intervention {
       orig.copy(
         intervention = origIntervention.copy(
           name = name.getOrElse(origIntervention.name),
-          typeId = typeId.orElse(origIntervention.typeId),
+          typeId = typeId.getOrElse(origIntervention.typeId),
           dosage = dosage.getOrElse(origIntervention.dosage),
           isActive = isActive.getOrElse(origIntervention.isActive),
           deliveryMethod = deliveryMethod
