@@ -100,4 +100,9 @@ object eligibility {
   implicit def labelRankingsFormat: RootJsonFormat[MismatchRankedLabels] = jsonFormat2(MismatchRankedLabels)
 
   implicit def matchedPatientFormat: RootJsonFormat[MatchedPatient] = jsonFormat6(MatchedPatient)
+
+  implicit lazy val eligibleTrialFormat: RootJsonFormat[EligibleTrial] = jsonFormat2(EligibleTrial.apply)
+  implicit lazy val eligibleArmFormat: RootJsonFormat[EligibleArm] = jsonFormat2(EligibleArm.apply)
+  implicit lazy val eligibleCriterionFormat: RootJsonFormat[EligibleCriterion] = jsonFormat2(EligibleCriterion.apply)
+
 }
