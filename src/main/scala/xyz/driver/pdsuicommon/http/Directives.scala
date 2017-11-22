@@ -13,6 +13,7 @@ import xyz.driver.pdsuicommon.domain._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import xyz.driver.core.generators
 import xyz.driver.core.rest.ContextHeaders
+import xyz.driver.core.rest.errors.{InvalidActionException, InvalidInputException, ResourceNotFoundException}
 
 import scala.util.control._
 import scala.util._
@@ -61,10 +62,9 @@ trait Directives {
     PathMatchers.JavaUUID.map((id) => UuidId(id))
 
   def failFast[A](reply: A): A = reply match {
-    case err: NotFoundError       => throw new NotFoundException(err.getMessage)
-    case err: AuthenticationError => throw new AuthenticationException(err.getMessage)
-    case err: AuthorizationError  => throw new AuthorizationException(err.getMessage)
-    case err: DomainError         => throw new DomainException(err.getMessage)
+    case err: NotFoundError       => throw ResourceNotFoundException(err.getMessage)
+    case err: AuthorizationError  => throw InvalidActionException(err.getMessage)
+    case err: DomainError         => throw InvalidInputException(err.getMessage)
     case other                    => other
   }
 
@@ -72,11 +72,10 @@ trait Directives {
     def errorResponse(ex: Throwable) =
       ErrorsResponse(Seq(ResponseError(None, ex.getMessage, 1)), req)
     ExceptionHandler {
-      case ex: AuthenticationException => complete(StatusCodes.Unauthorized        -> errorResponse(ex))
-      case ex: AuthorizationException  => complete(StatusCodes.Forbidden           -> errorResponse(ex))
-      case ex: NotFoundException       => complete(StatusCodes.NotFound            -> errorResponse(ex))
-      case ex: DomainException         => complete(StatusCodes.BadRequest          -> errorResponse(ex))
-      case NonFatal(ex)                => complete(StatusCodes.InternalServerError -> errorResponse(ex))
+      case ex: InvalidActionException    => complete(StatusCodes.Forbidden           -> errorResponse(ex))
+      case ex: ResourceNotFoundException => complete(StatusCodes.NotFound            -> errorResponse(ex))
+      case ex: InvalidInputException     => complete(StatusCodes.BadRequest          -> errorResponse(ex))
+      case NonFatal(ex)                  => complete(StatusCodes.InternalServerError -> errorResponse(ex))
     }
   }
 
