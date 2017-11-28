@@ -8,8 +8,6 @@ import xyz.driver.pdsuidomain.services.PatientEligibleTrialService.RichPatientEl
 object patienteligibletrial {
   import DefaultJsonProtocol._
   import common._
-  import xyz.driver.pdsuidomain.formats.json.trial._
-  import xyz.driver.pdsuidomain.formats.json.patientcriterion._
 
   def applyUpdateToTrialArmGroup(json: JsValue, orig: PatientTrialArmGroupView): PatientTrialArmGroupView =
     json match {
@@ -24,10 +22,19 @@ object patienteligibletrial {
       case _ => deserializationError(s"Expected Json Object as partial PatientTrialArmGroupView, but got $json")
     }
 
-  implicit val patientEligibleArmGroupView: RootJsonFormat[PatientTrialArmGroupView] =
-    jsonFormat7(PatientTrialArmGroupView.apply)
-
-  implicit val patientEligibleTrialFormat: RootJsonFormat[RichPatientEligibleTrial] =
-    jsonFormat3(RichPatientEligibleTrial.apply)
+  implicit val patientEligibleTrialWriter: RootJsonWriter[RichPatientEligibleTrial] =
+    new RootJsonWriter[RichPatientEligibleTrial] {
+      override def write(obj: RichPatientEligibleTrial) =
+        JsObject(
+          "id"                        -> obj.group.id.toJson,
+          "patientId"                 -> obj.group.patientId.toJson,
+          "trialId"                   -> obj.group.trialId.toJson,
+          "trialTitle"                -> obj.trial.title.toJson,
+          "arms"                      -> obj.arms.map(_.armName).toJson,
+          "hypothesisId"              -> obj.trial.hypothesisId.toJson,
+          "verifiedEligibilityStatus" -> obj.group.verifiedEligibilityStatus.toJson,
+          "isVerified"                -> obj.group.isVerified.toJson
+        )
+    }
 
 }
