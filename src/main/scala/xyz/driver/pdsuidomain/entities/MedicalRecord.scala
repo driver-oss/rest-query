@@ -85,12 +85,8 @@ object MedicalRecord {
 
   }
   object Status {
-    case object Unprocessed   extends Status
-    case object PreCleaning   extends Status
     case object New           extends Status
     case object Cleaned       extends Status
-    case object PreOrganized  extends Status
-    case object PreOrganizing extends Status
     case object Reviewed      extends Status
     case object Organized     extends Status
     case object Done          extends Status
@@ -98,12 +94,8 @@ object MedicalRecord {
     case object Archived      extends Status
 
     def fromString(status: String): Option[Status] = status match {
-      case "Unprocessed"   => Some(Unprocessed)
-      case "PreCleaning"   => Some(PreCleaning)
       case "New"           => Some(New)
       case "Cleaned"       => Some(Cleaned)
-      case "PreOrganized"  => Some(PreOrganized)
-      case "PreOrganizing" => Some(PreOrganizing)
       case "Reviewed"      => Some(Reviewed)
       case "Organized"     => Some(Organized)
       case "Done"          => Some(Done)
@@ -113,12 +105,8 @@ object MedicalRecord {
     }
 
     val All: Set[Status] = Set[Status](
-      Unprocessed,
-      PreCleaning,
       New,
       Cleaned,
-      PreOrganized,
-      PreOrganizing,
       Reviewed,
       Organized,
       Done,
