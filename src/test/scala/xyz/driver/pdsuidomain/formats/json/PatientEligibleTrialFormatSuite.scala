@@ -59,7 +59,7 @@ class PatientEligibleTrialFormatSuite extends FlatSpec with Matchers {
         "verifiedEligibilityStatus":"Yes","trialId":"NCT000001","eligibilityStatus":"Yes","id":1},
         "arms":[{"patientCriterionId":1,"armId":31,"armName":"arm 31"},{"patientCriterionId":1,"armId":32,"armName":"arm 32"}]}""".parseJson)
 
-    val updatePatientEligibleTrialJson      = """{"group":{"isVerified":true}}""".parseJson
+    val updatePatientEligibleTrialJson      = """{"isVerified":true}""".parseJson
     val expectedUpdatedPatientTrialArmGroup = group.copy(isVerified = true)
     val parsedUpdatePatientTrialArmGroup    = applyUpdateToTrialArmGroup(updatePatientEligibleTrialJson, group)
     parsedUpdatePatientTrialArmGroup should be(expectedUpdatedPatientTrialArmGroup)
