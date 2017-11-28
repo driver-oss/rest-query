@@ -72,7 +72,7 @@ class RestPatientEligibleTrialService(transport: ServiceTransport, baseUri: Uri)
       entity <- Marshal(draftPatientTrialArmGroup).to[RequestEntity]
       request = HttpRequest(
         HttpMethods.PATCH,
-        endpointUri(baseUri, s"/v1/patient/${origEligibleTrialWithTrial.group.patientId}/trial/${origEligibleTrialWithTrial.group.id}"))
+        endpointUri(baseUri, s"/v1/patient/${origEligibleTrialWithTrial.group.patientId}/trial/${origEligibleTrialWithTrial.trial.id}"))
         .withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply    <- apiResponse[RichPatientEligibleTrial](response)
