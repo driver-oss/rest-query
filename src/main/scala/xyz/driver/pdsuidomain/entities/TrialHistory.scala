@@ -17,25 +17,31 @@ object TrialHistory {
 
   sealed trait State
   object State {
-    case object Summarize    extends State
-    case object Criteriarize extends State
-    case object Review       extends State
-    case object Flag         extends State
+    case object Summarize      extends State
+    case object Criteriarize   extends State
+    case object Review         extends State
+    case object ReviewSummary  extends State
+    case object ReviewCriteria extends State
+    case object Flag           extends State
 
-    val All: Set[State] = Set[State](Summarize, Criteriarize, Review, Flag)
+    val All: Set[State] = Set[State](Summarize, Criteriarize, Review, ReviewSummary, ReviewCriteria, Flag)
 
     val fromString: PartialFunction[String, State] = {
-      case "Summarize"    => State.Summarize
-      case "Criteriarize" => State.Criteriarize
-      case "Review"       => State.Review
-      case "Flag"         => State.Flag
+      case "Summarize"      => State.Summarize
+      case "Criteriarize"   => State.Criteriarize
+      case "Review"         => State.Review
+      case "ReviewSummary"  => State.ReviewSummary
+      case "ReviewCriteria" => State.ReviewCriteria
+      case "Flag"           => State.Flag
     }
 
     def stateToString(x: State): String = x match {
-      case State.Summarize    => "Summarize"
-      case State.Criteriarize => "Criteriarize"
-      case State.Review       => "Review"
-      case State.Flag         => "Flag"
+      case State.Summarize      => "Summarize"
+      case State.Criteriarize   => "Criteriarize"
+      case State.Review         => "Review"
+      case State.ReviewSummary  => "ReviewSummary"
+      case State.ReviewCriteria => "ReviewCriteria"
+      case State.Flag           => "Flag"
     }
 
     implicit def toPhiString(x: State): PhiString =
