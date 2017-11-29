@@ -16,13 +16,8 @@ object record {
   import common._
 
   implicit val recordStatusFormat: EnumJsonFormat[Status] = new EnumJsonFormat[Status](
-    "PreCleaning"   -> Status.PreCleaning,
-    "Unprocessed"   -> Status.Unprocessed,
-    "PreOrganized"  -> Status.PreOrganized,
     "New"           -> Status.New,
     "Cleaned"       -> Status.Cleaned,
-    "PreOrganized"  -> Status.PreOrganized,
-    "PreOrganizing" -> Status.PreOrganizing,
     "Reviewed"      -> Status.Reviewed,
     "Organized"     -> Status.Organized,
     "Done"          -> Status.Done,
