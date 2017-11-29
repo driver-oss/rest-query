@@ -12,6 +12,7 @@ object trialhistory {
   implicit val trialStateFormat = new EnumJsonFormat[State](
     "Summarize"      -> State.Summarize,
     "Criteriarize"   -> State.Criteriarize,
+    "Review"         -> State.Review,
     "ReviewSummary"  -> State.ReviewSummary,
     "ReviewCriteria" -> State.ReviewCriteria,
     "Flag"           -> State.Flag
