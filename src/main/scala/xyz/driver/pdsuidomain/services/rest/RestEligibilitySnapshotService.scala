@@ -3,7 +3,6 @@ package xyz.driver.pdsuidomain.services.rest
 import akka.http.scaladsl.model.{HttpMethods, HttpRequest, Uri}
 import akka.stream.Materializer
 import xyz.driver.core.rest.{AuthorizedServiceRequestContext, ServiceTransport}
-import xyz.driver.entities.users
 import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.domain.UuidId
 import xyz.driver.pdsuidomain.entities.eligibility.EligibleTrial
