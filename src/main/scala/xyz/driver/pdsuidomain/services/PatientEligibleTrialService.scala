@@ -96,11 +96,9 @@ object PatientEligibleTrialService {
 
     case object NotFoundError extends UpdateReply with DefaultNotFoundError with DomainError.NotFoundError
 
-    case object PatientNotFoundError
-        extends UpdateReply with DefaultPatientNotFoundError with DomainError.NotFoundError
+    case object PatientNotFoundError extends UpdateReply with DefaultPatientNotFoundError with DomainError.NotFoundError
 
-    case object AuthorizationError
-        extends UpdateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
+    case object AuthorizationError extends UpdateReply with DomainError.AuthorizationError with DefaultAccessDeniedError
 
     final case class CommonError(userMessage: String) extends UpdateReply with DomainError
 
@@ -127,7 +125,7 @@ trait PatientEligibleTrialService {
   def getCriterionListByGroupId(patientId: UuidId[Patient], id: LongId[PatientTrialArmGroup])(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetCriterionListOfGroupReply]
 
-  def update(origEligibleTrialWithTrial: RichPatientEligibleTrial,
-             draftPatientTrialArmGroup: PatientTrialArmGroupView)(
+  def update(origEligibleTrialWithTrial: RichPatientEligibleTrial, draftPatientTrialArmGroup: PatientTrialArmGroupView)(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
+
 }
