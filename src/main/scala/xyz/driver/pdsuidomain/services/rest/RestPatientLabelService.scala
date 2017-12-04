@@ -22,13 +22,12 @@ class RestPatientLabelService(transport: ServiceTransport, baseUri: Uri)(
   import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
   import xyz.driver.pdsuidomain.formats.json.listresponse._
   import xyz.driver.pdsuidomain.formats.json.patientlabel._
-  import xyz.driver.pdsuidomain.services.PatientLabelService._
 
   def getAll(patientId: UuidId[Patient],
              filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply] = {
+    implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[(Seq[RichPatientLabel], Int)] = {
     val request = HttpRequest(HttpMethods.GET,
                               endpointUri(baseUri,
                                           s"/v1/patient/$patientId/label",
@@ -37,7 +36,7 @@ class RestPatientLabelService(transport: ServiceTransport, baseUri: Uri)(
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply    <- apiResponse[ListResponse[RichPatientLabel]](response)
     } yield {
-      GetListReply.EntityList(reply.items, reply.meta.itemsCount)
+      (reply.items, reply.meta.itemsCount)
     }
   }
 
@@ -45,30 +44,30 @@ class RestPatientLabelService(transport: ServiceTransport, baseUri: Uri)(
                               hypothesisId: UuidId[Hypothesis],
                               pagination: Option[Pagination] = None)(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]
-  ): Future[GetDefiningCriteriaListReply] = {
+  ): Future[(Seq[PatientLabel], Int)] = {
     val request = HttpRequest(HttpMethods.GET,
                               endpointUri(baseUri, s"/patient/$patientId/hypothesis", paginationQuery(pagination)))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply    <- apiResponse[ListResponse[PatientLabel]](response)
     } yield {
-      GetDefiningCriteriaListReply.EntityList(reply.items, reply.meta.itemsCount)
+      (reply.items, reply.meta.itemsCount)
     }
   }
 
   def getByLabelIdOfPatient(patientId: UuidId[Patient], labelId: LongId[Label])(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByLabelIdReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[RichPatientLabel] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/patient/$patientId/label/$labelId"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[RichPatientLabel](response)
+      entity   <- apiResponse[RichPatientLabel](response)
     } yield {
-      GetByLabelIdReply.Entity(reply)
+      entity
     }
   }
 
   def update(origPatientLabel: PatientLabel, draftPatientLabel: PatientLabel)(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[RichPatientLabel] = {
     for {
       entity <- Marshal(draftPatientLabel).to[RequestEntity]
       request = HttpRequest(
@@ -76,9 +75,9 @@ class RestPatientLabelService(transport: ServiceTransport, baseUri: Uri)(
         endpointUri(baseUri, s"/v1/patient/${origPatientLabel.patientId}/label/${origPatientLabel.labelId}"))
         .withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[RichPatientLabel](response)
+      entity   <- apiResponse[RichPatientLabel](response)
     } yield {
-      UpdateReply.Updated(reply)
+      entity
     }
   }
 
