@@ -31,8 +31,9 @@ class RestTrialIssueService(transport: ServiceTransport, baseUri: Uri)
 
     implicit val jsonReader: RootJsonReader[TrialIssue] = trialIssueReader(trialId)
 
-    val request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, s"/v1/trial/$trialId/issue"))
     for {
+      entity <- Marshal(draft).to[RequestEntity]
+      request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, s"/v1/trial/$trialId/issue")).withEntity(entity)
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply    <- apiResponse[TrialIssue](response)
     } yield {

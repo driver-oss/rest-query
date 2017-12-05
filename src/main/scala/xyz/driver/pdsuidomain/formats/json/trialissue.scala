@@ -69,7 +69,7 @@ object trialissue {
     )
   }
 
-  implicit def trialIssueReader(trialId: StringId[Trial]): RootJsonReader[TrialIssue] =
+  def trialIssueReader(trialId: StringId[Trial]): RootJsonReader[TrialIssue] =
     new RootJsonReader[TrialIssue] {
       implicit val className: String = "TrialIssue"
 
