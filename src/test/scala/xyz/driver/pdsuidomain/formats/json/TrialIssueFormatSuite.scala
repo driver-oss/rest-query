@@ -26,6 +26,7 @@ class TrialIssueFormatSuite extends FlatSpec with Matchers {
 
     writtenJson should be("""{"id":10,"userId":"userId-001","lastUpdate":"2017-08-10T18:00Z","isDraft":false,
         "text":"message text","evidence":"evidence","archiveRequired":false,"meta":"{}"}""".parseJson)
+    trialIssueReader(StringId("NCT000001")).read(writtenJson) shouldBe trialIssue
 
     val createTrialIssueJson      = """{"text":"message text","evidence":"evidence","meta":"{}"}""".parseJson
     val expectedCreatedTrialIssue = trialIssue.copy(id = LongId(0), lastUpdate = LocalDateTime.MIN, isDraft = true)
