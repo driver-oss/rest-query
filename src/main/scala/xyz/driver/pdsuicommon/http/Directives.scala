@@ -13,6 +13,7 @@ import xyz.driver.pdsuicommon.domain._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import xyz.driver.core.generators
 import xyz.driver.core.rest.ContextHeaders
+import xyz.driver.core.rest.errors.{InvalidActionException, InvalidInputException, ResourceNotFoundException}
 
 import scala.util.control._
 import scala.util._
@@ -69,14 +70,32 @@ trait Directives {
   }
 
   def domainExceptionHandler(req: String): ExceptionHandler = {
-    def errorResponse(ex: Throwable) =
-      ErrorsResponse(Seq(ResponseError(None, ex.getMessage, 1)), req)
+    def errorResponse(msg: String, code: Int) =
+      ErrorsResponse(Seq(ResponseError(None, msg, code)), req)
     ExceptionHandler {
-      case ex: AuthenticationException => complete(StatusCodes.Unauthorized        -> errorResponse(ex))
-      case ex: AuthorizationException  => complete(StatusCodes.Forbidden           -> errorResponse(ex))
-      case ex: NotFoundException       => complete(StatusCodes.NotFound            -> errorResponse(ex))
-      case ex: DomainException         => complete(StatusCodes.BadRequest          -> errorResponse(ex))
-      case NonFatal(ex)                => complete(StatusCodes.InternalServerError -> errorResponse(ex))
+      case ex: AuthenticationException =>
+        complete(StatusCodes.Unauthorized -> errorResponse(ex.getMessage, 401))
+
+      case ex: InvalidActionException =>
+        complete(StatusCodes.Forbidden -> errorResponse(ex.message, 403))
+
+      case ex: AuthorizationException =>
+        complete(StatusCodes.Forbidden -> errorResponse(ex.getMessage, 403))
+
+      case ex: ResourceNotFoundException =>
+        complete(StatusCodes.NotFound -> errorResponse(ex.message, 404))
+
+      case ex: NotFoundException =>
+        complete(StatusCodes.NotFound -> errorResponse(ex.getMessage, 404))
+
+      case ex: InvalidInputException =>
+        complete(StatusCodes.BadRequest -> errorResponse(ex.message, 400))
+
+      case ex: DomainException =>
+        complete(StatusCodes.BadRequest -> errorResponse(ex.getMessage, 400))
+
+      case NonFatal(ex) =>
+        complete(StatusCodes.InternalServerError -> errorResponse(ex.getMessage, 500))
     }
   }
 
