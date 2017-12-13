@@ -6,7 +6,7 @@ import akka.stream.Materializer
 import xyz.driver.core.rest.{Pagination => _, _}
 import xyz.driver.entities.labels.Label
 import xyz.driver.entities.users.AuthUserInfo
-import xyz.driver.pdsuicommon.db._
+import xyz.driver.pdsuicommon.db.{Pagination, _}
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
@@ -26,32 +26,32 @@ class RestPatientLabelService(transport: ServiceTransport, baseUri: Uri)(
   def getAll(patientId: UuidId[Patient],
              filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
-             pagination: Option[Pagination] = None)(
-    implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[(Seq[RichPatientLabel], Int)] = {
+             pagination: Pagination = Pagination.Default)(
+    implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[ListResponse[RichPatientLabel]] = {
     val request = HttpRequest(HttpMethods.GET,
                               endpointUri(baseUri,
                                           s"/v1/patient/$patientId/label",
-                                          filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
+                                          filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(Some(pagination))))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply    <- apiResponse[ListResponse[RichPatientLabel]](response)
     } yield {
-      (reply.items, reply.meta.itemsCount)
+      reply
     }
   }
 
   def getDefiningCriteriaList(patientId: UuidId[Patient],
                               hypothesisId: UuidId[Hypothesis],
-                              pagination: Option[Pagination] = None)(
+                              pagination: Pagination = Pagination.Default)(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]
-  ): Future[(Seq[PatientLabel], Int)] = {
+  ): Future[ListResponse[PatientLabel]] = {
     val request = HttpRequest(HttpMethods.GET,
-                              endpointUri(baseUri, s"/patient/$patientId/hypothesis", paginationQuery(pagination)))
+                              endpointUri(baseUri, s"/patient/$patientId/hypothesis", paginationQuery(Some(pagination))))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply    <- apiResponse[ListResponse[PatientLabel]](response)
     } yield {
-      (reply.items, reply.meta.itemsCount)
+      reply
     }
   }
 

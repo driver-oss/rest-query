@@ -5,6 +5,7 @@ import xyz.driver.entities.labels.Label
 import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
+import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
 
 import scala.concurrent.Future
@@ -18,6 +19,6 @@ trait PatientLabelEvidenceService {
              labelId: LongId[Label],
              filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
-             pagination: Option[Pagination] = None)(
-    implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[(Seq[PatientLabelEvidenceView], Int)]
+             pagination: Pagination = Pagination.Default)(
+    implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[ListResponse[PatientLabelEvidenceView]]
 }

@@ -1,11 +1,10 @@
 package xyz.driver.pdsuidomain.services
 
-import java.time.LocalDateTime
-
 import xyz.driver.core.rest.AuthorizedServiceRequestContext
 import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain._
+import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
 
 import scala.concurrent.Future
@@ -17,8 +16,8 @@ trait PatientService {
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
-             pagination: Option[Pagination] = None)(
-    implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[(Seq[Patient], Int, Option[LocalDateTime])]
+             pagination: Pagination = Pagination.Default)(
+    implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[ListResponse[Patient]]
 
   def unassign(origPatient: Patient)(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Patient]

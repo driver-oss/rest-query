@@ -1,13 +1,11 @@
 package xyz.driver.pdsuidomain.services.rest
 
-import java.time.LocalDateTime
-
 import scala.concurrent.{ExecutionContext, Future}
 import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import xyz.driver.core.rest.{Pagination => _, _}
 import xyz.driver.entities.users.AuthUserInfo
-import xyz.driver.pdsuicommon.db._
+import xyz.driver.pdsuicommon.db.{Pagination, _}
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
@@ -34,16 +32,16 @@ class RestPatientService(transport: ServiceTransport, baseUri: Uri)(implicit pro
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
-             pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[(Seq[Patient], Int, Option[LocalDateTime])] = {
+             pagination: Pagination = Pagination.Default)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[ListResponse[Patient]] = {
     val request = HttpRequest(
       HttpMethods.GET,
-      endpointUri(baseUri, "/v1/patient", filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
+      endpointUri(baseUri, "/v1/patient", filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(Some(pagination))))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply    <- apiResponse[ListResponse[Patient]](response)
     } yield {
-      (reply.items, reply.meta.itemsCount, reply.meta.lastUpdate)
+      reply
     }
   }
 
