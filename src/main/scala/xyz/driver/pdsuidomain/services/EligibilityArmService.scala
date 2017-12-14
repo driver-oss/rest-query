@@ -125,6 +125,9 @@ trait EligibilityArmService {
   def getByEligibilityId(armId: LongId[EligibilityArm])(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply]
 
+  def deleteByEligibilityIdSlotArmId(armId: LongId[EligibilityArm], slotArmId: LongId[SlotArm])(
+    implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[DeleteReply]
+
   def getBySlotId(armId: LongId[SlotArm],
                   filter: SearchFilterExpr = SearchFilterExpr.Empty,
                   sorting: Option[Sorting] = None,
