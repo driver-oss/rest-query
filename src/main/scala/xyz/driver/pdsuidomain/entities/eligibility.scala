@@ -60,4 +60,9 @@ object eligibility {
                                   orderId: Id[TestOrder],
                                   disease: CancerType,
                                   patientDataStatus: ProcessStepExecutionStatus)
+
+  final case class EligibleTrial(nctId: String, arms: Seq[EligibleArm])
+  final case class EligibleArm(title: String, criteria: Seq[EligibleCriterion])
+  final case class EligibleCriterion(text: String, eligibilityStatus: LabelValue)
+
 }

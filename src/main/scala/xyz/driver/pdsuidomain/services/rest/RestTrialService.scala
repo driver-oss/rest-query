@@ -110,7 +110,7 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
     }
 
     val id      = origTrial.id.id
-    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/trial/$id/$action", query))
+    val request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, s"/v1/trial/$id/$action", query))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply    <- apiResponse[Trial](response)

@@ -126,7 +126,7 @@ object ACL extends PhiLogging {
   object Trial
       extends BaseACL(
         label = "trial",
-        read = TcRoles + RoutesCurator + TreatmentMatchingAdmin + ResearchOncologist + AdministratorRole,
+        read = TcRoles ++ TreatmentMatchingRoles + ResearchOncologist + AdministratorRole,
         update = TcRoles
       )
 
