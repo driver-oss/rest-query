@@ -24,14 +24,14 @@ object documentissue {
         .map(_.convertTo[Boolean])
         .getOrElse(deserializationError(s"DocumentIssue json object does not contain `archiveRequired` field: $json"))
 
-      val startPage = fields.get("startPage").map(_.convertTo[Double])
-      val endPage   = fields.get("endPage").map(_.convertTo[Double])
+      val startPage = fields.get("startPage").map(_.convertTo[Option[Double]])
+      val endPage   = fields.get("endPage").map(_.convertTo[Option[Double]])
 
       orig.copy(
         text = text,
         archiveRequired = archiveRequired,
-        startPage = startPage,
-        endPage = endPage
+        startPage = startPage.getOrElse(orig.startPage),
+        endPage = endPage.getOrElse(orig.endPage)
       )
 
     case _ => deserializationError(s"Expected Json Object as partial DocumentIssue, but got $json")
@@ -49,8 +49,8 @@ object documentissue {
           .getOrElse(deserializationError(s"DocumentIssue json object does not contain `text` field: $json"))
 
         val id        = fields.get("id").map(_.convertTo[LongId[DocumentIssue]])
-        val startPage = fields.get("startPage").map(_.convertTo[Double])
-        val endPage   = fields.get("endPage").map(_.convertTo[Double])
+        val startPage = fields.get("startPage").flatMap(_.convertTo[Option[Double]])
+        val endPage   = fields.get("endPage").flatMap(_.convertTo[Option[Double]])
 
         DocumentIssue(
           id = id.getOrElse(LongId(0)),
