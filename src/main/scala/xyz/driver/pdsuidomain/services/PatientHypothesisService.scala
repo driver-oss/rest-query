@@ -18,7 +18,7 @@ trait PatientHypothesisService {
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[ListResponse[PatientHypothesis]]
 
   def getById(patientId: UuidId[Patient], hypothesisId: UuidId[Hypothesis])(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[PatientHypothesis]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Option[PatientHypothesis]]
 
   def update(origPatientHypothesis: PatientHypothesis, draftPatientHypothesis: PatientHypothesis)(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[PatientHypothesis]

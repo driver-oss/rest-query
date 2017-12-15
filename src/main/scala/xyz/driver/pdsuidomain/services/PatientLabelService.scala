@@ -24,7 +24,7 @@ trait PatientLabelService {
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[ListResponse[PatientLabel]]
 
   def getByLabelIdOfPatient(patientId: UuidId[Patient], labelId: LongId[Label])(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[RichPatientLabel]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Option[RichPatientLabel]]
 
   def update(origPatientLabel: PatientLabel, draftPatientLabel: PatientLabel)(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[RichPatientLabel]

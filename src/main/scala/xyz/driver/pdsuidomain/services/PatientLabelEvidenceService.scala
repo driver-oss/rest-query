@@ -13,7 +13,7 @@ import scala.concurrent.Future
 trait PatientLabelEvidenceService {
 
   def getById(patientId: UuidId[Patient], labelId: LongId[Label], id: LongId[PatientLabelEvidence])(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[PatientLabelEvidenceView]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Option[PatientLabelEvidenceView]]
 
   def getAll(patientId: UuidId[Patient],
              labelId: LongId[Label],

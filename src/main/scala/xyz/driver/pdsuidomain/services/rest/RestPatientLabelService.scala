@@ -56,13 +56,13 @@ class RestPatientLabelService(transport: ServiceTransport, baseUri: Uri)(
   }
 
   def getByLabelIdOfPatient(patientId: UuidId[Patient], labelId: LongId[Label])(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[RichPatientLabel] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Option[RichPatientLabel]] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/patient/$patientId/label/$labelId"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
       entity   <- apiResponse[RichPatientLabel](response)
     } yield {
-      entity
+      Option(entity)
     }
   }
 

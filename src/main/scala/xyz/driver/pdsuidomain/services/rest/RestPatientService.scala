@@ -20,13 +20,13 @@ class RestPatientService(transport: ServiceTransport, baseUri: Uri)(implicit pro
   import xyz.driver.pdsuidomain.formats.json.patient._
 
   def getById(id: UuidId[Patient])(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Patient] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Option[Patient]] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/patient/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
       entity   <- apiResponse[Patient](response)
     } yield {
-      entity
+      Option(entity)
     }
   }
 

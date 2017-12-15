@@ -15,7 +15,7 @@ trait PatientIssueService {
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[PatientIssue]
 
   def getById(patientId: UuidId[Patient], id: LongId[PatientIssue])(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[PatientIssue]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Option[PatientIssue]]
 
   def getListByPatientId(patientId: UuidId[Patient],
                          filter: SearchFilterExpr = SearchFilterExpr.Empty,

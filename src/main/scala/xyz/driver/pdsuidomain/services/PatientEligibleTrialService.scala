@@ -18,7 +18,7 @@ trait PatientEligibleTrialService {
     implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[ListResponse[RichPatientEligibleTrial]]
 
   def getById(patientId: UuidId[Patient], id: LongId[PatientTrialArmGroup])(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[RichPatientEligibleTrial]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Option[RichPatientEligibleTrial]]
 
   def getCriterionListByGroupId(patientId: UuidId[Patient], id: LongId[PatientTrialArmGroup])(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[ListResponse[RichPatientCriterion]]

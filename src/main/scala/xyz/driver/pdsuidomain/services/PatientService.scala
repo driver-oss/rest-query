@@ -12,7 +12,7 @@ import scala.concurrent.Future
 trait PatientService {
 
   def getById(id: UuidId[Patient])(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Patient]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Option[Patient]]
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,

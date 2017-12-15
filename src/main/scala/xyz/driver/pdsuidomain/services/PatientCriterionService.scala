@@ -18,7 +18,7 @@ trait PatientCriterionService {
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[ListResponse[RichPatientCriterion]]
 
   def getById(patientId: UuidId[Patient], id: LongId[PatientCriterion])(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[RichPatientCriterion]
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Option[RichPatientCriterion]]
 
   def updateList(patientId: UuidId[Patient], draftEntities: List[DraftPatientCriterion])(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Unit]

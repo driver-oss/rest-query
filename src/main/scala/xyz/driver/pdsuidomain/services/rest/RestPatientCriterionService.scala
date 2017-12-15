@@ -41,13 +41,13 @@ class RestPatientCriterionService(transport: ServiceTransport, baseUri: Uri)(
   }
 
   def getById(patientId: UuidId[Patient], id: LongId[PatientCriterion])(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[RichPatientCriterion] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Option[RichPatientCriterion]] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/patient/$patientId/criterion/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
       entity   <- apiResponse[RichPatientCriterion](response)
     } yield {
-      entity
+      Option(entity)
     }
   }
 
