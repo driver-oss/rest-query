@@ -4,14 +4,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import akka.http.scaladsl.model.{HttpResponse, ResponseEntity, StatusCodes, Uri}
 import akka.http.scaladsl.unmarshalling.{Unmarshal, Unmarshaller}
 import akka.stream.Materializer
-import xyz.driver.pdsuicommon.db.{
-  Pagination,
-  SearchFilterBinaryOperation,
-  SearchFilterExpr,
-  SearchFilterNAryOperation,
-  Sorting,
-  SortingOrder
-}
+import xyz.driver.core.rest.errors.{InvalidActionException, InvalidInputException, ResourceNotFoundException}
+import xyz.driver.pdsuicommon.db.{Pagination, SearchFilterBinaryOperation, SearchFilterExpr, SearchFilterNAryOperation, Sorting, SortingOrder}
 import xyz.driver.pdsuicommon.error._
 
 trait RestHelper {
@@ -93,7 +87,7 @@ trait RestHelper {
         .to[ErrorsResponse]
         .transform(
           response => response.errors.map(_.message).mkString(", "),
-          ex => new DomainException("Response has invalid format", ex)
+          ex => InvalidInputException(s"Response has invalid format: ${ex.getMessage}")
         )
     }
 
@@ -102,11 +96,10 @@ trait RestHelper {
     } else {
       extractErrorMessage(response).flatMap { message =>
         Future.failed(response.status match {
-          case StatusCodes.Unauthorized => new AuthenticationException(message)
-          case StatusCodes.Forbidden    => new AuthorizationException(message)
-          case StatusCodes.NotFound     => new NotFoundException(message)
+          case StatusCodes.Forbidden    => InvalidActionException(message)
+          case StatusCodes.NotFound     => ResourceNotFoundException(message)
           case other =>
-            new DomainException(s"Unhandled domain error for HTTP status ${other.value}. $message")
+            InvalidInputException(s"Unhandled domain error for HTTP status ${other.value}. $message")
         })
       }
     }
