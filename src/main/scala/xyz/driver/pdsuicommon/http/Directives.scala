@@ -62,10 +62,9 @@ trait Directives {
     PathMatchers.JavaUUID.map((id) => UuidId(id))
 
   def failFast[A](reply: A): A = reply match {
-    case err: NotFoundError       => throw new NotFoundException(err.getMessage)
-    case err: AuthenticationError => throw new AuthenticationException(err.getMessage)
-    case err: AuthorizationError  => throw new AuthorizationException(err.getMessage)
-    case err: DomainError         => throw new DomainException(err.getMessage)
+    case err: NotFoundError       => throw ResourceNotFoundException(err.getMessage)
+    case err: AuthorizationError  => throw InvalidActionException(err.getMessage)
+    case err: DomainError         => throw InvalidInputException(err.getMessage)
     case other                    => other
   }
 
@@ -73,26 +72,14 @@ trait Directives {
     def errorResponse(msg: String, code: Int) =
       ErrorsResponse(Seq(ResponseError(None, msg, code)), req)
     ExceptionHandler {
-      case ex: AuthenticationException =>
-        complete(StatusCodes.Unauthorized -> errorResponse(ex.getMessage, 401))
-
       case ex: InvalidActionException =>
         complete(StatusCodes.Forbidden -> errorResponse(ex.message, 403))
-
-      case ex: AuthorizationException =>
-        complete(StatusCodes.Forbidden -> errorResponse(ex.getMessage, 403))
 
       case ex: ResourceNotFoundException =>
         complete(StatusCodes.NotFound -> errorResponse(ex.message, 404))
 
-      case ex: NotFoundException =>
-        complete(StatusCodes.NotFound -> errorResponse(ex.getMessage, 404))
-
       case ex: InvalidInputException =>
         complete(StatusCodes.BadRequest -> errorResponse(ex.message, 400))
-
-      case ex: DomainException =>
-        complete(StatusCodes.BadRequest -> errorResponse(ex.getMessage, 400))
 
       case NonFatal(ex) =>
         complete(StatusCodes.InternalServerError -> errorResponse(ex.getMessage, 500))
