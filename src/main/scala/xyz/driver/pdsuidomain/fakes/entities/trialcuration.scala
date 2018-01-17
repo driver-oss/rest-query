@@ -137,11 +137,9 @@ object trialcuration {
   def nextStudyDesign(): StudyDesign = generators.oneOf[StudyDesign](StudyDesign.All: _*)
 
   def nextInterventionType(): InterventionType = generators.oneOf[InterventionType](
-    RadiationTherapy,
     Chemotherapy,
     TargetedTherapy,
     Immunotherapy,
-    Surgery,
     HormoneTherapy,
     Other,
     Radiation,

@@ -12,6 +12,7 @@ object trial {
   import DefaultJsonProtocol._
   import Trial._
   import common._
+  import studydesign._
 
   implicit val trialStatusFormat: RootJsonFormat[Status] = new EnumJsonFormat[Status](
     "New"            -> Status.New,
@@ -180,5 +181,8 @@ object trial {
 
     case _ => deserializationError(s"Expected Json Object as Trial, but got $json")
   }
+
+  implicit val trialCreationRequestFormat: RootJsonFormat[TrialCreationRequest] =
+    jsonFormat6(TrialCreationRequest.apply)
 
 }
