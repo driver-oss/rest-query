@@ -133,7 +133,7 @@ object ACL extends PhiLogging {
   object TrialHistory
       extends BaseACL(
         label = "trial history",
-        read = Set(TrialAdmin)
+        read = TcRoles
       )
 
   object TrialIssue
