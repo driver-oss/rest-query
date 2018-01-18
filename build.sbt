@@ -11,7 +11,6 @@ lazy val core = (project in file("."))
     "com.lihaoyi"                       %% "fastparse"              % "1.0.0",
     "com.typesafe.akka"                 %% "akka-http"              % "10.0.10",
     "com.typesafe.scala-logging"        %% "scala-logging"          % "3.5.0",
-    "io.getquill"                       %% "quill-jdbc"             % "1.2.1",
     "io.github.cloudify"                %% "spdf"                   % "1.4.0",
     "xyz.driver"                        %% "core"                   % "1.6.12",
     "xyz.driver"                        %% "domain-model"           % "0.21.16",
