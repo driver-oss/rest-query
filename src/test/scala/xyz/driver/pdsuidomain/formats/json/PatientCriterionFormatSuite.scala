@@ -6,8 +6,7 @@ import spray.json._
 import org.scalatest.{FlatSpec, Matchers}
 import xyz.driver.entities.labels.LabelValue
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
-import xyz.driver.pdsuidomain.entities.{PatientCriterion, PatientCriterionArm}
-import xyz.driver.pdsuidomain.services.PatientCriterionService.{DraftPatientCriterion, RichPatientCriterion}
+import xyz.driver.pdsuidomain.entities.{DraftPatientCriterion, PatientCriterion, PatientCriterionArm, RichPatientCriterion}
 
 class PatientCriterionFormatSuite extends FlatSpec with Matchers {
   import xyz.driver.pdsuidomain.formats.json.patientcriterion._

@@ -18,9 +18,6 @@ import xyz.driver.pdsuidomain.formats.json.record._
 import xyz.driver.pdsuidomain.formats.json.document._
 import xyz.driver.pdsuidomain.services.CriterionService.RichCriterion
 import xyz.driver.pdsuidomain.services.ExtractedDataService.RichExtractedData
-import xyz.driver.pdsuidomain.services.PatientCriterionService.{DraftPatientCriterion, RichPatientCriterion}
-import xyz.driver.pdsuidomain.services.PatientEligibleTrialService.RichPatientEligibleTrial
-import xyz.driver.pdsuidomain.services.PatientLabelService.RichPatientLabel
 
 import scala.collection.immutable
 

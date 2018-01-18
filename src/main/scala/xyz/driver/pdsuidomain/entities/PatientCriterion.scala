@@ -2,7 +2,7 @@ package xyz.driver.pdsuidomain.entities
 
 import java.time.LocalDateTime
 
-import xyz.driver.entities.labels.LabelValue
+import xyz.driver.entities.labels.{Label, LabelValue}
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuicommon.logging._
 
@@ -55,6 +55,33 @@ final case class PatientCriterion(id: LongId[PatientCriterion],
                                   inclusion: Option[Boolean]) {
   import scalaz.syntax.equal._
   def isIneligibleForEv: Boolean = eligibilityStatus === LabelValue.No && isVerified
+}
+
+final case class DraftPatientCriterion(id: LongId[PatientCriterion],
+                                       eligibilityStatus: Option[LabelValue],
+                                       isVerified: Option[Boolean]) {
+  def applyTo(orig: PatientCriterion) = {
+    orig.copy(
+      eligibilityStatus = eligibilityStatus.getOrElse(orig.eligibilityStatus),
+      isVerified = isVerified.getOrElse(orig.isVerified)
+    )
+  }
+}
+
+object DraftPatientCriterion {
+  implicit def toPhiString(x: DraftPatientCriterion): PhiString = {
+    phi"DraftPatientCriterion(id=${x.id}, eligibilityStatus=${Unsafe(x.eligibilityStatus)}, isVerified=${x.isVerified})"
+  }
+}
+
+final case class RichPatientCriterion(patientCriterion: PatientCriterion,
+                                      labelId: LongId[Label],
+                                      armList: List[PatientCriterionArm])
+
+object RichPatientCriterion {
+  implicit def toPhiString(x: RichPatientCriterion): PhiString = {
+    phi"RichPatientCriterion(patientCriterion=${x.patientCriterion}, labelId=${x.labelId}, arms=${x.armList})"
+  }
 }
 
 object PatientCriterionArm {

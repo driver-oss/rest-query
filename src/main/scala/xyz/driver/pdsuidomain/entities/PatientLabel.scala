@@ -22,6 +22,14 @@ final case class PatientLabel(id: LongId[PatientLabel],
                               isImplicitMatch: Boolean,
                               isVisible: Boolean)
 
+final case class RichPatientLabel(patientLabel: PatientLabel, isVerified: Boolean)
+
+object RichPatientLabel {
+  implicit def toPhiString(x: RichPatientLabel): PhiString = {
+    phi"RichPatientLabel(patientLabel=${x.patientLabel}, isVerified=${x.isVerified})"
+  }
+}
+
 object PatientLabelEvidence {
   implicit def toPhiString(x: PatientLabelEvidence): PhiString = {
     import x._

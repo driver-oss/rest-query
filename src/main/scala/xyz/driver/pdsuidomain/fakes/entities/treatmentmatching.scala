@@ -6,9 +6,6 @@ import xyz.driver.fakes
 import xyz.driver.pdsuicommon.domain.{LongId, StringId}
 import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
-import xyz.driver.pdsuidomain.services.PatientCriterionService.{DraftPatientCriterion, RichPatientCriterion}
-import xyz.driver.pdsuidomain.services.PatientEligibleTrialService.RichPatientEligibleTrial
-import xyz.driver.pdsuidomain.services.PatientLabelService.RichPatientLabel
 import eu.timepit.refined.{refineMV, refineV}
 import xyz.driver.core.auth.User
 

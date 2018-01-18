@@ -69,13 +69,20 @@ trait Directives {
   }
 
   def domainExceptionHandler(req: String): ExceptionHandler = {
-    def errorResponse(ex: Throwable) =
-      ErrorsResponse(Seq(ResponseError(None, ex.getMessage, 1)), req)
+    def errorResponse(msg: String, code: Int) =
+      ErrorsResponse(Seq(ResponseError(None, msg, code)), req)
     ExceptionHandler {
-      case ex: InvalidActionException    => complete(StatusCodes.Forbidden           -> errorResponse(ex))
-      case ex: ResourceNotFoundException => complete(StatusCodes.NotFound            -> errorResponse(ex))
-      case ex: InvalidInputException     => complete(StatusCodes.BadRequest          -> errorResponse(ex))
-      case NonFatal(ex)                  => complete(StatusCodes.InternalServerError -> errorResponse(ex))
+      case ex: InvalidActionException =>
+        complete(StatusCodes.Forbidden -> errorResponse(ex.message, 403))
+
+      case ex: ResourceNotFoundException =>
+        complete(StatusCodes.NotFound -> errorResponse(ex.message, 404))
+
+      case ex: InvalidInputException =>
+        complete(StatusCodes.BadRequest -> errorResponse(ex.message, 400))
+
+      case NonFatal(ex) =>
+        complete(StatusCodes.InternalServerError -> errorResponse(ex.getMessage, 500))
     }
   }
 
