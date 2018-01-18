@@ -7,7 +7,6 @@ import org.scalatest.{FlatSpec, Matchers}
 import xyz.driver.entities.labels.LabelValue
 import xyz.driver.pdsuicommon.domain.{LongId, UuidId}
 import xyz.driver.pdsuidomain.entities._
-import xyz.driver.pdsuidomain.services.PatientLabelService.RichPatientLabel
 
 class PatientLabelFormatSuite extends FlatSpec with Matchers {
 

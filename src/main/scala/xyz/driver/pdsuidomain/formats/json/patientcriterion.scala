@@ -5,7 +5,6 @@ import xyz.driver.entities.labels.{Label, LabelValue}
 import xyz.driver.formats.json.labels._
 import xyz.driver.pdsuicommon.domain.LongId
 import xyz.driver.pdsuidomain.entities._
-import xyz.driver.pdsuidomain.services.PatientCriterionService.{DraftPatientCriterion, RichPatientCriterion}
 
 object patientcriterion {
   import DefaultJsonProtocol._

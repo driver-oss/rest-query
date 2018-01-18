@@ -5,7 +5,7 @@ import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import xyz.driver.core.rest.{Pagination => _, _}
 import xyz.driver.entities.users.AuthUserInfo
-import xyz.driver.pdsuicommon.db._
+import xyz.driver.pdsuicommon.db.{Pagination, _}
 import xyz.driver.pdsuicommon.domain._
 import xyz.driver.pdsuidomain.ListResponse
 import xyz.driver.pdsuidomain.entities._
@@ -19,62 +19,60 @@ class RestPatientService(transport: ServiceTransport, baseUri: Uri)(implicit pro
   import xyz.driver.pdsuidomain.formats.json.listresponse._
   import xyz.driver.pdsuidomain.formats.json.patient._
 
-  import xyz.driver.pdsuidomain.services.PatientService._
-
   def getById(id: UuidId[Patient])(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetByIdReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Option[Patient]] = {
     val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/patient/$id"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[Patient](response)
+      entity   <- apiResponse[Patient](response)
     } yield {
-      GetByIdReply.Entity(reply)
+      Option(entity)
     }
   }
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
-             pagination: Option[Pagination] = None)(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[GetListReply] = {
+             pagination: Pagination = Pagination.Default)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[ListResponse[Patient]] = {
     val request = HttpRequest(
       HttpMethods.GET,
-      endpointUri(baseUri, "/v1/patient", filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(pagination)))
+      endpointUri(baseUri, "/v1/patient", filterQuery(filter) ++ sortingQuery(sorting) ++ paginationQuery(Some(pagination))))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
       reply    <- apiResponse[ListResponse[Patient]](response)
     } yield {
-      GetListReply.EntityList(reply.items, reply.meta.itemsCount, reply.meta.lastUpdate)
+      reply
     }
   }
 
   private def editAction(orig: Patient, action: String)(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] = {
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Patient] = {
     val id      = orig.id.toString
     val request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, s"/v1/patient/$id/$action"))
     for {
       response <- transport.sendRequestGetResponse(requestContext)(request)
-      reply    <- apiResponse[Patient](response)
+      entity   <- apiResponse[Patient](response)
     } yield {
-      UpdateReply.Updated(reply)
+      entity
     }
   }
 
   def unassign(origPatient: Patient)(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Patient] =
     editAction(origPatient, "unassign")
   def start(origPatient: Patient)(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Patient] =
     editAction(origPatient, "start")
   def submit(origPatient: Patient)(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Patient] =
     editAction(origPatient, "submit")
   def restart(origPatient: Patient)(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Patient] =
     editAction(origPatient, "restart")
   def flag(origPatient: Patient)(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Patient] =
     editAction(origPatient, "flag")
   def resolve(origPatient: Patient)(
-          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Patient] =
     editAction(origPatient, "resolve")
 }

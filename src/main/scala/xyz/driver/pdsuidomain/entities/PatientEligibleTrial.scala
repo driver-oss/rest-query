@@ -82,3 +82,13 @@ final case class PatientTrialArmGroupView(id: LongId[PatientTrialArmGroup],
     )
   }
 }
+
+final case class RichPatientEligibleTrial(trial: Trial,
+                                          group: PatientTrialArmGroupView,
+                                          arms: List[PatientCriterionArm])
+
+object RichPatientEligibleTrial {
+  implicit def toPhiString(x: RichPatientEligibleTrial): PhiString = {
+    phi"RichPatientEligibleTrial(group=${x.group}, trial=${x.trial}, arms=${x.arms})"
+  }
+}
