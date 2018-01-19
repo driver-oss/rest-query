@@ -12,7 +12,6 @@ object trial {
   import DefaultJsonProtocol._
   import Trial._
   import common._
-  import studydesign._
 
   implicit val trialStatusFormat: RootJsonFormat[Status] = new EnumJsonFormat[Status](
     "New"            -> Status.New,

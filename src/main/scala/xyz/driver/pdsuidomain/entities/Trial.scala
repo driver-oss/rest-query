@@ -58,7 +58,7 @@ final case class TrialCreationRequest(id: UuidId[Trial],
                                       nctId: String,
                                       title: Option[String],
                                       phase: String,
-                                      studyDesign: Option[StudyDesign],
+                                      studyDesign: Option[String],
                                       lastReviewed: LocalDateTime)
 
 object Trial {
