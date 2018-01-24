@@ -49,6 +49,18 @@ object StudyDesign {
   }
 }
 
+object TrialCreationRequest {
+
+  implicit def toPhiString(x: TrialCreationRequest): PhiString = phi"${Unsafe(x.toString)}"
+}
+
+final case class TrialCreationRequest(id: UuidId[Trial],
+                                      nctId: String,
+                                      title: Option[String],
+                                      phase: String,
+                                      studyDesign: Option[String],
+                                      lastReviewed: LocalDateTime)
+
 object Trial {
 
   sealed trait Status {
@@ -67,7 +79,7 @@ object Trial {
     case object Flagged        extends Status
     case object Archived       extends Status
 
-    val All = Set[Status](
+    val All: Set[Status] = Set[Status](
       New,
       ReviewSummary,
       Summarized,
@@ -79,7 +91,7 @@ object Trial {
       Archived
     )
 
-    val AllPrevious = Set[Status](New, ReviewSummary, Summarized, ReviewCriteria)
+    val AllPrevious: Set[Status] = Set[Status](New, ReviewSummary, Summarized, ReviewCriteria)
 
     implicit def toPhiString(x: Status): PhiString = Unsafe(Utils.getClassSimpleName(x.getClass))
   }

@@ -181,4 +181,7 @@ object trial {
     case _ => deserializationError(s"Expected Json Object as Trial, but got $json")
   }
 
+  implicit val trialCreationRequestFormat: RootJsonFormat[TrialCreationRequest] =
+    jsonFormat6(TrialCreationRequest.apply)
+
 }

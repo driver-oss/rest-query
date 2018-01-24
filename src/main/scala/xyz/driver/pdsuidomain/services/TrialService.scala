@@ -12,7 +12,7 @@ import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.StringId
 import xyz.driver.pdsuicommon.error.DomainError
 import xyz.driver.pdsuicommon.logging._
-import xyz.driver.pdsuidomain.entities.Trial
+import xyz.driver.pdsuidomain.entities.{Trial, TrialCreationRequest}
 import xyz.driver.pdsuidomain.entities.export.trial.ExportTrialWithLabels
 
 import scala.concurrent.Future
@@ -121,6 +121,9 @@ trait TrialService {
   def getPdfSource(trialId: StringId[Trial])(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Source[ByteString, NotUsed]]
 
+  def getHtmlSource(trialId: StringId[Trial])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Source[ByteString, NotUsed]]
+
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
@@ -150,4 +153,6 @@ trait TrialService {
   def unassign(origTrial: Trial)(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply]
 
+  def addTrial(trial: TrialCreationRequest)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Trial]
 }

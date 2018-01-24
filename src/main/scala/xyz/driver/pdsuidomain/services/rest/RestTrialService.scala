@@ -73,6 +73,18 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
     }
   }
 
+  def getHtmlSource(trialId: StringId[Trial])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]
+  ): Future[Source[ByteString, NotUsed]] = {
+    val request = HttpRequest(HttpMethods.GET, endpointUri(baseUri, s"/v1/trial/$trialId/source.html"))
+    for {
+      response <- transport.sendRequestGetResponse(requestContext)(request)
+      reply    <- apiResponse[HttpEntity](response)
+    } yield {
+      reply.dataBytes.mapMaterializedValue(_ => NotUsed)
+    }
+  }
+
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
              pagination: Option[Pagination] = None)(
@@ -146,4 +158,16 @@ class RestTrialService(transport: ServiceTransport, baseUri: Uri)(implicit prote
   def unassign(origTrial: Trial)(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     singleAction(origTrial, "unassign")
+
+  override def addTrial(trial: TrialCreationRequest)(
+    implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Trial] = {
+    for {
+      entity   <- Marshal(trial).to[RequestEntity]
+      request = HttpRequest(HttpMethods.POST, endpointUri(baseUri, s"/v1/trial/${trial.nctId}")).withEntity(entity)
+      response <- transport.sendRequestGetResponse(requestContext)(request)
+      reply    <- apiResponse[Trial](response)
+    } yield {
+      reply
+    }
+  }
 }

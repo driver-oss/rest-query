@@ -16,12 +16,6 @@ sealed trait InterventionType {
 
 object InterventionType {
 
-  final case object RadiationTherapy extends InterventionType {
-    val id: LongId[InterventionType]         = LongId[InterventionType](1)
-    val name: String                         = "Radiation therapy"
-    val deliveryMethods: Set[DeliveryMethod] = commonMethods
-  }
-
   final case object Chemotherapy extends InterventionType {
     val id: LongId[InterventionType]         = LongId[InterventionType](2)
     val name: String                         = "Chemotherapy"
@@ -37,12 +31,6 @@ object InterventionType {
   final case object Immunotherapy extends InterventionType {
     val id: LongId[InterventionType]         = LongId[InterventionType](4)
     val name: String                         = "Immunotherapy"
-    val deliveryMethods: Set[DeliveryMethod] = commonMethods
-  }
-
-  final case object Surgery extends InterventionType {
-    val id: LongId[InterventionType]         = LongId[InterventionType](5)
-    val name: String                         = "Surgery"
     val deliveryMethods: Set[DeliveryMethod] = commonMethods
   }
 
@@ -152,7 +140,7 @@ object InterventionType {
     }
   }
 
-  val commonMethods = Set[DeliveryMethod](
+  val commonMethods: Set[DeliveryMethod] = Set[DeliveryMethod](
     IntravenousInfusionIV,
     IntramuscularInjection,
     SubcutaneousInjection,
@@ -166,11 +154,9 @@ object InterventionType {
   )
 
   val All: Map[LongId[InterventionType], InterventionType] = Map[LongId[InterventionType], InterventionType](
-    LongId[InterventionType](1) -> RadiationTherapy,
     LongId[InterventionType](2) -> Chemotherapy,
     LongId[InterventionType](3) -> TargetedTherapy,
     LongId[InterventionType](4) -> Immunotherapy,
-    LongId[InterventionType](5) -> Surgery,
     LongId[InterventionType](6) -> HormoneTherapy,
     LongId[InterventionType](7) -> Other,
     LongId[InterventionType](8) -> Radiation,

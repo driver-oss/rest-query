@@ -13,7 +13,7 @@ import xyz.driver.entities.users.AuthUserInfo
 import xyz.driver.pdsuicommon.db._
 import xyz.driver.pdsuicommon.domain.{LongId, StringId, UuidId}
 import xyz.driver.pdsuidomain.entities.export.trial.{ExportTrialArm, ExportTrialLabelCriterion, ExportTrialWithLabels}
-import xyz.driver.pdsuidomain.entities.{Criterion, EligibilityArm, Trial}
+import xyz.driver.pdsuidomain.entities._
 import xyz.driver.pdsuidomain.services.TrialService
 
 import scala.concurrent.Future
@@ -52,7 +52,12 @@ class FakeTrialService extends TrialService {
   def getPdfSource(trialId: StringId[Trial])(
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]
   ): Future[Source[ByteString, NotUsed]] =
-    Future.failed(new NotImplementedError("fake pdf download is not implemented"))
+    Future.failed(new NotImplementedError("fake PDF download is not implemented"))
+
+  def getHtmlSource(trialId: StringId[Trial])(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]
+  ): Future[Source[ByteString, NotUsed]] =
+    Future.failed(new NotImplementedError("fake HTML download is not implemented"))
 
   def getAll(filter: SearchFilterExpr = SearchFilterExpr.Empty,
              sorting: Option[Sorting] = None,
@@ -125,4 +130,7 @@ class FakeTrialService extends TrialService {
           implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[UpdateReply] =
     update(origTrial, origTrial)
 
+  def addTrial(newTrial: TrialCreationRequest)(
+          implicit requestContext: AuthorizedServiceRequestContext[AuthUserInfo]): Future[Trial] =
+    Future.successful(trial)
 }
