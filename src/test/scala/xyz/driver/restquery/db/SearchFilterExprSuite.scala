@@ -1,6 +1,7 @@
-package xyz.driver.pdsuicommon.db
+package xyz.driver.restquery.db
 
 import org.scalatest.{FreeSpecLike, MustMatchers}
+import xyz.driver.restquery.query.{SearchFilterBinaryOperation, SearchFilterExpr, SearchFilterNAryOperation}
 
 class SearchFilterExprSuite extends FreeSpecLike with MustMatchers {
 

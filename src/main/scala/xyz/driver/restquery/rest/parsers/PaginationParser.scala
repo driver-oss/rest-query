@@ -1,6 +1,6 @@
-package xyz.driver.restquery.http.parsers
+package xyz.driver.restquery.rest.parsers
 
-import xyz.driver.restquery.domain.Pagination
+import xyz.driver.restquery.query.Pagination
 
 import scala.util._
 
@@ -16,8 +16,9 @@ object PaginationParser {
     }
 
     Try {
-      Pagination(validate("pageSize", Pagination.Default.pageSize),
-                 validate("pageNumber", Pagination.Default.pageNumber))
+      Pagination(
+        validate("pageSize", Pagination.Default.pageSize),
+        validate("pageNumber", Pagination.Default.pageNumber))
     }
   }
 }

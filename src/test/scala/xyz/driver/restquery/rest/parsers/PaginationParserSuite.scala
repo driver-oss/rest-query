@@ -1,8 +1,8 @@
-package xyz.driver.restquery.http.parsers
+package xyz.driver.restquery.rest.parsers
 
-import xyz.driver.restquery.http.parsers.TestUtils._
+import xyz.driver.restquery.rest.parsers.TestUtils._
 import org.scalatest.{FreeSpecLike, MustMatchers}
-import xyz.driver.restquery.domain.Pagination
+import xyz.driver.restquery.query.Pagination
 
 import scala.util.{Failure, Try}
 

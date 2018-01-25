@@ -1,4 +1,4 @@
-package xyz.driver.restquery.domain
+package xyz.driver.restquery.query
 
 sealed trait SearchFilterExpr {
   def find(p: SearchFilterExpr => Boolean): Option[SearchFilterExpr]
@@ -169,28 +169,5 @@ object SearchFilterExpr {
       }
     }
   }
-
-}
-
-sealed trait SearchFilterBinaryOperation
-
-object SearchFilterBinaryOperation {
-
-  case object Eq    extends SearchFilterBinaryOperation
-  case object NotEq extends SearchFilterBinaryOperation
-  case object Like  extends SearchFilterBinaryOperation
-  case object Gt    extends SearchFilterBinaryOperation
-  case object GtEq  extends SearchFilterBinaryOperation
-  case object Lt    extends SearchFilterBinaryOperation
-  case object LtEq  extends SearchFilterBinaryOperation
-
-}
-
-sealed trait SearchFilterNAryOperation
-
-object SearchFilterNAryOperation {
-
-  case object In    extends SearchFilterNAryOperation
-  case object NotIn extends SearchFilterNAryOperation
 
 }

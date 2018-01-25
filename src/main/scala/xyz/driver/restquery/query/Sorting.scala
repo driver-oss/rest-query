@@ -1,4 +1,4 @@
-package xyz.driver.restquery.domain
+package xyz.driver.restquery.query
 
 import scala.collection.generic.CanBuildFrom
 
@@ -43,7 +43,7 @@ object Sorting {
   }
 
   def collect[B, That](sorting: Sorting)(f: PartialFunction[Dimension, B])(
-          implicit bf: CanBuildFrom[Seq[Dimension], B, That]): That = sorting match {
+      implicit bf: CanBuildFrom[Seq[Dimension], B, That]): That = sorting match {
     case x: Dimension if f.isDefinedAt(x) =>
       val r = bf.apply()
       r += f(x)

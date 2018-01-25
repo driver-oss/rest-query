@@ -1,4 +1,4 @@
-package xyz.driver.pdsuicommon.utils
+package xyz.driver.restquery.utils
 
 import java.time.LocalDateTime
 import java.util.regex.{Matcher, Pattern}
@@ -58,7 +58,6 @@ object Utils {
   // From Guava
   def isSafeControl(char: Char): Boolean =
     char <= '\u001f' || (char >= '\u007f' && char <= '\u009f')
-
 
   def safeTrim(string: String): String = {
     def shouldKeep(c: Char): Boolean = !isSafeControl(c) && !isSafeWhitespace(c)

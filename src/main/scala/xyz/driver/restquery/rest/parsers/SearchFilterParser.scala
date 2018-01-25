@@ -1,10 +1,10 @@
-package xyz.driver.restquery.http.parsers
+package xyz.driver.restquery.rest.parsers
 
 import java.util.UUID
 
 import fastparse.all._
 import fastparse.core.Parsed
-import xyz.driver.restquery.domain.{SearchFilterBinaryOperation, SearchFilterExpr, SearchFilterNAryOperation}
+import xyz.driver.restquery.query.{SearchFilterBinaryOperation, SearchFilterExpr, SearchFilterNAryOperation}
 import xyz.driver.restquery.utils.Utils
 import xyz.driver.restquery.utils.Utils._
 
@@ -47,7 +47,7 @@ object SearchFilterParser {
     }
 
   private val operationsMapping = {
-    import xyz.driver.restquery.domain.SearchFilterBinaryOperation._
+    import xyz.driver.restquery.query.SearchFilterBinaryOperation._
 
     Map[String, SearchFilterBinaryOperation](
       "eq"    -> Eq,

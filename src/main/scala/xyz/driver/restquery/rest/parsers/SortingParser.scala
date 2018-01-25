@@ -1,8 +1,8 @@
-package xyz.driver.restquery.http.parsers
+package xyz.driver.restquery.rest.parsers
 
 import fastparse.all._
 import fastparse.core.Parsed
-import xyz.driver.restquery.domain.{Sorting, SortingOrder}
+import xyz.driver.restquery.query.{Sorting, SortingOrder}
 import xyz.driver.restquery.utils.Utils._
 
 import scala.util.Try
@@ -21,9 +21,10 @@ object SortingParser {
         prefixedFields.size match {
           case 1 => Sorting.Dimension(None, toSnakeCase(field), sortingOrder)
           case 2 =>
-            Sorting.Dimension(Some(prefixedFields.head).map(toSnakeCase),
-                              toSnakeCase(prefixedFields.last),
-                              sortingOrder)
+            Sorting.Dimension(
+              Some(prefixedFields.head).map(toSnakeCase),
+              toSnakeCase(prefixedFields.last),
+              sortingOrder)
         }
     }
   }

@@ -1,4 +1,4 @@
-package xyz.driver.restquery.http.parsers
+package xyz.driver.restquery.rest.parsers
 
 import java.util.UUID
 
@@ -7,11 +7,11 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Gen, Prop}
 import org.scalatest.FreeSpecLike
 import org.scalatest.prop.Checkers
-import xyz.driver.restquery.domain.SearchFilterBinaryOperation.Eq
-import xyz.driver.restquery.domain.SearchFilterExpr.Dimension
-import xyz.driver.restquery.domain.SearchFilterNAryOperation.In
-import xyz.driver.restquery.domain.{SearchFilterExpr, SearchFilterNAryOperation}
-import xyz.driver.restquery.http.parsers.TestUtils._
+import xyz.driver.restquery.query.SearchFilterBinaryOperation.Eq
+import xyz.driver.restquery.query.SearchFilterExpr.Dimension
+import xyz.driver.restquery.query.SearchFilterNAryOperation.In
+import xyz.driver.restquery.query.{SearchFilterExpr, SearchFilterNAryOperation}
+import xyz.driver.restquery.rest.parsers.TestUtils._
 import xyz.driver.restquery.utils.Utils
 import xyz.driver.restquery.utils.Utils._
 
@@ -29,7 +29,7 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
 
   "parse" - {
     "should convert column names to snake case" in {
-      import xyz.driver.restquery.domain.SearchFilterBinaryOperation._
+      import xyz.driver.restquery.query.SearchFilterBinaryOperation._
 
       val filter = SearchFilterParser.parse(
         Seq(
@@ -77,7 +77,7 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
       "binary" - {
         "common operators" - {
           "should be parsed with text values" in check {
-            import xyz.driver.restquery.domain.SearchFilterBinaryOperation._
+            import xyz.driver.restquery.query.SearchFilterBinaryOperation._
 
             val testQueryGen = queryGen(
               dimensionGen = Gen.identifier,
@@ -123,15 +123,17 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
         "actual isVisible boolean" - {
           "should not be parsed with boolean values" in {
             val filter = SearchFilterParser.parse(Seq("filters" -> "isVisible EQ true"))
-            assert(filter === Success(SearchFilterExpr.Atom.Binary(Dimension(None, "is_visible"), Eq, Boolean.box(true))))
+            assert(
+              filter === Success(SearchFilterExpr.Atom.Binary(Dimension(None, "is_visible"), Eq, Boolean.box(true))))
           }
         }
 
         "actual patientId uuid" - {
           "should parse the full UUID as java.util.UUID type" in {
             val filter = SearchFilterParser.parse(Seq("filters" -> "patientId EQ 4b4879f7-42b3-4b7c-a685-5c97d9e69e7c"))
-            assert(filter === Success(SearchFilterExpr.Atom.Binary(
-              Dimension(None, "patient_id"), Eq, UUID.fromString("4b4879f7-42b3-4b7c-a685-5c97d9e69e7c"))))
+            assert(
+              filter === Success(SearchFilterExpr.Atom
+                .Binary(Dimension(None, "patient_id"), Eq, UUID.fromString("4b4879f7-42b3-4b7c-a685-5c97d9e69e7c"))))
           }
         }
 

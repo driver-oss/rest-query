@@ -1,6 +1,6 @@
-package xyz.driver.restquery.http.parsers
+package xyz.driver.restquery.rest.parsers
 
-import xyz.driver.restquery.http.parsers.TestUtils._
+import xyz.driver.restquery.rest.parsers.TestUtils._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Gen, Prop}
 import org.scalatest.prop.Checkers

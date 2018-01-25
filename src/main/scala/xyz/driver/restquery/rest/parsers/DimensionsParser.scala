@@ -1,4 +1,4 @@
-package xyz.driver.restquery.http.parsers
+package xyz.driver.restquery.rest.parsers
 
 import scala.util.{Failure, Success, Try}
 

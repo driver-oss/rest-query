@@ -1,10 +1,11 @@
-package xyz.driver.pdsuicommon.db
+package xyz.driver.restquery.db
 
 import java.time.{LocalDateTime, ZoneOffset}
 
 import org.slf4j.LoggerFactory
 import slick.jdbc.{GetResult, JdbcProfile}
 import xyz.driver.core.database.SlickDal
+import xyz.driver.restquery.query.{Pagination, SearchFilterExpr, Sorting}
 
 import scala.collection.breakOut
 import scala.concurrent.ExecutionContext
@@ -12,18 +13,20 @@ import scala.concurrent.ExecutionContext
 object SlickPostgresQueryBuilder {
   private val logger = LoggerFactory.getLogger(this.getClass)
 
-  import xyz.driver.pdsuicommon.db.SlickQueryBuilder._
+  import xyz.driver.restquery.db.SlickQueryBuilder._
 
-  def apply[T](databaseName: String,
-               tableName: String,
-               lastUpdateFieldName: Option[String],
-               nullableFields: Set[String],
-               links: Set[SlickTableLink],
-               runner: Runner[T],
-               countRunner: CountRunner)(implicit sqlContext: SlickDal,
-                                         profile: JdbcProfile,
-                                         getResult: GetResult[T],
-                                         ec: ExecutionContext): SlickPostgresQueryBuilder[T] = {
+  def apply[T](
+      databaseName: String,
+      tableName: String,
+      lastUpdateFieldName: Option[String],
+      nullableFields: Set[String],
+      links: Set[SlickTableLink],
+      runner: Runner[T],
+      countRunner: CountRunner)(
+      implicit sqlContext: SlickDal,
+      profile: JdbcProfile,
+      getResult: GetResult[T],
+      ec: ExecutionContext): SlickPostgresQueryBuilder[T] = {
     val parameters = SlickPostgresQueryBuilderParameters(
       databaseName = databaseName,
       tableData = TableData(tableName, lastUpdateFieldName, nullableFields),
@@ -32,31 +35,30 @@ object SlickPostgresQueryBuilder {
     new SlickPostgresQueryBuilder[T](parameters)(runner, countRunner)
   }
 
-  def apply[T](databaseName: String,
-               tableName: String,
-               lastUpdateFieldName: Option[String],
-               nullableFields: Set[String],
-               links: Set[SlickTableLink])(implicit sqlContext: SlickDal,
-                                           profile: JdbcProfile,
-                                           getResult: GetResult[T],
-                                           ec: ExecutionContext): SlickPostgresQueryBuilder[T] = {
-    apply[T](databaseName,
-             tableName,
-             SlickQueryBuilderParameters.AllFields,
-             lastUpdateFieldName,
-             nullableFields,
-             links)
+  def apply[T](
+      databaseName: String,
+      tableName: String,
+      lastUpdateFieldName: Option[String],
+      nullableFields: Set[String],
+      links: Set[SlickTableLink])(
+      implicit sqlContext: SlickDal,
+      profile: JdbcProfile,
+      getResult: GetResult[T],
+      ec: ExecutionContext): SlickPostgresQueryBuilder[T] = {
+    apply[T](databaseName, tableName, SlickQueryBuilderParameters.AllFields, lastUpdateFieldName, nullableFields, links)
   }
 
-  def apply[T](databaseName: String,
-               tableName: String,
-               fields: Set[String],
-               lastUpdateFieldName: Option[String],
-               nullableFields: Set[String],
-               links: Set[SlickTableLink])(implicit sqlContext: SlickDal,
-                                           profile: JdbcProfile,
-                                           getResult: GetResult[T],
-                                           ec: ExecutionContext): SlickPostgresQueryBuilder[T] = {
+  def apply[T](
+      databaseName: String,
+      tableName: String,
+      fields: Set[String],
+      lastUpdateFieldName: Option[String],
+      nullableFields: Set[String],
+      links: Set[SlickTableLink])(
+      implicit sqlContext: SlickDal,
+      profile: JdbcProfile,
+      getResult: GetResult[T],
+      ec: ExecutionContext): SlickPostgresQueryBuilder[T] = {
 
     val runner: Runner[T] = { parameters =>
       val sql = parameters.toSql(countQuery = false, fields = fields).as[T]
@@ -94,8 +96,8 @@ object SlickPostgresQueryBuilder {
 }
 
 class SlickPostgresQueryBuilder[T](parameters: SlickPostgresQueryBuilderParameters)(
-        implicit runner: SlickQueryBuilder.Runner[T],
-        countRunner: SlickQueryBuilder.CountRunner)
+    implicit runner: SlickQueryBuilder.Runner[T],
+    countRunner: SlickQueryBuilder.CountRunner)
     extends SlickQueryBuilder[T](parameters) {
 
   def withFilter(newFilter: SearchFilterExpr): SlickQueryBuilder[T] = {

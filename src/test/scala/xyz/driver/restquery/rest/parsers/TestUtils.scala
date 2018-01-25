@@ -1,7 +1,6 @@
-package xyz.driver.restquery.http.parsers
+package xyz.driver.restquery.rest.parsers
 
-import
-org.scalacheck.Prop
+import org.scalacheck.Prop
 import org.scalacheck.Prop.BooleanOperators
 import org.scalatest.matchers.{MatchResult, Matcher}
 import xyz.driver.restquery.utils.Utils

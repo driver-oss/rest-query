@@ -1,4 +1,4 @@
-package xyz.driver.restquery.domain
+package xyz.driver.restquery.query
 
 /**
   * @param pageNumber Starts with 1

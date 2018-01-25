@@ -1,11 +1,15 @@
-package xyz.driver.restquery.query
+package xyz.driver.restquery.db
 
 import java.sql.PreparedStatement
 
 import slick.jdbc.{JdbcProfile, SQLActionBuilder}
-import xyz.driver.restquery.db.{SlickQueryBuilder, SlickQueryBuilderParameters, SlickTableLink}
 import xyz.driver.restquery.query.Sorting.{Dimension, Sequential}
 import xyz.driver.restquery.query.SortingOrder.{Ascending, Descending}
+import xyz.driver.restquery.query._
+
+object SlickQueryBuilderParameters {
+  val AllFields = Set("*")
+}
 
 trait SlickQueryBuilderParameters {
   import SlickQueryBuilder._
@@ -107,7 +111,7 @@ trait SlickQueryBuilderParameters {
     * @return Returns SQL string and list of values for binding in prepared statement.
     */
   protected def filterToSql(escapedTableName: String, filter: SearchFilterExpr)(
-    implicit profile: JdbcProfile): SQLActionBuilder = {
+      implicit profile: JdbcProfile): SQLActionBuilder = {
     import SearchFilterBinaryOperation._
     import SearchFilterExpr._
     import profile.api._
@@ -122,10 +126,11 @@ trait SlickQueryBuilderParameters {
       case x if !SearchFilterExpr.isEmpty(x) => filterToSql(escapedTableName, x)
     }
 
-    def multipleSqlToAction(first: Boolean,
-                            op: String,
-                            conditions: Seq[SQLActionBuilder],
-                            sql: SQLActionBuilder): SQLActionBuilder = {
+    def multipleSqlToAction(
+        first: Boolean,
+        op: String,
+        conditions: Seq[SQLActionBuilder],
+        sql: SQLActionBuilder): SQLActionBuilder = {
       if (conditions.nonEmpty) {
         val condition = conditions.head
         if (first) {
