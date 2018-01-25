@@ -54,12 +54,7 @@ object TrialCreationRequest {
   implicit def toPhiString(x: TrialCreationRequest): PhiString = phi"${Unsafe(x.toString)}"
 }
 
-final case class TrialCreationRequest(id: UuidId[Trial],
-                                      nctId: String,
-                                      title: Option[String],
-                                      phase: String,
-                                      studyDesign: Option[String],
-                                      lastReviewed: LocalDateTime)
+final case class TrialCreationRequest(id: UuidId[Trial], nctId: String, phase: String)
 
 object Trial {
 

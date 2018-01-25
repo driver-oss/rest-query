@@ -182,6 +182,6 @@ object trial {
   }
 
   implicit val trialCreationRequestFormat: RootJsonFormat[TrialCreationRequest] =
-    jsonFormat6(TrialCreationRequest.apply)
+    jsonFormat3(TrialCreationRequest.apply)
 
 }
