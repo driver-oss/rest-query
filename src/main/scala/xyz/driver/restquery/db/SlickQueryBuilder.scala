@@ -3,7 +3,7 @@ package xyz.driver.restquery.db
 import java.sql.{JDBCType, PreparedStatement}
 import java.time.LocalDateTime
 
-import slick.jdbc.{JdbcProfile, PositionedParameters, SQLActionBuilder, SetParameter}
+import slick.jdbc._
 import xyz.driver.restquery.query._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,10 +30,13 @@ object SlickQueryBuilder {
 
   implicit class SQLActionBuilderConcat(a: SQLActionBuilder) {
     def concat(b: SQLActionBuilder): SQLActionBuilder = {
-      SQLActionBuilder(a.queryParts ++ b.queryParts, (p: Unit, pp: PositionedParameters) => {
-        a.unitPConv.apply(p, pp)
-        b.unitPConv.apply(p, pp)
-      })
+      SQLActionBuilder(
+        a.queryParts ++ b.queryParts,
+        (p: Unit, pp: PositionedParameters) => {
+          a.unitPConv.apply(p, pp)
+          b.unitPConv.apply(p, pp)
+        }
+      )
     }
   }
 
