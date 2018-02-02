@@ -12,4 +12,20 @@ object SearchFilterBinaryOperation {
   case object Lt    extends SearchFilterBinaryOperation
   case object LtEq  extends SearchFilterBinaryOperation
 
+  val All: Set[SearchFilterBinaryOperation] = Set(
+    Eq,
+    NotEq,
+    Like,
+    Gt,
+    GtEq,
+    Lt,
+    LtEq
+  )
+
+  val binaryOperationToName: Map[SearchFilterBinaryOperation, String] =
+    All.map(a => a -> a.toString.toLowerCase).toMap
+
+  val binaryOperationsFromString: Map[String, SearchFilterBinaryOperation] =
+    for ((k, v) <- binaryOperationToName) yield (v, k)
+
 }

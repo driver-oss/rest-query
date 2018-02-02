@@ -18,7 +18,7 @@ object SearchFilterParser {
       val (dimensionName, (strOperation, value)) = input
       val updatedValue                           = trimIfString(value)
 
-      parseOperation(strOperation.toLowerCase).map { op =>
+      parseBinaryOperation(strOperation.toLowerCase).map { op =>
         SearchFilterExpr.Atom.Binary(dimensionName, op, updatedValue.asInstanceOf[AnyRef])
       }
     }
@@ -30,13 +30,10 @@ object SearchFilterParser {
       val (dimensionName, (strOperation, xs)) = input
       val updatedValues                       = xs.map(trimIfString)
 
-      if (strOperation.toLowerCase == "in") {
-        Some(
+      parseNAryOperation(strOperation.toLowerCase).map(
+        op =>
           SearchFilterExpr.Atom
-            .NAry(dimensionName, SearchFilterNAryOperation.In, updatedValues.map(_.asInstanceOf[AnyRef])))
-      } else {
-        None
-      }
+            .NAry(dimensionName, op, updatedValues.map(_.asInstanceOf[AnyRef])))
     }
   }
 
@@ -46,21 +43,11 @@ object SearchFilterParser {
       case a         => a
     }
 
-  private val operationsMapping = {
-    import xyz.driver.restquery.query.SearchFilterBinaryOperation._
+  private def parseBinaryOperation: String => Option[SearchFilterBinaryOperation] =
+    SearchFilterBinaryOperation.binaryOperationsFromString.get
 
-    Map[String, SearchFilterBinaryOperation](
-      "eq"    -> Eq,
-      "noteq" -> NotEq,
-      "like"  -> Like,
-      "gt"    -> Gt,
-      "gteq"  -> GtEq,
-      "lt"    -> Lt,
-      "lteq"  -> LtEq
-    )
-  }
-
-  private def parseOperation(x: String): Option[SearchFilterBinaryOperation] = operationsMapping.get(x)
+  private def parseNAryOperation: String => Option[SearchFilterNAryOperation] =
+    SearchFilterNAryOperation.nAryOperationsFromString.get
 
   private val whitespaceParser = P(CharPred(Utils.isSafeWhitespace))
 
@@ -76,14 +63,28 @@ object SearchFilterParser {
   }
 
   private val commonOperatorParser: Parser[String] = {
-    P(IgnoreCase("eq") | IgnoreCase("like") | IgnoreCase("noteq")).!
+    import xyz.driver.restquery.query.SearchFilterBinaryOperation.binaryOperationToName
+    val eq    = binaryOperationToName(SearchFilterBinaryOperation.Eq)
+    val like  = binaryOperationToName(SearchFilterBinaryOperation.Like)
+    val noteq = binaryOperationToName(SearchFilterBinaryOperation.NotEq)
+    P(IgnoreCase(eq) | IgnoreCase(like) | IgnoreCase(noteq)).!
   }
 
   private val numericOperatorParser: Parser[String] = {
-    P(IgnoreCase("eq") | IgnoreCase("noteq") | ((IgnoreCase("gt") | IgnoreCase("lt")) ~ IgnoreCase("eq").?)).!
+    import xyz.driver.restquery.query.SearchFilterBinaryOperation.binaryOperationToName
+    val eq    = binaryOperationToName(SearchFilterBinaryOperation.Eq)
+    val noteq = binaryOperationToName(SearchFilterBinaryOperation.NotEq)
+    val gt    = binaryOperationToName(SearchFilterBinaryOperation.Gt)
+    val lt    = binaryOperationToName(SearchFilterBinaryOperation.Lt)
+    P(IgnoreCase(eq) | IgnoreCase(noteq) | ((IgnoreCase(gt) | IgnoreCase(lt)) ~ IgnoreCase(eq).?)).!
   }
 
-  private val naryOperatorParser: Parser[String] = P(IgnoreCase("in")).!
+  private val naryOperatorParser: Parser[String] = {
+    import xyz.driver.restquery.query.SearchFilterNAryOperation.nAryOperationToName
+    val in    = nAryOperationToName(SearchFilterNAryOperation.In)
+    val notin = nAryOperationToName(SearchFilterNAryOperation.NotIn)
+    P(IgnoreCase(in) | IgnoreCase(notin)).!
+  }
 
   private val isPositiveParser: Parser[Boolean] = P(CharIn("-+").!.?).map {
     case Some("-") => false
@@ -92,12 +93,13 @@ object SearchFilterParser {
 
   private val digitsParser: Parser[String] = P(CharIn('0' to '9').rep(min = 1).!) // Exclude Unicode "digits"
 
-  private val numberParser: Parser[String] = P(isPositiveParser ~ digitsParser.! ~ ("." ~ digitsParser).!.?).map {
-    case (false, intPart, Some(fracPart)) => s"-$intPart.${fracPart.tail}"
-    case (false, intPart, None)           => s"-$intPart"
-    case (_, intPart, Some(fracPart))     => s"$intPart.${fracPart.tail}"
-    case (_, intPart, None)               => s"$intPart"
-  }
+  private val numberParser: Parser[String] =
+    P(isPositiveParser ~ digitsParser.! ~ ("." ~ digitsParser).!.?).map {
+      case (false, intPart, Some(fracPart)) => s"-$intPart.${fracPart.tail}"
+      case (false, intPart, None)           => s"-$intPart"
+      case (_, intPart, Some(fracPart))     => s"$intPart.${fracPart.tail}"
+      case (_, intPart, None)               => s"$intPart"
+    }
 
   private val nAryValueParser: Parser[String] = P(CharPred(_ != ',').rep(min = 1).!)
 
@@ -110,16 +112,21 @@ object SearchFilterParser {
 
   private val uuidParser: Parser[UUID] =
     P(
-      hexDigit.rep(8).! ~ "-" ~ hexDigit.rep(4).! ~ "-" ~ hexDigit.rep(4).! ~ "-" ~ hexDigit.rep(4).! ~ "-" ~ hexDigit
+      hexDigit.rep(8).! ~ "-" ~ hexDigit.rep(4).! ~ "-" ~ hexDigit
+        .rep(4)
+        .! ~ "-" ~ hexDigit.rep(4).! ~ "-" ~ hexDigit
         .rep(12)
         .!).map {
-      case (group1, group2, group3, group4, group5) => UUID.fromString(s"$group1-$group2-$group3-$group4-$group5")
+      case (group1, group2, group3, group4, group5) =>
+        UUID.fromString(s"$group1-$group2-$group3-$group4-$group5")
     }
 
   private val binaryAtomParser: Parser[SearchFilterExpr.Atom.Binary] = P(
     dimensionParser ~ whitespaceParser ~
       ((numericOperatorParser.! ~ whitespaceParser ~ (longParser | numberParser.!) ~ End) |
-        (commonOperatorParser.! ~ whitespaceParser ~ (uuidParser | booleanParser | AnyChar.rep(min = 1).!) ~ End))
+        (commonOperatorParser.! ~ whitespaceParser ~ (uuidParser | booleanParser | AnyChar
+          .rep(min = 1)
+          .!) ~ End))
   ).map {
     case BinaryAtomFromTuple(atom) => atom
   }
@@ -127,7 +134,8 @@ object SearchFilterParser {
   private val nAryAtomParser: Parser[SearchFilterExpr.Atom.NAry] = P(
     dimensionParser ~ whitespaceParser ~ (
       naryOperatorParser ~ whitespaceParser ~
-        ((longParser.rep(min = 1, sep = ",") ~ End) | (booleanParser.rep(min = 1, sep = ",") ~ End) |
+        ((longParser.rep(min = 1, sep = ",") ~ End) | (booleanParser
+          .rep(min = 1, sep = ",") ~ End) |
           (nAryValueParser.!.rep(min = 1, sep = ",") ~ End))
     )
   ).map {
@@ -149,8 +157,9 @@ object SearchFilterParser {
 
       case head :: Nil =>
         atomParser.parse(head) match {
-          case Parsed.Success(x, _)    => x
-          case e: Parsed.Failure[_, _] => throw new ParseQueryArgException("filters" -> formatFailure(1, e))
+          case Parsed.Success(x, _) => x
+          case e: Parsed.Failure[_, _] =>
+            throw new ParseQueryArgException("filters" -> formatFailure(1, e))
         }
 
       case xs =>
@@ -172,7 +181,8 @@ object SearchFilterParser {
   }
 
   private def formatFailure(sectionIndex: Int, e: Parsed.Failure[_, _]): String = {
-    s"section $sectionIndex: ${fastparse.core.ParseError.msg(e.extra.input, e.extra.traced.expected, e.index)}"
+    s"section $sectionIndex: ${fastparse.core.ParseError
+      .msg(e.extra.input, e.extra.traced.expected, e.index)}"
   }
 
 }
