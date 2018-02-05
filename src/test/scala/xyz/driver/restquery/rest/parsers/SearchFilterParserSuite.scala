@@ -9,7 +9,7 @@ import org.scalatest.FreeSpecLike
 import org.scalatest.prop.Checkers
 import xyz.driver.restquery.query.SearchFilterBinaryOperation.Eq
 import xyz.driver.restquery.query.SearchFilterExpr.Dimension
-import xyz.driver.restquery.query.SearchFilterNAryOperation.In
+import xyz.driver.restquery.query.SearchFilterNAryOperation.{In, NotIn}
 import xyz.driver.restquery.query.{SearchFilterExpr, SearchFilterNAryOperation}
 import xyz.driver.restquery.rest.parsers.TestUtils._
 import xyz.driver.restquery.utils.Utils
@@ -42,8 +42,10 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
         filter === Success(SearchFilterExpr.Intersection(List(
           SearchFilterExpr.Atom
             .NAry(Dimension(None, "status"), In, Seq("Summarized", "ReviewCriteria", "Flagged", "Done")),
-          SearchFilterExpr.Atom.Binary(Dimension(None, "previous_status"), NotEq, "New"),
-          SearchFilterExpr.Atom.Binary(Dimension(None, "previous_status"), NotEq, "ReviewSummary")
+          SearchFilterExpr.Atom
+            .Binary(Dimension(None, "previous_status"), NotEq, "New"),
+          SearchFilterExpr.Atom
+            .Binary(Dimension(None, "previous_status"), NotEq, "ReviewSummary")
         ))))
     }
     "dimensions" - {
@@ -89,8 +91,9 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
               SearchFilterParser
                 .parse(Seq("filters" -> query))
                 .map {
-                  case SearchFilterExpr.Atom.Binary(_, Eq | NotEq | Like, _) => true
-                  case x                                                     => throw new UnexpectedSearchFilterExprException(x)
+                  case SearchFilterExpr.Atom.Binary(_, Eq | NotEq | Like, _) =>
+                    true
+                  case x => throw new UnexpectedSearchFilterExprException(x)
                 }
                 .successProp
             }
@@ -115,16 +118,21 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
 
         "actual recordId" - {
           "should not be parsed with numeric values" in {
-            val filter = SearchFilterParser.parse(Seq("filters" -> "recordId EQ 1"))
-            assert(filter === Success(SearchFilterExpr.Atom.Binary(Dimension(None, "record_id"), Eq, Long.box(1))))
+            val filter =
+              SearchFilterParser.parse(Seq("filters" -> "recordId EQ 1"))
+            assert(
+              filter === Success(SearchFilterExpr.Atom
+                .Binary(Dimension(None, "record_id"), Eq, Long.box(1))))
           }
         }
 
         "actual isVisible boolean" - {
           "should not be parsed with boolean values" in {
-            val filter = SearchFilterParser.parse(Seq("filters" -> "isVisible EQ true"))
+            val filter =
+              SearchFilterParser.parse(Seq("filters" -> "isVisible EQ true"))
             assert(
-              filter === Success(SearchFilterExpr.Atom.Binary(Dimension(None, "is_visible"), Eq, Boolean.box(true))))
+              filter === Success(SearchFilterExpr.Atom
+                .Binary(Dimension(None, "is_visible"), Eq, Boolean.box(true))))
           }
         }
 
@@ -160,14 +168,26 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
 
       "n-ary" - {
         "actual record Ids" - {
-          "should not be parsed with text values" in {
+          "should not be parsed with text values on 'IN'" in {
             val filter = SearchFilterParser.parse(Seq("filters" -> "id IN 1,5"))
             filter match {
               case Success(_) => ()
               case Failure(t) => t.printStackTrace()
             }
             assert(
-              filter === Success(SearchFilterExpr.Atom.NAry(Dimension(None, "id"), In, Seq(Long.box(1), Long.box(5)))))
+              filter === Success(SearchFilterExpr.Atom
+                .NAry(Dimension(None, "id"), In, Seq(Long.box(1), Long.box(5)))))
+          }
+          "should not be parsed with text values on 'NOTIN'" in {
+            val filter =
+              SearchFilterParser.parse(Seq("filters" -> "id NOTIN 1,5"))
+            filter match {
+              case Success(_) => ()
+              case Failure(t) => t.printStackTrace()
+            }
+            assert(
+              filter === Success(
+                SearchFilterExpr.Atom.NAry(Dimension(None, "id"), NotIn, Seq(Long.box(1), Long.box(5)))))
           }
         }
 
@@ -182,8 +202,27 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
             SearchFilterParser
               .parse(Seq("filters" -> query))
               .map {
-                case SearchFilterExpr.Atom.NAry(_, SearchFilterNAryOperation.In, _) => true
-                case x                                                              => throw new UnexpectedSearchFilterExprException(x)
+                case SearchFilterExpr.Atom.NAry(_, SearchFilterNAryOperation.In, _) =>
+                  true
+                case x => throw new UnexpectedSearchFilterExprException(x)
+              }
+              .successProp
+          }
+        }
+
+        "not in" in check {
+          val testQueryGen = queryGen(
+            dimensionGen = Gen.identifier,
+            opGen = Gen.const("notin"),
+            valueGen = inValuesGen
+          )
+
+          Prop.forAllNoShrink(testQueryGen) { query =>
+            SearchFilterParser
+              .parse(Seq("filters" -> query))
+              .map {
+                case SearchFilterExpr.Atom.NAry(_, SearchFilterNAryOperation.NotIn, _) => true
+                case x                                                                 => throw new UnexpectedSearchFilterExprException(x)
               }
               .successProp
           }
@@ -211,7 +250,9 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
         }
 
         Prop.forAllNoShrink(intersectionsGen) { queries =>
-          SearchFilterParser.parse(queries.map(query => "filters" -> query)).successProp
+          SearchFilterParser
+            .parse(queries.map(query => "filters" -> query))
+            .successProp
         }
       }
     }
@@ -222,8 +263,10 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
 
   private val allBinaryOpsGen: Gen[String] =
     Gen.oneOf(CommonBinaryOps ++ NumericBinaryOps).flatMap(randomCapitalization)
-  private val commonBinaryOpsGen: Gen[String]  = Gen.oneOf(CommonBinaryOps).flatMap(randomCapitalization)
-  private val numericBinaryOpsGen: Gen[String] = Gen.oneOf(NumericBinaryOps).flatMap(randomCapitalization)
+  private val commonBinaryOpsGen: Gen[String] =
+    Gen.oneOf(CommonBinaryOps).flatMap(randomCapitalization)
+  private val numericBinaryOpsGen: Gen[String] =
+    Gen.oneOf(NumericBinaryOps).flatMap(randomCapitalization)
 
   private val inValueCharsGen: Gen[Char] = arbitrary[Char].filter(_ != ',')
 
@@ -231,9 +274,13 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
     !Utils.safeTrim(s).isEmpty
   }
 
-  private val numericBinaryAtomValuesGen: Gen[String] = arbitrary[Long].map(_.toString)
+  private val numericBinaryAtomValuesGen: Gen[String] =
+    arbitrary[Long].map(_.toString)
   private val inValueGen: Gen[String] = {
-    Gen.nonEmptyContainerOf[Seq, Char](inValueCharsGen).map(_.mkString).filter(s => Utils.safeTrim(s).nonEmpty)
+    Gen
+      .nonEmptyContainerOf[Seq, Char](inValueCharsGen)
+      .map(_.mkString)
+      .filter(s => Utils.safeTrim(s).nonEmpty)
   }
   private val inValuesGen: Gen[String] = Gen.choose(1, 5).flatMap { size =>
     Gen.containerOfN[Seq, String](size, inValueGen).map(_.mkString(","))
