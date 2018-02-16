@@ -8,7 +8,7 @@ lazy val core = (project in file("."))
   .settings(libraryDependencies ++= Seq(
     "com.typesafe.akka"          %% "akka-http"      % "10.0.11",
     "com.lihaoyi"                %% "fastparse"      % "1.0.0",
-    "xyz.driver"                 %% "core"           % "1.7.0",
+    "xyz.driver"                 %% "core"           % "1.8.1",
     "com.typesafe.scala-logging" %% "scala-logging"  % "3.5.0",
     "org.slf4j"                  % "slf4j-api"       % "1.7.21",
     "ch.qos.logback"             % "logback-classic" % "1.1.7",
