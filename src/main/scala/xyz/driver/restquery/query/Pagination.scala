@@ -3,7 +3,9 @@ package xyz.driver.restquery.query
 /**
   * @param pageNumber Starts with 1
   */
-final case class Pagination(pageSize: Int, pageNumber: Int)
+final case class Pagination(pageSize: Int, pageNumber: Int) {
+  def offset: Int = pageSize * pageNumber
+}
 
 object Pagination {
 
