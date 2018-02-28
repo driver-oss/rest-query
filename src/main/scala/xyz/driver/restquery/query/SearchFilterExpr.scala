@@ -1,8 +1,21 @@
 package xyz.driver.restquery.query
 
+import xyz.driver.restquery.query.SearchFilterBinaryOperation.Eq
+import xyz.driver.restquery.query.SearchFilterExpr.{Atom, Dimension}
+
 sealed trait SearchFilterExpr {
   def find(p: SearchFilterExpr => Boolean): Option[SearchFilterExpr]
   def replace(f: PartialFunction[SearchFilterExpr, SearchFilterExpr]): SearchFilterExpr
+
+  def findEqFilter(fieldName: String): Option[SearchFilterExpr] =
+    findEqFilter(Dimension(None, fieldName))
+
+  def findEqFilter(dimension: Dimension): Option[SearchFilterExpr] = {
+    this.find {
+      case Atom.Binary(`dimension`, Eq, _) => true
+      case _                               => false
+    }
+  }
 }
 
 object SearchFilterExpr {
