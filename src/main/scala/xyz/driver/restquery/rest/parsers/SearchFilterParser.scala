@@ -134,8 +134,9 @@ object SearchFilterParser {
   private val nAryAtomParser: Parser[SearchFilterExpr.Atom.NAry] = P(
     dimensionParser ~ whitespaceParser ~ (
       naryOperatorParser ~ whitespaceParser ~
-        ((longParser.rep(min = 1, sep = ",") ~ End) | (booleanParser
-          .rep(min = 1, sep = ",") ~ End) |
+        ((uuidParser.rep(min = 1, sep = ",") ~ End) |
+          (longParser.rep(min = 1, sep = ",") ~ End) |
+          (booleanParser.rep(min = 1, sep = ",") ~ End) |
           (nAryValueParser.!.rep(min = 1, sep = ",") ~ End))
     )
   ).map {

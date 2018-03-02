@@ -145,6 +145,23 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
           }
         }
 
+        "actual trial uuid list" - {
+          "should parse the list of UUIDs as java.util.UUID type" in {
+            val filter = SearchFilterParser.parse(Seq("filters" -> ("trialId in 57b375a3-2eb3-4fed-a80d-0ffda69d68cf," +
+              "f82539f1-39a1-48b5-9ca9-636c131bdbf1,2676b5c0-7b14-4962-9455-04055dc37f59")))
+            assert(
+              filter === Success(SearchFilterExpr.Atom.NAry(
+                Dimension(None, "trial_id"),
+                In,
+                Seq(
+                  UUID.fromString("57b375a3-2eb3-4fed-a80d-0ffda69d68cf"),
+                  UUID.fromString("f82539f1-39a1-48b5-9ca9-636c131bdbf1"),
+                  UUID.fromString("2676b5c0-7b14-4962-9455-04055dc37f59")
+                )
+              )))
+          }
+        }
+
         "all operators" - {
           "should be parsed with numeric values" in check {
             val testQueryGen = queryGen(
