@@ -5,10 +5,10 @@ Supports ANDs and ORs, pagination and sorting.
 
 Example of the REST request applying filtering:
 ```
-https://treatment-matching-api/v1/patient?filters=status+EQ+New&filters=assignee+EQ+null&pageNumber=1&pageSize=20&sort=lastUpdate
+https://example.org/v1/tasks?filters=status+EQ+New&filters=assignee+EQ+null&pageNumber=1&pageSize=20&sort=lastUpdate
 ```
 
-Queries can be build in the code as well (e.g., for testing):
+Queries can be built in the code as well (e.g., for testing):
 
 ```
 SearchFilterExpr.Atom.NAry("id", In, objects.map(x => Long.box(x.id)))
