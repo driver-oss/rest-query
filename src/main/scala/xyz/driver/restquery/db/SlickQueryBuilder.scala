@@ -60,10 +60,12 @@ final case class SlickPostgresQueryBuilderParameters(
 
   def limitToSql()(implicit profile: JdbcProfile): SQLActionBuilder = {
     import profile.api._
-    pagination.map { pagination =>
-      val startFrom = (pagination.pageNumber - 1) * pagination.pageSize
-      sql"limit #${pagination.pageSize} OFFSET #$startFrom"
-    } getOrElse (sql"")
+    pagination
+      .map { pagination =>
+        val startFrom = (pagination.pageNumber - 1) * pagination.pageSize
+        sql"limit #${pagination.pageSize} OFFSET #$startFrom"
+      }
+      .getOrElse(sql"")
   }
 
   val qs = """""""
