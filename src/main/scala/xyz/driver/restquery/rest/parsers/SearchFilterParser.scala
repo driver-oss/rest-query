@@ -1,5 +1,6 @@
 package xyz.driver.restquery.rest.parsers
 
+import java.time.LocalDate
 import java.util.UUID
 
 import fastparse.all._
@@ -121,9 +122,16 @@ object SearchFilterParser {
         UUID.fromString(s"$group1-$group2-$group3-$group4-$group5")
     }
 
+  private val dateParser: Parser[LocalDate] =
+    P(CharIn('0' to '9').rep(min = 4).! ~ "-" ~ CharIn('0' to '9').rep(1).! ~ "-" ~ CharIn('0' to '9').rep(1).!)
+      .map {
+        case (year, month, day) =>
+          LocalDate.of(year.toInt, month.toInt, day.toInt)
+      }
+
   private val binaryAtomParser: Parser[SearchFilterExpr.Atom.Binary] = P(
     dimensionParser ~ whitespaceParser ~
-      ((numericOperatorParser.! ~ whitespaceParser ~ (longParser | numberParser.!) ~ End) |
+      ((numericOperatorParser.! ~ whitespaceParser ~ (dateParser | longParser | numberParser.!) ~ End) |
         (commonOperatorParser.! ~ whitespaceParser ~ (uuidParser | booleanParser | AnyChar
           .rep(min = 1)
           .!) ~ End))
@@ -134,7 +142,8 @@ object SearchFilterParser {
   private val nAryAtomParser: Parser[SearchFilterExpr.Atom.NAry] = P(
     dimensionParser ~ whitespaceParser ~ (
       naryOperatorParser ~ whitespaceParser ~
-        ((uuidParser.rep(min = 1, sep = ",") ~ End) |
+        ((dateParser.rep(min = 1, sep = ",") ~ End) |
+          (uuidParser.rep(min = 1, sep = ",") ~ End) |
           (longParser.rep(min = 1, sep = ",") ~ End) |
           (booleanParser.rep(min = 1, sep = ",") ~ End) |
           (nAryValueParser.!.rep(min = 1, sep = ",") ~ End))

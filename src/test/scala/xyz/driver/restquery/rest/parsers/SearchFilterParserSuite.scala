@@ -1,5 +1,6 @@
 package xyz.driver.restquery.rest.parsers
 
+import java.time.LocalDate
 import java.util.UUID
 
 import fastparse.core.Parsed
@@ -159,6 +160,33 @@ class SearchFilterParserSuite extends FreeSpecLike with Checkers {
                   UUID.fromString("2676b5c0-7b14-4962-9455-04055dc37f59")
                 )
               )))
+          }
+        }
+
+        "actual startDate - date" - {
+          "should parse the full date as java.time.LocalDate type" in {
+            val filter = SearchFilterParser.parse(Seq("filters" -> "startDate EQ 2018-05-22"))
+            assert(
+              filter === Success(SearchFilterExpr.Atom
+                .Binary(Dimension(None, "start_date"), Eq, LocalDate.of(2018, 5, 22))))
+          }
+        }
+
+        "actual date list" - {
+          "should parse the list of dates as java.time.LocalDate type" in {
+            val filter = SearchFilterParser.parse(Seq("filters" -> ("startDate in 2018-05-19," +
+              "2018-05-20,2018-05-21")))
+            assert(
+              filter === Success(
+                SearchFilterExpr.Atom.NAry(
+                  Dimension(None, "start_date"),
+                  In,
+                  Seq(
+                    LocalDate.of(2018, 5, 19),
+                    LocalDate.of(2018, 5, 20),
+                    LocalDate.of(2018, 5, 21)
+                  )
+                )))
           }
         }
 
